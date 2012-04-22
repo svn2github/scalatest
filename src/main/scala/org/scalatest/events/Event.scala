@@ -17,6 +17,10 @@ package org.scalatest.events
 
 import org.scalatest._
 import java.util.Date
+import scala.xml.Elem
+import java.io.StringWriter
+import java.io.PrintWriter
+import java.io.BufferedWriter
 
 /**
  * A base class for the events that can be passed to the report function passed
@@ -71,6 +75,128 @@ sealed abstract class Event extends Ordered[Event] with java.io.Serializable {
    * the passed event
    */
   def compare(that: Event): Int = ordinal.compare(that.ordinal)
+  
+  /**
+   * 
+   */
+  def toXml: Elem
+  
+  private[events] object EventXmlHelper {
+    def stringOption(strOption: Option[String]) = strOption.getOrElse("")
+    def longOption(longOption: Option[Long]) = if (longOption.isDefined) longOption.get.toString else ""
+    def booleanOption(booleanOption: Option[Boolean]) = if (booleanOption.isDefined) booleanOption.get.toString else ""
+    def formatterOption(formatterOption: Option[Formatter]) = {
+      formatterOption match {
+        case Some(formatter) =>
+          formatter match {
+            case MotionToSuppress => 
+              <MotionToSuppress/>
+            case indentedText: IndentedText => 
+              <IndentedText>
+                 <formattedText>{ indentedText.formattedText }</formattedText>
+                 <rawText>{ indentedText.rawText }</rawText>
+                 <indentationLevel>{ indentedText.indentationLevel }</indentationLevel>
+              </IndentedText>
+          }
+        case None => ""
+      }
+    }
+    def locationOption(locationOption: Option[Location]) = {
+      locationOption match {
+        case Some(location) =>
+          location match {
+            case topOfClass: TopOfClass =>
+              <TopOfClass>
+                <className>{ topOfClass.className }</className>
+              </TopOfClass>
+            case topOfMethod: TopOfMethod => 
+              <TopOfMethod>
+                <className>{ topOfMethod.className }</className>
+                <methodId>{ topOfMethod.methodId }</methodId>
+              </TopOfMethod>
+            case lineInFile: LineInFile => 
+              <LineInFile>
+                <lineNumber>{ lineInFile.lineNumber }</lineNumber>
+                <fileName>{ lineInFile.fileName }</fileName>
+              </LineInFile>
+            case SeeStackDepthException => 
+              <SeeStackDepthException />
+            case _ =>
+              ""
+          } 
+        case None => ""
+      }
+    }
+    def getThrowableStackDepth(throwable: Throwable) = {
+      throwable match { 
+        case sde: StackDepthException => sde.failedCodeStackDepth 
+        case _ => -1
+      }
+    }
+    def throwableOption(throwableOption: Option[Throwable]) = {
+      throwableOption match {
+        case Some(throwable) => 
+          <message>{ throwable.getMessage }</message>
+          <depth>{ getThrowableStackDepth(throwable) }</depth>
+          <stackTraces>
+            {
+              val stackTraces = throwable.getStackTrace
+              for (stackTrace <- stackTraces) yield {
+                <stackTrace>
+                  <className>{ stackTrace.getClassName }</className>
+                  <methodName>{ stackTrace.getMethodName }</methodName>
+                  <fileName>{ stackTrace.getFileName }</fileName>
+                  <lineNumber>{ stackTrace.getLineNumber }</lineNumber>
+                  <isNative>{ stackTrace.isNativeMethod }</isNative>
+                  <toString>{ stackTrace.toString }</toString>
+                </stackTrace>
+              }
+              /*val stringWriter = new StringWriter()
+              val writer = new PrintWriter(new BufferedWriter(stringWriter))
+              throwable.printStackTrace(writer)
+              writer.flush()
+              stringWriter.toString*/
+            }
+          </stackTraces>
+        case None => ""
+      }
+    }
+    def summaryOption(summaryOption: Option[Summary]) = {
+      summaryOption match {
+        case Some(summary) =>
+          <testsSucceededCount>{ summary.testsSucceededCount }</testsSucceededCount>
+          <testsFailedCount>{ summary.testsFailedCount }</testsFailedCount>
+          <testsIgnoredCount>{ summary.testsIgnoredCount }</testsIgnoredCount>
+          <testsPendingCount>{ summary.testsPendingCount }</testsPendingCount>
+          <testsCanceledCount>{ summary.testsCanceledCount }</testsCanceledCount>
+          <suitesCompletedCount>{ summary.suitesCompletedCount }</suitesCompletedCount>
+          <suitesAbortedCount>{ summary.suitesAbortedCount }</suitesAbortedCount>
+        case None => ""
+      }
+    }
+    def nameInfoOption(nameInfoOption: Option[NameInfo]) = {
+      nameInfoOption match {
+        case Some(nameInfo) => 
+          <suiteName>{ nameInfo.suiteName }</suiteName>
+          <suiteId>{ nameInfo.suiteID }</suiteId>
+          <suiteClassName>{ stringOption(nameInfo.suiteClassName) }</suiteClassName>
+          <decodedSuiteName>{ stringOption(nameInfo.decodedSuiteName) }</decodedSuiteName>
+          <testName>
+            { 
+              nameInfo.testName match {
+                case Some(testName) => 
+                  <testName>{ testName.testName }</testName>
+                  <decodedTestName>{ stringOption(testName.decodedTestName) }</decodedTestName>
+                case None =>
+                  ""
+              }
+            }
+          </testName>
+        case None => 
+          ""
+      }
+    }
+  }
 }
 
 /**
@@ -160,6 +286,26 @@ final case class TestStarting (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <TestStarting>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <suiteName>{ suiteName }</suiteName>
+      <suiteId>{ suiteId }</suiteId>
+      <suiteClassName>{ stringOption(suiteClassName) }</suiteClassName>
+      <decodedSuiteName>{ stringOption(decodedSuiteName) }</decodedSuiteName>
+      <testName>{ testName }</testName>
+      <testText>{ testText }</testText>
+      <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <rerunner>{ stringOption(rerunner) }</rerunner>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </TestStarting>
 }
 
 /**
@@ -254,6 +400,27 @@ final case class TestSucceeded (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <TestSucceeded>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <suiteName>{ suiteName }</suiteName>
+      <suiteId>{ suiteId }</suiteId>
+      <suiteClassName>{ stringOption(suiteClassName) }</suiteClassName>
+      <decodedSuiteName>{ stringOption(decodedSuiteName) }</decodedSuiteName>
+      <duration>{ longOption(duration) }</duration>
+      <testName>{ testName }</testName>
+      <testText>{ testText }</testText>
+      <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <rerunner>{ stringOption(rerunner) }</rerunner>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </TestSucceeded>
 }
 
 /**
@@ -356,6 +523,29 @@ final case class TestFailed (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <TestFailed>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <message>{ message }</message>
+      <suiteName>{ suiteName }</suiteName>
+      <suiteId>{ suiteId }</suiteId>
+      <suiteClassName>{ stringOption(suiteClassName) }</suiteClassName>
+      <decodedSuiteName>{ stringOption(decodedSuiteName) }</decodedSuiteName>
+      <duration>{ longOption(duration) }</duration>
+      <testName>{ testName }</testName>
+      <testText>{ testText }</testText>
+      <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <throwable>{ throwableOption(throwable) }</throwable>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <rerunner>{ stringOption(rerunner) }</rerunner>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </TestFailed>
 }
 
 /**
@@ -441,6 +631,25 @@ final case class TestIgnored (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <TestIgnored>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <suiteName>{ suiteName }</suiteName>
+      <suiteId>{ suiteId }</suiteId>
+      <suiteClassName>{ stringOption(suiteClassName) }</suiteClassName>
+      <decodedSuiteName>{ stringOption(decodedSuiteName) }</decodedSuiteName>
+      <testName>{ testName }</testName>
+      <testText>{ testText }</testText>
+      <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </TestIgnored>
 }
 
 /**
@@ -524,6 +733,26 @@ final case class TestPending (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <TestPending>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <suiteName>{ suiteName }</suiteName>
+      <suiteId>{ suiteId }</suiteId>
+      <suiteClassName>{ stringOption(suiteClassName) }</suiteClassName>
+      <decodedSuiteName>{ stringOption(decodedSuiteName) }</decodedSuiteName>
+      <duration>{ longOption(duration) }</duration>
+      <testName>{ testName }</testName>
+      <testText>{ testText }</testText>
+      <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </TestPending>
 }
 
 /**
@@ -618,6 +847,28 @@ final case class TestCanceled (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <TestCanceled>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <message>{ message }</message>
+      <suiteName>{ suiteName }</suiteName>
+      <suiteId>{ suiteId }</suiteId>
+      <suiteClassName>{ stringOption(suiteClassName) }</suiteClassName>
+      <decodedSuiteName>{ stringOption(decodedSuiteName) }</decodedSuiteName>
+      <duration>{ longOption(duration) }</duration>
+      <testName>{ testName }</testName>
+      <testText>{ testText }</testText>
+      <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <throwable>{ throwableOption(throwable) }</throwable>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </TestCanceled>
 }
 
 /**
@@ -697,6 +948,23 @@ final case class SuiteStarting (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <SuiteStarting>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <suiteName>{ suiteName }</suiteName>
+      <suiteId>{ suiteId }</suiteId>
+      <suiteClassName>{ stringOption(suiteClassName) }</suiteClassName>
+      <decodedSuiteName>{ stringOption(decodedSuiteName) }</decodedSuiteName>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <rerunner>{ stringOption(rerunner) }</rerunner>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </SuiteStarting>
 }
 
 /**
@@ -781,6 +1049,24 @@ final case class SuiteCompleted (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <SuiteCompleted>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <suiteName>{ suiteName }</suiteName>
+      <suiteId>{ suiteId }</suiteId>
+      <suiteClassName>{ stringOption(suiteClassName) }</suiteClassName>
+      <decodedSuiteName>{ stringOption(decodedSuiteName) }</decodedSuiteName>
+      <duration>{ longOption(duration) }</duration>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <rerunner>{ stringOption(rerunner) }</rerunner>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </SuiteCompleted>
 }
 
 /**
@@ -877,6 +1163,26 @@ final case class SuiteAborted (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <SuiteAborted>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <message>{ message }</message>
+      <suiteName>{ suiteName }</suiteName>
+      <suiteId>{ suiteId }</suiteId>
+      <suiteClassName>{ stringOption(suiteClassName) }</suiteClassName>
+      <decodedSuiteName>{ stringOption(decodedSuiteName) }</decodedSuiteName>
+      <duration>{ longOption(duration) }</duration>
+      <throwable>{ throwableOption(throwable) }</throwable>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <rerunner>{ stringOption(rerunner) }</rerunner>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </SuiteAborted>
 }
 
 // TODO: Put location as a val set to None
@@ -940,6 +1246,29 @@ final case class RunStarting (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <RunStarting>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <testCount>{ testCount }</testCount>
+      <configMap>
+        { 
+          for ((key, value) <- configMap) yield {
+            <entry>
+              <key>{ key }</key>
+              <value>{ value }</value>
+            </entry>
+          }
+        }
+      </configMap>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </RunStarting>
 }
 
 /**
@@ -1016,6 +1345,20 @@ final case class RunCompleted (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <RunCompleted>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <duration>{ longOption(duration) }</duration>
+      <summary>{ summaryOption(summary) }</summary>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </RunCompleted>
 }
 
 /**
@@ -1093,6 +1436,20 @@ final case class RunStopped (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <RunStopped>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <duration>{ longOption(duration) }</duration>
+      <summary>{ summaryOption(summary) }</summary>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </RunStopped>
 }
 
 /**
@@ -1169,6 +1526,22 @@ final case class RunAborted (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <RunAborted>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <message>{ message }</message>
+      <throwable>{ throwableOption(throwable) }</throwable>
+      <duration>{ longOption(duration) }</duration>
+      <summary>{ summaryOption(summary) }</summary>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </RunAborted>
 }
 
 /**
@@ -1245,6 +1618,23 @@ final case class InfoProvided (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <InfoProvided>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <message>{ message }</message>
+      <nameInfo>{ nameInfoOption(nameInfo) }</nameInfo>
+      <aboutAPendingTest>{ booleanOption(aboutAPendingTest) }</aboutAPendingTest>
+      <aboutACanceledTest>{ booleanOption(aboutACanceledTest) }</aboutACanceledTest>
+      <throwable>{ throwableOption(throwable) }</throwable>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </InfoProvided>
 }
 
 /**
@@ -1317,6 +1707,22 @@ final case class MarkupProvided (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <MarkupProvided>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <text>{ text }</text>
+      <nameInfo>{ nameInfoOption(nameInfo) }</nameInfo>
+      <aboutAPendingTest>{ booleanOption(aboutAPendingTest) }</aboutAPendingTest>
+      <aboutACanceledTest>{ booleanOption(aboutACanceledTest) }</aboutACanceledTest>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </MarkupProvided>
 }
 
 /**
@@ -1387,6 +1793,22 @@ final case class ScopeOpened (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <ScopeOpened>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <message>{ message }</message>
+      <nameInfo>{ nameInfoOption(if (nameInfo != null) Some(nameInfo) else None) }</nameInfo>
+      <aboutAPendingTest>{ booleanOption(aboutAPendingTest) }</aboutAPendingTest>
+      <aboutACanceledTest>{ booleanOption(aboutACanceledTest) }</aboutACanceledTest>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </ScopeOpened>
 }
 
 /**
@@ -1457,6 +1879,22 @@ final case class ScopeClosed (
     throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  def toXml = 
+    <ScopeClosed>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <message>{ message }</message>
+      <nameInfo>{ nameInfoOption(if (nameInfo != null) Some(nameInfo) else None) }</nameInfo>
+      <aboutAPendingTest>{ booleanOption(aboutAPendingTest) }</aboutAPendingTest>
+      <aboutACanceledTest>{ booleanOption(aboutACanceledTest) }</aboutACanceledTest>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </ScopeClosed>
 }
 
 /*

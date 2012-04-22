@@ -511,10 +511,10 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
 
     checkRunTestParamsForNull(testName, reporter, stopper, configMap, tracker)
 
-    val (stopRequested, report, method, hasPublicNoArgConstructor, rerunnable, testStartTime) =
+    val (stopRequested, report, method, testStartTime) =
       getSuiteRunTestGoodies(stopper, reporter, testName)
 
-    reportTestStarting(thisSuite, report, tracker, testName, testName, getDecodedName(testName), rerunnable, Some(getTopOfMethod(testName)))
+    reportTestStarting(thisSuite, report, tracker, testName, testName, getDecodedName(testName), thisSuite.rerunner, Some(getTopOfMethod(testName)))
 
     val formatter = getIndentedText(testName, 1, true)
 
@@ -579,7 +579,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
       }
 
       val duration = System.currentTimeMillis - testStartTime
-      reportTestSucceeded(thisSuite, report, tracker, testName, testName, getDecodedName(testName), duration, formatter, rerunnable, Some(getTopOfMethod(method)))
+      reportTestSucceeded(thisSuite, report, tracker, testName, testName, getDecodedName(testName), duration, formatter, thisSuite.rerunner, Some(getTopOfMethod(method)))
     }
     catch { 
       case ite: InvocationTargetException =>
@@ -593,17 +593,17 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
             val duration = System.currentTimeMillis - testStartTime
             val message = getMessageForException(e)
             val formatter = getIndentedText(testName, 1, true)
-            report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), rerunnable))
+            report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), thisSuite.rerunner))
             // Set so info's printed out in the finally clause show up yellow
             testWasCanceled = true // Set so info's printed out in the finally clause show up yellow
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
-            handleFailedTest(t, hasPublicNoArgConstructor, testName, rerunnable, report, tracker, duration)
+            handleFailedTest(t, testName, report, tracker, duration)
           case e => throw e
         }
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
-        handleFailedTest(e, hasPublicNoArgConstructor, testName, rerunnable, report, tracker, duration)
+        handleFailedTest(e, testName, report, tracker, duration)
       case e => throw e
     }
     finally {

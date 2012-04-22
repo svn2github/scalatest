@@ -199,9 +199,9 @@ private[scalatest] object SuiteDiscoveryHelper {
   // Returns Some(<class name>) if processed, else None
   private def processClassName(className: String, loader: ClassLoader, suffixes: Option[Pattern]): Option[String] = {
 
-    if (classNameSuffixOkay(className, suffixes) && isAccessibleSuite(className, loader)
+    if (classNameSuffixOkay(className, suffixes) && isDiscoverableSuite(className, loader)
         && 
-        (isDiscoverableSuite(className, loader) || isRunnable(className, loader))) 
+        (isAccessibleSuite(className, loader) || isRunnable(className, loader))) 
       Some(className)
     else 
       None 

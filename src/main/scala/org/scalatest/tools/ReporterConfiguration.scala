@@ -33,6 +33,7 @@ private[tools] case class DashboardReporterConfiguration(configSet: Set[Reporter
 private[tools] case class XmlReporterConfiguration(configSet: Set[ReporterConfigParam], fileName: String) extends ReporterConfiguration
 private[tools] case class HtmlReporterConfiguration(configSet: Set[ReporterConfigParam], fileName: String) extends ReporterConfiguration
 private[tools] case class CustomReporterConfiguration(configSet: Set[ReporterConfigParam], reporterClass: String) extends ReporterConfiguration
+private[tools] case class SocketReporterConfiguration(host: String, port: Int) extends ReporterConfiguration
 
 // If there were no fileReporterSpecList or customReporterSpecList specified, you get Nil
 // If there were no graphicReporterSpec, standardOutReporterSpec, or standardErrReporterSpec, you get None
@@ -45,7 +46,8 @@ private[tools] case class ReporterConfigurations(
   val standardOutReporterConfiguration: Option[StandardOutReporterConfiguration],
   val standardErrReporterConfiguration: Option[StandardErrReporterConfiguration],
   val htmlReporterConfigurationList: List[HtmlReporterConfiguration],
-  val customReporterConfigurationList: List[CustomReporterConfiguration]
+  val customReporterConfigurationList: List[CustomReporterConfiguration], 
+  val socketReporterConfigurationList: List[SocketReporterConfiguration]
 ) extends Seq[ReporterConfiguration] {
 
   val reporterConfigurationList =
@@ -58,7 +60,8 @@ private[tools] case class ReporterConfigurations(
       standardOutReporterConfiguration.toList,
       standardErrReporterConfiguration.toList,
       htmlReporterConfigurationList,
-      customReporterConfigurationList
+      customReporterConfigurationList, 
+      socketReporterConfigurationList
     )
 
   // Need to add the null pointer checks, or later, NotNull

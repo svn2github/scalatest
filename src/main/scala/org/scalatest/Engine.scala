@@ -180,7 +180,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
     checkRunTestParamsForNull(testName, reporter, stopper, configMap, tracker)
 
-    val (stopRequested, report, hasPublicNoArgConstructor, rerunnable, testStartTime) =
+    val (stopRequested, report, testStartTime) =
       theSuite.getRunTestGoodies(stopper, reporter, testName)
 
     if (!atomic.get.testsMap.contains(testName))
@@ -188,7 +188,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
     val theTest = atomic.get.testsMap(testName)
 
-    reportTestStarting(theSuite, report, tracker, testName, theTest.testText, None, rerunnable, theTest.lineInFile)
+    reportTestStarting(theSuite, report, tracker, testName, theTest.testText, None, theSuite.rerunner, theTest.lineInFile)
 
     val testTextWithOptionalPrefix = prependChildPrefix(theTest.parent, theTest.testText)
     val formatter = getIndentedText(testTextWithOptionalPrefix, theTest.indentationLevel, includeIcon)
@@ -217,7 +217,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
       val duration = System.currentTimeMillis - testStartTime
       val durationToReport = theTest.recordedDuration.getOrElse(duration)
-      reportTestSucceeded(theSuite, report, tracker, testName, theTest.testText, None, durationToReport, formatter, rerunnable, theTest.lineInFile)
+      reportTestSucceeded(theSuite, report, tracker, testName, theTest.testText, None, durationToReport, formatter, theSuite.rerunner, theTest.lineInFile)
     }
     catch { // XXX
       case _: TestPendingException =>
@@ -226,12 +226,12 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
         testWasPending = true // Set so info's printed out in the finally clause show up yellow
       case e: TestCanceledException =>
         val duration = System.currentTimeMillis - testStartTime
-        reportTestCanceled(theSuite, report, e, testName, theTest.testText, None, rerunnable, tracker, duration, theTest.indentationLevel, includeIcon, theTest.lineInFile)
+        reportTestCanceled(theSuite, report, e, testName, theTest.testText, None, theSuite.rerunner, tracker, duration, theTest.indentationLevel, includeIcon, theTest.lineInFile)
         testWasCanceled = true // Set so info's printed out in the finally clause show up yellow
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         val durationToReport = theTest.recordedDuration.getOrElse(duration)
-        reportTestFailed(theSuite, report, e, testName, theTest.testText, None, rerunnable, tracker, durationToReport, theTest.indentationLevel, includeIcon, Some(SeeStackDepthException))
+        reportTestFailed(theSuite, report, e, testName, theTest.testText, None, theSuite.rerunner, tracker, durationToReport, theTest.indentationLevel, includeIcon, Some(SeeStackDepthException))
       case e => throw e
     }
     finally {

@@ -571,7 +571,7 @@ object Runner {
     val fullReporterConfigurations: ReporterConfigurations =
       if (reporterArgsList.isEmpty)
         // If no reporters specified, just give them a graphic reporter
-        new ReporterConfigurations(Some(GraphicReporterConfiguration(Set())), Nil, Nil, Nil, Nil, None, None, Nil, Nil)
+        new ReporterConfigurations(Some(GraphicReporterConfiguration(Set())), Nil, Nil, Nil, Nil, None, None, Nil, Nil, Nil)
       else
         parseReporterArgsIntoConfigurations(reporterArgsList)
 
@@ -604,7 +604,8 @@ object Runner {
             fullReporterConfigurations.standardOutReporterConfiguration,
             fullReporterConfigurations.standardErrReporterConfiguration,
             fullReporterConfigurations.htmlReporterConfigurationList,
-            fullReporterConfigurations.customReporterConfigurationList
+            fullReporterConfigurations.customReporterConfigurationList, 
+            fullReporterConfigurations.socketReporterConfigurationList
           )
         }
       }
@@ -668,6 +669,12 @@ object Runner {
         if (it.hasNext)
           it.next
       }
+      else if (s.startsWith("-k")) {
+        if (it.hasNext)
+          it.next
+        if (it.hasNext)
+          it.next
+      }
       else if (!s.startsWith("-D") && !s.startsWith("-g") && !s.startsWith("-o") && !s.startsWith("-e") && !s.startsWith("-c")) {
         lb += s
       }
@@ -724,7 +731,7 @@ object Runner {
     val testNGXMLFiles = new ListBuffer[String]()
     val suffixes = new ListBuffer[String]()
 
-    val it = args.iterator
+    val it = args.iterator.buffered
     while (it.hasNext) {
 
       val s = it.next
@@ -843,6 +850,14 @@ object Runner {
       }
       else if (s.startsWith("-Q")) {
         suffixes += "Spec|Suite|Tests"
+      }
+      else if (s.startsWith("-k")) {
+        
+        reporters += s
+        if (it.hasNext && !it.head.startsWith("-")) // for host
+          reporters += it.next
+        if (it.hasNext && !it.head.startsWith("-")) // for port
+          reporters += it.next
       }
       else {
         throw new IllegalArgumentException("Unrecognized argument: " + s)
@@ -964,7 +979,7 @@ object Runner {
 
     // TODO: also check and print a user friendly message for this
     // again here, i had to skip some things, so I had to use an iterator.
-    val it = args.iterator
+    val it = args.iterator.buffered
     while (it.hasNext)
       it.next.take(2).toString match {
         case "-g" =>
@@ -1042,6 +1057,23 @@ object Runner {
             it.next // scroll past the reporter class
           else
             throw new IllegalArgumentException("-r needs to be followed by a reporter class name arg: ")
+        case "-k" =>
+          if (it.hasNext && !it.head.startsWith("-")) {
+            it.next
+            if (it.hasNext && !it.head.startsWith("-")) {
+              try { 
+                it.next.toInt 
+              } 
+              catch { 
+                case _ => 
+                  throw new IllegalArgumentException("port number must be an integer")
+              }
+            }
+            else
+              throw new IllegalArgumentException("-k needs to be followed by a host name and port number" )
+          }
+          else
+            throw new IllegalArgumentException("-k needs to be followed by a host name and port number" )
         case arg: String =>
           throw new IllegalArgumentException("An arg started with an invalid character string: " + arg)
       }
@@ -1176,6 +1208,25 @@ object Runner {
     }
     val customReporterConfigurationList = buildCustomReporterConfigurationList(args)
 
+    def buildSocketReporterConfigurationList(args: List[String]) = {
+      val it = args.iterator
+      val lb = new ListBuffer[SocketReporterConfiguration]
+      while (it.hasNext) {
+        val arg = it.next
+        if (arg.startsWith("-k")) {
+          if (!it.hasNext)
+            throw new IllegalArgumentException("-k must be followed by host and port")
+          val host = it.next
+          if (!it.hasNext)
+            throw new IllegalArgumentException("-k must be followed by host and port")
+          val port = it.next.toInt
+          lb += new SocketReporterConfiguration(host, port)
+        }
+      }
+      lb.toList
+    }
+    val socketReporterConfigurationList = buildSocketReporterConfigurationList(args)
+    
     // Here instead of one loop, i go through the loop several times.
     new ReporterConfigurations(
       graphicReporterConfigurationOption,
@@ -1186,7 +1237,8 @@ object Runner {
       standardOutReporterConfigurationOption,
       standardErrReporterConfigurationOption,
       htmlReporterConfigurationList,
-      customReporterConfigurationList
+      customReporterConfigurationList, 
+      socketReporterConfigurationList
     )
   }
 
