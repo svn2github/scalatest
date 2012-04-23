@@ -23,19 +23,20 @@ import org.scalatest.StackDepthException
 import java.nio.channels.ClosedByInterruptException
 import java.nio.channels.Selector
 import java.net.Socket
+import org.scalatest.time.Span
 
 /**
  * Trait that provides a <code>failAfter</code> construct, which allows you to specify a time limit for an
  * operation passed as a by-name parameter, as well as a way to interrupt it if the operation exceeds its time limit.
  *
  * <p>
- * The time limit is passed as the first parameter, a <code>Long</code> number of milliseconds. The operation is
+ * The time limit is passed as the first parameter, as a <a href="../time/Span.html"><code>Span</code></a>. The operation is
  * passed as the second parameter. And an <a href="Interruptor.html"><code>Interruptor</code></a>, a strategy for interrupting the operation, is
  * passed as an implicit third parameter.  Here's a simple example of its use:
  * </p>
  *
- * <pre>
- * failAfter(100) {
+ * <pre class="stHighlight">
+ * failAfter(Span(100, Millis)) {
  *   Thread.sleep(200)
  * }
  * </pre>
@@ -50,19 +51,19 @@ import java.net.Socket
  * </p>
  *
  * <p>
- * If you prefer you can mix in or import the members of <a href="../TimeSugar.html"><code>TimeSugar</code></a> and place a units value after the integer timeout.
+ * If you prefer you can mix in or import the members of <a href="../time/SpanSugar.html"><code>SpanSugar</code></a> and place a units value after the integer timeout.
  * Here are some examples:
  * </p>
  *
- * <pre>
- * import org.scalatest.TimeSugar._
+ * <pre class="stHighlight">
+ * import org.scalatest.time.SpanSugar._
  *
  * failAfter(100 millis) {
- *   Thread.sleep(200 millis)
+ *   Thread.sleep(200)
  * }
  *
  * failAfter(1 second) {
- *   Thread.sleep(2 seconds)
+ *   Thread.sleep(2000)
  * }
  * </pre>
  *
@@ -71,9 +72,9 @@ import java.net.Socket
  * <code>failAfter</code>, so that no synchronization is necessary to access variables declared outside the by-name.
  * </p>
  *
- * <pre>
+ * <pre class="stHighlight">
  * var result = -1 // No need to make this volatile
- * failAfter(100) {
+ * failAfter(100 millis) {
  *   result = accessNetService()
  * }
  * result should be (99)
@@ -98,9 +99,9 @@ import java.net.Socket
  * interrupt the main thread in any way:
  * </p>
  *
- * <pre>
+ * <pre class="stHighlight">
  * override val defaultInterruptor = DoNotInterrupt
- * failAfter(100) {
+ * failAfter(100 millis) {
  *   Thread.sleep(500)
  * }
  * </pre>
@@ -240,27 +241,27 @@ trait Timeouts {
    * @param fun the operation on which to enforce the passed timeout
    * @param interruptor a strategy for interrupting the passed operation
    */
-  def failAfter[T](timeout: Long)(fun: => T)(implicit interruptor: Interruptor): T = {
+  def failAfter[T](timeout: Span)(fun: => T)(implicit interruptor: Interruptor): T = {
     timeoutAfter(
       timeout,
       fun,
       interruptor,
       t => new TestFailedDueToTimeoutException(
-        sde => Some(Resources("timeoutFailedAfter", timeout.toString)), t, getStackDepthFun("Timeouts.scala", "failAfter"), timeout
+        sde => Some(Resources("timeoutFailedAfter", timeout.prettyString)), t, getStackDepthFun("Timeouts.scala", "failAfter"), timeout
       )
     )
   }
 
 /* Uncomment for 2.0
-  def cancelAfter[T](timeout: Long)(f: => T)(implicit interruptor: Interruptor): T = {
+  def cancelAfter[T](timeout: Span)(f: => T)(implicit interruptor: Interruptor): T = {
     timeoutAfter(timeout, f, interruptor, t => new TestCanceledException(sde => Some(Resources("timeoutCanceledAfter", timeout.toString)), t, getStackDepthFun("Timeouts.scala", "cancelAfter")))
   }
 */
 
-  private def timeoutAfter[T](timeout: Long, f: => T, interruptor: Interruptor, exceptionFun: Option[Throwable] => StackDepthException): T = {
+  private def timeoutAfter[T](timeout: Span, f: => T, interruptor: Interruptor, exceptionFun: Option[Throwable] => StackDepthException): T = {
     val timer = new Timer()
     val task = new TimeoutTask(Thread.currentThread(), interruptor)
-    timer.schedule(task, timeout)
+    timer.schedule(task, timeout.totalNanos / 1000 / 1000) // TODO: Probably use a sleep so I can use nanos
     try {
       val result = f
       timer.cancel()

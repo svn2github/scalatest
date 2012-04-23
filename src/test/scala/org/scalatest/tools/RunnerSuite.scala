@@ -309,7 +309,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-m", "com.example.webapp"),
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
-      Some(Pattern.compile(".*(Spec|Suite|Tests|foo)$"))
+      Some(Pattern.compile(".*(Spec|Suite|foo)$"))
     )
   }
 

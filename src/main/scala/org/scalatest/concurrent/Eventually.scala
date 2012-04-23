@@ -59,7 +59,7 @@ import scala.annotation.tailrec
  * </pre>
  *
  * <p>
- * Assuming the default configuration parameters, <code>timeout</code> 1000 milliseconds and <code>interval</code> 10 milliseconds,
+ * Assuming the default configuration parameters, a <code>timeout</code> of 1 second and an <code>interval</code> of 10 milliseconds,
  * were passed implicitly to <code>eventually</code>, the detail message of the thrown
  * <code>TestFailedException</code> would look like:
  * </p>
@@ -93,10 +93,10 @@ import scala.annotation.tailrec
  * timeout
  * </td>
  * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">
- * 1000
+ * 1 second
  * </td>
  * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
- * the maximum amount of time in milliseconds to allow unsuccessful attempts before giving up and throwing <code>TestFailedException</code>
+ * the maximum amount of time to allow unsuccessful attempts before giving up and throwing <code>TestFailedException</code>
  * </td>
  * </tr>
  * <tr>
@@ -104,16 +104,16 @@ import scala.annotation.tailrec
  * interval
  * </td>
  * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">
- * 10
+ * 10 milliseconds
  * </td>
  * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
- * the number of milliseconds to sleep between each attempt
+ * the amount of time to sleep between each attempt
  * </td>
  * </tr>
  * </table>
  *
-* <p>
- * The <code>eventually</code> methods of trait <code>Eventually</code> each take an <code>RetryConfig</code>
+ * <p>
+ * The <code>eventually</code> methods of trait <code>Eventually</code> each take an <code>TimeoutConfig</code>
  * object as an implicit parameter. This object provides values for the two configuration parameters. Trait
  * <code>Eventually</code> provides an implicit <code>val</code> named <code>retryConfig</code> with each
  * configuration parameter set to its default value. 
@@ -126,7 +126,7 @@ import scala.annotation.tailrec
  *
  * <pre class="stHighlight">
  * implicit override val retryConfig =
- *   RetryConfig(timeout = 2000, interval = 5)
+ *   TimeoutConfig(timeout = Span(2, Seconds), interval = Span(5, Millis))
  * </pre>
  *
  * <p>
@@ -135,35 +135,44 @@ import scala.annotation.tailrec
  *
  * <pre class="stHighlight">
  * implicit val retryConfig =
- *   RetryConfig(timeout = 2000, interval = 5)
+ *   TimeoutConfig(timeout = Span(2, Seconds), interval = Span(5, Millis))
  * </pre>
  *
  * <p>
- * In addition to taking a <code>RetryConfig</code> object as an implicit parameter, the <code>eventually</code> methods of trait
- * <code>Eventually</code> include overloaded forms that take one or two <code>RetryConfigParam</code>
- * objects that you can use to override the values provided by the implicit <code>RetryConfig</code> for a single <code>eventually</code>
+ * In addition to taking a <code>TimeoutConfig</code> object as an implicit parameter, the <code>eventually</code> methods of trait
+ * <code>Eventually</code> include overloaded forms that take one or two <code>TimeoutConfigParam</code>
+ * objects that you can use to override the values provided by the implicit <code>TimeoutConfig</code> for a single <code>eventually</code>
  * invocation. For example, if you want to set <code>timeout</code> to 5000 for just one particular <code>eventually</code> invocation,
  * you can do so like this:
  * </p>
  *
  * <pre class="stHighlight">
- * eventually (timeout(5000)) { Thread.sleep(10); it.next should be (110) }
+ * eventually (timeout(Span(5, Seconds))) { Thread.sleep(10); it.next should be (110) }
  * </pre>
  *
  * <p>
- * This invocation of <code>eventually</code> will use 5000 for <code>timeout</code> and whatever value is specified by the 
- * implicitly passed <code>RetryConfig</code> object for the <code>interval</code> configuration parameter.
+ * This invocation of <code>eventually</code> will use 5 seconds for the <code>timeout</code> and whatever value is specified by the
+ * implicitly passed <code>TimeoutConfig</code> object for the <code>interval</code> configuration parameter.
  * If you want to set both configuration parameters in this way, just list them separated by commas:
  * </p>
  * 
  * <pre class="stHighlight">
- * eventually (timeout(5000), interval(5)) { it.next should be (110) }
+ * eventually (timeout(Span(5, Seconds)), interval(Span(5, Millis)) { it.next should be (110) }
+ * </pre>
+ *
+ * <p>
+ * You can also import or mix in the members of <a href="../time/SpanSugar.html"><code>SpanSugar</code></a> if
+ * you want a more concise DSL for expressing time spans:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * eventually (timeout(5 seconds), interval(5 millis) { it.next should be (110) }
  * </pre>
  *
  * @author Bill Venners
  * @author Chua Chee Seng
  */
-trait Eventually extends RetryConfiguration {
+trait Eventually extends TimeoutConfiguration {
 
   /**
    * Invokes the passed by-name parameter repeatedly until it either succeeds, or a configured maximum
@@ -188,12 +197,12 @@ trait Eventually extends RetryConfiguration {
    * @param timeout the <code>Timeout</code> configuration parameter
    * @param interval the <code>Interval</code> configuration parameter
    * @param fun the by-name parameter to repeatedly invoke
-   * @param config an <code>RetryConfig</code> object containing <code>timeout</code> and
+   * @param config an <code>TimeoutConfig</code> object containing <code>timeout</code> and
    *          <code>interval</code> parameters that are unused by this method
    * @return the result of invoking the <code>fun</code> by-name parameter, the first time it succeeds
    */
-  def eventually[T](timeout: Timeout, interval: Interval)(fun: => T)(implicit config: RetryConfig): T =
-    eventually(fun)(RetryConfig(timeout.value, interval.value))
+  def eventually[T](timeout: Timeout, interval: Interval)(fun: => T)(implicit config: TimeoutConfig): T =
+    eventually(fun)(TimeoutConfig(timeout.value, interval.value))
 
   /**
    * Invokes the passed by-name parameter repeatedly until it either succeeds, or a configured maximum
@@ -218,13 +227,13 @@ trait Eventually extends RetryConfiguration {
    * @param interval the <code>Interval</code> configuration parameter
    * @param timeout the <code>Timeout</code> configuration parameter
    * @param fun the by-name parameter to repeatedly invoke
-   * @param config an <code>RetryConfig</code> object containing <code>timeout</code> and
+   * @param config an <code>TimeoutConfig</code> object containing <code>timeout</code> and
    *          <code>interval</code> parameters that are unused by this method
    * @return the result of invoking the <code>fun</code> by-name parameter, the first time it succeeds
    */
-  def eventually[T](interval: Interval, timeout: Timeout)(fun: => T)(implicit config: RetryConfig): T =
-    eventually(fun)(RetryConfig(timeout.value, interval.value))
-
+  def eventually[T](interval: Interval, timeout: Timeout)(fun: => T)(implicit config: TimeoutConfig): T =
+    eventually(fun)(TimeoutConfig(timeout.value, interval.value))
+  // TODO: Drop the implicit parameter in this and the next one, becuase it is not used
   /**
    * Invokes the passed by-name parameter repeatedly until it either succeeds, or a configured maximum
    * amount of time has passed, sleeping a configured interval between attempts.
@@ -242,17 +251,17 @@ trait Eventually extends RetryConfiguration {
    * <code>TestFailedException</code> is configured by the value contained in the passed
    * <code>timeout</code> parameter.
    * The interval to sleep between attempts is configured by the <code>interval</code> field of
-   * the <code>RetryConfig</code> passed implicitly as the last parameter.
+   * the <code>TimeoutConfig</code> passed implicitly as the last parameter.
    * </p>
    *
    * @param timeout the <code>Timeout</code> configuration parameter
    * @param fun the by-name parameter to repeatedly invoke
-   * @param config the <code>RetryConfig</code> object containing the (unused) <code>timeout</code> and
+   * @param config the <code>TimeoutConfig</code> object containing the (unused) <code>timeout</code> and
    *          (used) <code>interval</code> parameters
    * @return the result of invoking the <code>fun</code> by-name parameter, the first time it succeeds
    */
-  def eventually[T](timeout: Timeout)(fun: => T)(implicit config: RetryConfig): T =
-    eventually(fun)(RetryConfig(timeout.value, config.interval))
+  def eventually[T](timeout: Timeout)(fun: => T)(implicit config: TimeoutConfig): T =
+    eventually(fun)(TimeoutConfig(timeout.value, config.interval))
 
   /**
    * Invokes the passed by-name parameter repeatedly until it either succeeds, or a configured maximum
@@ -268,19 +277,19 @@ trait Eventually extends RetryConfiguration {
    *
    * <p>
    * The maximum amount of time in milliseconds to tolerate unsuccessful attempts before giving up is configured by the <code>timeout</code> field of
-   * the <code>RetryConfig</code> passed implicitly as the last parameter.
+   * the <code>TimeoutConfig</code> passed implicitly as the last parameter.
    * The interval to sleep between attempts is configured by the value contained in the passed
    * <code>interval</code> parameter.
    * </p>
    *
    * @param interval the <code>Interval</code> configuration parameter
    * @param fun the by-name parameter to repeatedly invoke
-   * @param config the <code>RetryConfig</code> object containing the (used) <code>timeout</code> and
+   * @param config the <code>TimeoutConfig</code> object containing the (used) <code>timeout</code> and
    *          (unused) <code>interval</code> parameters
    * @return the result of invoking the <code>fun</code> by-name parameter, the first time it succeeds
    */
-  def eventually[T](interval: Interval)(fun: => T)(implicit config: RetryConfig): T =
-    eventually(fun)(RetryConfig(config.timeout, interval.value))
+  def eventually[T](interval: Interval)(fun: => T)(implicit config: TimeoutConfig): T =
+    eventually(fun)(TimeoutConfig(config.timeout, interval.value))
 
   /**
    * Invokes the passed by-name parameter repeatedly until it either succeeds, or a configured maximum
@@ -296,18 +305,18 @@ trait Eventually extends RetryConfiguration {
    *
    * <p>
    * The maximum amount of time in milliseconds to tolerate unsuccessful attempts before giving up is configured by the <code>timeout</code> field of
-   * the <code>RetryConfig</code> passed implicitly as the last parameter.
+   * the <code>TimeoutConfig</code> passed implicitly as the last parameter.
    * The interval to sleep between attempts is configured by the <code>interval</code> field of
-   * the <code>RetryConfig</code> passed implicitly as the last parameter.
+   * the <code>TimeoutConfig</code> passed implicitly as the last parameter.
    * </p>
    *
    * @param fun the by-name parameter to repeatedly invoke
-   * @param config the <code>RetryConfig</code> object containing the <code>timeout</code> and
+   * @param config the <code>TimeoutConfig</code> object containing the <code>timeout</code> and
    *          <code>interval</code> parameters
    * @return the result of invoking the <code>fun</code> by-name parameter, the first time it succeeds
    */
-  def eventually[T](fun: => T)(implicit config: RetryConfig): T = {
-    val startMillis = System.currentTimeMillis
+  def eventually[T](fun: => T)(implicit config: TimeoutConfig): T = {
+    val startNanos = System.nanoTime
     def makeAValiantAttempt(): Either[Throwable, T] = {
       try {
         Right(fun)
@@ -325,15 +334,15 @@ trait Eventually extends RetryConfiguration {
       makeAValiantAttempt() match {
         case Right(result) => result
         case Left(e) => 
-          val duration = System.currentTimeMillis - startMillis
-          if (duration < timeout)
-            Thread.sleep(interval)
+          val duration = System.nanoTime - startNanos
+          if (duration < timeout.totalNanos)
+            Thread.sleep(interval.millisPart, interval.nanosPart)
           else {
             def msg =
               if (e.getMessage == null)
-                Resources("didNotEventuallySucceed", attempt.toString, interval.toString)
+                Resources("didNotEventuallySucceed", attempt.toString, interval.prettyString)
               else
-                Resources("didNotEventuallySucceedBecause", attempt.toString, interval.toString, e.getMessage)
+                Resources("didNotEventuallySucceedBecause", attempt.toString, interval.prettyString, e.getMessage)
             throw new TestFailedException(
               sde => Some(msg),
               Some(e),

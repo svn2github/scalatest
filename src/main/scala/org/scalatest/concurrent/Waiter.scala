@@ -17,6 +17,7 @@ package org.scalatest.concurrent
 
 import org.scalatest._
 import Assertions.fail
+import time.{Second, Span}
 
 /**
  * Class that facilitates performing assertions outside the main test thread, such as assertions in callback threads
@@ -194,12 +195,12 @@ class Waiter {
    * @param timeout the number of milliseconds timeout, or -1 to indicate no timeout (default is -1)
    * @param dismissals the number of dismissals to wait for (default is 1)
    */
-  def await(timeout: Long = -1, dismissals: Int = 1) {
+  def await(timeout: Span = Span(1, Second), dismissals: Int = 1) {
     if (Thread.currentThread != creatingThread)
       throw new NotAllowedException(Resources("awaitMustBeCalledOnCreatingThread"), 1)
     
-    val startTime = System.currentTimeMillis
-    def timedOut = timeout >= 0 && startTime + timeout < System.currentTimeMillis
+    val startTime = System.nanoTime
+    def timedOut = startTime + timeout.totalNanos < System.nanoTime
     while (dismissedCount < dismissals && !timedOut && thrown.isEmpty)
       Thread.sleep(10)
 
@@ -208,7 +209,10 @@ class Waiter {
       throw thrown.get
     else if (timedOut)
       throw new TestFailedException(Resources("awaitTimedOut"), 1)
-  }
+  } // This has an interval and a timeout, just like Eventually and Futures. Hmm...
+  // I think it makes sense. Have overloaded await calls? Or just use nulls? And take
+  // a TimeoutConfig. Dismissals default can be 1. But that means I need the timeout and interval methods,
+  // just like Eventually and Futures, and I need a dismissals method to make it consistent.
   
   /**
    * Increases the dismissal count by one. 

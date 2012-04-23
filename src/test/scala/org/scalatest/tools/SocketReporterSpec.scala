@@ -29,6 +29,8 @@ import org.scalatest.events.TestNameInfo
 import org.scalatest.events.LineInFile
 import org.scalatest.events.MarkupProvided
 import org.scalatest.concurrent.Eventually
+import org.scalatest.time.Span
+import org.scalatest.time.Seconds
 
 class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
   
@@ -324,7 +326,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       spec.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
       eventRecorder.stopped = true
       rep.dispose()
-      eventually(timeout(30000)) { assert(eventRecorder.ready) } // Wait until the receiver is ready
+      eventually(timeout(Span(30, Seconds))) { assert(eventRecorder.ready) } // Wait until the receiver is ready
       
         
       assert(eventRecorder.scopeOpenedEvents.length === 1)
@@ -388,7 +390,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
                        Some(1000L), None, Some(TopOfClass("another class name")), Some("another rerunner"), None, Thread.currentThread.getName, timeStamp))
       rep.dispose()
       eventRecorder.stopped = true
-      eventually(timeout(10000)) { assert(eventRecorder.ready) } // Wait until the receiver is ready
+      eventually(timeout(Span(10, Seconds))) { assert(eventRecorder.ready) } // Wait until the receiver is ready
       
       
       assert(eventRecorder.suiteStartingEvents.length === 2)
@@ -419,7 +421,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
                      None, None, Thread.currentThread.getName, timeStamp))
       rep.dispose()
       eventRecorder.stopped = true
-      eventually(timeout(10000)) { assert(eventRecorder.ready) } // Wait until the receiver is ready
+      eventually(timeout(Span(10, Seconds))) { assert(eventRecorder.ready) } // Wait until the receiver is ready
       
       
       assert(eventRecorder.runStartingEvents.length === 1)
@@ -482,7 +484,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
           Some(false), Some(true), None, Some(LineInFile(188, "SocketReporterSpec.scala")), None, Thread.currentThread.getName, timeStamp))
       rep.dispose()
       eventRecorder.stopped = true
-      eventually(timeout(10000)) { assert(eventRecorder.ready) } // Wait until the receiver is ready
+      eventually(timeout(Span(10, Seconds))) { assert(eventRecorder.ready) } // Wait until the receiver is ready
         
       
       assert(eventRecorder.infoProvidedEvents.length === 1)

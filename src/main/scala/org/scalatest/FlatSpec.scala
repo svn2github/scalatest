@@ -1354,8 +1354,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">scala> (new SharedTestExampleSpec).execute()
- * A Stack (when empty) 
+ * scala> (new SharedTestExampleSpec).execute()
+ * <span class="stGreen">A Stack (when empty)
  * - should be empty
  * - should complain on peek
  * - should complain on pop

@@ -15,23 +15,18 @@
  */
 package org.scalatest.concurrent
 
-import org.scalatest.FunSpec
-import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.Stopper
-import org.scalatest.Filter
-import org.scalatest.Tracker
-import org.scalatest.SharedHelpers
-import org.scalatest.Resources
+import org.scalatest.time.{Span, Millis}
+import org.scalatest._
 
-class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelpers {
+class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelpers with SeveredStackTraces {
   describe("A time-limited test") {
     describe("when it does not timeout") {
       describe("when it succeeds") {
         it("should succeed") {
           val a =
             new FunSuite with TimeLimitedTests {
-              val timeLimit = 100L
+              val timeLimit = Span(100L, Millis)
               test("plain old success") { assert(1 + 1 === 2) }
             }
           val rep = new EventRecordingReporter
@@ -44,7 +39,7 @@ class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelper
         it("should fail") {
           val a =
             new FunSuite with TimeLimitedTests {
-              val timeLimit = 100L
+              val timeLimit = Span(100L, Millis)
               test("plain old failure") { assert(1 + 1 === 3) }
             }
           val rep = new EventRecordingReporter
@@ -58,7 +53,7 @@ class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelper
       it("should fail with a timeout exception with the proper error message") {
         val a =
           new FunSuite with TimeLimitedTests {
-            val timeLimit = 100L
+            val timeLimit = Span(100L, Millis)
             test("time out failure") { Thread.sleep(500) }
           }
         val rep = new EventRecordingReporter
@@ -66,12 +61,12 @@ class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelper
         val tf = rep.testFailedEventsReceived
         tf.size should be (1)
         val tfe = tf(0)
-        tfe.message should be (Resources("testTimeLimitExceeded", "100"))
+        tfe.message should be (Resources("testTimeLimitExceeded", "100 milliseconds"))
       }
       it("should fail with a timeout exception with the proper cause, if the test timed out after it completed abruptly") {
         val a =
           new FunSuite with TimeLimitedTests {
-            val timeLimit = 10L
+            val timeLimit = Span(10L, Millis)
             override val defaultTestInterruptor = DoNotInterrupt
             test("time out failure") {
               Thread.sleep(50)
@@ -83,7 +78,7 @@ class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelper
         val tf = rep.testFailedEventsReceived
         tf.size should be (1)
         val tfe = tf(0)
-        tfe.message should be (Resources("testTimeLimitExceeded", "10"))
+        tfe.message should be (Resources("testTimeLimitExceeded", "10 milliseconds"))
         import org.scalatest.OptionValues._
         tfe.throwable.value match {
           case tfe: TestFailedDueToTimeoutException =>
