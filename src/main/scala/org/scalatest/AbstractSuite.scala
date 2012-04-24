@@ -184,4 +184,9 @@ trait AbstractSuite { this: Suite =>
    * The fully qualified name of the class that can be used to rerun this suite.
    */
   def rerunner: Option[String]
+  
+  /**
+   * Suite style name.
+   */
+  def styleName: String
 }

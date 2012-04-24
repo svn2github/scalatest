@@ -274,6 +274,53 @@ Tags to include and exclude: -n "CheckinTests FunctionalTests" -l "SlowTests Net
         }
       }
     }
+
+    private[scalatest] def parsePropsAndTags(args: Array[String]) = {
+
+      import collection.mutable.ListBuffer
+
+      val props = new ListBuffer[String]()
+      val includes = new ListBuffer[String]()
+      val excludes = new ListBuffer[String]()
+      var repoArgs = new ListBuffer[String]()
+
+      val it = args.iterator
+      while (it.hasNext) {
+
+        val s = it.next
+
+        if (s.startsWith("-D")) {
+          props += s
+        }
+        else if (s.startsWith("-n")) {
+          includes += s
+          if (it.hasNext)
+            includes += it.next
+        }
+        else if (s.startsWith("-l")) {
+          excludes += s
+          if (it.hasNext)
+            excludes += it.next
+        }
+        else if (s.startsWith("-o")) {
+          repoArgs += s
+        }
+        else if (s == "sequential") {
+          // To skip as it is passed in from Play 2.0 as arg to specs2.
+          println("Warning: \"sequential\" is ignored by ScalaTest. To get rid of this warning, please add \"testOptions in Test := Nil\" in main defintion of your project build file.")
+        }
+        //      else if (s.startsWith("-b")) {
+        //
+        //        testNGXMLFiles += s
+        //        if (it.hasNext)
+        //          testNGXMLFiles += it.next
+        //      }
+        else {
+          throw new IllegalArgumentException("Unrecognized argument: " + s)
+        }
+      }
+      (props.toList, includes.toList, excludes.toList, repoArgs.toList)
+    }
   }
 }
 

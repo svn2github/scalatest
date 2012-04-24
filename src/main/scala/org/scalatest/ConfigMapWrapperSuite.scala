@@ -17,4 +17,9 @@ final class ConfigMapWrapperSuite(clazz: Class[_ <: Suite]) extends Suite {
     val suite = constructor.newInstance(configMap)
     suite.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
   }
+  
+  /**
+   * Suite style name.
+   */
+  final override def styleName: String = "ConfigMapWrapperSuite"
 }

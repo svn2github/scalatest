@@ -59,7 +59,7 @@ class FunSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Sh
       }
     }
 
-    it("should throw NotAllowedException if a duplicate test name registration is attempted") {
+    it("should throw DuplicateTestNameException if a duplicate test name registration is attempted") {
 
       intercept[DuplicateTestNameException] {
         new FunSpec {

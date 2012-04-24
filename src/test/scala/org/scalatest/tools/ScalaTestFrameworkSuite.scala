@@ -49,20 +49,20 @@ class ScalaTestFrameworkSuite extends FunSuite{
     assert(runner.testLoader == currentThread.getContextClassLoader)
     assert(runner.loggers === loggers)
   }
-  
+
   private def parsePropsAndTags(rawargs:String) = {
     val translator = new SbtFriendlyParamsTranslator()
     translator.parsePropsAndTags(Array(rawargs).filter(!_.equals("")))
   }
-  
+
   test("-g not supported when runs in SBT test-framework") {
     intercept[IllegalArgumentException] { parsePropsAndTags("-g") }
   }
-  
+
   test("graphic not supported when runs in SBT test-framework") {
     intercept[IllegalArgumentException] { parsePropsAndTags("graphic") }
   }
-  
+
   test("-f not supported when runs in SBT test-framework") {
     intercept[IllegalArgumentException] { parsePropsAndTags("-f test.xml") }
   }
@@ -161,6 +161,15 @@ class ScalaTestFrameworkSuite extends FunSuite{
   
   test("testng not supported when runs in SBT test-framework") {
     intercept[IllegalArgumentException] { parsePropsAndTags("testng(a.b.c, a.b.d)") }
+  }
+  
+  test("ignores 'sequential' argument") {
+    val framework = new ScalaTestFramework
+    import framework.ScalaTestRunner
+
+    val loggers: Array[Logger] = Array(new TestLogger)
+    val runner = framework.testRunner(currentThread.getContextClassLoader, loggers).asInstanceOf[ScalaTestRunner]
+    runner.parsePropsAndTags(Array("sequential"))
   }
 
   class TestLogger extends Logger{

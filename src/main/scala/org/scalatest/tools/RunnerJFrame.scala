@@ -73,11 +73,23 @@ import EventToPresent.eventToEventToPresent
  *
  * @author Bill Venners
  */                 
-private[scalatest] class RunnerJFrame(val eventTypesToCollect: Set[EventToPresent],
-    reporterConfigurations: ReporterConfigurations, suitesList: List[SuiteParam], junitsList: List[String], runpathList: List[String], 
-    tagsToIncludeSet: Set[String], tagsToExcludeSet: Set[String], propertiesMap: Map[String, String], concurrent: Boolean, memberOfList: List[String], 
-    beginsWithList: List[String], testNGList: List[String], passFailReporter: Option[Reporter], numThreads: Int, suffixes: Option[Pattern]) 
-    extends JFrame(Resources("ScalaTestTitle")) with RunDoneListener with RunnerGUI {
+private[scalatest] class RunnerJFrame(
+  val eventTypesToCollect: Set[EventToPresent],
+  reporterConfigurations: ReporterConfigurations,
+  suitesList: List[SuiteParam],
+  junitsList: List[String],
+  runpathList: List[String], 
+  tagsToIncludeSet: Set[String],
+  tagsToExcludeSet: Set[String],
+  propertiesMap: Map[String, Object],
+  concurrent: Boolean,
+  memberOfList: List[String], 
+  beginsWithList: List[String],
+  testNGList: List[String],
+  passFailReporter: Option[Reporter],
+  numThreads: Int,
+  suffixes: Option[Pattern]
+) extends JFrame(Resources("ScalaTestTitle")) with RunDoneListener with RunnerGUI {
   
   // This should only be updated by the event handler thread.
   private var currentState: RunnerGUIState = RunningState

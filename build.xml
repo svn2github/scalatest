@@ -7,8 +7,9 @@
              classpathref="maven-ant-tasks.classpath" />
 
     <!-- set global properties for this build -->
-    <property name="release" value="2.0-SNAPSHOT" />
     <property name="scala.version" value="2.9.0" />
+	<property name="for.scala" value="2.9.x" />
+        <property name="release" value="2.0-SNAPSHOT" />
 
     <property name="scalasrc" value="src/main/scala" />
     <property name="javasrc" value="src/main/java" />
@@ -181,6 +182,7 @@
     <target name="gencode" depends="init, compile-codegenerators">
         <java classname="GenMustMatchers" classpathref="run.generators.class.path" fork="false" />
         <java classname="GenMustMatchersTests" classpathref="run.generators.class.path" fork="false" />
+    	<java classname="GenTheyWord" classpathref="run.generators.class.path" fork="false" />
     </target>
 
     <target name="compile" depends="compile-main, compile-tests, compile-examples"/>
@@ -207,17 +209,16 @@
     	
        <!-- copy these here not in dist because sometimes I like to do -cp target/jar_contents things, such as REPL sessions -->
        <antcall target="copy-resources"/>
-<!-- TODO: Delete this if the antcall works
-        <copy file="${resources}/org/scalatest/ScalaTestBundle.properties" todir="${jar.contents}/org/scalatest" />
-        <copy todir="${jar.contents}/images">
-            <fileset dir="${images}" />
-        </copy>
--->
-
     </target>
 
     <target name="copy-resources">
         <copy file="${resources}/org/scalatest/ScalaTestBundle.properties" todir="${jar.contents}/org/scalatest" />
+        <copy file="${resources}/org/scalatest/ScalaTestBundle.properties" todir="${jar.contents}/org/scalatest">
+        	<filterset>
+        	   <filter token="RELEASE" value="${release}" />
+        	   <filter token="SCALAVERSION" value="${for.scala}" />
+        	</filterset>
+        </copy>
         <copy todir="${jar.contents}/images">
             <fileset dir="${images}" />
         </copy>
@@ -320,14 +321,14 @@
     <zip zipfile="${zipper}/scalatest-${release}/scalatest-${release}-tests-src.zip" basedir="${tests}"/>
 -->
 
-        <zip zipfile="scalatest-${release}.zip" basedir="${zipper}" />
+        <zip zipfile="scalatest-${release}-for-scala-${for.scala}.zip" basedir="${zipper}" />
     </target>
 
     <target name="copyprops">
         <copy file="${resources}/org/scalatest/ScalaTestBundle.properties" todir="${jar.contents}/org/scalatest" overwrite="true">
             <filterset>
                 <filter token="RELEASE" value="${release}" />
-                <filter token="SCALAVERSION" value="${scala.version}" />
+                <filter token="SCALAVERSION" value="${for.scala}" />
             </filterset>
         </copy>
         <copy todir="${jar.contents}/images">

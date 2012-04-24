@@ -59,6 +59,16 @@ class Suites(suitesToNest: Suite*) extends Suite {
    * the order they were passed.
    */
   override val nestedSuites = suitesToNest.toList
+  
+  override private[scalatest] def checkChosenStyles(configMap: Map[String, Any]) {
+    if (!testNames.isEmpty) 
+      super.checkChosenStyles(configMap)
+  }
+  
+  /**
+   * Suite style name.
+   */
+  final override def styleName: String = "Suites"
 }
 
 /**

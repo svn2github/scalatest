@@ -1342,6 +1342,11 @@ trait FunSuite extends Suite { thisSuite =>
    * </p>
    */
   protected def testsFor(unit: Unit) {}
+  
+  /**
+   * Suite style name.
+   */
+  final override def styleName: String = "FunSuite"
 }
 
 private[scalatest] object FunSuite {

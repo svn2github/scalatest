@@ -55,6 +55,7 @@ import Suite.reportInfoProvided
 import scala.reflect.NameTransformer
 import tools.SuiteDiscoveryHelper
 import tools.Runner
+import StackDepthExceptionHelper.getStackDepthFun
 
 /**
  * A suite of tests. A <code>Suite</code> instance encapsulates a conceptual
@@ -2104,6 +2105,17 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       messageRecorderForThisTest.fireRecordedMessages(testWasPending, testWasCanceled) 
     }
   }
+  
+  private[scalatest] def checkChosenStyles(configMap: Map[String, Any]) {
+    val chosenStyleSet = 
+        if (configMap.isDefinedAt("org.scalatest.ChosenStyles"))
+          configMap("org.scalatest.ChosenStyles").asInstanceOf[Set[String]]
+        else
+          Set.empty[String]
+    
+    if (chosenStyleSet.size > 0 && !chosenStyleSet.contains(styleName)) 
+      throw new NotAllowedException(Resources("suiteNotChosenAborted", styleName, chosenStyleSet.mkString(", ")), getStackDepthFun("Scala.scala", "checkChosenStyles"))
+  }
 
   /**
    * Run zero to many of this <code>Suite</code>'s tests.
@@ -2193,6 +2205,8 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       throw new NullPointerException("distributor was null")
     if (tracker == null)
       throw new NullPointerException("tracker was null")
+    
+    checkChosenStyles(configMap)
 
     val stopRequested = stopper
 
@@ -2622,6 +2636,11 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   private[scalatest] def getTopOfClass = TopOfClass(this.getClass.getName)
   private[scalatest] def getTopOfMethod(method:Method) = TopOfMethod(this.getClass.getName, method.toGenericString())
   private[scalatest] def getTopOfMethod(testName:String) = TopOfMethod(this.getClass.getName, getMethodForTestName(testName).toGenericString())
+  
+  /**
+   * Suite style name.
+   */
+  def styleName: String = "Suite"
 }
 
 private[scalatest] object Suite {
