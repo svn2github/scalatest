@@ -32,10 +32,9 @@ import time.{Millis, Second, Span}
  *
  * <p>
  * Timeouts are used by the <code>eventually</code> methods of trait
- * <a href="Eventually.html"><code>Eventually</code></a>, the <code>whenReady</code> methods of trait
- * <a href="Futures.html"><code>Futures</code></a>, the <code>awaitResult</code> method of
- * trait <a href="Futures$FutureConcept.html"><code>Futures.FutureConcept</code></a>, and the <code>await</code> method of trait
- * <a href="Waiter.html"><code>Waiter</code></a>.
+ * <a href="Eventually.html"><code>Eventually</code></a> and the <code>await</code> method of class
+ * <a href="AsyncAssertions/Waiter.html"><code>Waiter</code></a>, a member of trait
+ * <a href="AsyncAssertions.html"><code>AsyncAssertions</code></a>.
  * </p>
  *
  * @author Bill Venners
@@ -101,7 +100,7 @@ trait TimeoutConfiguration {
    *
    * @author Bill Venners
    */
-  case class Timeout(value: Span) extends TimeoutConfigParam
+  final case class Timeout(value: Span) extends TimeoutConfigParam
 
   /**
    * A <code>TimeoutConfigParam</code> that specifies the amount of time to sleep after
@@ -113,7 +112,7 @@ trait TimeoutConfiguration {
    *
    * @author Bill Venners
    */
-  case class Interval(value: Span) extends TimeoutConfigParam
+  final case class Interval(value: Span) extends TimeoutConfigParam
 
   /**
    * Implicit <code>TimeoutConfig</code> value providing default configuration values.

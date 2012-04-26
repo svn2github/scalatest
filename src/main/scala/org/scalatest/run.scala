@@ -75,7 +75,7 @@ package org.scalatest
  * </p>
  *
  * <pre style="background-color: #2c415c; padding: 10px">
- * <span style="color: white">$ scala -cp scalatest-RELEASE.jar org.scalatest.tools.Runner -p . -o -s ExampleSpec</span>
+ * <span style="color: white">$ scala -cp scalatest-RELEASE.jar org.scalatest.tools.Runner -R . -o -s ExampleSpec</span>
  * </pre>
  *
  * <p>
@@ -97,7 +97,7 @@ object run {
    *
    * <p>
    * This method will invoke the main method of <code>org.scalatest.tools.Runner</code>, passing
-   * in <code>"-p ."</code> to set the runpath to the current directory, <code>"-o"</code> to select the
+   * in <code>"-R ."</code> to set the runpath to the current directory, <code>"-o"</code> to select the
    * standard out reporter, and each argument preceded by <code>-s</code>. For example, this <code>run</code>
    * command:
    * </p>
@@ -111,13 +111,13 @@ object run {
    * </p>
    *
    * <pre style="background-color: #2c415c; padding: 10px">
-   * <span style="color: white">$ scala -cp scalatest-RELEASE.jar org.scalatest.tools.Runner -p . -o -s ExampleSpec</span>
+   * <span style="color: white">$ scala -cp scalatest-RELEASE.jar org.scalatest.tools.Runner -R . -o -s ExampleSpec</span>
    * </pre>
    *
    * @param args
    */
   def main(args: Array[String]) {
-    tools.Runner.main(Array("-p", ".", "-o") ++ args.flatMap(s => Array("-s", s)))
+    tools.Runner.main(Array("-R", ".", "-o") ++ args.flatMap(s => Array("-s", s)))
   }
 
   /**

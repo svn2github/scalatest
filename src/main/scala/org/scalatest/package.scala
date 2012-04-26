@@ -66,22 +66,4 @@ package object scalatest {
    * Returns a copy of this <code>Shell</code> with <code>statsPassed</code> configuration parameter set to <code>false</code>.
    */
   lazy val nostats: Shell = defaultShell.nostats
-
-  /**
-   * Run the passed suite, optionally passing in a test name and config map. 
-   *
-   * <p>
-   * This method will invoke <code>execute</code> on the passed <code>suite</code>, passing in
-   * the specified (or default) <code>testName</code> and <code>configMap</code> and the configuration values
-   * passed to this <code>Shell</code>'s constructor (<code>colorPassed</code>, <code>durationsPassed</code>, <code>shortStacksPassed</code>,
-   * <code>fullStacksPassed</code>, and <code>statsPassed</code>).
-   * </p>
-   */
-/*
-  def run(suite: Suite, testName: String = null, configMap: Map[String, Any] = Map()) {
-    defaultShell.run(suite, testName, configMap)
-  }
-*/
-  type ShouldMatchers = matchers.ShouldMatchers
-  // type MustMatchers = matchers.MustMatchers
 }

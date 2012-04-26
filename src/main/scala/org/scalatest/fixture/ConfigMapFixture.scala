@@ -33,7 +33,7 @@ trait ConfigMapFixture { this: fixture.Suite =>
    * Invoke the test function, passing to the the test function the <code>configMap</code>
    * obtained by invoking <code>configMap</code> on the passed <code>OneArgTest</code>.
    *
-   * @param fun the <code>OneArgTest</code> to invoke, passing in the
+   * @param test the <code>OneArgTest</code> to invoke, passing in the
    *   <code>configMap</code> fixture
    */
   def withFixture(test: OneArgTest) {

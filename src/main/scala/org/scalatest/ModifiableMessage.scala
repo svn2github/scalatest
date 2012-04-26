@@ -86,8 +86,7 @@ trait ModifiableMessage[T <: Throwable] { this: Throwable =>
    * a new instance with the revised detail message.
    * </p>
    *
-   * @param fun An object whose <code>toString</code> method returns a message to append
-   *   to this exception's detail message.
+   * @param fun A function that returns the new detail message option given the old one.
    */
   def modifyMessage(fun: Option[String] => Option[String]): T
 }

@@ -20,7 +20,8 @@ import matchers.ShouldMatchers
 import SharedHelpers.thisLineNumber
 import time.{Span, Millis}
 
-class WaiterSpec extends fixture.FunSpec with ShouldMatchers with SharedHelpers with ConductorFixture with OptionValues {
+class AsyncAssertionsSpec extends fixture.FunSpec with ShouldMatchers with SharedHelpers with ConductorFixture with
+    OptionValues with AsyncAssertions {
 /*
   def withCause(cause: Throwable)(fun: => Unit) {
     try {
@@ -121,7 +122,7 @@ class WaiterSpec extends fixture.FunSpec with ShouldMatchers with SharedHelpers 
       @volatile var awaitReturnedPrematurely = false
       thread {
         w = new Waiter
-        w.await(dismissals = 3)
+        w.await(dismissals(3))
         doneWaiting = true
       }
       thread {
@@ -151,7 +152,7 @@ class WaiterSpec extends fixture.FunSpec with ShouldMatchers with SharedHelpers 
       val w = new Waiter
       val caught =
         intercept[TestFailedException] {
-          w.await(timeout = Span(10, Millis))
+          w.await(timeout(Span(10, Millis)))
         }
       caught.message.value should be (Resources("awaitTimedOut"))
       if (caught.failedCodeLineNumber.value != thisLineNumber - 3)

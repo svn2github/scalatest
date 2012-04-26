@@ -197,43 +197,11 @@ trait Eventually extends TimeoutConfiguration {
    * @param timeout the <code>Timeout</code> configuration parameter
    * @param interval the <code>Interval</code> configuration parameter
    * @param fun the by-name parameter to repeatedly invoke
-   * @param config an <code>TimeoutConfig</code> object containing <code>timeout</code> and
-   *          <code>interval</code> parameters that are unused by this method
    * @return the result of invoking the <code>fun</code> by-name parameter, the first time it succeeds
    */
-  def eventually[T](timeout: Timeout, interval: Interval)(fun: => T)(implicit config: TimeoutConfig): T =
+  def eventually[T](timeout: Timeout, interval: Interval)(fun: => T): T =
     eventually(fun)(TimeoutConfig(timeout.value, interval.value))
 
-  /**
-   * Invokes the passed by-name parameter repeatedly until it either succeeds, or a configured maximum
-   * amount of time has passed, sleeping a configured interval between attempts.
-   *
-   * <p>
-   * The by-name parameter "succeeds" if it returns a result. It "fails" if it throws any exception that
-   * would normally cause a test to fail. (These are any exceptions except <a href="TestPendingException"><code>TestPendingException</code></a> and
-   * <code>Error</code>s listed in the
-   * <a href="Suite.html#errorHandling">Treatment of <code>java.lang.Error</code>s</a> section of the
-   * documentation of trait <code>Suite</code>.)
-   * </p>
-   *
-   * <p>
-   * The maximum amount of time in milliseconds to tolerate unsuccessful attempts before giving up and throwing
-   * <code>TestFailedException</code> is configured by the value contained in the passed
-   * <code>timeout</code> parameter.
-   * The interval to sleep between attempts is configured by the value contained in the passed
-   * <code>interval</code> parameter.
-   * </p>
-   *
-   * @param interval the <code>Interval</code> configuration parameter
-   * @param timeout the <code>Timeout</code> configuration parameter
-   * @param fun the by-name parameter to repeatedly invoke
-   * @param config an <code>TimeoutConfig</code> object containing <code>timeout</code> and
-   *          <code>interval</code> parameters that are unused by this method
-   * @return the result of invoking the <code>fun</code> by-name parameter, the first time it succeeds
-   */
-  def eventually[T](interval: Interval, timeout: Timeout)(fun: => T)(implicit config: TimeoutConfig): T =
-    eventually(fun)(TimeoutConfig(timeout.value, interval.value))
-  // TODO: Drop the implicit parameter in this and the next one, becuase it is not used
   /**
    * Invokes the passed by-name parameter repeatedly until it either succeeds, or a configured maximum
    * amount of time has passed, sleeping a configured interval between attempts.
