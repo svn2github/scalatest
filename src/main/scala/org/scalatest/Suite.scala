@@ -2047,13 +2047,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     val informerForThisTest =
       MessageRecordingInformer(
         messageRecorderForThisTest, 
-        (message, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, 2, location, isConstructingThread, true, Some(testWasPending), Some(testWasCanceled))
+        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, payload, 2, location, isConstructingThread, true, Some(testWasPending), Some(testWasCanceled))
       )
 
     val documenterForThisTest =
       MessageRecordingDocumenter(
         messageRecorderForThisTest, 
-        (message, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, 2, location, isConstructingThread, true, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
+        (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, None, 2, location, isConstructingThread, true, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
       )
 
     val args: Array[Object] =
@@ -2992,6 +2992,7 @@ used for test events like succeeded/failed, etc.
     tracker: Tracker,
     testName: Option[String],
     message: String,
+    payload: Option[Any], 
     level: Int,
     location: Option[Location],
     includeNameInfo: Boolean,
@@ -3016,7 +3017,8 @@ used for test events like succeeded/failed, etc.
         aboutACanceledTest,
         None,
         Some(getIndentedTextForInfo(message, level, includeIcon, testName.isDefined)),
-        location
+        location,
+        payload
       )
     )
   }

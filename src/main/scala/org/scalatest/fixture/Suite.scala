@@ -522,13 +522,13 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
     val informerForThisTest =
       MessageRecordingInformer(
         messageRecorderForThisTest, 
-        (message, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, 2, location, isConstructingThread, true, Some(testWasPending), Some(testWasCanceled))
+        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, payload, 2, location, isConstructingThread, true, Some(testWasPending), Some(testWasCanceled))
       )
 
     val documenterForThisTest =
       MessageRecordingDocumenter(
         messageRecorderForThisTest, 
-        (message, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, 2, location, isConstructingThread, true, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
+        (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, None, 2, location, isConstructingThread, true, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
       )
 
 // TODO: Use a message recorder in FixtureSuite. Maybe just allow the state and
@@ -564,7 +564,14 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
                     def apply(message: String) {
                       if (message == null)
                         throw new NullPointerException
-                      reportInfoProvided(thisSuite, report, tracker, Some(testName), message, 2, getLineInFile(Thread.currentThread().getStackTrace, 2), true)
+                      reportInfoProvided(thisSuite, report, tracker, Some(testName), message, None, 2, getLineInFile(Thread.currentThread().getStackTrace, 2), true)
+                    }
+                    def apply(message: String, payload: Any) {
+                      if (message == null)
+                        throw new NullPointerException
+                      if (payload == null)
+                        throw new NullPointerException
+                      reportInfoProvided(thisSuite, report, tracker, Some(testName), message, Some(payload), 2, getLineInFile(Thread.currentThread().getStackTrace, 2), true)
                     }
                   }
                 Array(informer)
