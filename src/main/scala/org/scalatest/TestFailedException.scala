@@ -16,14 +16,26 @@
 package org.scalatest
 
 /**
- * Exception that indicates a test failed. The purpose of this exception is to encapsulate information about
+ * Exception that indicates a test failed.
+ *
+ * <p>
+ * One purpose of this exception is to encapsulate information about
  * the stack depth at which the line of test code that failed resides, so that information can be presented to
  * the user that makes it quick to find the failing line of test code. (In other words, the user need not scan through the
  * stack trace to find the correct filename and line number of the failing test.)
+ * </p>
+ *
+ * <p>
+ * Another purpose of this exception is to encapsulate a payload, an object to be included in a <code>TestFailed</code> event
+ * as its payload, so it can be consumed by a custom reporter that understand the payload. For example, tests could take a screen
+ * shot image of a GUI when a test fails, and include that as a payload. A custom reporter could listen for such payloads and
+ * display the screen shots to the user.
+ * </p>
  *
  * @param messageFun a function that produces an optional detail message for this <code>TestFailedException</code>.
  * @param cause an optional cause, the <code>Throwable</code> that caused this <code>TestFailedException</code> to be thrown.
  * @param failedCodeStackDepthFun a function that produces the depth in the stack trace of this exception at which the line of test code that failed resides.
+ * @param payload an optional payload, which ScalaTest will include in a resulting <code>TestFailed</code> event
  *
  * @throws NullPointerException if either <code>messageFun</code>, <code>cause</code> or <code>failedCodeStackDepthFun</code> is <code>null</code>, or <code>Some(null)</code>.
  *
@@ -32,11 +44,25 @@ package org.scalatest
 class TestFailedException(
   messageFun: StackDepthException => Option[String],
   cause: Option[Throwable],
-  failedCodeStackDepthFun: StackDepthException => Int
-) extends StackDepthException(messageFun, cause, failedCodeStackDepthFun) with ModifiableMessage[TestFailedException] with ModifiablePayload[TestFailedException] {
+  failedCodeStackDepthFun: StackDepthException => Int,
+  val payload: Option[Any]
+) extends StackDepthException(messageFun, cause, failedCodeStackDepthFun) with ModifiableMessage[TestFailedException] with Payload with ModifiablePayload[TestFailedException] {
 
-  val payload: Option[Any] = None
-  
+  // val payload: Option[Any] = None TODO Delete this if the parametric field works
+
+  /**
+   * Constructs a <code>TestFailedException</code> with pre-determined <code>message</code> and <code>failedCodeStackDepth</code>. (This was
+   * the primary constructor form from ScalaTest 1.5 to 1.8.)
+   *
+   * @param messageFun a function that produces an optional detail message for this <code>TestFailedException</code>.
+   * @param cause an optional cause, the <code>Throwable</code> that caused this <code>TestFailedException</code> to be thrown.
+   * @param failedCodeStackDepthFun a function that produces the depth in the stack trace of this exception at which the line of test code that failed resides.
+   *
+   * @throws NullPointerException if either <code>message</code> of <code>cause</code> is <code>null</code>, or <code>Some(null)</code>.
+   */
+  def this(messageFun: StackDepthException => Option[String], cause: Option[Throwable], failedCodeStackDepthFun: StackDepthException => Int) =
+    this(messageFun, cause, failedCodeStackDepthFun, None)
+
   /**
    * Constructs a <code>TestFailedException</code> with pre-determined <code>message</code> and <code>failedCodeStackDepth</code>. (This was
    * the primary constructor form prior to ScalaTest 1.5.)
@@ -51,7 +77,8 @@ class TestFailedException(
     this(
       StackDepthException.toExceptionFunction(message),
       cause,
-      e => failedCodeStackDepth
+      e => failedCodeStackDepth,
+      None
     )
 
   /**
@@ -149,16 +176,22 @@ class TestFailedException(
    * the modified optional detail message for the result instance of <code>TestFailedException</code>.
    */
   def modifyMessage(fun: Option[String] => Option[String]): TestFailedException = {
-    val mod = new TestFailedException(fun(message), cause, failedCodeStackDepth)
+    val mod = new TestFailedException(fun(message), cause, failedCodeStackDepth) // TODO: Seems like here I could just compose the message functions and not evaluate them, in case it is never used
     mod.setStackTrace(getStackTrace)
     mod
   }
   
+  /**
+   * Returns an instance of this exception's class, identical to this exception,
+   * except with the payload option replaced with the result of passing
+   * the current payload option to the passed function, <code>fun</code>.
+   *
+   * @param fun A function that, given the current optional payload, will produce
+   * the modified optional payload for the result instance of <code>TestFailedException</code>.
+   */
   def modifyPayload(fun: Option[Any] => Option[Any]): TestFailedException = {
     val currentPayload = payload
-    val mod = new TestFailedException(message, cause, failedCodeStackDepth) {
-      override val payload = fun(currentPayload)
-    }
+    val mod = new TestFailedException(messageFun, cause, failedCodeStackDepthFun, fun(currentPayload)) // TODO: Should I be lazy about replacing the payload?
     mod.setStackTrace(getStackTrace)
     mod
   }
@@ -183,8 +216,9 @@ class TestFailedException(
   /**
    * Returns a hash code value for this object.
    */
-  // Don't need to change it. Implementing it only so as to not freak out people who know
-  // that if you override equals you must override hashCode.
-  override def hashCode: Int = super.hashCode
+  override def hashCode: Int =
+    41 * (
+      super.hashCode
+    ) + payload.hashCode
 }
 

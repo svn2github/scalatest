@@ -43,7 +43,7 @@ import org.testng.TestListenerAdapter
  *
  * <p>
  * To execute <code>TestNGWrapperSuite</code>s with ScalaTest's <code>Runner</code>, you must include TestNG's jar file on the class path or runpath.
- * This version of <code>TestNGSuite</code> was tested with TestNG version 5.7.
+ * This version of <code>TestNGSuite</code> was tested with TestNG version 6.3.1.
  * </p>
  *
  * @author Josh Cough

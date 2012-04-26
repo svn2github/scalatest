@@ -16,11 +16,11 @@
 package org.scalatest
 
 /**
- * Trait implemented by exception types that can modify their detail message.
+ * Trait implemented by <code>Payload</code> exception types that can modify their payload.
  *
  * <p>
  * This trait facilitates the <code>withPayload</code> construct provided by trait
- * <code>Assertions</code>. This construct enables a payload object (or modified
+ * <code>Payloads</code>. This construct enables a payload object (or modified
  * payload object) to be included as the payload of a thrown exception. The payload
  * can then be included in the ScalaTest event that results from that exception. For
  * example, the payload included in a <code>TestFailedException</code> will be included
@@ -37,14 +37,12 @@ package org.scalatest
  * <p>
  * Exception types that mix in this trait have a <code>modifyPayload</code> method, which
  * returns an exception identical to itself, except with the payload option replaced with
- * the result of invoking the passed function, supplying the current detail message option
- * as the lone <code>String</code> parameter.
+ * the result of invoking the passed function, supplying the current payload option
+ * as the lone <code>Option[Any]</code> parameter.
  * </p>
  */
-trait ModifiablePayload[T <: Throwable] { this: Throwable =>
+trait ModifiablePayload[T <: Throwable] { this: Throwable with Payload =>
   
-  val payload: Option[Any]
-
   /**
    * Returns an instance of this exception's class, identical to this exception,
    * except with the payload option replaced with

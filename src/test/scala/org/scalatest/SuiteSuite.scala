@@ -116,6 +116,12 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers {
     expect("MySuite$1") {
      Suite.stripDollars("MySuite$1")
     }
+    expect("ExampleSuite") {
+      Suite.stripDollars("$read$$iw$$iw$$iw$$iw$ExampleSuite")
+    }
+    expect("Fred") {
+      Suite.stripDollars("$line19.$read$$iw$$iw$Fred$")
+    }
   }
   
   def testDiffStrings() {

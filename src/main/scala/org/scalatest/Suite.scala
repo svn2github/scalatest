@@ -2341,8 +2341,8 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     val formatter = getIndentedText(testName, 1, true)
     val payload = 
       throwable match {
-        case modPayload: ModifiablePayload[_] => 
-          modPayload.payload
+        case optPayload: Payload => 
+          optPayload.payload
         case _ => 
           None
       }
@@ -2683,10 +2683,15 @@ private[scalatest] object Suite {
     }
   }
 
+  // This attempts to strip dollar signs that happen when using the interpretter. It is quite fragile
+  // and already broke once. In the early days, all funky dollar sign encrusted names coming out of
+  // the interpreter started with "line". Now they don't, but in both cases they seemed to have at
+  // least one "$iw$" in them. So now I leave the string alone unless I see a "$iw$" in it. Worst case
+  // is sometimes people will get ugly strings coming out of the interpreter. -bv April 3, 2012
   private[scalatest] def stripDollars(s: String): String = {
     val lastDollarIndex = s.lastIndexOf('$')
     if (lastDollarIndex < s.length - 1)
-      if (lastDollarIndex == -1 || !s.startsWith("line")) s else s.substring(lastDollarIndex + 1)
+      if (lastDollarIndex == -1 || !s.contains("$iw$")) s else s.substring(lastDollarIndex + 1)
     else {
       // The last char is a dollar sign
       val lastNonDollarChar = s.reverse.find(_ != '$')
@@ -2951,8 +2956,8 @@ used for test events like succeeded/failed, etc.
     val formatter = getIndentedText(testText, level, includeIcon)
     val payload = 
       throwable match {
-        case modPayload: ModifiablePayload[_] => 
-          modPayload.payload
+        case optPayload: Payload => 
+          optPayload.payload
         case _ => 
           None
       }
