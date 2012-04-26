@@ -371,7 +371,14 @@ private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker) exte
 
     val formatter = getIndentedText(testCase.toString, 1, true)
     val suiteName = getSuiteNameForTestCase(testCase)
-    report(TestFailed(tracker.nextOrdinal(), getMessageGivenThrowable(throwable, false), suiteName, testCase.getClass.getName, Some(testCase.getClass.getName), getDecodedName(suiteName), testCase.toString, testCase.toString, getDecodedName(testCase.toString), Some(throwable), None, Some(formatter), Some(SeeStackDepthException)))
+    val payload = 
+      throwable match {
+        case modPayload: ModifiablePayload[_] => 
+          modPayload.payload
+        case _ => 
+          None
+      }
+    report(TestFailed(tracker.nextOrdinal(), getMessageGivenThrowable(throwable, false), suiteName, testCase.getClass.getName, Some(testCase.getClass.getName), getDecodedName(suiteName), testCase.toString, testCase.toString, getDecodedName(testCase.toString), Some(throwable), None, Some(formatter), Some(SeeStackDepthException), None, payload))
 
     failedTestsSet += testCase
   }
@@ -385,7 +392,7 @@ private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker) exte
 
     val formatter = getIndentedText(testCase.toString, 1, true)
     val suiteName = getSuiteNameForTestCase(testCase)
-    report(TestFailed(tracker.nextOrdinal(), getMessageGivenThrowable(assertionFailedError, true), suiteName, testCase.getClass.getName, Some(testCase.getClass.getName), getDecodedName(suiteName), testCase.toString, testCase.toString, getDecodedName(testCase.toString), Some(assertionFailedError), None, Some(formatter), Some(SeeStackDepthException)))
+    report(TestFailed(tracker.nextOrdinal(), getMessageGivenThrowable(assertionFailedError, true), suiteName, testCase.getClass.getName, Some(testCase.getClass.getName), getDecodedName(suiteName), testCase.toString, testCase.toString, getDecodedName(testCase.toString), Some(assertionFailedError), None, Some(formatter), Some(SeeStackDepthException), None))
 
     failedTestsSet += testCase
   }

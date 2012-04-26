@@ -33,8 +33,10 @@ class TestFailedException(
   messageFun: StackDepthException => Option[String],
   cause: Option[Throwable],
   failedCodeStackDepthFun: StackDepthException => Int
-) extends StackDepthException(messageFun, cause, failedCodeStackDepthFun) with ModifiableMessage[TestFailedException] { 
+) extends StackDepthException(messageFun, cause, failedCodeStackDepthFun) with ModifiableMessage[TestFailedException] with ModifiablePayload[TestFailedException] {
 
+  val payload: Option[Any] = None
+  
   /**
    * Constructs a <code>TestFailedException</code> with pre-determined <code>message</code> and <code>failedCodeStackDepth</code>. (This was
    * the primary constructor form prior to ScalaTest 1.5.)
@@ -151,6 +153,15 @@ class TestFailedException(
     mod.setStackTrace(getStackTrace)
     mod
   }
+  
+  def modifyPayload(fun: Option[Any] => Option[Any]): TestFailedException = {
+    val currentPayload = payload
+    val mod = new TestFailedException(message, cause, failedCodeStackDepth) {
+      override val payload = fun(currentPayload)
+    }
+    mod.setStackTrace(getStackTrace)
+    mod
+  }
 
   /**
    * Indicates whether this object can be equal to the passed object.
@@ -165,7 +176,7 @@ class TestFailedException(
    */
   override def equals(other: Any): Boolean =
     other match {
-      case that: TestFailedException => super.equals(that)
+      case that: TestFailedException => super.equals(that) && payload == that.payload
       case _ => false
     }
 

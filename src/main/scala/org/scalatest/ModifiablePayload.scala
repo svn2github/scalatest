@@ -42,6 +42,8 @@ package org.scalatest
  * </p>
  */
 trait ModifiablePayload[T <: Throwable] { this: Throwable =>
+  
+  val payload: Option[Any]
 
   /**
    * Returns an instance of this exception's class, identical to this exception,

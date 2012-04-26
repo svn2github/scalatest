@@ -2339,7 +2339,14 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
     val message = getMessageForException(throwable)
     val formatter = getIndentedText(testName, 1, true)
-    report(TestFailed(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), Some(throwable), Some(duration), Some(formatter), Some(SeeStackDepthException), rerunner))
+    val payload = 
+      throwable match {
+        case modPayload: ModifiablePayload[_] => 
+          modPayload.payload
+        case _ => 
+          None
+      }
+    report(TestFailed(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), Some(throwable), Some(duration), Some(formatter), Some(SeeStackDepthException), rerunner, payload))
   }
 
   /**
@@ -2942,7 +2949,14 @@ used for test events like succeeded/failed, etc.
 
     val message = getMessageForException(throwable)
     val formatter = getIndentedText(testText, level, includeIcon)
-    report(TestFailed(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName),theSuite.decodedSuiteName, testName, testText, decodedTestName, Some(throwable), Some(duration), Some(formatter), location, theSuite.rerunner))
+    val payload = 
+      throwable match {
+        case modPayload: ModifiablePayload[_] => 
+          modPayload.payload
+        case _ => 
+          None
+      }
+    report(TestFailed(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName),theSuite.decodedSuiteName, testName, testText, decodedTestName, Some(throwable), Some(duration), Some(formatter), location, theSuite.rerunner, payload))
   }
 
   // TODO: Possibly separate these out from method tests and function tests, because locations are different

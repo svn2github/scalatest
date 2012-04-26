@@ -55,7 +55,14 @@ import org.scalatest.events.TopOfMethod
           Resources("jUnitTestFailed")
 
       val formatter = getIndentedText(testName, 1, true)
-      report(TestFailed(theTracker.nextOrdinal(), message, testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), throwable, None, Some(formatter), Some(SeeStackDepthException)))
+      val payload = 
+        throwable match {
+          case modPayload: ModifiablePayload[_] => 
+            modPayload.payload
+          case _ => 
+            None
+        }
+      report(TestFailed(theTracker.nextOrdinal(), message, testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), throwable, None, Some(formatter), Some(SeeStackDepthException), None, payload))
       // TODO: can I add a duration?
     }
 
