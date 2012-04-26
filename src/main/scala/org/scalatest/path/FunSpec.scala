@@ -695,8 +695,6 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
   private final val engine = PathEngine.getEngine()
   import engine._
 
-  private final val stackDepth = 3 // TODO: Minimize this state. 
-
   override def newInstance = this.getClass.newInstance.asInstanceOf[FunSpec]
 
   /**
@@ -755,7 +753,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(testText: String, testTags: Tag*)(testFun: => Unit) {
-      handleTest(thisSuite, testText, testFun _, "itCannotAppearInsideAnotherIt", "FunSpec.scala", "apply", stackDepth, testTags: _*)
+      handleTest(thisSuite, testText, testFun _, "itCannotAppearInsideAnotherIt", "FunSpec.scala", "apply", 1, 0, testTags: _*)
     }
     
     /**
@@ -867,7 +865,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(testText: String, testTags: Tag*)(testFun: => Unit) {
-      handleTest(thisSuite, testText, testFun _, "theyCannotAppearInsideAnotherThey", "FunSpec.scala", "apply", stackDepth, testTags: _*)
+      handleTest(thisSuite, testText, testFun _, "theyCannotAppearInsideAnotherThey", "FunSpec.scala", "apply", 1, 0, testTags: _*)
     }
  
     /**
@@ -953,7 +951,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
    */
   protected def ignore(testText: String, testTags: Tag*)(testFun: => Unit) {
     // Might not actually register it. Only will register it if it is its turn.
-    handleIgnoredTest(testText, testFun _, "ignoreCannotAppearInsideAnIt", "FunSpec.scala", "ignore", stackDepth + 1, testTags: _*)
+    handleIgnoredTest(testText, testFun _, "ignoreCannotAppearInsideAnIt", "FunSpec.scala", "ignore", 1, 0, testTags: _*)
   }
   
   /**
@@ -970,7 +968,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
    * </p>
    */
   protected def describe(description: String)(fun: => Unit) {
-    handleNestedBranch(description, None, fun, "describeCannotAppearInsideAnIt", "FunSpec.scala", "describe", stackDepth + 1)
+    handleNestedBranch(description, None, fun, "describeCannotAppearInsideAnIt", "FunSpec.scala", "describe", 7, -2)
   }
   
   /**

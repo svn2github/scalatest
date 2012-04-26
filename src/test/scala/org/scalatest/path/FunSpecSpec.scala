@@ -794,5 +794,51 @@ class FunSpecSpec extends org.scalatest.FreeSpec with SharedHelpers with GivenWh
       }
     }
   }
+  
+  "when failure happens" - {
+    "should fire TestFailed event with correct stack depth info when test failed" in {
+      class TestSpec extends FunSpec {
+        it("fail scenario") {
+          assert(1 === 2)
+        }
+        describe("a feature") {
+          it("nested fail scenario") {
+            assert(1 === 2)
+          }
+        }
+        override def newInstance = new TestSpec
+      }
+      val rep = new EventRecordingReporter
+      val s1 = new TestSpec
+      s1.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      assert(rep.testFailedEventsReceived.size === 2)
+      assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "FunSpecSpec.scala")
+      assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 14)
+      assert(rep.testFailedEventsReceived(1).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "FunSpecSpec.scala")
+      assert(rep.testFailedEventsReceived(1).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 12)
+    }
+    
+    "should generate TestRegistrationClosedException with correct stack depth info when has a it nested inside a it" in {
+      class TestSpec extends FunSpec {
+        describe("a feature") {
+          it("a scenario") {
+            it("nested scenario") {
+              assert(1 === 2)
+            }
+          }
+        }
+        override def newInstance = new TestSpec
+      }
+      val rep = new EventRecordingReporter
+      val s = new TestSpec
+      s.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      val testFailedEvents = rep.testFailedEventsReceived
+      assert(testFailedEvents.size === 1)
+      assert(testFailedEvents(0).throwable.get.getClass() === classOf[TestRegistrationClosedException])
+      val trce = testFailedEvents(0).throwable.get.asInstanceOf[TestRegistrationClosedException]
+      assert("FunSpecSpec.scala" === trce.failedCodeFileName.get)
+      assert(trce.failedCodeLineNumber.get === thisLineNumber - 15)
+    }
+  }
 }
 

@@ -548,6 +548,20 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers {
       simpleSuite.checkChosenStyles(Map("org.scalatest.ChosenStyles" -> Set("FunSpec")))
     }
   }
+  
+  def testStackDepth() {
+    class TestSpec extends Suite {
+      def testFailure() {
+        assert(1 === 2)
+      }
+    }
+    val rep = new EventRecordingReporter
+    val s1 = new TestSpec
+    s1.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+    assert(rep.testFailedEventsReceived.size === 1)
+    assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "SuiteSuite.scala")
+    assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 8)
+  }
 }
 
 class `My Test` extends Suite {}

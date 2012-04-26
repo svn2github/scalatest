@@ -1032,5 +1032,25 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       assert(rep.eventsReceived.exists(_.isInstanceOf[TestSucceeded]))
     }
   }
+  
+  describe("when failure happens") {
+    it("should fire TestFailed event with correct stack depth info when test failed") {
+      class TestSpec extends Suite {
+        type FixtureParam = String
+        def withFixture(test: OneArgTest) {
+          withFixture(test.toNoArgTest("hi"))
+        }
+        def testFailure(fixture: String) {
+          assert(1 === 2)
+        }
+      }
+      val rep = new EventRecordingReporter
+      val s1 = new TestSpec
+      s1.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      assert(rep.testFailedEventsReceived.size === 1)
+      assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "SuiteSpec.scala")
+      assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 8)
+    }
+  }
 }
 

@@ -696,6 +696,53 @@ class FunSuiteSpec extends FunSpec with SharedHelpers {
       }
     }
   }
+  
+  describe("when failure happens") {
+    it("should fire TestFailed event with correct stack depth info when test failed") {
+      class TestSpec extends FunSuite {
+        test("fail scenario") {
+          assert(1 === 2)
+        }
+      }
+      val rep = new EventRecordingReporter
+      val s1 = new TestSpec
+      s1.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      assert(rep.testFailedEventsReceived.size === 1)
+      assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "FunSuiteSpec.scala")
+      assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 8)
+    }
+    
+    it("should generate TestRegistrationClosedException with correct stack depth info when has a test nested inside a test") {
+      class TestSpec extends FunSuite {
+        var registrationClosedThrown = false
+        test("a scenario") {
+          test("nested scenario") {
+            assert(1 === 2)
+          }
+        }
+        override def withFixture(test: NoArgTest) {
+          try {
+            test.apply()
+          }
+          catch {
+            case e: TestRegistrationClosedException => 
+              registrationClosedThrown = true
+              throw e
+          }
+        }
+      }
+      val rep = new EventRecordingReporter
+      val s = new TestSpec
+      s.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      assert(s.registrationClosedThrown == true)
+      val testFailedEvents = rep.testFailedEventsReceived
+      assert(testFailedEvents.size === 1)
+      assert(testFailedEvents(0).throwable.get.getClass() === classOf[TestRegistrationClosedException])
+      val trce = testFailedEvents(0).throwable.get.asInstanceOf[TestRegistrationClosedException]
+      assert("FunSuiteSpec.scala" === trce.failedCodeFileName.get)
+      assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+    }
+  }
 }
 
 

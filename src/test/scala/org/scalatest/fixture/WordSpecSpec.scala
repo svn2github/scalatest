@@ -992,4 +992,59 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       }
     }
   }
+  
+  describe("when failure happens") {
+    
+    it("should fire TestFailed event with correct stack depth info when test failed") {
+      class TestSpec extends WordSpec {
+        type FixtureParam = String
+        def withFixture(test: OneArgTest) { test("hi") }
+        "A Stack" should {
+          "chill out" in { fixture =>
+            assert(1 === 2)
+          }
+        }
+      }
+      val rep = new EventRecordingReporter
+      val s1 = new TestSpec
+      s1.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      assert(rep.testFailedEventsReceived.size === 1)
+      assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "WordSpecSpec.scala")
+      assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 9)
+    }
+    
+    it("should generate TestRegistrationClosedException with correct stack depth info when has an in nested inside an in") {
+      class TestSpec extends WordSpec {
+        type FixtureParam = String
+        var registrationClosedThrown = false
+        "a feature" should {
+          "a scenario" in { fixture =>
+            "nested scenario" in { fixture =>
+              
+            }
+          }
+        }
+        def withFixture(test: OneArgTest) {
+          try {
+            test.apply("hi")
+          }
+          catch {
+            case e: TestRegistrationClosedException => 
+              registrationClosedThrown = true
+              throw e
+          }
+        }
+      }
+      val rep = new EventRecordingReporter
+      val s = new TestSpec
+      s.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      assert(s.registrationClosedThrown == true)
+      val testFailedEvents = rep.testFailedEventsReceived
+      assert(testFailedEvents.size === 1)
+      assert(testFailedEvents(0).throwable.get.getClass() === classOf[TestRegistrationClosedException])
+      val trce = testFailedEvents(0).throwable.get.asInstanceOf[TestRegistrationClosedException]
+      assert("WordSpecSpec.scala" === trce.failedCodeFileName.get)
+      assert(trce.failedCodeLineNumber.get === thisLineNumber - 25)
+    }
+  }
 }

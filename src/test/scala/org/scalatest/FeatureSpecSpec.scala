@@ -772,5 +772,80 @@ class FeatureSpecSpec extends FunSpec with SharedHelpers {
         assert(caught.getMessage === "Feature clauses cannot be nested.")
       }
     }
+    
+    describe("when failure happens") {
+      
+      it("should fire TestFailed event with correct stack depth info when test failed") {
+        class TestSpec extends FeatureSpec {
+          scenario("fail scenario") {
+            assert(1 === 2)
+          }
+          feature("a feature") {
+            scenario("nested fail scenario") {
+              assert(1 === 2)
+            }
+          }
+        }
+        val rep = new EventRecordingReporter
+        val s1 = new TestSpec
+        s1.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+        assert(rep.testFailedEventsReceived.size === 2)
+        assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "FeatureSpecSpec.scala")
+        assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 13)
+        assert(rep.testFailedEventsReceived(1).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "FeatureSpecSpec.scala")
+        assert(rep.testFailedEventsReceived(1).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 11)
+      }
+      
+      it("should generate NotAllowedException with correct stack depth info when has a feature nested inside a feature") {
+        class TestSpec extends FeatureSpec {
+          feature("a feature") {
+            feature("inner feature") {
+              ignore("nested fail scenario") {
+                assert(1 === 1)
+              }
+            }
+          }
+        }
+        val rep = new EventRecordingReporter
+        val caught = intercept[NotAllowedException] {
+          new TestSpec
+        }
+        assert(caught.failedCodeFileName.get === "FeatureSpecSpec.scala")
+        assert(caught.failedCodeLineNumber.get === thisLineNumber - 12)
+      }
+      
+      it("should generate TestRegistrationClosedException with correct stack depth info when has a scenario nested inside a scenario") {
+        class TestSpec extends FeatureSpec {
+          var registrationClosedThrown = false
+          feature("a feature") {
+            scenario("a scenario") {
+              scenario("nested scenario") {
+                assert(1 === 2)
+              }
+            }
+          }
+          override def withFixture(test: NoArgTest) {
+            try {
+              test.apply()
+            }
+            catch {
+              case e: TestRegistrationClosedException => 
+                registrationClosedThrown = true
+                throw e
+            }
+          }
+        }
+        val rep = new EventRecordingReporter
+        val s = new TestSpec
+        s.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+        assert(s.registrationClosedThrown == true)
+        val testFailedEvents = rep.testFailedEventsReceived
+        assert(testFailedEvents.size === 1)
+        assert(testFailedEvents(0).throwable.get.getClass() === classOf[TestRegistrationClosedException])
+        val trce = testFailedEvents(0).throwable.get.asInstanceOf[TestRegistrationClosedException]
+        assert("FeatureSpecSpec.scala" === trce.failedCodeFileName.get)
+        assert(trce.failedCodeLineNumber.get === thisLineNumber - 25)
+      }
+    }
   }
 }

@@ -96,7 +96,7 @@ class LocationFunctionSuiteProp extends FunctionSuiteProp {
       
       }
     }
-    val suiteTypeName: String = "Spec"
+    val suiteTypeName: String = "FunSpec"
     val expectedStartingList = List(TestStartingPair("A Spec succeed", expectedSourceFileName, thisLineNumber - 14), 
                                    TestStartingPair("A Spec pending", expectedSourceFileName, thisLineNumber - 12),
                                    TestStartingPair("A Spec cancel", expectedSourceFileName, thisLineNumber - 10))
@@ -123,7 +123,7 @@ class LocationFunctionSuiteProp extends FunctionSuiteProp {
       
       }
     }
-    val suiteTypeName: String = "FixtureSpec"
+    val suiteTypeName: String = "FixtureFunSpec"
     val expectedStartingList = List(TestStartingPair("A Spec succeed", expectedSourceFileName, thisLineNumber - 14), 
                                    TestStartingPair("A Spec pending", expectedSourceFileName, thisLineNumber - 12),
                                    TestStartingPair("A Spec cancel", expectedSourceFileName, thisLineNumber - 10))

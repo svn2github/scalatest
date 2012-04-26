@@ -1428,7 +1428,6 @@ import Suite.anErrorThatShouldCauseAnAbort
 trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSuite =>
 
   private final val engine = new Engine("concurrentSpecMod", "Spec")
-  private final val stackDepth = 4
   import engine._
 
   /**
@@ -1465,16 +1464,13 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * to form the test name
    * @param methodName Method name of the caller
    * @param testTags the optional list of tags for this test
-   * @param methodName method name of the caller
    * @param testFun the test function
    * @throws DuplicateTestNameException if a test with the same name has been registered previously
    * @throws TestRegistrationClosedException if invoked after <code>run</code> has been invoked on this suite
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToRun(specText: String, methodName: String, testTags: List[Tag], testFun: () => Unit) {
-
-    // TODO: This is what was being used before but it is wrong
-    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "FlatSpec.scala", methodName, stackDepth, None, None, testTags: _*)
+    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "FlatSpec.scala", methodName, 4, -3, None, None, testTags: _*)
   }
 
   /**
@@ -1516,9 +1512,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def of(description: String) {
-
-      // TODO: This is what was here, but it needs fixing.
-      registerFlatBranch(description, "describeCannotAppearInsideAnIt", "FlatSpec.scala", "of", stackDepth + 2)
+      registerFlatBranch(description, "describeCannotAppearInsideAnIt", "FlatSpec.scala", "of", 3)
     }
   }
 
@@ -1643,7 +1637,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, "ignore", tags, testFun _)
+      registerTestToIgnore(verb + " " + name, tags, "ignore", testFun _)
     }
   }
 
@@ -1753,7 +1747,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, "ignore", List(), testFun _)
+      registerTestToIgnore(verb + " " + name, List(), "ignore", testFun _)
     }
 
     /**
@@ -2005,7 +1999,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, "in", tags, testFun _)
+      registerTestToIgnore(verb + " " + name, tags, "in", testFun _)
     }
 
     /**
@@ -2035,7 +2029,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def is(testFun: => PendingNothing) {
-      registerTestToIgnore(verb + " " + name, "is", tags, testFun _)
+      registerTestToIgnore(verb + " " + name, tags, "is", testFun _)
     }
     // Note: no def ignore here, so you can't put two ignores in the same line
   }
@@ -2102,7 +2096,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, "in", List(), testFun _)
+      registerTestToIgnore(verb + " " + name, List(), "in", testFun _)
     }
 
     /**
@@ -2131,7 +2125,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def is(testFun: => PendingNothing) {
-      registerTestToIgnore(verb + " " + name, "is", List(), testFun _)
+      registerTestToIgnore(verb + " " + name, List(), "is", testFun _)
     }
 
     /**
@@ -2358,7 +2352,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, "ignore", tags, testFun _)
+      registerTestToIgnore(verb + " " + name, tags, "ignore", testFun _)
     }
   }
 
@@ -2468,7 +2462,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, "ignore", List(), testFun _)
+      registerTestToIgnore(verb + " " + name, List(), "ignore", testFun _)
     }
 
     /**
@@ -2748,7 +2742,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + rest, "ignore", List(), testFun _)
+      registerTestToIgnore(verb + " " + rest, List(), "ignore", testFun _)
     }
   }
 
@@ -2846,7 +2840,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + rest, "ignore", tagsList, testFun _)
+      registerTestToIgnore(verb + " " + rest, tagsList, "ignore", testFun _)
     }
   }
 
@@ -2948,17 +2942,15 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    *
    * @param specText the specification text, which will be combined with the descText of any surrounding describers
    * to form the test name
-   * @param methodName Method name of the caller
    * @param testTags the optional list of tags for this test
+   * @param methodName caller's method name
    * @param testFun the test function
    * @throws DuplicateTestNameException if a test with the same name has been registered previously
    * @throws TestRegistrationClosedException if invoked after <code>run</code> has been invoked on this suite
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
-  private def registerTestToIgnore(specText: String, methodName: String, testTags: List[Tag], testFun: () => Unit) {
-
-    // TODO: This is how these were, but it needs attention. Mentions "it".
-    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FlatSpec.scala", methodName, stackDepth, testTags: _*)
+  private def registerTestToIgnore(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
+    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FlatSpec.scala", methodName, 4, -3, testTags: _*)
   }
 
   /**

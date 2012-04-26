@@ -1486,7 +1486,6 @@ import Suite.anErrorThatShouldCauseAnAbort
 trait FreeSpec extends Suite { thisSuite =>
 
   private final val engine = new Engine("concurrentFreeSpecMod", "FreeSpec")
-  private final val stackDepth = 4
   import engine._
 
   /**
@@ -1521,17 +1520,15 @@ trait FreeSpec extends Suite { thisSuite =>
    *
    * @param specText the specification text, which will be combined with the descText of any surrounding describers
    * to form the test name
-   * @param methodName Method name of the caller
    * @param testTags the optional list of tags for this test
+   * @param methodName caller's method name
    * @param testFun the test function
    * @throws DuplicateTestNameException if a test with the same name has been registered previously
    * @throws TestRegistrationClosedException if invoked after <code>run</code> has been invoked on this suite
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
-  private def registerTestToRun(specText: String, methodName: String, testTags: List[Tag], testFun: () => Unit) {
-    // TODO: This is what was being used before but it is wrong
-    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "FreeSpec.scala", 
-                 methodName, stackDepth, None, None, testTags: _*)
+  private def registerTestToRun(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
+    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "FreeSpec.scala", methodName, 4, -3, None, None, testTags: _*)
   }
 
   /**
@@ -1546,17 +1543,15 @@ trait FreeSpec extends Suite { thisSuite =>
    *
    * @param specText the specification text, which will be combined with the descText of any surrounding describers
    * to form the test name
-   * @param methodName Method name of the caller
    * @param testTags the optional list of tags for this test
+   * @param methodName caller's method name
    * @param testFun the test function
    * @throws DuplicateTestNameException if a test with the same name has been registered previously
    * @throws TestRegistrationClosedException if invoked after <code>run</code> has been invoked on this suite
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
-  private def registerTestToIgnore(specText: String, methodName: String, testTags: List[Tag], testFun: () => Unit) {
-
-    // TODO: This is how these were, but it needs attention. Mentions "it".
-    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FreeSpec.scala", methodName, stackDepth, testTags: _*)
+  private def registerTestToIgnore(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
+    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FreeSpec.scala", methodName, 4, -3, testTags: _*)
   }
 
   /**
@@ -1588,7 +1583,7 @@ trait FreeSpec extends Suite { thisSuite =>
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToRun(specText, "in", tags, testFun _)
+      registerTestToRun(specText, tags, "in", testFun _)
     }
 
     /**
@@ -1608,7 +1603,7 @@ trait FreeSpec extends Suite { thisSuite =>
      * </p>
      */
     def is(testFun: => PendingNothing) {
-      registerTestToRun(specText, "is", tags, testFun _)
+      registerTestToRun(specText, tags, "is", testFun _)
     }
 
     /**
@@ -1628,7 +1623,7 @@ trait FreeSpec extends Suite { thisSuite =>
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(specText, "ignore", tags, testFun _)
+      registerTestToIgnore(specText, tags, "ignore", testFun _)
     }
   }       
 
@@ -1648,8 +1643,7 @@ trait FreeSpec extends Suite { thisSuite =>
      * text (passed to the contructor of <code>FreeSpecStringWrapper</code> and immediately invoke the passed function.
      */
     def - (fun: => Unit) {
-      // TODO: Fix the resource name and method name
-      registerNestedBranch(string, None, fun, "describeCannotAppearInsideAnIt", "FreeSpec.scala", "-", stackDepth - 1)
+      registerNestedBranch(string, None, fun, "describeCannotAppearInsideAnIt", "FreeSpec.scala", "-", 3, -2)
     }
 
     /**
@@ -1669,7 +1663,7 @@ trait FreeSpec extends Suite { thisSuite =>
      * </p>
      */
     def in(f: => Unit) {
-      registerTestToRun(string, "in", List(), f _)
+      registerTestToRun(string, List(), "in", f _)
     }
 
     /**
@@ -1689,7 +1683,7 @@ trait FreeSpec extends Suite { thisSuite =>
      * </p>
      */
     def ignore(f: => Unit) {
-      registerTestToIgnore(string, "ignore", List(), f _)
+      registerTestToIgnore(string, List(), "ignore", f _)
     }
 
     /**
@@ -1709,7 +1703,7 @@ trait FreeSpec extends Suite { thisSuite =>
      * </p>
      */
     def is(f: => PendingNothing) {
-      registerTestToRun(string, "is", List(), f _)
+      registerTestToRun(string, List(), "is", f _)
     }
 
     /**
