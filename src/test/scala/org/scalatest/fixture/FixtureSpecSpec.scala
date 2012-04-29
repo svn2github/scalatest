@@ -17,6 +17,7 @@ package org.scalatest.fixture
 
 import org.scalatest._
 import events.TestFailed
+import org.scalatest.exceptions._
 
 class FixtureSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with SharedHelpers {
 

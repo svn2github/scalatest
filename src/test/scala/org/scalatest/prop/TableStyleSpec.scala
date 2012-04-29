@@ -17,6 +17,7 @@ package org.scalatest.prop
 
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.exceptions._
 
 class TableStyleSpec extends FunSpec with ShouldMatchers with TableDrivenPropertyChecks {
 

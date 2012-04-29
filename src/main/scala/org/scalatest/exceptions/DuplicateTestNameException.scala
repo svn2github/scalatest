@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest
+package org.scalatest.exceptions
+
+import org.scalatest.Resources
 
 /**
  * Exception that indicates an attempt was made to register a test that had the same name as a test

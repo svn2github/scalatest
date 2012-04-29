@@ -17,6 +17,7 @@ package org.scalatest
 
 import org.scalatest.events.Event
 import org.scalatest.events.TestSucceeded
+import org.scalatest.exceptions._
 
 class UseAsFunctionSpec extends FreeSpec {
 

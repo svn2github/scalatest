@@ -29,6 +29,7 @@ import java.util.regex.Pattern
 import Suite.getIndentedText
 import Suite.getDecodedName
 import org.scalatest.events.TopOfMethod
+import exceptions._
 
   private[junit] class MyRunListener(report: Reporter,
                                      config: Map[String, Any],
@@ -57,7 +58,7 @@ import org.scalatest.events.TopOfMethod
       val formatter = getIndentedText(testName, 1, true)
       val payload = 
         throwable match {
-          case optPayload: Payload=> 
+          case optPayload: PayloadField => 
             optPayload.payload
           case _ => 
             None

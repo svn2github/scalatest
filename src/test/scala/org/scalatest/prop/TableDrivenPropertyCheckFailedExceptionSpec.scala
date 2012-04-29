@@ -18,6 +18,7 @@ package org.scalatest.prop
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.SharedHelpers.thisLineNumber
+import org.scalatest.exceptions._
 
 class TableDrivenPropertyCheckFailedExceptionSpec extends FunSpec with ShouldMatchers with TableDrivenPropertyChecks {
 

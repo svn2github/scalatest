@@ -20,6 +20,7 @@ import scala.collection.immutable.TreeSet
 import org.scalatest.junit.junit4helpers._
 import org.junit.Test
 import org.junit.Ignore
+import org.scalatest.exceptions._
 
 class JUnitSuiteSpec extends FunSpec with SharedHelpers {
 

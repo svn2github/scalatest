@@ -22,6 +22,7 @@ import Arbitrary._
 import Prop._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import org.scalatest.exceptions._
 
 class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
 

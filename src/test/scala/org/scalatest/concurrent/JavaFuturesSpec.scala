@@ -20,6 +20,7 @@ import org.scalatest.SharedHelpers.thisLineNumber
 import org.scalatest._
 import time._
 import java.util.concurrent.{ExecutionException, Callable, ExecutorService, Executors, Future => FutureOfJava, TimeUnit, FutureTask}
+import org.scalatest.exceptions._
 
 class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with JavaFutures with SeveredStackTraces {
 

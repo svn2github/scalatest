@@ -17,6 +17,7 @@ package org.scalatest.mock
 
 import org.scalatest._
 import matchers.ShouldMatchers
+import org.scalatest.exceptions._
 
 class EasyMockSugarSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
   "The EasyMockSugar trait's whenExecuting method" should

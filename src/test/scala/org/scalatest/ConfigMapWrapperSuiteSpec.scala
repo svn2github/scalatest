@@ -1,5 +1,7 @@
 package org.scalatest
 
+import org.scalatest.exceptions._
+
 class ConfigMapWrapperSuiteSpec extends FunSuite with SharedHelpers with SeveredStackTraces {
 
   // Need a test that ensures the passed config map gets in there.

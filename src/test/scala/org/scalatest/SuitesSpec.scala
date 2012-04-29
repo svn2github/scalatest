@@ -15,6 +15,8 @@
  */
 package org.scalatest
 
+import org.scalatest.exceptions._
+
 class SuitesSpec extends FunSpec {
 
   val a = new Suite {}

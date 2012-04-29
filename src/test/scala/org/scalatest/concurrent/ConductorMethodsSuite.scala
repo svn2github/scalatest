@@ -19,6 +19,7 @@ import org.scalatest._
 import matchers.ShouldMatchers
 import _root_.java.util.concurrent.{Callable, CountDownLatch}
 import Thread.State._
+import org.scalatest.exceptions._
 
 class ConductorMethodsSuite extends FunSuite with ConductorMethods with ShouldMatchers {
 

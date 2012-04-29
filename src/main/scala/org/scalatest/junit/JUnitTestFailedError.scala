@@ -15,8 +15,8 @@
  */
 package org.scalatest.junit
 
-import org.scalatest.StackDepth
-import org.scalatest.ModifiableMessage
+import org.scalatest.exceptions.StackDepth
+import org.scalatest.exceptions.ModifiableMessage
 import _root_.junit.framework.AssertionFailedError
 
 /**

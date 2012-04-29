@@ -28,6 +28,7 @@ import java.util.Set
 import java.io.StringWriter
 import org.scalatest.events._
 import PrintReporter._
+import org.scalatest.exceptions._
 
 /**
  * A <code>Reporter</code> that prints test status information in HTML format to a file.

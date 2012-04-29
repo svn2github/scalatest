@@ -29,7 +29,8 @@ import java.nio.channels.ServerSocketChannel
 import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
 import org.scalatest.time._
-import org.scalatest.{SeveredStackTraces, FunSpec, TestFailedException, Resources}
+import org.scalatest.{SeveredStackTraces, FunSpec, Resources}
+import org.scalatest.exceptions._
 
 class TimeoutsSpec extends FunSpec with ShouldMatchers with SeveredStackTraces {
 

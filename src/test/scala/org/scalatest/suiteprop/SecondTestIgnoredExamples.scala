@@ -1,6 +1,7 @@
 package org.scalatest.suiteprop
 
 import org.scalatest._
+import org.scalatest.exceptions._
 
 class SecondTestIgnoredExamples extends SuiteExamples {
 

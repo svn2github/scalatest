@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest
+package org.scalatest.exceptions
 
 /**
  * Exception that indicates an action that is only allowed during a suite's test registration phase,

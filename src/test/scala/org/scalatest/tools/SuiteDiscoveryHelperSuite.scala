@@ -19,6 +19,7 @@ import org.scalatest._
 import scala.collection.mutable
 import java.io.File
 import java.util.regex.Pattern
+import org.scalatest.exceptions._
 
 class SuiteDiscoveryHelperFriend(sdt: SuiteDiscoveryHelper.type) {
 

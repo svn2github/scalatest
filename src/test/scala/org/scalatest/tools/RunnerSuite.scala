@@ -17,6 +17,7 @@ package org.scalatest.tools
 
 import org.scalatest._
 import java.util.regex.Pattern
+import org.scalatest.exceptions._
 
 class RunnerSuite() extends Suite with PrivateMethodTester {
 

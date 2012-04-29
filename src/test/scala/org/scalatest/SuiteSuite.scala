@@ -17,6 +17,7 @@ package org.scalatest
 
 import scala.collection.immutable.TreeSet
 import org.scalatest.events._
+import org.scalatest.exceptions._
 
 class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers {
 

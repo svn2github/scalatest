@@ -17,6 +17,7 @@ package org.scalatest.tools
 
 import org.scalatest._
 import org.scalatest.events._
+import org.scalatest.exceptions._
 
 /*
 I can't get this to work and have no more time. Will make nestedSuiteNames package access.

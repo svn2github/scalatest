@@ -32,6 +32,7 @@ import org.scalatest.junit.JUnitTestFailedError
 import org.scalatest.prop.PropertyCheckFailedException
 import org.scalatest.prop.TableDrivenPropertyCheckFailedException
 import Suite.indentation
+import org.scalatest.exceptions._
 
 /**
  * A <code>Reporter</code> that prints test status information to

@@ -19,6 +19,7 @@ import org.scalatest._
 import matchers.ShouldMatchers
 import SharedHelpers.thisLineNumber
 import time.{Span, Millis}
+import org.scalatest.exceptions._
 
 class AsyncAssertionsSpec extends fixture.FunSpec with ShouldMatchers with SharedHelpers with ConductorFixture with
     OptionValues with AsyncAssertions {

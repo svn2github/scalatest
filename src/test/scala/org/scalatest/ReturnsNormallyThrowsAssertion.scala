@@ -15,6 +15,8 @@
  */
 package org.scalatest
 
+import org.scalatest.exceptions._
+
 trait ReturnsNormallyThrowsAssertion {
 
   def returnsNormally(f: => Unit): Boolean = {

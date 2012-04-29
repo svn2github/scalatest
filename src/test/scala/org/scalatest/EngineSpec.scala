@@ -18,6 +18,7 @@ package org.scalatest
 import events.InfoProvided
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.events.LineInFile
+import org.scalatest.exceptions._
 
 class EngineSpec extends FlatSpec with SharedHelpers with ShouldMatchers {
 

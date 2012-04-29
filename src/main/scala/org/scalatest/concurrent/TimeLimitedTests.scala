@@ -18,9 +18,10 @@ package org.scalatest.concurrent
 import org.scalatest.AbstractSuite
 import org.scalatest.Suite
 import Timeouts._
-import org.scalatest.ModifiableMessage
+import org.scalatest.exceptions.ModifiableMessage
 import org.scalatest.Resources
 import org.scalatest.time.Span
+import org.scalatest.exceptions.TimeoutField
 
 /**
  * Trait mixed into exceptions thrown by <code>failAfter</code> due to a timeout.
@@ -141,7 +142,7 @@ trait TimeLimitedTests extends AbstractSuite { this: Suite =>
       } (defaultTestInterruptor)
     }
     catch {
-      case e: ModifiableMessage[_] with TimeoutException =>
+      case e: org.scalatest.exceptions.ModifiableMessage[_] with TimeoutField =>
         throw e.modifyMessage(opts => Some(Resources("testTimeLimitExceeded", e.timeout.prettyString)))
     }
   }

@@ -17,6 +17,7 @@ package org.scalatest
 
 // elements
 import org.scalatest.events._
+import org.scalatest.exceptions._
 
 class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
 

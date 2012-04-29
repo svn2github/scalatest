@@ -20,6 +20,7 @@ package org.scalatest.testng {
   import org.scalatest.jmock.TestReporter
   import org.testng.annotations.Test
   import testng.test._
+  import org.scalatest.exceptions._
 
   //execute(None, new StandardOutReporter, new Stopper {}, Filter(), Map(), None)
   class TestNGSuiteGroupsSuite extends FunSuite {

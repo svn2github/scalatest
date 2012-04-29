@@ -18,6 +18,7 @@ package org.scalatest
 import java.io.PrintStream
 import java.io.ByteArrayOutputStream
 import org.scalatest.events._
+import org.scalatest.exceptions._
 
 class CatchReporterSuite extends Suite {
 

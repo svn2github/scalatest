@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils
 import org.jmock.Mockery
 import org.jmock.Expectations
 import org.scalatest.events.Ordinal
+import org.scalatest.exceptions._
 
 package org.scalatest.testng {
 

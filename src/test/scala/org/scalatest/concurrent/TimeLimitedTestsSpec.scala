@@ -18,6 +18,7 @@ package org.scalatest.concurrent
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.time.{Span, Millis}
 import org.scalatest._
+import org.scalatest.exceptions._
 
 class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelpers with SeveredStackTraces {
   describe("A time-limited test") {

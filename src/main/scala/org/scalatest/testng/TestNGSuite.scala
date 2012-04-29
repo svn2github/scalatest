@@ -26,6 +26,7 @@ import events.MotionToSuppress
 
 import org.testng.TestNG
 import org.testng.TestListenerAdapter
+import exceptions._
 
 /**
  * A suite of tests that can be run with either TestNG or ScalaTest. This trait allows you to mark any
@@ -288,7 +289,7 @@ trait TestNGSuite extends Suite { thisSuite =>
       val formatter = getIndentedText(testName, 1, true)
       val payload = 
       throwable match {
-        case optPayload: Payload => 
+        case optPayload: PayloadField => 
           optPayload.payload
         case _ => 
           None

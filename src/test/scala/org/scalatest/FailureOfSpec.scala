@@ -15,6 +15,8 @@
  */
 package org.scalatest
 
+import org.scalatest.exceptions._
+
 class FailureOfSpec extends FunSpec with FailureOf {
 
   describe("The failureOf method") {

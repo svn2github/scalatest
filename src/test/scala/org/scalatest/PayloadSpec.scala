@@ -1,5 +1,6 @@
 package org.scalatest
 import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.exceptions._
 
 class PayloadSpec extends FlatSpec with SharedHelpers with ShouldMatchers with Payloads {
 

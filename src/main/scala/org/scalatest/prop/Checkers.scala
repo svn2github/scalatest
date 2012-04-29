@@ -23,7 +23,8 @@ import org.scalacheck.Pretty
 import org.scalacheck.Arg
 import org.scalacheck.Prop
 import org.scalacheck.Test
-import org.scalatest.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions._
 
 /**
  * Trait that contains several &#8220;check&#8221; methods that perform ScalaCheck property checks.

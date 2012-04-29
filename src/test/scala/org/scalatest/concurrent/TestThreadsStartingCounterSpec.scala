@@ -17,6 +17,7 @@ package org.scalatest.concurrent
 
 import org.scalatest._
 import matchers.ShouldMatchers
+import org.scalatest.exceptions._
 
 class TestThreadsStartingCounterSpec extends fixture.WordSpec with ShouldMatchers with ConductorFixture {
   "A TestThreadsStartingCounter" should {

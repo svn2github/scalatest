@@ -19,10 +19,11 @@ import org.scalatest._
 import matchers.ShouldMatchers
 import Thread.State._
 import java.util.concurrent.atomic.AtomicBoolean
+import org.scalatest.exceptions._
 
 class ConductorSuite extends FunSuite with ShouldMatchers with SharedHelpers {
 
-  val baseLineNumber = 25
+  val baseLineNumber = 26
 
   test("if conduct is called twice, the second time it throws an NotAllowedException") {
     val conductor = new Conductor

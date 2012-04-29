@@ -15,6 +15,8 @@
  */
 package org.scalatest
 
+import org.scalatest.exceptions._
+
 class NonImplicitAssertionsSuite extends FunSuite with NonImplicitAssertions {
   test("make sure all the non-implicit assertions work") {
     assert(1 + 1 == 2)

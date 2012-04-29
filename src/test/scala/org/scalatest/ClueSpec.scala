@@ -17,6 +17,7 @@ package org.scalatest
 
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.junit.JUnitTestFailedError
+import org.scalatest.exceptions._
 
 class ClueSpec extends FlatSpec with ShouldMatchers {
 

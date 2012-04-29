@@ -19,6 +19,7 @@ import org.scalatest.FunSuite
 import org.scalatools.testing.Logger
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import org.scalatest.exceptions._
 
 @RunWith(classOf[JUnitRunner])
 class ScalaTestFrameworkSuite extends FunSuite{

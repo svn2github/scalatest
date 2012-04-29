@@ -15,6 +15,8 @@
  */
 package org.scalatest.concurrent
 
+import org.scalatest.exceptions._
+
 private[concurrent] object DoOver {
   def tryTryAgain(maxTries: Int = 1, delayBetweenTries: Int = 0)(fun: => Unit) {
 

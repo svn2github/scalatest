@@ -25,6 +25,7 @@ package org.scalatest.testng {
   import org.scalatest.mock.JMockCycle
   import org.scalatest.mock.JMockCycleFixture
   import org.scalatest.fixture
+  import org.scalatest.exceptions._
 
   class TestNGSuiteSuite extends fixture.FunSuite with JMockCycleFixture with SuiteExpectations {
 

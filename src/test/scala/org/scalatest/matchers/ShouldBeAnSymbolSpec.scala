@@ -16,6 +16,7 @@
 package org.scalatest.matchers
 
 import org.scalatest._
+import org.scalatest.exceptions._
 
 class ShouldBeAnSymbolSpec extends FunSpec with ShouldMatchers with FruitMocks {
 

@@ -15,6 +15,9 @@
  */
 package org.scalatest
 
+import exceptions.StackDepthException
+import exceptions.ModifiableMessage
+
 /**
  * Exception thrown to indicate a test is pending.
  *

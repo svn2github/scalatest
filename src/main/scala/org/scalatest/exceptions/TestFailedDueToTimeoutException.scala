@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest.concurrent
+package org.scalatest.exceptions
 
-import org.scalatest.TestFailedException
-import org.scalatest.StackDepthException
 import org.scalatest.time.Span
 
 /**
@@ -37,7 +35,7 @@ class TestFailedDueToTimeoutException(
   cause: Option[Throwable],
   failedCodeStackDepthFun: StackDepthException => Int,
   val timeout: Span
-) extends TestFailedException(messageFun, cause, failedCodeStackDepthFun) with TimeoutException {
+) extends TestFailedException(messageFun, cause, failedCodeStackDepthFun) with TimeoutField {
 
   /**
    * Returns an instance of this exception's class, identical to this exception,

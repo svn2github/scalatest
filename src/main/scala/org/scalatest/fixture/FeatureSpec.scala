@@ -18,11 +18,12 @@ package org.scalatest.fixture
 import org.scalatest._
 import FixtureNodeFamily._
 import scala.collection.immutable.ListSet
-import org.scalatest.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import java.util.concurrent.atomic.AtomicReference
 import java.util.ConcurrentModificationException
 import org.scalatest.events._
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
+import org.scalatest.exceptions._
 
 /**
  * A sister trait to <code>org.scalatest.FeatureSpec</code> that can pass a fixture object into its tests.

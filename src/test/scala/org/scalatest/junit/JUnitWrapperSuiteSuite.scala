@@ -17,6 +17,7 @@ package org.scalatest.junit {
 
   import org.scalatest._
   import org.scalatest.events._
+  import org.scalatest.exceptions._
 
   class JUnitWrapperSuiteSuite extends FunSuite {
 

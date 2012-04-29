@@ -15,6 +15,8 @@
  */
 package org.scalatest
 
+import exceptions.ModifiableMessage
+
 /**
  * Trait providing an implicit conversion that allows clues to be place after a block of code.
  *

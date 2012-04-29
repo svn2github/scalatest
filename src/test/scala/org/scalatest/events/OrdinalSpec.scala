@@ -6,6 +6,7 @@ import org.scalatest.prop.Checkers
 import org.scalacheck._
 import Arbitrary._
 import Prop._
+import org.scalatest.exceptions._
 
 class OrdinalSpec extends FunSpec with ShouldMatchers with Checkers {
 

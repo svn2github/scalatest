@@ -20,6 +20,7 @@ import org.scalatest.fixture
 import org.scalatest.matchers.ShouldMatchers
 import _root_.java.util.concurrent.{Callable, CountDownLatch}
 import java.lang.Thread.State._
+import org.scalatest.exceptions._
 
 // On Mac got: "ABCFEDGHI" was not equal to "ABCDEFGHI"
 // Finally Got: "ABDEFGHI" was not equal to "ABCDEFGHI" Didn't get a C, so that means

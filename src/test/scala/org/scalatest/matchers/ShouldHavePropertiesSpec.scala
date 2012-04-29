@@ -21,6 +21,7 @@ import org.scalacheck._
 import Arbitrary._
 import Prop._
 import scala.reflect.BeanProperty
+import org.scalatest.exceptions._
 
 // TODO: check not not and not not not to make sure those negative failure messages make sense.
 class ShouldHavePropertiesSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion with BookPropertyMatchers {

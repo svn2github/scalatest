@@ -1,6 +1,7 @@
 package org.scalatest
 
 import scala.collection.immutable.TreeSet
+import org.scalatest.exceptions._
 
 class FilterSpec extends FunSpec {
   

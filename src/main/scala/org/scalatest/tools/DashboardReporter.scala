@@ -18,7 +18,7 @@ package org.scalatest.tools
 import org.scalatest.events._
 import org.scalatest.Reporter
 import org.scalatest.events.MotionToSuppress
-import org.scalatest.StackDepthException
+import org.scalatest.exceptions.StackDepthException
 
 import java.io.PrintWriter
 import java.io.BufferedOutputStream

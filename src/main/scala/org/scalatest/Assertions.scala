@@ -17,6 +17,7 @@ package org.scalatest
 
 import scala.reflect.Manifest
 import Assertions.areEqualComparingArraysStructurally
+import org.scalatest.exceptions._
 
 /**
  * Trait that contains ScalaTest's basic assertion methods.
@@ -933,7 +934,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
       fun
     }
     catch {
-      case e: ModifiableMessage[_] =>
+      case e: org.scalatest.exceptions.ModifiableMessage[_] =>
         if (clue != "")
           throw e.modifyMessage(prepend)
         else

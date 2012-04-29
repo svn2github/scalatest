@@ -22,6 +22,7 @@ import org.scalatest.events._
 import Suite.formatterForSuiteStarting
 import Suite.formatterForSuiteCompleted
 import Suite.formatterForSuiteAborted
+import org.scalatest.exceptions.NotAllowedException
 
 private[scalatest] class SuiteRunner(suite: Suite, dispatch: DispatchReporter, stopper: Stopper, filter: Filter,
     propertiesMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) extends Runnable {

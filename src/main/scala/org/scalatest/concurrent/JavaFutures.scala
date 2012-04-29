@@ -17,9 +17,10 @@ package org.scalatest.concurrent
 
 import org.scalatest.time.Span
 import java.util.concurrent.{TimeUnit, Future => FutureOfJava}
-import org.scalatest.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
-import org.scalatest.{TestPendingException, TestFailedException, Resources}
+import org.scalatest.Resources
+import org.scalatest.exceptions.{TestPendingException, TestFailedException, TimeoutField}
 
 /**
  * Provides an implicit conversion from <code>java.util.concurrent.Future[T]</code> to
@@ -86,8 +87,8 @@ private[scalatest] trait JavaFutures extends Futures {
               sde => Some(Resources("wasNeverReady")),
               None,
               getStackDepthFun("JavaFutures.scala", methodName, adjustment)
-            ) with TimeoutException {
-              def timeout: Span = config.timeout
+            ) with TimeoutField {
+              val timeout: Span = config.timeout
             }
           case e: java.util.concurrent.ExecutionException =>
             val cause = e.getCause

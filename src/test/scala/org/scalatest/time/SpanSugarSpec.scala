@@ -17,6 +17,7 @@ package org.scalatest.time
 
 import org.scalatest.{SeveredStackTraces, FunSpec}
 import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.exceptions._
 
 class SpanSugarSpec extends FunSpec with SpanMatchers with ShouldMatchers with SeveredStackTraces {
   

@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2011 Artima, Inc.
+ * Copyright 2001-2012 Artima, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,8 @@ import Suite.reportInfoProvided
 import scala.reflect.NameTransformer
 import tools.SuiteDiscoveryHelper
 import tools.Runner
-import StackDepthExceptionHelper.getStackDepthFun
+import exceptions.StackDepthExceptionHelper.getStackDepthFun
+import exceptions._
 
 /**
  * A suite of tests. A <code>Suite</code> instance encapsulates a conceptual
@@ -2341,7 +2342,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     val formatter = getIndentedText(testName, 1, true)
     val payload = 
       throwable match {
-        case optPayload: Payload => 
+        case optPayload: PayloadField => 
           optPayload.payload
         case _ => 
           None
@@ -2956,7 +2957,7 @@ used for test events like succeeded/failed, etc.
     val formatter = getIndentedText(testText, level, includeIcon)
     val payload = 
       throwable match {
-        case optPayload: Payload => 
+        case optPayload: PayloadField => 
           optPayload.payload
         case _ => 
           None

@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest.concurrent
+package org.scalatest.exceptions
 
 import org.scalatest.time.Span
 
 /**
  * Trait mixed into exceptions thrown by <code>failAfter</code> due to a timeout, which offers
- * a <code>timeout</code> method that returns a <a href="../time/Span.html"><code>Span</code></a> representing the timeout that expired.
+ * a <code>timeout</code> field providing a <a href="../time/Span.html"><code>Span</code></a> representing the timeout that expired.
  *
  * <p>
  * This trait is used by trait <a href="TimeLimitedTests.html"><code>TimeLimitedTests</code></a> to detect exceptions thrown because of timeouts, and
  * for such exceptions, to modify the message to more clearly indicate a test timed out. (Although in its initial
- * release there is only one subclass of <code>TimeoutException</code> in ScalaTest,
+ * release there is only one subclass of <code>TimeoutField</code> in ScalaTest,
  * <a href="TestFailedDueToTimeoutException.html"><code>TestFailedDueToTimeoutException</code></a>,
  * in a future version of ScalaTest, there will be another....)
  * </p>
  */
-trait TimeoutException {
+trait TimeoutField { this: Throwable => 
 
   /**
-   * The timeout that expired causing this <code>TimeoutException</code>.
-   *
-   * @return the timeout that expired
+   * The timeout that expired causing this <code>Timeout</code> exception.
    */
-  def timeout: Span
+  val timeout: Span
 }
 
 /*

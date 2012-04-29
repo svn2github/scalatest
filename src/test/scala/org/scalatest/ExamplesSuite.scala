@@ -15,6 +15,8 @@
  */
 package org.scalatest
 
+import org.scalatest.exceptions._
+
 class ExamplesSuite extends FunSuite {
 
   test("that duplicate specTexts result in a thrown exception at construction time") {

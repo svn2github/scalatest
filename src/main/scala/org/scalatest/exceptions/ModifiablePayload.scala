@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest
+package org.scalatest.exceptions
 
 /**
  * Trait implemented by <code>Payload</code> exception types that can modify their payload.
@@ -41,7 +41,7 @@ package org.scalatest
  * as the lone <code>Option[Any]</code> parameter.
  * </p>
  */
-trait ModifiablePayload[T <: Throwable] { this: Throwable with Payload =>
+trait ModifiablePayload[T <: Throwable] { this: Throwable with PayloadField =>
   
   /**
    * Returns an instance of this exception's class, identical to this exception,

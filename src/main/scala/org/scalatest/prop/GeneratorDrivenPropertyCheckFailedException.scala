@@ -16,6 +16,7 @@
 package org.scalatest.prop
 
 import org.scalatest._
+import org.scalatest.exceptions._
 
 /**
  * Exception that indicates a ScalaCheck property check failed.

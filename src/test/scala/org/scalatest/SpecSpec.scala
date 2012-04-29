@@ -16,6 +16,7 @@
 package org.scalatest
 
 import org.scalatest.events._
+import org.scalatest.exceptions._
 
 class SpecSpec extends Spec with SharedHelpers with GivenWhenThen {
 

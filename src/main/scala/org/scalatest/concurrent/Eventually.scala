@@ -21,9 +21,10 @@ import java.nio.charset.CoderMalfunctionError
 import javax.xml.parsers.FactoryConfigurationError
 import javax.xml.transform.TransformerFactoryConfigurationError
 import java.lang.annotation.AnnotationFormatError
-import org.scalatest.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
 import scala.annotation.tailrec
+import org.scalatest.exceptions._
 
 /**
  * Trait that provides the <code>eventually</code> construct, which periodically retries executing

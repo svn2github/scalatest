@@ -19,7 +19,7 @@ import org.scalatest._
 import scala.collection.immutable.ListSet
 import java.util.ConcurrentModificationException
 import java.util.concurrent.atomic.AtomicReference
-import org.scalatest.StackDepthExceptionHelper.getStackDepth
+import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepth
 import org.scalatest.events._
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
 import org.scalatest.Suite.checkRunTestParamsForNull

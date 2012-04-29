@@ -33,6 +33,7 @@ import Suite.getIndentedText
 import Suite.getDecodedName
 import org.scalatest.events.TopOfMethod
 import org.scalatest.events.SeeStackDepthException
+import exceptions._
 
 /**
  * A <code>Suite</code> that is also a <code>junit.framework.TestCase</code>. 
@@ -373,7 +374,7 @@ private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker) exte
     val suiteName = getSuiteNameForTestCase(testCase)
     val payload = 
       throwable match {
-        case optPayload: Payload => 
+        case optPayload: PayloadField => 
           optPayload.payload
         case _ => 
           None

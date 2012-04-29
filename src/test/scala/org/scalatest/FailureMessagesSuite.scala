@@ -18,6 +18,7 @@ package org.scalatest
 import scala.collection.immutable.TreeSet
 import org.scalatest.events._
 import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.exceptions._
 
 class FailureMessagesSuite extends Suite with ShouldMatchers {
 

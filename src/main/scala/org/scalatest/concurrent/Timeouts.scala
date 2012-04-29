@@ -17,13 +17,14 @@ package org.scalatest.concurrent
 
 import java.util.TimerTask
 import java.util.Timer
-import org.scalatest.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.Resources
-import org.scalatest.StackDepthException
+import org.scalatest.exceptions.StackDepthException
 import java.nio.channels.ClosedByInterruptException
 import java.nio.channels.Selector
 import java.net.Socket
 import org.scalatest.time.Span
+import org.scalatest.exceptions.TestFailedDueToTimeoutException
 
 /**
  * Trait that provides a <code>failAfter</code> construct, which allows you to specify a time limit for an

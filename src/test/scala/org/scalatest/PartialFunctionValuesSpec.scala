@@ -4,6 +4,7 @@ import org.scalatest.OptionValues._
 import org.scalatest.PartialFunctionValues._
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.SharedHelpers.thisLineNumber
+import org.scalatest.exceptions._
 
 class PartialFunctionValuesSpec extends FunSpec with ShouldMatchers {
   

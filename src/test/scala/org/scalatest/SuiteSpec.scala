@@ -17,6 +17,7 @@ package org.scalatest
 
 import collection.immutable.TreeSet
 import org.scalatest.events._
+import org.scalatest.exceptions._
 
 class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
 

@@ -18,6 +18,7 @@ package org.scalatest.concurrent
 import org.scalatest._
 import Assertions.fail
 import time.{Second, Span}
+import org.scalatest.exceptions._
 
 /**
  * Trait that facilitates performing assertions outside the main test thread, such as assertions in callback methods

@@ -20,6 +20,7 @@ import collection.immutable.TreeSet
 import events.TestFailed
 import events.TestSucceeded
 import mock.MockitoSugar
+import org.scalatest.exceptions._
 
 class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with SharedHelpers {
 

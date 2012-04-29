@@ -17,7 +17,7 @@ package org.scalatest
 
 import java.util.concurrent.atomic.AtomicReference
 import java.util.ConcurrentModificationException
-import org.scalatest.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import FunSuite.IgnoreTagName
 import org.scalatest.NodeFamily.TestLeaf
 import org.scalatest.Suite._
@@ -27,6 +27,7 @@ import org.scalatest.events.SeeStackDepthException
 import scala.annotation.tailrec
 import org.scalatest.PathEngine.isInTargetPath
 import org.scalatest.events.SuiteAborted
+import org.scalatest.exceptions._
 
 // T will be () => Unit for FunSuite and FixtureParam => Any for fixture.FunSuite
 private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResourceName: String, simpleClassName: String)  {

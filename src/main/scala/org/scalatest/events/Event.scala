@@ -22,6 +22,8 @@ import java.io.StringWriter
 import java.io.PrintWriter
 import java.io.BufferedWriter
 
+import exceptions.StackDepthException
+
 /**
  * A base class for the events that can be passed to the report function passed
  * to the <code>execute</code> method of a <code>Suite</code>.

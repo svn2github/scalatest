@@ -20,7 +20,8 @@ import Thread.State._
 import PimpedThreadGroup._
 import _root_.java.util.concurrent._
 import _root_.java.util.concurrent.atomic.AtomicReference
-import org.scalatest.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions._
 
 /**
  * Class that facilitates the testing of classes, traits, and libraries designed

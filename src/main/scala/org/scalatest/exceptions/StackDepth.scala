@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest
+package org.scalatest.exceptions
 
 /**
  * Trait that encapsulates the information required of an exception thrown by ScalaTest's assertions

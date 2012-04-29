@@ -16,6 +16,7 @@
 package org.scalatest.matchers
 
 import org.scalatest._
+import org.scalatest.exceptions._
 
 /*
 This has a bit of redundancy with several other specs, but was the

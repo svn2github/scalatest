@@ -17,6 +17,7 @@ package org.scalatest.verb
 
 import org.scalatest._
 import events.TestSucceeded
+import org.scalatest.exceptions._
 
 class CanVerbSuite extends FunSuite with SharedHelpers {
   test("can use can in WordSpec (which might be very convenient at times)") {

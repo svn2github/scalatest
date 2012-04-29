@@ -21,6 +21,7 @@ import StringReporter.{colorizeLinesIndividually => colorize}
 import StringReporter.{countTrailingEOLs, countLeadingEOLs}
 import PrintReporter.ansiReset
 import PrintReporter.ansiCyan
+import org.scalatest.exceptions._
 
 class StringReporterSuite extends FunSuite with ShouldMatchers {
 

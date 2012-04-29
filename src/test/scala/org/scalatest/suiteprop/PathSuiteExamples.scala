@@ -2,6 +2,7 @@ package org.scalatest.suiteprop
 
 import org.scalatest._
 import prop.Tables
+import org.scalatest.exceptions._
 
 abstract class PathSuiteExamples extends Tables {
 

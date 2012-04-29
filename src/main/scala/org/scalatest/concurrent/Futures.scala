@@ -16,10 +16,11 @@
 package org.scalatest.concurrent
 
 import org.scalatest._
-import org.scalatest.StackDepthExceptionHelper.getStackDepthFun
+import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
 import scala.annotation.tailrec
 import org.scalatest.time.Span
+import org.scalatest.exceptions._
 
 /**
  * Trait that facilitates testing with futures.
@@ -272,7 +273,7 @@ private[scalatest] trait Futures extends TimeoutConfiguration {
         true
       }
       catch {
-        case e: TimeoutException => false
+        case e: TimeoutField => false
       }
     }
 
@@ -497,8 +498,8 @@ private[scalatest] trait Futures extends TimeoutConfiguration {
                 sde => Some(Resources("wasNeverReady", attempt.toString, interval.prettyString)),
                 None,
                 getStackDepthFun("Futures.scala", methodName, adjustment)
-              ) with TimeoutException {
-                def timeout: Span = config.timeout
+              ) with TimeoutField {
+                val timeout: Span = config.timeout
               }
             }
 
