@@ -28,16 +28,22 @@ class ScalaTestFrameworkSuite extends FunSuite{
     assert(new ScalaTestFramework().name === "ScalaTest")
   }
 
-  test("tests contains single test fingerprint"){
+  test("tests contains 2 correct test fingerprint, TestFingerprint and AnnotatedFingerprint"){
     val framework = new ScalaTestFramework
     val fingerprints = framework.tests
     assert(fingerprints.size === 2)
 
-    val fingerprint =
+    val testFingerprint =
       fingerprints(0).asInstanceOf[org.scalatools.testing.TestFingerprint]
 
-    assert(fingerprint.isModule === false)
-    assert(fingerprint.superClassName === "org.scalatest.Suite")
+    assert(testFingerprint.isModule === false)
+    assert(testFingerprint.superClassName === "org.scalatest.Suite")
+    
+    val annotatedFingerprint = 
+      fingerprints(1).asInstanceOf[org.scalatools.testing.AnnotatedFingerprint]
+    
+    assert(annotatedFingerprint.isModule() === false)
+    assert(annotatedFingerprint.annotationName === "org.scalatest.WrapWith")
   }
 
   test("creates runner with given arguments"){

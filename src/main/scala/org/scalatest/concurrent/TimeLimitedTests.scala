@@ -24,7 +24,7 @@ import org.scalatest.time.Span
 import org.scalatest.exceptions.TimeoutField
 
 /**
- * Trait mixed into exceptions thrown by <code>failAfter</code> due to a timeout.
+ * Trait that when mixed into a suite class establishes a time limit for its tests.
  *
  * <p>
  * This trait overrides <code>withFixture</code>, wrapping a <code>super.withFixture(test)</code> call

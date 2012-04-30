@@ -18,7 +18,7 @@ package org.scalatest.exceptions
 import org.scalatest.time.Span
 
 /**
- * Trait mixed into exceptions thrown by <code>failAfter</code> due to a timeout, which offers
+ * Trait mixed into exceptions thrown due to a timeout, which offers
  * a <code>timeout</code> field providing a <a href="../time/Span.html"><code>Span</code></a> representing the timeout that expired.
  *
  * <p>

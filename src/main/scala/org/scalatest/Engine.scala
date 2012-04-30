@@ -112,23 +112,14 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
   class RegistrationInformer extends Informer {
 
-    def apply(message: String) {
-      if (message == null)
-        throw new NullPointerException
-      val oldBundle = atomic.get
-      var (currentBranch, testNamesList, testsMap, tagsMap, registrationClosed) = oldBundle.unpack
-      currentBranch.subNodes ::= InfoLeaf(currentBranch, message, None, getLineInFile(Thread.currentThread().getStackTrace, 2))
-      updateAtomic(oldBundle, Bundle(currentBranch, testNamesList, testsMap, tagsMap, registrationClosed))
-    }
-
-    def apply(message: String, payload: Any) {
+    def apply(message: String, payload: Option[Any] = None) {
       if (message == null)
         throw new NullPointerException
       if (payload == null)
         throw new NullPointerException
       val oldBundle = atomic.get
       var (currentBranch, testNamesList, testsMap, tagsMap, registrationClosed) = oldBundle.unpack
-      currentBranch.subNodes ::= InfoLeaf(currentBranch, message, Some(payload), getLineInFile(Thread.currentThread().getStackTrace, 2))
+      currentBranch.subNodes ::= InfoLeaf(currentBranch, message, payload, getLineInFile(Thread.currentThread().getStackTrace, 2))
       updateAtomic(oldBundle, Bundle(currentBranch, testNamesList, testsMap, tagsMap, registrationClosed))
     }
   }
@@ -155,12 +146,14 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
   final val zombieInformer =
     new Informer {
       private val complaint = Resources("cantCallInfoNow", simpleClassName)
+/*
       def apply(message: String) {
         if (message == null)
           throw new NullPointerException
         throw new IllegalStateException(complaint)
       }
-      def apply(message: String, payload: Any) {
+*/
+      def apply(message: String, payload: Option[Any] = None) {
         if (message == null)
           throw new NullPointerException
         if (payload == null)
@@ -334,7 +327,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     configMap: Map[String, Any],
     distributor: Option[Distributor],
     tracker: Tracker,
-    info: String => Unit,
+    info: Informer,
     includeIcon: Boolean,
     runTest: (String, Reporter, Stopper, Map[String, Any], Tracker) => Unit
   ) {
@@ -822,7 +815,7 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
     configMap: Map[String, Any],
     distributor: Option[Distributor],
     tracker: Tracker,
-    info: String => Unit,
+    info: Informer,
     includeIcon: Boolean,
     runTest: (String, Reporter, Stopper, Map[String, Any], Tracker) => Unit
   ) {

@@ -16,7 +16,7 @@
 package org.scalatest
 
 class InformerSpec extends FlatSpec with SharedHelpers {
-
+  /*
   "An Informer" should "give back another Informer from its compose method" in {
     var lastS = "2"
     val myInfo =
@@ -28,7 +28,7 @@ class InformerSpec extends FlatSpec with SharedHelpers {
     val composed = myInfo compose { (i: Int) => (i + 1).toString }
     composed(1)
     assert(lastS === "2")
-  }
+  }  */
   
   it should "fire InfoProvided event with correct message and None in payload when using apply(message)" in {
     class MySuite extends FunSuite {
@@ -45,7 +45,7 @@ class InformerSpec extends FlatSpec with SharedHelpers {
   
   it should "fire InfoProvided event with correct message and payload when using apply(message, payload)" in {
     class MySuite extends FunSuite {
-      info("info message", "a payload")
+      info("info message", Some("a payload"))
     }
     val suite = new MySuite()
     val rep = new EventRecordingReporter()

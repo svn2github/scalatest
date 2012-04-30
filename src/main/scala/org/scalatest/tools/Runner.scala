@@ -82,6 +82,7 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  *
  * <pre class="stExamples">-Ddbname=testdb -Dserver=192.168.1.188</pre>
  *
+ * <a name="specifyingARunpath"></a>
  * <h2>Specifying a runpath</h2>
  *
  * <p>
@@ -105,6 +106,7 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  *
  * <pre class="stExamples">-R "serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar target/class\ files"</pre>
  *
+ * <a name="specifyingReporters"></a>
  * <h2>Specifying reporters</h2>
  *
  * <p>
@@ -177,7 +179,9 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * executed suites.
  * </p>
  *
+ * <a name="configuringReporters"></a>
  * <h2>Configuring Reporters</h2>
+ * </a>
  *
  * <p>
  * Each reporter option on the command line can include configuration characters. Configuration characters
@@ -266,7 +270,9 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * <code>"-eNDXEHLO"</code> will work.
  * </p>
  *
+ * <a name="specifyingTagsToIncludeAndExclude"></a>
  * <h2>Specifying tags to include and exclude</h2>
+ * </a>
  *
  * <p>
  * You can specify tag names of tests to include or exclude from a run. To specify tags to include,
@@ -290,7 +296,9 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * </ul>
  * </p>
  *
+ * <a name="specifyingSuffixesToDiscover"></a>
  * <h2>Specifying suffixes to discover</h2>
+ * </a>
  *
  * <p>
  * You can specify suffixes of <code>Suite</code> names to discover. To specify suffixes to discover,
@@ -321,7 +329,9 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * and declare a public, no-arg constructor, or are annotated with <code>WrapWith</code>. 
  * </p>
  *
+ * <a name="executingSuitesInParallel"></a>
  * <h2>Executing <code>Suite</code>s in parallel</h2>
+ * </a>
  *
  * <p>
  * With the proliferation of multi-core architectures, and the often parallelizable nature of tests, it is useful to be able to run
@@ -340,7 +350,9 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * processors available.
  * </p>
  *
+ * <a name="specifyingSuites"></a>
  * <h2>Specifying <code>Suite</code>s</h2>
+ * </a>
  *
  * <p>
  * Suites are specified on the command line with a <b>-s</b> followed by the fully qualified
@@ -372,7 +384,7 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * so client software can count on them being available.
  * </p>
  *
- * <a name="membersOnlyWildcard">
+ * <a name="membersOnlyWildcard"></a>
  * <h2>Specifying "members-only" and "wildcard" <code>Suite</code> paths</h2>
  * </a>
  *
@@ -407,7 +419,9 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * in the runpath.
  * </p>
  *
+ * <a name="specifyingChosenStyles"></a>
  * <h2>Specifying chosen styles</h2>
+ * </a>
  *
  * <p>
  * You can optionally specify chosen styles for a ScalaTest run. ScalaTest supports different styles of
@@ -456,6 +470,7 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * to keep most team members in line.
  * </p>
  *
+ * <a name="specifyingTestNGXML"></a>
  * <h2>Specifying TestNG XML config file paths</h2>
  *
  * <p>
@@ -467,6 +482,7 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * <code>-s</code>, <code>-m</code>, or </code>-w</code> parameters.
  * </p>
  *
+ * <a name="specifyingJUnitTests"></a>
  * <h2>Specifying JUnit tests</h2>
  *
  * <p>

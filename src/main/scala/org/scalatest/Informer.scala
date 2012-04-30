@@ -22,21 +22,21 @@ package org.scalatest
  * An <code>Informer</code> is essentially
  * used to wrap a <code>Reporter</code> and provide easy ways to send custom information
  * to that <code>Reporter</code> via an <code>InfoProvided</code> event.
- * <code>Informer</code> contains an <code>apply</code> method that takes an object.
- * The <code>Informer</code> will invoke <code>toString</code> on the passed object and
- * forward the resulting string to the <code>Reporter</code> as the <code>message</code>
- * parameter of an <code>InfoProvided</code> event.
+ * <code>Informer</code> contains an <code>apply</code> method that takes a string and
+ * an optional payload object of type <code>Any</code>.
+ * The <code>Informer</code> will forward the passed <code>message</code> string to the
+ * <code>Reporter</code> as the <code>message</code> parameter, and the optional
+ * payload object as the <code>payload</code> parameter, of an <code>InfoProvided</code> event.
  * </p>
  *
  * <p>
- * Here's an example of using an <code>Informer</code> in a <code>Suite</code>
- * subclass:
+ * Here's an example of using an <code>Informer</code>:
  * </p>
  * 
  * <pre class="stHighlight">
  * import org.scalatest._
  * 
- * class MySuite extends Suite {
+ * class ExampleSuite extends Suite {
  *   def testAddition(info: Informer) {
  *     assert(1 + 1 === 2)
  *     info("Addition seems to work")
@@ -52,6 +52,10 @@ package org.scalatest
  * <pre class="stREPL">
  * scala&gt; (new MySuite).execute()
  * <span class="stGreen">- testAddition(Informer)
+ *   + Addition seems to work</span>
+ * scala> (new ExampleSuite).execute()
+ * <span class="stGreen">ExampleSuite:
+ * - testAddition(Reporter)
  *   + Addition seems to work</span>
  * </pre>
  *
@@ -120,17 +124,20 @@ package org.scalatest
  * 
  * @author Bill Venners
  */
-trait Informer extends (String => Unit) {
-
+trait Informer {
+       // TODO: Make sure all the informer implementations check for null
   /**
-   * Provide information to the <code>Reporter</code> as the .
+   * Provide information and optionally, a payload, to the <code>Reporter</code> via an
+   * <code>InfoProvided</code> event.
    *
-   * @param message an object whose <code>toString</code> result will be forwarded to the wrapped <code>Reporter</code>
+   * @param message a string that will be forwarded to the wrapped <code>Reporter</code>
    *   via an <code>InfoProvided</code> event.
+   * @param payload an optional object which will be forwarded to the wrapped <code>Reporter</code>
+   *   as a payload via an <code>InfoProvided</code> event.
    *
-   * @throws NullPointerException if <code>message</code> reference is <code>null</code>
+   * @throws NullPointerException if <code>message</code> or <code>payload</code> reference is <code>null</code>
    */
-  def apply(message: String): Unit
+  def apply(message: String, payload: Option[Any] = None): Unit
   
   /**
    * Provide information and additional payload to the <code>Reporter</code> as the .
@@ -142,5 +149,5 @@ trait Informer extends (String => Unit) {
    *
    * @throws NullPointerException if <code>message</code> reference is <code>null</code>
    */
-  def apply(message: String, payload: Any): Unit
+  //def apply(message: String, payload: Any): Unit
 }

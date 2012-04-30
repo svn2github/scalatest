@@ -76,7 +76,12 @@ private[scalatest] class SuiteRerunner(suiteClassName: String) extends Rerunner 
       }
       catch {
         case e: RuntimeException => {
-          val rawString3 = Resources("executeException")
+          val eMessage = e.getMessage
+          val rawString3 = 
+            if (eMessage != null && eMessage.length > 0)
+              Resources("executeExceptionWithMessage", eMessage)
+            else
+              Resources("executeException")
           val formatter3 = formatterForSuiteAborted(suite, rawString3)
 
           val duration = System.currentTimeMillis - suiteStartTime

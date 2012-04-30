@@ -161,8 +161,8 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
   private def stringsToPrintOnError(noteResourceName: String, errorResourceName: String, message: String, throwable: Option[Throwable],
     formatter: Option[Formatter], suiteName: Option[String], testName: Option[String], duration: Option[Long]): List[String] = {
 
-    val stringToPrint = {
-      val withoutMessage = formatter match {
+    val stringToPrint =
+      formatter match {
         case Some(IndentedText(formattedText, _, _)) =>
           Resources("specTextAndNote", formattedText, Resources(noteResourceName))
         case _ =>
@@ -177,11 +177,6 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
             case None => Resources(errorResourceName, Resources("noNameSpecified"))
           }
       }
-      if (message == null || message.isEmpty)
-        withoutMessage
-      else
-        withoutMessage + " - " + message
-    }
 
     val stringToPrintWithPossibleDuration =
       duration match {

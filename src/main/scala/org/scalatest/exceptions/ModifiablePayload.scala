@@ -16,7 +16,7 @@
 package org.scalatest.exceptions
 
 /**
- * Trait implemented by <code>Payload</code> exception types that can modify their payload.
+ * Trait implemented by <code>PayloadField</code> exception types that can modify their payload.
  *
  * <p>
  * This trait facilitates the <code>withPayload</code> construct provided by trait

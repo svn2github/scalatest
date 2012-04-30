@@ -1790,7 +1790,12 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
     val suiteStartTime = System.currentTimeMillis
     def dispatchSuiteAborted(e: Throwable) {
-      val rawString = Resources("runOnSuiteException")
+      val eMessage = e.getMessage
+      val rawString = 
+        if (eMessage != null && eMessage.length > 0)
+          Resources("runOnSuiteException")
+        else
+          Resources("runOnSuiteExceptionWithMessage", eMessage)
       val formatter = formatterForSuiteAborted(thisSuite, rawString)
       val duration = System.currentTimeMillis - suiteStartTime
       dispatch(SuiteAborted(tracker.nextOrdinal(), rawString, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, Some(e), Some(duration), formatter, Some(SeeStackDepthException)))
@@ -2422,8 +2427,12 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         }
         catch {       
           case e: RuntimeException => {
-
-            val rawString = Resources("executeException")
+            val eMessage = e.getMessage
+            val rawString = 
+              if (eMessage != null && eMessage.length > 0)
+                Resources("executeExceptionWithMessage", eMessage)
+              else
+                Resources("executeException")
             val formatter = formatterForSuiteAborted(nestedSuite, rawString)
 
             val duration = System.currentTimeMillis - suiteStartTime
