@@ -1256,10 +1256,10 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
    * </p>
    */
   final override def nestedSuites: List[Suite] = Nil
-  
+
   /**
    * Suite style name.
    */
-  final override def styleName: String = "FunSpec"
+  final override val styleName: String = "org.scalatest.path.FunSpec"
 }
 

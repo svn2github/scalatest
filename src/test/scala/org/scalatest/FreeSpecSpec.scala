@@ -17,7 +17,10 @@ package org.scalatest
 
 // elements
 import org.scalatest.events._
-import org.scalatest.exceptions._
+/* Uncomment after remove type aliases in org.scalatest package object
+import org.scalatest.exceptions.TestFailedException
+import org.scalatest.exceptions.TestRegistrationClosedException
+*/
 
 class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
 

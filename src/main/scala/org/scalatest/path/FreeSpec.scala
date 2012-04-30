@@ -1259,6 +1259,6 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
   /**
    * Suite style name.
    */
-  final override def styleName: String = "FreeSpec"
+  final override val styleName: String = "org.scalatest.path.FreeSpec"
 }
 

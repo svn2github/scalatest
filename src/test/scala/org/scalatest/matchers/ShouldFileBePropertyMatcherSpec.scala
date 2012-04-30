@@ -21,7 +21,6 @@ import org.scalacheck._
 import Arbitrary._
 import Prop._
 import scala.reflect.BeanProperty
-import org.scalatest.exceptions._
 
 trait CustomFileBePropertyMatchers {
 

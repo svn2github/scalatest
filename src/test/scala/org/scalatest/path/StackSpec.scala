@@ -1,7 +1,6 @@
 package org.scalatest.path
 
 import scala.collection.mutable.ListBuffer
-import org.scalatest.exceptions._
 
 class Stack[T] {
 

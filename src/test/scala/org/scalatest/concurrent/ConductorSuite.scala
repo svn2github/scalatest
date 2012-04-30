@@ -19,7 +19,7 @@ import org.scalatest._
 import matchers.ShouldMatchers
 import Thread.State._
 import java.util.concurrent.atomic.AtomicBoolean
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.NotAllowedException
 
 class ConductorSuite extends FunSuite with ShouldMatchers with SharedHelpers {
 

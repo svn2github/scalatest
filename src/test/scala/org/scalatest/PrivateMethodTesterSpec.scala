@@ -15,8 +15,6 @@
  */
 package org.scalatest
 
-import org.scalatest.exceptions._
-
 class PrivateMethodTesterSpec extends FunSpec with PrivateMethodTester {
 
   describe("The PrivateMethodTester trait") {

@@ -20,7 +20,9 @@ import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
 import scala.annotation.tailrec
 import org.scalatest.time.Span
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
+import org.scalatest.exceptions.TestPendingException
+import org.scalatest.exceptions.TimeoutField
 
 /**
  * Trait that facilitates testing with futures.

@@ -19,7 +19,6 @@ import scala.collection.mutable.ListBuffer
 import org.scalatest.events.Event
 import org.scalatest.events.Ordinal
 import org.scalatest.SharedHelpers.SilentReporter
-import org.scalatest.exceptions._
 
 class BeforeNAfterSuite extends FunSuite {
 

@@ -16,7 +16,6 @@
 package org.scalatest
 
 import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
-import org.scalatest.exceptions._
 
 /**
  * Trait that provides an implicit conversion that adds a <code>valueAt</code> method

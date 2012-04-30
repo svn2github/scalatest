@@ -17,7 +17,6 @@ package org.scalatest.tools {
 
 import org.scalatest.FunSuite
 import org.scalatools.testing.{Event, EventHandler, Result, Logger, Runner => TestingRunner}
-import org.scalatest.exceptions._
 
   // testing runner.run:
   // def run(testClassName: String, fingerprint: TestFingerprint, args: Array[String]): Array[Event]

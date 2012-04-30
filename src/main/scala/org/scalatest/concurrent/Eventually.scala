@@ -16,15 +16,11 @@
 package org.scalatest.concurrent
 
 import org.scalatest._
-import java.awt.AWTError
-import java.nio.charset.CoderMalfunctionError
-import javax.xml.parsers.FactoryConfigurationError
-import javax.xml.transform.TransformerFactoryConfigurationError
-import java.lang.annotation.AnnotationFormatError
 import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
 import scala.annotation.tailrec
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
+import org.scalatest.exceptions.TestPendingException
 
 /**
  * Trait that provides the <code>eventually</code> construct, which periodically retries executing

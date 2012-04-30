@@ -16,7 +16,6 @@
 package org.scalatest
 
 import events._
-import org.scalatest.exceptions._
 
 class TopLevelSuite extends Suite with OneInstancePerTest {
   import TopLevelSuite.sideEffectWasNotSeen

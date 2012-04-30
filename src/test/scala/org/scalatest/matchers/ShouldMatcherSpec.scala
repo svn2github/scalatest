@@ -16,7 +16,7 @@
 package org.scalatest.matchers
 
 import org.scalatest._
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
 
 /*
 This has a bit of redundancy with several other specs, but was the

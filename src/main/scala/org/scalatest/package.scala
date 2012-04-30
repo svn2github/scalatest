@@ -67,7 +67,6 @@ package object scalatest {
    */
   lazy val nostats: Shell = defaultShell.nostats
 
-/*
   /**
    * <p>
    * <strong>This class has been moved to the <code>org.scalatest.exceptions</code> package. The deprecated type alias that has been left in its place will
@@ -139,5 +138,4 @@ package object scalatest {
    */
   @deprecated("Please use org.scalatest.exceptions.TestRegistrationClosedException instead.")
   type TestRegistrationClosedException = exceptions.TestRegistrationClosedException
-*/
 }

@@ -30,7 +30,7 @@ import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
 import org.scalatest.time._
 import org.scalatest.{SeveredStackTraces, FunSpec, Resources}
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
 
 class TimeoutsSpec extends FunSpec with ShouldMatchers with SeveredStackTraces {
 

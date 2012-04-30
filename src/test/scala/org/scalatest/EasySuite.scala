@@ -15,7 +15,5 @@
  */
 package org.scalatest
 
-import org.scalatest.exceptions._
-
 private[scalatest] class EasySuite extends Suite {
 }

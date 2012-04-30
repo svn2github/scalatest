@@ -29,10 +29,10 @@ import java.io.StringWriter
 import org.scalatest.events._
 import PrintReporter._
 import org.scalatest.junit.JUnitTestFailedError
-import org.scalatest.prop.PropertyCheckFailedException
-import org.scalatest.prop.TableDrivenPropertyCheckFailedException
+import org.scalatest.exceptions.PropertyCheckFailedException
+import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
 import Suite.indentation
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.StackDepth
 
 /**
  * A <code>Reporter</code> that prints test status information to

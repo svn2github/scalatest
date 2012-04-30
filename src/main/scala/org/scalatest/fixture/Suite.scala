@@ -21,7 +21,7 @@ import Suite._
 import java.lang.reflect.{InvocationTargetException, Method, Modifier}
 import org.scalatest.events._
 import org.scalatest.Suite._
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestPendingException
 
 /**
  * <code>Suite</code> that can pass a fixture object into its tests.
@@ -653,6 +653,11 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
          throw new IllegalArgumentException(Resources("testNotFound", testName))
      }
   }
+  
+  /**
+   * Suite style name.
+   */
+  override val styleName: String = "org.scalatest.fixture.Suite"
 }
 
 private object Suite {

@@ -19,7 +19,7 @@ import org.scalatest._
 import org.scalatest.prop.Checkers
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
 
 class ShouldLogicalMatcherExprSpec extends FunSpec with ShouldMatchers with Checkers with MockitoSugar with ReturnsNormallyThrowsAssertion {
 

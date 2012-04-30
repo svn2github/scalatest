@@ -17,7 +17,6 @@ package org.scalatest
 
 import scala.reflect.Manifest
 import Assertions.areEqualComparingArraysStructurally
-import org.scalatest.exceptions._
 
 /**
  * Trait that contains ScalaTest's basic assertion methods.

@@ -17,7 +17,6 @@ package org.scalatest
 package prop
 
 import matchers.ShouldMatchers
-import org.scalatest.exceptions._
 
 import Configuration._
 

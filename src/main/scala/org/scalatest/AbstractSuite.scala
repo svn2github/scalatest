@@ -188,5 +188,5 @@ trait AbstractSuite { this: Suite =>
   /**
    * Suite style name.
    */
-  def styleName: String
+  val styleName: String
 }

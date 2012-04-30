@@ -16,7 +16,7 @@
 package org.scalatest.matchers
 
 import org.scalatest._
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
 
 class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
 

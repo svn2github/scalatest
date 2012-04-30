@@ -19,7 +19,9 @@ import org.scalatest._
 
 import org.scalatest.path.{ FunSpec => PathFunSpec }
 import org.scalatest.events._
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
+import org.scalatest.exceptions.DuplicateTestNameException
+import org.scalatest.exceptions.TestRegistrationClosedException
 
 class FunSpecSpec extends org.scalatest.FreeSpec with SharedHelpers with GivenWhenThen {
 

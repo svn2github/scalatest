@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2011 Artima, Inc.
+ * Copyright 2001-2012 Artima, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 package org.scalatest
+package exceptions
 
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.exceptions._
 
 class StackDepthExceptionSpec extends FunSpec with ShouldMatchers with TableDrivenPropertyChecks {
 

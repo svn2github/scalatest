@@ -58,10 +58,10 @@ import java.util.regex.Pattern
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.awt.EventQueue
-import org.scalatest.prop.PropertyTestFailedException
+import org.scalatest.exceptions.GeneratorDrivenPropertyCheckFailedException
 import org.scalatest.events._
 import EventToPresent.eventToEventToPresent
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.StackDepth
 
 /**
  * The main class for Runner's GUI.
@@ -402,13 +402,13 @@ private[scalatest] class RunnerJFrame(
 
             val propCheckArgs: List[Any] =
               holder.throwable match {
-                case Some(ex: PropertyTestFailedException) => ex.args
+                case Some(ex: GeneratorDrivenPropertyCheckFailedException) => ex.args
                 case _ => List()
               }
 
             val propCheckLabels: List[String] =
               holder.throwable match {
-                case Some(ex: PropertyTestFailedException) => ex.labels
+                case Some(ex: GeneratorDrivenPropertyCheckFailedException) => ex.labels
                 case _ => List()
               }
 

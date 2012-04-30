@@ -16,7 +16,6 @@
 package org.scalatest.fixture
 
 import org.scalatest._
-import org.scalatest.exceptions._
 
 class ConfigMapFixtureSpec extends org.scalatest.FunSpec with SharedHelpers {
   describe("A ConfigMapFixture") {

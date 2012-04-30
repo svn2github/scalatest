@@ -19,7 +19,9 @@ import scala.collection.mutable.ListBuffer
 import org.scalatest.events.Event
 import org.scalatest.events.Ordinal
 import org.scalatest.SharedHelpers.SilentReporter
-import org.scalatest.exceptions._
+/* Uncomment after remove type aliases in org.scalatest package object
+import org.scalatest.exceptions.NotAllowedException
+*/
 
 class BeforeAndAfterFunctionsSuite extends FunSuite {
 

@@ -25,7 +25,7 @@ import org.scalatest.events._
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
 import verb.BehaveWord
 import FunSuite.IgnoreTagName 
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestRegistrationClosedException
 
 /**
  * A sister trait to <code>org.scalatest.FunSpec</code> that can pass a fixture object into its tests.
@@ -842,5 +842,5 @@ trait FunSpec extends Suite { thisSuite =>
   /**
    * Suite style name.
    */
-  final override def styleName: String = "FunSpec"
+  final override val styleName: String = "org.scalatest.fixture.FunSpec"
 }

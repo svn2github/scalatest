@@ -15,7 +15,6 @@
  */
 package org.scalatest
 
-import java.awt.AWTError
 import java.lang.annotation._
 import java.io.Serializable
 import java.lang.reflect.Constructor
@@ -31,6 +30,7 @@ import Suite.stripDollars
 import Suite.formatterForSuiteStarting
 import Suite.formatterForSuiteCompleted
 import Suite.checkForPublicNoArgConstructor
+import Suite.checkChosenStyles
 import Suite.formatterForSuiteAborted
 import Suite.anErrorThatShouldCauseAnAbort
 import Suite.getSimpleNameOfAnObjectsClass
@@ -2107,17 +2107,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     }
   }
   
-  private[scalatest] def checkChosenStyles(configMap: Map[String, Any]) {
-    val chosenStyleSet = 
-        if (configMap.isDefinedAt("org.scalatest.ChosenStyles"))
-          configMap("org.scalatest.ChosenStyles").asInstanceOf[Set[String]]
-        else
-          Set.empty[String]
-    
-    if (chosenStyleSet.size > 0 && !chosenStyleSet.contains(styleName)) 
-      throw new NotAllowedException(Resources("suiteNotChosenAborted", styleName, chosenStyleSet.mkString(", ")), getStackDepthFun("Scala.scala", "checkChosenStyles"))
-  }
-
   /**
    * Run zero to many of this <code>Suite</code>'s tests.
    *
@@ -2206,8 +2195,10 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       throw new NullPointerException("distributor was null")
     if (tracker == null)
       throw new NullPointerException("tracker was null")
-    
-    checkChosenStyles(configMap)
+  
+    val theTestNames = testNames
+    if (theTestNames.size > 0)
+      checkChosenStyles(configMap, styleName)
 
     val stopRequested = stopper
 
@@ -2230,7 +2221,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         }
 
       case None =>
-        for ((tn, ignoreTest) <- filter(testNames, tags, suiteId)) {
+        for ((tn, ignoreTest) <- filter(theTestNames, tags, suiteId)) {
           if (!stopRequested()) {
             if (ignoreTest)
               reportTestIgnored(thisSuite, report, tracker, tn, tn, getDecodedName(tn), 1, Some(getTopOfMethod(tn)))
@@ -2648,7 +2639,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   /**
    * Suite style name.
    */
-  def styleName: String = "Suite"
+  val styleName: String = "org.scalatest.Suite"
 }
 
 private[scalatest] object Suite {
@@ -2777,13 +2768,15 @@ private[scalatest] object Suite {
   private[scalatest] def anErrorThatShouldCauseAnAbort(throwable: Throwable) =
     throwable match {
       case _: AnnotationFormatError | 
-           _: AWTError | 
-           _: CoderMalfunctionError | 
+           _: CoderMalfunctionError |
            _: FactoryConfigurationError | 
            _: LinkageError | 
            _: ThreadDeath | 
            _: TransformerFactoryConfigurationError | 
            _: VirtualMachineError => true
+      // Don't use AWTError directly because it doesn't exist on Android, and a user
+      // got ScalaTest to compile under Android.
+      case e if e.getClass.getName == "java.awt.AWTError" => true
       case _ => false
     }
 
@@ -3159,4 +3152,40 @@ used for test events like succeeded/failed, etc.
     else
       None
   }
+
+  def checkChosenStyles(configMap: Map[String, Any], styleName: String) {
+    val chosenStyleSet = 
+        if (configMap.isDefinedAt("org.scalatest.ChosenStyles"))
+          configMap("org.scalatest.ChosenStyles").asInstanceOf[Set[String]]
+        else
+          Set.empty[String]
+    
+    if (chosenStyleSet.size > 0 && !chosenStyleSet.contains(styleName)) {
+      val e =
+        if (chosenStyleSet.size == 1)
+          new NotAllowedException(Resources("notTheChosenStyle", styleName, chosenStyleSet.head), getStackDepthFun("Scala.scala", "checkChosenStyles"))
+        else
+          new NotAllowedException(Resources("notOneOfTheChosenStyles", styleName, Suite.makeListForHumans(Vector.empty ++ chosenStyleSet.iterator)), getStackDepthFun("Scala.scala", "checkChosenStyles"))
+      throw e
+    }
+  }
+
+  // If it contains a space, or is an empty string, put quotes around it. OTherwise people might
+  // get confused by the chosenStyles error message.
+  def makeListForHumans(words: Vector[String]): String = {
+    val quotedWords = words map { w =>
+      if (w.length == 0 || w.indexOf(' ') >= 0) "\"" + w + "\""
+      else w
+    }
+    quotedWords.length match {
+      case 0 => "<empty list>"
+      //case 1 if quotedWords(0).isEmpty => "\"\""
+      case 1 => quotedWords(0)
+      case 2 => Resources("leftAndRight", quotedWords(0), quotedWords(1))
+      case _ =>
+        val (leading, trailing) = quotedWords.splitAt(quotedWords.length - 2)
+        leading.mkString(", ") + ", " + Resources("leftCommaAndRight", trailing(0), trailing(1))
+    }
+  }
 }
+

@@ -15,8 +15,6 @@
  */
 package org.scalatest
 
-import org.scalatest.exceptions._
-
 class OperatorNames {
 
   def op_21_! : Boolean = true

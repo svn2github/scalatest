@@ -1,7 +1,6 @@
 package org.scalatest.time
 
 import org.scalatest.matchers.{HavePropertyMatcher, HavePropertyMatchResult}
-import org.scalatest.exceptions._
 
 trait SpanMatchers {
 

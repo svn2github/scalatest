@@ -20,7 +20,6 @@ import scala.reflect.Manifest
 import org.jmock.Expectations
 import org.hamcrest.core.IsAnything
 import org.scalatest.events._
-import org.scalatest.exceptions._
 
 trait SuiteExpectations {
 

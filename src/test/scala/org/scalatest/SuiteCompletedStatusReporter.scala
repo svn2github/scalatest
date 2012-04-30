@@ -17,7 +17,6 @@ package org.scalatest
 
 import org.scalatest._
 import events.{SuiteCompleted, Event}
-import org.scalatest.exceptions._
 
 /*
 java -Dorg.scalatest.BigSuite.size=5 -Dorg.scalatest.SuiteCompletedStatusReporter.max=100 -classpath scalatest-1.0-SNAPSHOT.jar:/usr/artima/scala/lib/scala-library.jar org.scalatest.tools.Runner -c4 -p "scalatest-1.0-SNAPSHOT-tests.jar" -oNCXEHLO -r org.scalatest.SuiteCompletedStatusReporter -s org.scalatest.BigSuite -s org.scalatest.BigSuite -s org.scalatest.BigSuite -s org.scalatest.BigSuite -s org.scalatest.BigSuite

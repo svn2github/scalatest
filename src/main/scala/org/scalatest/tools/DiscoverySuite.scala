@@ -55,11 +55,7 @@ private[scalatest] class DiscoverySuite(path: String, accessibleSuites: Set[Stri
           }
         }
       }
-  
-  override private[scalatest] def checkChosenStyles(configMap: Map[String, Any]) {
-    // Do nothing for this suite.
-  }
-  
+     // TODO: probably override run to just call runNestedSuites
   override protected def runTests(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
                              configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
     if (testName == null)

@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 package org.scalatest
-package prop
+package exceptions
 
 import matchers.ShouldMatchers
-import org.scalatest.exceptions._
+import org.scalatest.prop._
+/* Uncomment this after removing the deprecated type aliases in the org.scalatest.prop package object
+import org.scalatest.exceptions.PropertyCheckFailedException
+*/
 
-class PropertyCheckFailedExceptionSuite extends FunSuite with ShouldMatchers {
+class GeneratorDrivenPropertyCheckFailedExceptionSuite extends FunSuite with ShouldMatchers {
 
   test("PropertyCheckFailedException's argNames method should return argN if no argument names are passed to the constructor") {
 
     val e =
-      new PropertyCheckFailedException(
+      new GeneratorDrivenPropertyCheckFailedException(
         sde => "msg",
         None,
         sde => 7,
+        None,
         "msg",
         List(1, 2, 3),
-        None
+        None,
+        List.empty
       )
 
     e.argNames should be (List("arg0", "arg1", "arg2"))
@@ -39,13 +44,15 @@ class PropertyCheckFailedExceptionSuite extends FunSuite with ShouldMatchers {
   test("PropertyCheckFailedException's argNames method should return the passed argument names if supplied to the constructor") {
 
     val e =
-      new PropertyCheckFailedException(
+      new GeneratorDrivenPropertyCheckFailedException(
         sde => "msg",
         None,
         sde => 7,
+        None,
         "msg",
         List(1, 2, 3),
-        Some(List("a", "b", "c"))
+        Some(List("a", "b", "c")),
+        List.empty
       )
 
     e.argNames should be (List("a", "b", "c"))

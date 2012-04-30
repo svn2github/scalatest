@@ -18,7 +18,9 @@ package org.scalatest
 import org.scalatest.Inside._
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.SharedHelpers.thisLineNumber
-import org.scalatest.exceptions._
+/* Uncomment after remove type aliases in org.scalatest package object
+import org.scalatest.exceptions.TestFailedException
+*/
 
 class InsideSpec extends Spec with ShouldMatchers with OptionValues {
 

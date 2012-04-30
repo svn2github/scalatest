@@ -17,7 +17,7 @@ package org.scalatest.fixture
 
 import org.scalatest._
 import org.scalatest.events.{TestStarting, TestFailed}
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.DuplicateTestNameException
 
 object SlowTest extends Tag("SlowTest")
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest.prop
+package org.scalatest.exceptions
 
 /**
  * Exception that indicates an evaluation of a property should be discarded, because a condition

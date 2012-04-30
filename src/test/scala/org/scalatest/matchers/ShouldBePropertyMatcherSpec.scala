@@ -21,7 +21,7 @@ import org.scalacheck._
 import Arbitrary._
 import Prop._
 import scala.reflect.BeanProperty
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
 
 class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion with BookPropertyMatchers {
 

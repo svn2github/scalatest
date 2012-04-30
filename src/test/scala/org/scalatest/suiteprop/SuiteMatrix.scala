@@ -18,7 +18,6 @@ package org.scalatest.suiteprop
 import org.scalatest._
 import prop.TableDrivenPropertyChecks
 import matchers.ShouldMatchers
-import org.scalatest.exceptions._
 
 class SuiteMatrix extends PropSpec with ShouldMatchers with TableDrivenPropertyChecks with SharedHelpers {
 

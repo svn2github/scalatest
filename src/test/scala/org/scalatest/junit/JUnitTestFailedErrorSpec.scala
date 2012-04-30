@@ -16,11 +16,10 @@
 package org.scalatest.junit
 
 import org.scalatest._
-import org.scalatest.exceptions._
 
 class JUnitTestFailedErrorSpec extends FunSpec with ShouldMatchersForJUnit {
 
-  val baseLineNumber = 23
+  val baseLineNumber = 22
 
   describe("The JUnitTestFailedError") {
 
@@ -257,14 +256,14 @@ class JUnitTestFailedErrorSpec extends FunSpec with ShouldMatchersForJUnit {
 
     it("should return the cause in both cause and getCause") {
       val theCause = new IllegalArgumentException("howdy")
-      val tfe = new JUnitTestFailedError(Some("doody"), Some(theCause), 3)
+      val tfe = new JUnitTestFailedError(Some("doody"), Some(theCause), 3, None)
       assert(tfe.cause.isDefined)
       assert(tfe.cause.get === theCause)
       assert(tfe.getCause == theCause)
     }
 
     it("should return None in cause and null in getCause if no cause") {
-      val tfe = new JUnitTestFailedError(Some("doody"), None, 3)
+      val tfe = new JUnitTestFailedError(Some("doody"), None, 3, None)
       assert(tfe.cause.isEmpty)
       assert(tfe.getCause == null)
     }

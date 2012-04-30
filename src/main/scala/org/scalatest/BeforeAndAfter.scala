@@ -16,7 +16,6 @@
 package org.scalatest
 
 import java.util.concurrent.atomic.AtomicReference
-import org.scalatest.exceptions._
 
 /**
  * Trait that can be mixed into suites that need code executed before and after

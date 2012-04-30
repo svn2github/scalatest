@@ -19,7 +19,6 @@ import org.scalatest._
 import matchers.ShouldMatchers
 import prop.TableDrivenPropertyChecks
 import scala.collection.mutable.ListBuffer
-import org.scalatest.exceptions._
 
 class PathListBufferExamples extends PathSuiteExamples {
 

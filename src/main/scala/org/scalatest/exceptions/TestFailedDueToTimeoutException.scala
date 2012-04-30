@@ -34,8 +34,9 @@ class TestFailedDueToTimeoutException(
   messageFun: StackDepthException => Option[String],
   cause: Option[Throwable],
   failedCodeStackDepthFun: StackDepthException => Int,
+  payload: Option[Any],
   val timeout: Span
-) extends TestFailedException(messageFun, cause, failedCodeStackDepthFun) with TimeoutField {
+) extends TestFailedException(messageFun, cause, failedCodeStackDepthFun, payload) with TimeoutField {
 
   /**
    * Returns an instance of this exception's class, identical to this exception,
@@ -46,7 +47,22 @@ class TestFailedDueToTimeoutException(
    * the modified optional detail message for the result instance of <code>TestFailedDueToTimeoutException</code>.
    */
   override def modifyMessage(fun: Option[String] => Option[String]): TestFailedDueToTimeoutException = {
-    val mod = new TestFailedDueToTimeoutException(sde => fun(message), cause, failedCodeStackDepthFun, timeout)
+    val mod = new TestFailedDueToTimeoutException(sde => fun(message), cause, failedCodeStackDepthFun, payload, timeout)
+    mod.setStackTrace(getStackTrace)
+    mod
+  }
+
+  /**
+   * Returns an instance of this exception's class, identical to this exception,
+   * except with the payload option replaced with the result of passing
+   * the current payload option to the passed function, <code>fun</code>.
+   *
+   * @param fun A function that, given the current optional payload, will produce
+   * the modified optional payload for the result instance of <code>TestFailedDueToTimeoutException</code>.
+   */
+  override def modifyPayload(fun: Option[Any] => Option[Any]): TestFailedDueToTimeoutException = {
+    val currentPayload = payload
+    val mod = new TestFailedDueToTimeoutException(messageFun, cause, failedCodeStackDepthFun, fun(currentPayload), timeout)
     mod.setStackTrace(getStackTrace)
     mod
   }

@@ -631,7 +631,7 @@ private [junit] class JUnit3ComfortSuite extends Suite with OneInstancePerTest {
   /**
    * Suite style name.
    */
-  final override def styleName: String = "JUnit3ComfortSuite"
+  final override val styleName: String = "JUnit3ComfortSuite"
 }
 
 /*

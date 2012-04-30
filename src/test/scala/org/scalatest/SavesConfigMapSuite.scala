@@ -1,7 +1,6 @@
 package org.scalatest
 
 import SavesConfigMapSuite.theConfigMap
-import org.scalatest.exceptions._
 
 @WrapWith(classOf[ConfigMapWrapperSuite])
 class SavesConfigMapSuite(configMap: Map[String, Any]) extends FunSuite {

@@ -171,6 +171,10 @@ package prop
 """
 
 val propertyCheckPreamble = """
+/* Uncomment this when remove the deprecated type aliases in the org.scalatest.prop package object.
+import exceptions.DiscardedEvaluationException
+import exceptions.GeneratorDrivenPropertyCheckFailedException
+*/
 import org.scalacheck.Arbitrary
 import org.scalacheck.Shrink
 import org.scalacheck.Prop
@@ -1131,6 +1135,9 @@ object GeneratorDrivenPropertyChecks extends GeneratorDrivenPropertyChecks
 val generatorSuitePreamble = """
 
 import matchers.ShouldMatchers
+/* Uncomment this when remove the deprecated type aliases in the org.scalatest.prop package object.
+import exceptions.GeneratorDrivenPropertyCheckFailedException
+*/
 import org.scalacheck.Gen
 """
 

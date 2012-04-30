@@ -24,7 +24,7 @@ import scala.reflect.Manifest
 import Helper.transformOperatorChars
 import scala.collection.Traversable
 import Assertions.areEqualComparingArraysStructurally
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers

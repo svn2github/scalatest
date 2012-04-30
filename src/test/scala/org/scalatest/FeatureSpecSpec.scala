@@ -16,7 +16,11 @@
 package org.scalatest
 
 import org.scalatest.events.TestStarting
-import org.scalatest.exceptions._
+/* Uncomment once remove deprecated type aliases in org.scalatest
+import org.scalatest.exceptions.DuplicateTestNameException
+import org.scalatest.exceptions.NotAllowedException
+import org.scalatest.exceptions.TestFailedException
+*/
 
 class FeatureSpecSpec extends FunSpec with SharedHelpers {
 

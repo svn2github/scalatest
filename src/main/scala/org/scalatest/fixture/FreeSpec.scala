@@ -861,5 +861,5 @@ trait FreeSpec extends Suite { thisSuite =>
   /**
    * Suite style name.
    */
-  final override def styleName: String = "FreeSpec"
+  final override val styleName: String = "org.scalatest.fixture.FreeSpec"
 }

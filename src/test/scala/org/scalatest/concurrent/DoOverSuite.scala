@@ -18,7 +18,6 @@ package org.scalatest.concurrent
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import DoOver.tryTryAgain
-import org.scalatest.exceptions._
 
 class DoOverSuite extends FunSuite with ShouldMatchers {
 

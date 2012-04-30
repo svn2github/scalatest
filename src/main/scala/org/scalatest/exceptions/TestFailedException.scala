@@ -48,8 +48,6 @@ class TestFailedException(
   val payload: Option[Any]
 ) extends StackDepthException(messageFun, cause, failedCodeStackDepthFun) with ModifiableMessage[TestFailedException] with PayloadField with ModifiablePayload[TestFailedException] {
 
-  // val payload: Option[Any] = None TODO Delete this if the parametric field works
-
   /**
    * Constructs a <code>TestFailedException</code> with pre-determined <code>message</code> and <code>failedCodeStackDepth</code>. (This was
    * the primary constructor form from ScalaTest 1.5 to 1.8.)

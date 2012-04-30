@@ -19,7 +19,6 @@ import org.scalatest._
 import org.scalatest.fixture
 import matchers.ShouldMatchers
 import org.jmock.Expectations.{equal => thatEquals}
-import org.scalatest.exceptions._
 
 class JMockCycleSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
 

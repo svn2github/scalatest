@@ -16,7 +16,6 @@
 package org.scalatest
 
 import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
-import org.scalatest.exceptions._
 
 /**
  * Trait containing the <code>inside</code> construct, which allows you to make statements about nested object graphs using pattern matching.

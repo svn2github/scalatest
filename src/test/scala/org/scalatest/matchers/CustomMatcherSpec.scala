@@ -17,7 +17,7 @@ package org.scalatest.matchers
 
 import org.scalatest._
 import scala.collection.mutable.ListBuffer
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
 
 trait CustomMatchers {
 

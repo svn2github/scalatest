@@ -16,7 +16,6 @@
 package org.scalatest
 
 import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.exceptions._
 
 class ShellSuite extends Suite with ShouldMatchers {
 

@@ -17,7 +17,6 @@ package org.scalatest.jmock;
 
 import org.scalatest._
 import org.scalatest.events._
-import org.scalatest.exceptions._
 
 class TestReporter extends Reporter {
 

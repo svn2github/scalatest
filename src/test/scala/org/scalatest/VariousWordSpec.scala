@@ -17,7 +17,6 @@ package org.scalatest
 
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.verb.ShouldVerb
-import org.scalatest.exceptions._
 
 private class VariousWordSpec {} // prevents unnecessary recompilation
 

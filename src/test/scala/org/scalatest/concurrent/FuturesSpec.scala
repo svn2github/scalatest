@@ -23,7 +23,8 @@ import java.util.concurrent.{Future => FutureOfJava}
 import java.util.concurrent.TimeUnit
 import org.scalatest._
 import time._
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
+import org.scalatest.exceptions.TestPendingException
 
 class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Futures with SeveredStackTraces {
 

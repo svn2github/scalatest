@@ -171,6 +171,10 @@ package prop
 """
 
 val importsForTableForNTemplate = """
+/* Uncomment this when remove the deprecated type aliases in the org.scalatest.prop package object.
+import exceptions.TableDrivenPropertyCheckFailedException
+import exceptions.DiscardedEvaluationException
+*/
 import scala.collection.mutable.Builder
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.IndexedSeqLike
@@ -333,6 +337,7 @@ $namesAndValues$
               "  )",
             Some(ex),
             getStackDepthFun("TableDrivenPropertyChecks.scala", "forAll", 2),
+            None,
             FailureMessages("undecoratedPropertyCheckFailureMessage"),
             List($alphaLower$),
             List($alphaName$),
@@ -921,6 +926,9 @@ object TableDrivenPropertyChecks extends TableDrivenPropertyChecks
 val tableSuitePreamble = """
 
 import matchers.ShouldMatchers
+/* Uncomment this when remove the deprecated type aliases in the org.scalatest.prop package object.
+import exceptions.TableDrivenPropertyCheckFailedException
+*/
 
 class TableSuite extends FunSuite with TableDrivenPropertyChecks with ShouldMatchers {
 """

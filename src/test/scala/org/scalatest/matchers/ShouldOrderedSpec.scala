@@ -21,7 +21,7 @@ import org.scalacheck._
 import Arbitrary._
 import Prop._
 import Integer.{MAX_VALUE, MIN_VALUE}
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
 
 class ShouldOrderedSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
 

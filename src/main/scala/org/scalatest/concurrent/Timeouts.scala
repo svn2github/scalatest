@@ -248,7 +248,7 @@ trait Timeouts {
       fun,
       interruptor,
       t => new TestFailedDueToTimeoutException(
-        sde => Some(Resources("timeoutFailedAfter", timeout.prettyString)), t, getStackDepthFun("Timeouts.scala", "failAfter"), timeout
+        sde => Some(Resources("timeoutFailedAfter", timeout.prettyString)), t, getStackDepthFun("Timeouts.scala", "failAfter"), None, timeout
       )
     )
   }

@@ -15,8 +15,6 @@
  */
 package org.scalatest
 
-import org.scalatest.exceptions._
-
 class InformerSpec extends FlatSpec with SharedHelpers {
 
   "An Informer" should "give back another Informer from its compose method" in {

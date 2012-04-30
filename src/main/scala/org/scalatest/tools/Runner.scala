@@ -50,19 +50,19 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * </p>
  *
  * <pre class="stExamples">
- * scala [-classpath scalatest-&lt;version&gt;.jar:...] org.scalatest.tools.Runner 
-[-D&lt;key&gt;=&lt;value&gt; [...]] [-p &lt;runpath&gt;] [reporter [...]] 
-[-n &lt;includes&gt;] [-l &lt;excludes&gt;] [-c] [-s &lt;suite class name&gt; 
-[...]] [-j &lt;junit class name&gt; [...]] [-m &lt;members-only suite path&gt; 
-[...]] [-w &lt;wildcard suite path&gt; [...]] [-q &lt;suffixes&gt;] [-Q] [-b &lt;TestNG config file 
-path&gt; [...]]
+ * scala [-classpath scalatest-&lt;version&gt;.jar:...] org.scalatest.tools.Runner
+ * [-D&lt;key&gt;=&lt;value&gt; [...]] [-R &lt;runpath&gt;] [reporter [...]]
+ * [-n &lt;includes&gt;] [-l &lt;excludes&gt;] [-P] [-s &lt;suite class name&gt;
+ * [...]] [-j &lt;junit class name&gt; [...]] [-m &lt;members-only suite path&gt;
+ * [...]] [-w &lt;wildcard suite path&gt; [...]] [-q &lt;suffixes&gt;] [-Q] [-y &lt;chosen styles&gt;]
+ * [-b &lt;TestNG config file path&gt; [...]]
  * </pre>
  *
  * <p>
  * The simplest way to start <code>Runner</code> is to specify the directory containing your compiled tests as the sole element of the runpath, for example:
  * </p>
  *
- * <pre class="stExamples">scala -classpath scalatest-&lt;version&gt;.jar org.scalatest.tools.Runner -p compiled_tests</pre>
+ * <pre class="stExamples">scala -classpath scalatest-&lt;version&gt;.jar org.scalatest.tools.Runner -R compiled_tests</pre>
  *
  * <p>
  * Given the previous command, <code>Runner</code> will discover and execute all <code>Suite</code>s in the <code>compiled_tests</code> directory and its subdirectories,
@@ -95,7 +95,7 @@ path&gt; [...]]
  * </p>
  *
  * <p>
- * The runpath is specified with the <b>-p</b> option. The <b>-p</b> must be followed by a space,
+ * The runpath is specified with the <b>-R</b> option. The <b>-R</b> must be followed by a space,
  * a double quote (<code>"</code>), a white-space-separated list of
  * paths and URLs, and a double quote. If specifying only one element in the runpath, you can leave off
  * the double quotes, which only serve to combine a white-space separated list of strings into one
@@ -103,7 +103,7 @@ path&gt; [...]]
  * place a backslash (\) in front of the space. Here's an example:
  * </p>
  *
- * <pre class="stExamples">-p "serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar target/class\ files"</pre>
+ * <pre class="stExamples">-R "serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar target/class\ files"</pre>
  *
  * <h2>Specifying reporters</h2>
  *
@@ -128,7 +128,7 @@ path&gt; [...]]
  *     the standard output</li>
  * <li> <code><b>-e[configs...]</b></code> - causes test results to be written to
  *     the standard error</li>
- * <li> <code><b>-r[configs...] &lt;reporterclass&gt;</b></code> - causes test results to be reported to
+ * <li> <code><b>-C[configs...] &lt;reporterclass&gt;</b></code> - causes test results to be reported to
  *     an instance of the specified fully qualified <code>Reporter</code> class name</li>
  * </ul>
  *
@@ -137,15 +137,15 @@ path&gt; [...]]
  * </p>
  *
  * <p>
- * The <code><b>-r</b></code> option causes the reporter specified in
+ * The <code><b>-C</b></code> option causes the reporter specified in
  * <code><b>&lt;reporterclass&gt;</b></code> to be
  * instantiated.
- * Each reporter class specified with a <b>-r</b> option must be public, implement
+ * Each reporter class specified with a <b>-C</b> option must be public, implement
  * <code>org.scalatest.Reporter</code>, and have a public no-arg constructor.
  * Reporter classes must be specified with fully qualified names. 
  * The specified reporter classes may be
  * deployed on the classpath. If a runpath is specified with the
- * <code>-p</code> option, the specified reporter classes may also be loaded from the runpath.
+ * <code>-R</code> option, the specified reporter classes may also be loaded from the runpath.
  * All specified reporter classes will be loaded and instantiated via their no-arg constructor.
  * </p>
  *
@@ -155,12 +155,12 @@ path&gt; [...]]
  * writing to a file named <code>"test.out"</code>, you would type:
  * </p>
  *
- * <pre class="stExamples">java -jar scalatest.jar -p mydir <b>-g -f test.out</b> -s MySuite</pre>
+ * <pre class="stExamples">java -jar scalatest.jar -R mydir <b>-g -f test.out</b> -s MySuite</pre>
  *
  * <p>
  * The <code><b>-g</b></code>, <code><b>-o</b></code>, or <code><b>-e</b></code> options can
  * appear at most once each in any single command line.
- * Multiple appearances of <code><b>-f</b></code> and <code><b>-r</b></code> result in multiple reporters
+ * Multiple appearances of <code><b>-f</b></code> and <code><b>-C</b></code> result in multiple reporters
  * unless the specified <code><b>&lt;filename&gt;</b></code> or <code><b>&lt;reporterclass&gt;</b></code> is
  * repeated. If any of <code><b>-g</b></code>, <code><b>-o</b></code>, <code><b>-e</b></code>,
  * <code><b>&lt;filename&gt;</b></code> or <code><b>&lt;reporterclass&gt;</b></code> are repeated on
@@ -182,7 +182,7 @@ path&gt; [...]]
  * <p>
  * Each reporter option on the command line can include configuration characters. Configuration characters
  * are specified immediately following the <code><b>-g</b></code>, <code><b>-o</b></code>,
- * <code><b>-e</b></code>, <code><b>-f</b></code>, or <code><b>-r</b></code>. The following configuration
+ * <code><b>-e</b></code>, <code><b>-f</b></code>, or <code><b>-C</b></code>. The following configuration
  * characters, which cause reports to be dropped, are valid for any reporter:
  * </p>
  *
@@ -257,7 +257,7 @@ path&gt; [...]]
  * </p>
  *
  * <p>
- * <code>scala -classpath scalatest-&lt;version&gt;.jar -p mydir <strong>-g -eNDXEHLO</strong> -s MySuite</code>
+ * <code>scala -classpath scalatest-&lt;version&gt;.jar -R mydir <strong>-g -eNDXEHLO</strong> -s MySuite</code>
  * </p>
  *
  * <p>
@@ -325,7 +325,7 @@ path&gt; [...]]
  *
  * <p>
  * With the proliferation of multi-core architectures, and the often parallelizable nature of tests, it is useful to be able to run
- * tests in parallel. If you include <code>-c</code> on the command line, <code>Runner</code> will pass a <code>Distributor</code> to 
+ * tests in parallel. If you include <code>-P</code> on the command line, <code>Runner</code> will pass a <code>Distributor</code> to
  * the <code>Suite</code>s you specify with <code>-s</code>. <code>Runner</code> will set up a thread pool to execute any <code>Suite</code>s
  * passed to the <code>Distributor</code>'s <code>put</code> method in parallel. Trait <code>Suite</code>'s implementation of
  * <code>runNestedSuites</code> will place any nested <code>Suite</code>s into this <code>Distributor</code>. Thus, if you have a <code>Suite</code>
@@ -333,8 +333,8 @@ path&gt; [...]]
  * </p>
  *
  * <p>
- * The <code>-c</code> option may optionally be appended with a number (e.g.
- * "<code>-c10</code>" -- no intervening space) to specify the number of
+ * The <code>-P</code> option may optionally be appended with a number (e.g.
+ * "<code>-P10</code>" -- no intervening space) to specify the number of
  * threads to be created in the thread pool.  If no number (or 0) is
  * specified, the number of threads will be decided based on the number of
  * processors available.
@@ -355,7 +355,7 @@ path&gt; [...]]
  * <code>Suite</code> classes must be specified with fully qualified names. 
  * The specified <code>Suite</code> classes may be
  * loaded from the classpath. If a runpath is specified with the
- * <code>-p</code> option, specified <code>Suite</code> classes may also be loaded from the runpath.
+ * <code>-R</code> option, specified <code>Suite</code> classes may also be loaded from the runpath.
  * All specified <code>Suite</code> classes will be loaded and instantiated via their no-arg constructor.
  * </p>
  *
@@ -407,6 +407,55 @@ path&gt; [...]]
  * in the runpath.
  * </p>
  *
+ * <h2>Specifying chosen styles</h2>
+ *
+ * <p>
+ * You can optionally specify chosen styles for a ScalaTest run. ScalaTest supports different styles of
+ * testing so that different teams can use the style or styles that best suits their situation and culture. But
+ * in any one project, it is recommended you decide on one main style for unit testing, and
+ * consistently use only that style for unit testing throughout the project. If you also have integration
+ * tests in your project, you may wish to pick a different style for them than you are using for unit testing.
+ * You may want to allow certain styles to be used in special testing situations on a project, but in general,
+ * it is best to minimize the styles used in any given project to a few, or one.
+ * </p>
+ *
+ * <p>
+ * To facilitate the communication and enforcement of a team's style choices for a project, you can
+ * specify the chosen styles in your project build. If chosen styles is defined, ScalaTest style traits that are
+ * not among the chosen list will abort with a message complaining that the style trait is not one of the
+ * chosen styles. The style name for each ScalaTest style trait is its fully qualified name. For example,
+ * to specify that <code>org.scalatest.FunSpec</code> as your chosen style you'd pass this to
+ * <code>Runner</code>:
+ * </p>
+ *
+ * <pre class="stExamples">-y org.scalatest.FunSpec</pre>
+ *
+ * <p>
+ * If you wanted <code>org.scalatest.FunSpec</code> as your main unit testing style, but also wanted to
+ * allow <code>PropSpec</code> for test matrixes and <code>FeatureSpec</code> for
+ * integration tests, you would write:
+ * </p>
+ *
+ * <pre class="stExamples">-y org.scalatest.FunSpec -y org.scalatest.PropSpec -y org.scalatest.FeatureSpec</pre>
+ *
+ * <p>
+ * To select <code>org.scalatest.FlatSpec</code> as your main unit testing style, but allow
+ * <code>org.scalatest.fixture.FlatSpec</code> for multi-threaded unit tests, you'd write:
+ * </p>
+ *
+ * <pre class="stExamples">-y org.scalatest.FlatSpec -y org.scalatest.fixture.FlatSpec</pre>
+ *
+ * <p>
+ * The style name for a suite is obtained by invoking its <code>styleName</code> method. Custom style
+ * traits can override this method so that a custom style can participate in the chosen styles list.
+ * </p>
+ *
+ * <p>
+ * Because ScalaTest is so customizable, a determined programmer could circumvent
+ * the chosen styles check, but in practice <code>-y</code> should be persuasive enough tool
+ * to keep most team members in line.
+ * </p>
+ *
  * <h2>Specifying TestNG XML config file paths</h2>
  *
  * <p>
@@ -450,7 +499,7 @@ object Runner {
   // reporter was requested, or just run the tests itself. If a GUI is started,
   // an event handler thread will get going, and it will start a RunnerThread,
   // which will actually do the running. The GUI can repeatedly start RunnerThreads
-  // and RerunnerThreads, until the GUI is closed. If -c is specified, that means
+  // and RerunnerThreads, until the GUI is closed. If -P is specified, that means
   // the tests should be run concurrently, which in turn means a Distributor will
   // be passed to the execute method of the Suites, which will in turn populate
   // it with its nested suites instead of executing them directly in the same
@@ -504,8 +553,8 @@ object Runner {
   }
 
   // TODO: I don't think I'm enforcing that properties can't start with "org.scalatest"
-  // TODO: I don't think I'm handling rejecting multiple -f/-r with the same arg. -f fred.txt -f fred.txt should
-  // fail, as should -r MyReporter -r MyReporter. I'm failing on -o -o, -g -g, and -e -e, but the error messages
+  // TODO: I don't think I'm handling rejecting multiple -f/-C with the same arg. -f fred.txt -f fred.txt should
+  // fail, as should -C MyReporter -C MyReporter. I'm failing on -o -o, -g -g, and -e -e, but the error messages
   // could indeed be nicer.
   /**
    * Runs a suite of tests, with optional GUI. See the main documentation for this singleton object for the details.
@@ -726,9 +775,9 @@ object Runner {
 
   //
   // Examines concurrent option arg to see if it contains an optional numeric
-  // value representing the number of threads to use, e.g. -c10 for 10 threads.
+  // value representing the number of threads to use, e.g. -P10 for 10 threads.
   //
-  // It's possible for user to specify the -c option multiple times on the
+  // It's possible for user to specify the -P option multiple times on the
   // command line, although it isn't particularly useful.  This method scans
   // through multiples until it finds one with a number appended and uses
   // that.  If none have a number it just returns 0.
@@ -1141,6 +1190,11 @@ object Runner {
           }
           else
             throw new IllegalArgumentException("-k needs to be followed by a host name and port number" )
+        case "-C" =>
+          if (it.hasNext)
+            it.next // scroll past the reporter class
+          else
+            throw new IllegalArgumentException("-C needs to be followed by a reporter class name arg: ")
         case arg: String =>
           throw new IllegalArgumentException("An arg started with an invalid character string: " + arg)
       }

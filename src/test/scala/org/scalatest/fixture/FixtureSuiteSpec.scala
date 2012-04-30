@@ -20,7 +20,6 @@ import collection.immutable.TreeSet
 import events.TestFailed
 import events.TestSucceeded
 import mock.MockitoSugar
-import org.scalatest.exceptions._
 
 class FixtureSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with SharedHelpers {
 

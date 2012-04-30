@@ -19,7 +19,6 @@ import events._
 import Suite.formatterForSuiteAborted
 import Suite.formatterForSuiteCompleted
 import Suite.formatterForSuiteStarting
-import org.scalatest.exceptions._
 
 /*
 java -Dorg.scalatest.BigSuite.size=5 -Dorg.scalatest.SuiteCompletedStatusReporter.max=100 -classpath scalatest-1.0-CLICKDEMO.jar:/usr/artima/scala/lib/scala-library.jar org.scalatest.tools.Runner -c4 -p "scalatest-1.0-CLICKDEMO-tests.jar" -oNCXEHLO -r org.scalatest.SuiteCompletedStatusReporter -s org.scalatest.BigSuite -s org.scalatest.BigSuite -s org.scalatest.BigSuite -s org.scalatest.BigSuite -s org.scalatest.BigSuite

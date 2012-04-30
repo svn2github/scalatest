@@ -19,7 +19,6 @@ package prop
 import matchers.ShouldMatchers
 
 import Configuration._
-import org.scalatest.exceptions._
 
 class PropertyCheckConfigSuite extends FunSuite with ShouldMatchers {
 

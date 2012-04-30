@@ -17,7 +17,6 @@ package org.scalatest
 
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.events._
-import org.scalatest.exceptions._
 
 class FunSpecSuite extends FunSuite with SharedHelpers {
 

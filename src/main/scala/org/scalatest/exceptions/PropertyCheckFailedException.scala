@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 package org.scalatest
-package prop
-
-import org.scalatest.exceptions._
+package exceptions
 
 /**
  * Exception that indicates a property check failed.
@@ -24,6 +22,7 @@ import org.scalatest.exceptions._
  * @param messageFun a function that returns a detail message (not optional) for this <code>PropertyCheckFailedException</code>.
  * @param cause an optional cause, the <code>Throwable</code> that caused this <code>PropertyCheckFailedException</code> to be thrown.
  * @param failedCodeStackDepthFun a function that returns the depth in the stack trace of this exception at which the line of test code that failed resides.
+ * @param payload an optional payload, which ScalaTest will include in a resulting <code>TestFailed</code> event
  * @param undecoratedMessage just a short message that has no redundancy with args, labels, etc. The regular "message" has everything in it.
  * @param args the argument values that caused the property check to fail.
  * @param optionalArgNames an optional list of string names for the arguments.
@@ -32,15 +31,30 @@ import org.scalatest.exceptions._
  *
  * @author Bill Venners
  */
-class PropertyCheckFailedException(
+abstract class PropertyCheckFailedException(
   messageFun: StackDepthException => String,
   cause: Option[Throwable],
   failedCodeStackDepthFun: StackDepthException => Int,
+  payload: Option[Any],
   val undecoratedMessage: String,
   val args: List[Any],
   optionalArgNames: Option[List[String]]
-) extends TestFailedException(sde => Some(messageFun(sde)), cause, failedCodeStackDepthFun) {
+) extends TestFailedException(sde => Some(messageFun(sde)), cause, failedCodeStackDepthFun, payload) {
 
+  /**
+   * This constructor has been deprecated and will be removed in a future version of ScalaTest. Please
+   * use the primary constructor instead.
+   */
+  @deprecated("Please use the primary constructor instead.")
+  def this(
+    messageFun: StackDepthException => String,
+    cause: Option[Throwable],
+    failedCodeStackDepthFun: StackDepthException => Int,
+    undecoratedMessage: String,
+    args: List[Any],
+    optionalArgNames: Option[List[String]]
+   ) = this(messageFun, cause, failedCodeStackDepthFun, None, undecoratedMessage, args, optionalArgNames)
+  
   if (messageFun == null) throw new NullPointerException("messageFun was null")
 
   if (cause == null) throw new NullPointerException("cause was null")

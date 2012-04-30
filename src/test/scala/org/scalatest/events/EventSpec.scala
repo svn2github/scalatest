@@ -5,7 +5,6 @@ import org.scalatest.prop.Checkers
 import org.scalacheck._
 import Arbitrary._
 import Prop._
-import org.scalatest.exceptions._
 
 class EventSpec extends FunSpec with Checkers {
 /*

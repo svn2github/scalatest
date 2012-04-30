@@ -17,7 +17,6 @@ package org.scalatest.suiteprop
 
 import org.scalatest._
 import prop.TableDrivenPropertyChecks
-import org.scalatest.exceptions._
 
 class OnlyFirstTestExecutedOnCreationExamples extends PathSuiteExamples {
 

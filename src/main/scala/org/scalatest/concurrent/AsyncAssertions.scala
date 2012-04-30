@@ -18,7 +18,8 @@ package org.scalatest.concurrent
 import org.scalatest._
 import Assertions.fail
 import time.{Second, Span}
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.NotAllowedException
+import org.scalatest.exceptions.TestFailedException
 
 /**
  * Trait that facilitates performing assertions outside the main test thread, such as assertions in callback methods
@@ -48,7 +49,7 @@ import org.scalatest.exceptions._
  * <p>
  * The <code>await</code> call will block until it either receives a report of a failed assertion from a different thread, at which
  * point it will complete abruptly with the same exception, or until it is <em>dismissed</em> by a different thread (or threads), at
- * which point it will return normally. You an optionally specify a timeout, interval (the time <code>await</code> sleeps between checks), and/or a number
+ * which point it will return normally. You can optionally specify a timeout, interval (the time <code>await</code> sleeps between checks), and/or a number
  * of dismissals to wait for. Here's an example:
  * </p>
  *
@@ -194,7 +195,7 @@ trait AsyncAssertions extends TimeoutConfiguration {
    * <p>
    * The <code>await</code> call will block until it either receives a report of a failed assertion from a different thread, at which
    * point it will complete abruptly with the same exception, or until it is <em>dismissed</em> by a different thread (or threads), at
-   * which point it will return normally. You an optionally specify a timeout, interval (the time <code>await</code> sleeps between checks), and/or a number
+   * which point it will return normally. You can optionally specify a timeout, interval (the time <code>await</code> sleeps between checks), and/or a number
    * of dismissals to wait for. Here's an example:
    * </p>
    *

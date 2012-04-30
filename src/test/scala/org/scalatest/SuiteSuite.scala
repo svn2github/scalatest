@@ -17,9 +17,18 @@ package org.scalatest
 
 import scala.collection.immutable.TreeSet
 import org.scalatest.events._
-import org.scalatest.exceptions._
+import java.lang.annotation.AnnotationFormatError
+import java.nio.charset.CoderMalfunctionError
+import javax.xml.parsers.FactoryConfigurationError
+import javax.xml.transform.TransformerFactoryConfigurationError
+import java.awt.AWTError
 
-class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers {
+/* Uncomment after remove type aliases in org.scalatest package object
+import org.scalatest.exceptions.NotAllowedException
+import org.scalatest.exceptions.TestFailedException
+*/
+
+class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with SeveredStackTraces {
 
   def testNamesAndGroupsMethodsDiscovered() {
 
@@ -549,13 +558,39 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers {
     }
     
     val simpleSuite = new SimpleSuite()
-    simpleSuite.checkChosenStyles(Map.empty)
-    simpleSuite.checkChosenStyles(Map("org.scalatest.ChosenStyles" -> Set("Suite")))
-    intercept[NotAllowedException] {
-      simpleSuite.checkChosenStyles(Map("org.scalatest.ChosenStyles" -> Set("FunSpec")))
-    }
+    simpleSuite.run(None, SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker)
+    simpleSuite.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker)
+    val caught =
+      intercept[NotAllowedException] {
+        simpleSuite.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSpec")), None, new Tracker)
+      }
+    import OptionValues._
+    assert(caught.message.value === Resources("notTheChosenStyle", "org.scalatest.Suite", "org.scalatest.FunSpec"))
+    val caught2 =
+      intercept[NotAllowedException] {
+        simpleSuite.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSpec", "org.scalatest.FreeSpec")), None, new Tracker)
+      }
+    assert(caught2.message.value === Resources("notOneOfTheChosenStyles", "org.scalatest.Suite", Suite.makeListForHumans(Vector("org.scalatest.FunSpec", "org.scalatest.FreeSpec"))))
+    val caught3 =
+      intercept[NotAllowedException] {
+        simpleSuite.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSpec", "org.scalatest.FreeSpec", "org.scalatest.FlatSpec")), None, new Tracker)
+      }
+    assert(caught3.message.value === Resources("notOneOfTheChosenStyles", "org.scalatest.Suite", Suite.makeListForHumans(Vector("org.scalatest.FunSpec", "org.scalatest.FreeSpec", "org.scalatest.FlatSpec"))))
   }
-  
+
+  def testMakeListForHumans() {
+    assert(Suite.makeListForHumans(Vector.empty) === "<empty list>")
+    assert(Suite.makeListForHumans(Vector("")) === "\"\"")
+    assert(Suite.makeListForHumans(Vector("   ")) === "\"   \"")
+    assert(Suite.makeListForHumans(Vector("FunSuite FunSpec")) === "\"FunSuite FunSpec\"")
+    assert(Suite.makeListForHumans(Vector("hi")) === "hi")
+    assert(Suite.makeListForHumans(Vector("ho")) === "ho")
+    assert(Suite.makeListForHumans(Vector("hi", "ho")) === Resources("leftAndRight", "hi", "ho"))
+    assert(Suite.makeListForHumans(Vector("fee", "fie", "foe", "fum")) === "fee, fie, " + Resources("leftCommaAndRight", "foe", "fum"))
+    assert(Suite.makeListForHumans(Vector("A", "stitch", "in", "time", "saves", "nine")) === "A, stitch, in, time, " + Resources("leftCommaAndRight", "saves", "nine"))
+    assert(Suite.makeListForHumans(Vector("fee ", "fie", " foe", "fum")) === "\"fee \", fie, " + Resources("leftCommaAndRight", "\" foe\"", "fum"))
+  }
+
   def testStackDepth() {
     class TestSpec extends Suite {
       def testFailure() {
@@ -568,6 +603,22 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers {
     assert(rep.testFailedEventsReceived.size === 1)
     assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "SuiteSuite.scala")
     assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 8)
+  }
+
+  def testAnErrorThatShouldCauseAnAbort() {
+    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new AnnotationFormatError("oops")) }
+    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new AWTError("ouch")) }
+    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new CoderMalfunctionError(new Exception)) }
+    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new FactoryConfigurationError) }
+    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new LinkageError) }
+    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new ThreadDeath) }
+    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new TransformerFactoryConfigurationError) }
+    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new VirtualMachineError {}) }
+    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new OutOfMemoryError) }
+    expect(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
+    expect(false) { Suite.anErrorThatShouldCauseAnAbort(new RuntimeException) }
+    expect(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
+    expect(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
   }
 }
 

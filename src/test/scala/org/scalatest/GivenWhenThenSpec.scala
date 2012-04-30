@@ -16,7 +16,6 @@
 package org.scalatest
 
 import events.InfoProvided
-import org.scalatest.exceptions._
 
 class GivenWhenThenSpec extends FunSpec with SharedHelpers {
   describe("The GivenWhenThen trait") {

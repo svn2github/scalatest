@@ -17,7 +17,11 @@ package org.scalatest
 
 // elements
 import org.scalatest.events._
-import org.scalatest.exceptions._
+/* Uncomment after remove type aliases in org.scalatest package object
+import org.scalatest.exceptions.DuplicateTestNameException
+import org.scalatest.exceptions.TestRegistrationClosedException
+import org.scalatest.exceptions.TestFailedException
+*/
 
 class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
 

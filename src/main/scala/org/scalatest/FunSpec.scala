@@ -1678,5 +1678,5 @@ trait FunSpec extends Suite { thisSuite =>
   /**
    * Suite style name.
    */
-  final override def styleName: String = "FunSpec"
+  final override val styleName: String = "org.scalatest.FunSpec"
 }

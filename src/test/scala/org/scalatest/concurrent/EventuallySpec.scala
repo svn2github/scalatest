@@ -20,7 +20,8 @@ import Eventually._
 import matchers.ShouldMatchers
 import SharedHelpers.thisLineNumber
 import time.{Millisecond, Span, Millis}
-import org.scalatest.exceptions._
+import org.scalatest.exceptions.TestFailedException
+import org.scalatest.exceptions.TestPendingException
 
 class EventuallySpec extends FunSpec with ShouldMatchers with OptionValues with SeveredStackTraces {
 

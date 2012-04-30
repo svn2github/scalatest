@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.ConcurrentModificationException
 import org.scalatest.events._
 import Suite.anErrorThatShouldCauseAnAbort
-import org.scalatest.exceptions._
 
 /**
  * A suite of tests in which each test represents one <em>scenario</em> of a <em>feature</em>. 
@@ -1798,5 +1797,5 @@ trait FeatureSpec extends Suite { thisSuite =>
   /**
    * Suite style name.
    */
-  final override def styleName: String = "FeatureSpec"
+  final override val styleName: String = "org.scalatest.FeatureSpec"
 }

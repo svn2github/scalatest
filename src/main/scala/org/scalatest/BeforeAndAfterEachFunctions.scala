@@ -16,7 +16,6 @@
 package org.scalatest
 
 import java.util.concurrent.atomic.AtomicReference
-import org.scalatest.exceptions._
 
 /**
  * <b>Trait <code>BeforeAndAfterEachFunctions</code> has been deprecated and will be removed in a future version of ScalaTest. Please

@@ -269,7 +269,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
   /**
    * Suite style name.
    */
-  final override def styleName: String = "JUnitSuite"
+  final override val styleName: String = "JUnitSuite"
 
 // verifySomething(org.scalatest.junit.helpers.HappySuite)
 // Description.displayName of a test report has the form <testMethodName>(<suiteClassName>)

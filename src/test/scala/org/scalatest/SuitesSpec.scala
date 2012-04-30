@@ -15,9 +15,11 @@
  */
 package org.scalatest
 
-import org.scalatest.exceptions._
+/* Uncomment after remove type aliases in org.scalatest package object
+import org.scalatest.exceptions.NotAllowedException
+*/
 
-class SuitesSpec extends FunSpec {
+class SuitesSpec extends FunSpec with SharedHelpers {
 
   val a = new Suite {}
   val b = new FunSuite {}
@@ -39,23 +41,31 @@ class SuitesSpec extends FunSpec {
         new Suites(aNull: _*)
       }
     }
-    it("should check for chosen styles in checkChosenStyles when testNames is not empty") {
+    it("should not care about chosenStyles if it contains no tests directly and only contains nested suites with no tests") {
       val f = new Suites(a, b, c, d, e)
-      f.checkChosenStyles(Map.empty)
-      f.checkChosenStyles(Map("org.scalatest.ChosenStyles" -> Set("FunSuite")))
-      
-      class SuitesWithTest(suitesToNest: Suite*) extends Suites(suitesToNest.toList: _*) {
+      f.run(None, SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker)
+      f.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("FunSuite")), None, new Tracker)
+    }
+
+    it("should care about chosenStyles if it contains tests directly") {
+
+      class SuitesWithSuiteStyleTests(suitesToNest: Suite*) extends Suites(suitesToNest.toList: _*) {
         def testMethod1() {}
+        def testMethod2() {}
       }
-      
-      val g = new SuitesWithTest(a, b, c, d, e)
-      g.checkChosenStyles(Map.empty)
-      g.checkChosenStyles(Map("org.scalatest.ChosenStyles" -> Set("Suites")))
+
+      val g = new SuitesWithSuiteStyleTests(a, b, c, d, e)
+      // OK if no chosen styles specified
+      g.run(None, SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker)
+      // OK if chosen styles is Suite, because that's the style of *tests* written in this Suites
+      g.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker)
       intercept[NotAllowedException] {
-        g.checkChosenStyles(Map("org.scalatest.ChosenStyles" -> Set("FunSuite")))
+        // Should not allow if chosen styles is FunSuite, because Suite is the style of *tests* written in this Suites
+        g.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSuite")), None, new Tracker)
       }
     }
   }
+
   describe("Specs") {
     it("should return the passed suites from nestedSuites") {
       val f = new Specs(a, b, c, d, e)
@@ -70,20 +80,27 @@ class SuitesSpec extends FunSpec {
         new Specs(aNull: _*)
       }
     }
-    it("should check for chosen styles in checkChosenStyles when testNames is not empty") {
+    it("should not care about chosenStyles if it contains no tests directly and only contains nested suites with no tests") {
       val f = new Specs(a, b, c, d, e)
-      f.checkChosenStyles(Map.empty)
-      f.checkChosenStyles(Map("org.scalatest.ChosenStyles" -> Set("FunSuite")))
-      
-      class SpecssWithTest(suitesToNest: Suite*) extends Specs(suitesToNest.toList: _*) {
+      f.run(None, SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker)
+      f.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSuite")), None, new Tracker)
+    }
+
+    it("should care about chosenStyles if it contains tests directly") {
+
+      class SpecsWithSuiteStyleTests(suitesToNest: Suite*) extends Specs(suitesToNest.toList: _*) {
         def testMethod1() {}
+        def testMethod2() {}
       }
-      
-      val g = new SpecssWithTest(a, b, c, d, e)
-      g.checkChosenStyles(Map.empty)
-      g.checkChosenStyles(Map("org.scalatest.ChosenStyles" -> Set("Specs")))
+
+      val g = new SpecsWithSuiteStyleTests(a, b, c, d, e)
+      // OK if no chosen styles specified
+      g.run(None, SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker)
+      // OK if chosen styles is Suite, because that's the style of *tests* written in this Specs
+      g.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker)
       intercept[NotAllowedException] {
-        g.checkChosenStyles(Map("org.scalatest.ChosenStyles" -> Set("FunSuite")))
+        // Should not allow if chosen styles is FunSuite, because Suite is the style of *tests* written in this Specs
+        g.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSuite")), None, new Tracker)
       }
     }
   }

@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest.prop
+package org.scalatest.exceptions
 
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.SharedHelpers.thisLineNumber
-import org.scalatest.exceptions._
+import org.scalatest.prop._
+/* Uncomment this after removing the deprecated type aliases in the org.scalatest.prop package object
+import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
+*/
 
 class TableDrivenPropertyCheckFailedExceptionSpec extends FunSpec with ShouldMatchers with TableDrivenPropertyChecks {
 
@@ -74,20 +77,20 @@ class TableDrivenPropertyCheckFailedExceptionSpec extends FunSpec with ShouldMat
 
     it("should return the cause in both cause and getCause") {
       val theCause = new IllegalArgumentException("howdy")
-      val tfe = new TableDrivenPropertyCheckFailedException(sde => "doody", Some(theCause), sde => 3, "howdy", List(1, 2, 3), List("a", "b", "c"), 7)
+      val tfe = new TableDrivenPropertyCheckFailedException(sde => "doody", Some(theCause), sde => 3, None, "howdy", List(1, 2, 3), List("a", "b", "c"), 7)
       assert(tfe.cause.isDefined)
       assert(tfe.cause.get === theCause)
       assert(tfe.getCause == theCause)
     }
 
     it("should return None in cause and null in getCause if no cause") {
-      val tfe = new TableDrivenPropertyCheckFailedException(sde => "doody", None, sde => 3, "howdy", List(1, 2, 3), List("a", "b", "c"), 7)
+      val tfe = new TableDrivenPropertyCheckFailedException(sde => "doody", None, sde => 3, None, "howdy", List(1, 2, 3), List("a", "b", "c"), 7)
       assert(tfe.cause.isEmpty)
       assert(tfe.getCause == null)
     }
 
     it("should be equal to itself") {
-      val tfe = new TableDrivenPropertyCheckFailedException(sde => "doody", None, sde => 3, "howdy", List(1, 2, 3), List("a", "b", "c"), 7)
+      val tfe = new TableDrivenPropertyCheckFailedException(sde => "doody", None, sde => 3, None, "howdy", List(1, 2, 3), List("a", "b", "c"), 7)
       assert(tfe equals tfe)
     }
   }
