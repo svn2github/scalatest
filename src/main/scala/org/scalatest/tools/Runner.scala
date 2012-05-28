@@ -504,6 +504,8 @@ object Runner {
   private val RUNNER_JFRAME_START_Y: Int = 100
   
   private val SELECTED_TAG = "org.scalatest.Selected"
+  
+  @volatile private[scalatest] var spanScaleFactor: Double = 1.0
 
   private final val DefaultNumFilesToArchive = 2
 
@@ -642,7 +644,8 @@ object Runner {
       wildcardArgsList,
       testNGArgsList,
       suffixes, 
-      chosenStyles
+      chosenStyles, 
+      spanScaleFactors
     ) = parseArgs(args)
 
     val fullReporterConfigurations: ReporterConfigurations =
@@ -664,6 +667,7 @@ object Runner {
     val wildcardList: List[String] = parseSuiteArgsIntoNameStrings(wildcardArgsList, "-w")
     val testNGList: List[String] = parseSuiteArgsIntoNameStrings(testNGArgsList, "-b")
     val chosenStyleSet: Set[String] = parseChosenStylesIntoChosenStyleSet(chosenStyles, "-y")
+    spanScaleFactor = parseSpanScaleFactor(spanScaleFactors, "-F")
 
     // If there's a graphic reporter, we need to leave it out of
     // reporterSpecs, because we want to pass all reporterSpecs except
@@ -692,7 +696,11 @@ object Runner {
     
     if (propertiesMap.isDefinedAt("org.scalatest.ChosenStyles"))
       throw new IllegalArgumentException("Property name 'org.scalatest.ChosenStyles' is used by ScalaTest, please choose other property name.")
-    val configMap = propertiesMap + ("org.scalatest.ChosenStyles" -> chosenStyleSet)
+    val configMap = 
+      if (chosenStyleSet.isEmpty)
+        propertiesMap
+      else
+        propertiesMap + ("org.scalatest.ChosenStyles" -> chosenStyleSet)
 
     fullReporterConfigurations.graphicReporterConfiguration match {
       case Some(GraphicReporterConfiguration(configSet)) => {
@@ -767,7 +775,8 @@ object Runner {
         s.startsWith("-t") ||
         s.startsWith("-z") ||
         s.startsWith("-q") ||
-        s.startsWith("-Q")
+        s.startsWith("-Q") ||
+        s.startsWith("-F")
       ) {
         if (it.hasNext)
           it.next
@@ -834,6 +843,7 @@ object Runner {
     val testNGXMLFiles = new ListBuffer[String]()
     val suffixes = new ListBuffer[String]()
     val chosenStyles = new ListBuffer[String]()
+    val spanScaleFactor = new ListBuffer[String]()
 
     val it = args.iterator.buffered
     while (it.hasNext) {
@@ -988,7 +998,13 @@ object Runner {
       }
       else if (s.startsWith("-y")) {
         chosenStyles += s
-        chosenStyles += it.next()
+        if (it.hasNext)
+          chosenStyles += it.next()
+      }
+      else if (s.startsWith("-F")) {
+        spanScaleFactor += s
+        if (it.hasNext)
+          spanScaleFactor += it.next()
       }
       else {
         throw new IllegalArgumentException("Unrecognized argument: " + s)
@@ -1008,7 +1024,8 @@ object Runner {
       wildcard.toList,
       testNGXMLFiles.toList,
       genSuffixesPattern(suffixes.toList), 
-      chosenStyles.toList
+      chosenStyles.toList, 
+      spanScaleFactor.toList
     )
   }
 
@@ -1537,6 +1554,34 @@ object Runner {
         throw new IllegalArgumentException("Last element must be a style name, not a " + dashArg + ".")
     }
     lb.toSet
+  }
+  
+  private[scalatest] def parseSpanScaleFactor(args: List[String], dashArg: String) = {
+    val it = args.iterator
+    val lb = new ListBuffer[Double]()
+    while (it.hasNext) {
+      val dash = it.next
+      if (dash != dashArg)
+        throw new IllegalArgumentException("Every other element, starting with the first, must be " + dashArg)
+      if (it.hasNext) {
+        val spanString = it.next
+        try {
+          lb += spanString.toDouble
+        }
+        catch {
+          case e: NumberFormatException =>
+            throw new IllegalArgumentException(dashArg + " must be followed by a number, but '" + spanString + "' is not a number.")
+        }
+      }
+      else
+        throw new IllegalArgumentException("Last element must be a number, not a " + dashArg + ".")
+    }
+    if (lb.size == 0)
+      1.0
+    else if (lb.size == 1)
+      lb(0)
+    else
+      throw new IllegalArgumentException("Only one -F can be specified.")
   }
 
   //

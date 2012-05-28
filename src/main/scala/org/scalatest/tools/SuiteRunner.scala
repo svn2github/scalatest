@@ -24,7 +24,7 @@ import Suite.formatterForSuiteCompleted
 import Suite.formatterForSuiteAborted
 import org.scalatest.exceptions.NotAllowedException
 
-private[scalatest] class SuiteRunner(suite: Suite, dispatch: DispatchReporter, stopper: Stopper, filter: Filter,
+private[scalatest] class SuiteRunner(suite: Suite, dispatch: Reporter, stopper: Stopper, filter: Filter,
     propertiesMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) extends Runnable {
 
   private val stopRequested = stopper

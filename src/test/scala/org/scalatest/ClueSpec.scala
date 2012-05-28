@@ -27,9 +27,9 @@ import org.scalatest.exceptions.TestFailedException
 import org.scalatest.exceptions.ModifiableMessage
 */
 
-class ClueSpec extends FlatSpec with ShouldMatchers with TableDrivenPropertyChecks {
+class ClueSpec extends FlatSpec with ShouldMatchers with TableDrivenPropertyChecks with SeveredStackTraces {
 
-  def examples: TableFor1[Throwable with ModifiableMessage[_]] =
+  def examples: TableFor1[Throwable with ModifiableMessage[_ <: StackDepth]] =
     Table(
       "exception",
       new TestFailedException("message", 3),
@@ -54,7 +54,7 @@ class ClueSpec extends FlatSpec with ShouldMatchers with TableDrivenPropertyChec
           case Some(msg) => Some(clue + " " + msg)
           case None => Some(clue)
         }
-      e.modifyMessage(fun).asInstanceOf[StackDepth].message.get should be ("clue message")
+      e.modifyMessage(fun).message.get should be ("clue message")
     }
   }
 
@@ -152,6 +152,21 @@ class ClueSpec extends FlatSpec with ShouldMatchers with TableDrivenPropertyChec
       caught.message should be ('defined)
       caught.message.get should equal ("List(1, 2, 3) message")
       caught.getClass should be theSameInstanceAs (e.getClass)
+    }
+  }
+
+  it should "pass the last value back" in {
+    val result = withClue("hi") { 3 }
+    result should equal (3)
+  }
+
+  it should "throw NPE if a null clue object is passed" in {
+    forAll (examples) { e =>
+      intercept[NullPointerException] {
+        withClue (null) {
+          throw e
+        }
+      }
     }
   }
 }

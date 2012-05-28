@@ -28,8 +28,8 @@ import org.scalatest.Resources
  * the <code>timeLimit</code> field of trait
  * <a href="../concurrent/TimeLimitedTests.html"><code>TimeLimitedTests</code></a>, and
  * the timeouts of traits <a href="../concurrent/Eventually.html"><code>Eventually</code></a>,
- * <a href="../concurrent/Futures.html"><code>Futures</code></a>, and
- * <a href="../concurrent/Waiter.html"><code>Waiter</code></a>. Here's an example:
+ * , and
+ * <a href="../concurrent/AsyncAssertions.html"><code>AsyncAssertions</code></a>. Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
@@ -389,6 +389,63 @@ final class Span private (totNanos: Long, lengthString: String, unitsResource: S
   lazy val nanosPart: Int = (totalNanos % 1000000).toInt
 
   /**
+   * Returns a <code>Span</code> representing this <code>Span</code> <em>scaled</em> by the passed factor.
+   *
+   * <p>
+   * The passed <code>factor</code> can be any positive number or zero, including fractional numbers. A number
+   * greater than one will scale the <code>Span</code> up to a larger value. A fractional number will scale it
+   * down to a smaller value. A factor of 1.0 will cause the exact same <code>Span</code> to be returned. A
+   * factor of zero will cause <code>Span.ZeroLength</code> to be returned.
+   * </p>
+   *
+   * <p>
+   * If overflow occurs, <code>Span.Max</code> will be returned. If underflow occurs, <code>Span.ZeroLength</code>
+   * will be returned.
+   * </p>
+   *
+   * @throws IllegalArgumentException if the passed value is less than zero
+   */
+  def scaledBy(factor: Double) = {
+    require(factor >= 0.0, "factor was less than zero")
+    factor match {
+      case 0.0 => Span.ZeroLength
+      case 1.0 => this
+      case _ =>
+        val newNanos: Double = totNanos * factor
+        newNanos match {
+          case n if n > Long.MaxValue => Span.Max
+          case 1 => Span(1, Nanosecond)
+          case n if n < 1000 =>
+            if (n.longValue == n) Span(n.longValue, Nanoseconds) else Span(n, Nanoseconds)
+          case 1000 => Span(1, Microsecond)
+          case n if n < 1000 * 1000 =>
+            val v = n / 1000
+            if (v.longValue == v) Span(v.longValue, Microseconds) else Span(v, Microseconds)
+          case 1000000 => Span(1, Millisecond)
+          case n if n < 1000 * 1000 * 1000 =>
+            val v = n / 1000 / 1000
+            if (v.longValue == v) Span(v.longValue, Millis) else Span(v, Millis)
+          case 1000000000L => Span(1, Second)
+          case n if n < 1000L * 1000 * 1000 * 60 =>
+            val v = n / 1000 / 1000 / 1000
+            if (v.longValue == v) Span(v.longValue, Seconds) else Span(v, Seconds)
+          case 60000000000L => Span(1, Minute)
+          case n if n < 1000L * 1000 * 1000 * 60 * 60 =>
+            val v = n / 1000 / 1000 / 1000 / 60
+            if (v.longValue == v) Span(v.longValue, Minutes) else Span(v, Minutes)
+          case 3600000000000L => Span(1, Hour)
+          case n if n < 1000L * 1000 * 1000 * 60 * 60 * 24 =>
+            val v = n / 1000 / 1000 / 1000 / 60 / 60
+            if (v.longValue == v) Span(v.longValue, Hours) else Span(v, Hours)
+          case 86400000000000L => Span(1, Day)
+          case n =>
+            val v = n / 1000 / 1000 / 1000 / 60 / 60 / 24
+            if (v.longValue == v) Span(v.longValue, Days) else Span(v, Days)
+        }
+    }
+  }
+
+  /**
    * Returns a localized string suitable for presenting to a user that describes the time span represented
    * by this <code>Span</code>.
    *
@@ -509,18 +566,25 @@ object Span {
   def apply(length: Double, units: Units): Span = new Span(length, units)
 
   /**
-   * Returns a <code>Span</code> with the maximum expressible value, <code>Span(Long.MaxValue, Nanoseconds)</code>,
+   * A <code>Span</code> with the maximum expressible value, <code>Span(Long.MaxValue, Nanoseconds)</code>,
    * which is approximately 292 years.
    *
    * <p>
-   * One use case for this factory method is to help convert a duration concept from a different library to
+   * One use case for this <code>Span</code> value is to help convert a duration concept from a different library to
    * <code>Span</code> when that library's duration concept includes a notion of infinite durations. An infinite
-   * duration can be converted to <code>Span.max</code>.
+   * duration can be converted to <code>Span.Max</code>.
    * </p>
    *
    * @return a <code>Span</code> with the maximum expressible value, <code>Long.MaxValue</code> nanoseconds.
    */
-  def max: Span = new Span(Long.MaxValue, Nanoseconds)
+  val Max: Span = new Span(Long.MaxValue.toDouble / 1000 / 1000 / 1000 / 60 / 60 / 24, Days)
+
+  /**
+   * A <code>Span</code> with representing a zero-length span of time.
+   *
+   * @return a zero-length <code>Span</code>.
+   */
+  val ZeroLength: Span = new Span(0, Nanoseconds)
 
   private def totalNanosForLongLength(length: Long, units: Units): Long = {
 

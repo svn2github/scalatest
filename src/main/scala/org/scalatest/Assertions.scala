@@ -918,8 +918,12 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * <pre>
    * (Employee's name was Bob Jones) Expected IllegalArgumentException to be thrown, but no exception was thrown
    * </pre>
+   *
+   * @throws NullPointerException if the passed <code>clue</code> is <code>null</code>
   */
-  def withClue(clue: Any)(fun: => Unit) {
+  def withClue[T](clue: Any)(fun: => T): T = {
+    if (clue == null)
+      throw new NullPointerException("clue was null")
     def prepend(currentMessage: Option[String]) =
       currentMessage match {
         case Some(msg) =>

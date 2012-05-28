@@ -264,7 +264,6 @@ class ConductorFixtureSuite extends fixture.FunSuite with ConductorFixture with 
     whenFinished {1 should be (1)}
   }
 
-
   // TODO: I don't understand this test. Josh, can you clarify?
   test("top level thread calls result in a running thread that is blocked such that it doesn't execute " +
        "prior to conduct being called.") { conductor => import conductor._

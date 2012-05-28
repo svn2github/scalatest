@@ -17,9 +17,9 @@ package org.scalatest.concurrent
 
 import org.scalatest._
 import Assertions.fail
-import time.{Second, Span}
 import org.scalatest.exceptions.NotAllowedException
 import org.scalatest.exceptions.TestFailedException
+import time.{Nanoseconds, Second, Span}
 
 /**
  * Trait that facilitates performing assertions outside the main test thread, such as assertions in callback methods
@@ -27,14 +27,14 @@ import org.scalatest.exceptions.TestFailedException
  *
  * <p>
  * Trait <code>AsyncAssertions</code> provides a <code>Waiter</code> class that you can use to orchestrate the inter-thread
- * communication required to perform assertions outside the main test thread, and means to configure it.
+ * communication required to perform assertions outside the main test thread, and a means to configure it.
  * </p>
  *
  * <p>
  * To use <code>Waiter</code>, create an instance of it in the main test thread:
  * </p>
  *
- * <pre class=stHighlight">
+ * <pre class="stHighlight">
  * val w = new Waiter // Do this in the main test thread
  * </pre>
  *
@@ -49,28 +49,28 @@ import org.scalatest.exceptions.TestFailedException
  * <p>
  * The <code>await</code> call will block until it either receives a report of a failed assertion from a different thread, at which
  * point it will complete abruptly with the same exception, or until it is <em>dismissed</em> by a different thread (or threads), at
- * which point it will return normally. You can optionally specify a timeout, interval (the time <code>await</code> sleeps between checks), and/or a number
+ * which point it will return normally. You can optionally specify a timeout and/or a number
  * of dismissals to wait for. Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
  * import org.scalatest.time.SpanSugar._
  *
- * w.await(timeout(10 millis), dismissals(2))
+ * w.await(timeout(300 millis), dismissals(2))
  * </pre>
  *
  * <p>
- * The default value for <code>timeout</code>, provided via an implicit <code>TimeoutConfig</code> parameter, is 1 second. The default value for
+ * The default value for <code>timeout</code>, provided via an implicit <code>PatienceConfig</code> parameter, is 150 milliseconds. The default value for
  * <code>dismissals</code> is 1. The <code>await</code> method will block until either it is dismissed a sufficient number of times by other threads or
  * an assertion fails in another thread. Thus if you just want to perform assertions in just one other thread, only that thread will be
  * performing a dismissal, so you can use the default value of 1 for <code>dismissals</code>.
  * </p>
  *
  * <p>
- * <code>Waiter</code> contains several overloaded forms of <code>await</code>, most of which take an implicit
- * <code>TimeoutConfig</code> parameter. To change the default timeout configuration, override or hide
+ * <code>Waiter</code> contains four overloaded forms of <code>await</code>, two of which take an implicit
+ * <code>PatienceConfig</code> parameter. To change the default timeout configuration, override or hide
  * (if you imported the members of <code>AsyncAssertions</code> companion object instead of mixing in the
- * trait) <code>timeoutConfig</code> with a new one that returns your desired configuration.
+ * trait) <code>patienceConfig</code> with a new one that returns your desired configuration.
  * </p>
  *
  * <p>
@@ -152,7 +152,7 @@ import org.scalatest.exceptions.TestFailedException
  *
  * @author Bill Venners
  */
-trait AsyncAssertions extends TimeoutConfiguration {
+trait AsyncAssertions extends PatienceConfiguration {
 
   /**
    * A configuration parameter that specifies the number of dismissals to wait for before returning normally
@@ -195,28 +195,28 @@ trait AsyncAssertions extends TimeoutConfiguration {
    * <p>
    * The <code>await</code> call will block until it either receives a report of a failed assertion from a different thread, at which
    * point it will complete abruptly with the same exception, or until it is <em>dismissed</em> by a different thread (or threads), at
-   * which point it will return normally. You can optionally specify a timeout, interval (the time <code>await</code> sleeps between checks), and/or a number
+   * which point it will return normally. You can optionally specify a timeout and/or a number
    * of dismissals to wait for. Here's an example:
    * </p>
    *
    * <pre class="stHighlight">
    * import org.scalatest.time.SpanSugar._
    *
-   * w.await(timeout(10 millis), dismissals(2))
+   * w.await(timeout(300 millis), dismissals(2))
    * </pre>
    *
    * <p>
-   * The default value for <code>timeout</code>, provided via an implicit <code>TimeoutConfig</code> parameter, is 1 second. The default value for
+   * The default value for <code>timeout</code>, provided via an implicit <code>PatienceConfig</code> parameter, is 150 milliseconds. The default value for
    * <code>dismissals</code> is 1. The <code>await</code> method will block until either it is dismissed a sufficient number of times by other threads or
    * an assertion fails in another thread. Thus if you just want to perform assertions in just one other thread, only that thread will be
    * performing a dismissal, so you can use the default value of 1 for <code>dismissals</code>.
    * </p>
    *
    * <p>
-   * <code>Waiter</code> contains several overloaded forms of <code>await</code>, most of which take an implicit
-   * <code>TimeoutConfig</code> parameter. To change the default timeout configuration, override or hide
+   * <code>Waiter</code> contains four overloaded forms of <code>await</code>, two of which take an implicit
+   * <code>PatienceConfig</code> parameter. To change the default timeout configuration, override or hide
    * (if you imported the members of <code>AsyncAssertions</code> companion object instead of mixing in the
-   * trait) <code>timeoutConfig</code> with a new one that returns your desired configuration.
+   * trait) <code>patienceConfig</code> with a new one that returns your desired configuration.
    * </p>
    *
    * <p>
@@ -306,7 +306,7 @@ trait AsyncAssertions extends TimeoutConfiguration {
     @volatile private var thrown: Option[Throwable] = None
 
     private def setThrownIfEmpty(t: Throwable) {
-      synchronized {
+      synchronized {      // Why is this synchronized?
         if (thrown.isEmpty) thrown = Some(t)
       }
     }
@@ -332,6 +332,9 @@ trait AsyncAssertions extends TimeoutConfiguration {
       }
       catch { // Exceptions after the first are swallowed (need to get to dismissals later)
         case t: Throwable => setThrownIfEmpty(t)
+        synchronized {
+          notifyAll()
+        }
       }
     }
 
@@ -356,15 +359,22 @@ trait AsyncAssertions extends TimeoutConfiguration {
      * @param timeout the number of milliseconds timeout, or -1 to indicate no timeout (default is -1)
      * @param dismissals the number of dismissals to wait for (default is 1)
      */
-    private def awaitImpl(timeout: Span, interval: Span, dismissals: Int = 1) {
+    private def awaitImpl(timeout: Span, dismissals: Int = 1) {
       if (Thread.currentThread != creatingThread)
         throw new NotAllowedException(Resources("awaitMustBeCalledOnCreatingThread"), 2)
 
-      val startTime = System.nanoTime
-      def timedOut = startTime + timeout.totalNanos < System.nanoTime
-      while (dismissedCount < dismissals && !timedOut && thrown.isEmpty)
-        Thread.sleep(interval.millisPart)
-
+      val startTime: Long = System.nanoTime
+      val endTime: Long = startTime + timeout.totalNanos
+      def timedOut: Boolean = endTime < System.nanoTime
+      while (dismissedCount < dismissals && !timedOut && thrown.isEmpty) {
+        val timeLeft: Span = {
+          val diff = endTime - System.nanoTime
+          if (diff > 0) Span(diff, Nanoseconds) else Span.ZeroLength
+        }
+        synchronized {
+          wait(timeLeft.millisPart, timeLeft.nanosPart)
+        }
+      }
       dismissedCount = 0 // reset the dismissed count to support multiple await calls
       if (thrown.isDefined)
         throw thrown.get
@@ -375,7 +385,7 @@ trait AsyncAssertions extends TimeoutConfiguration {
     /**
      * Wait for an exception to be produced by the by-name passed to <code>apply</code>, or one dismissal,
      * sleeping an interval between checks and timing out after a timeout, both configured
-     * by an implicit <code>TimeoutConfig</code>.
+     * by an implicit <code>PatienceConfig</code>.
      *
      * <p>
      * This method may only be invoked by the thread that created the <code>Waiter</code>.
@@ -398,52 +408,16 @@ trait AsyncAssertions extends TimeoutConfiguration {
      * of time the thread that calls <code>await</code> will sleep between "checks."
      * </p>
      *
-     * @param config the <code>TimeoutConfig</code> object containing the <code>timeout</code> and
-     *          <code>interval</code> parameters
+     * @param config the <code>PatienceConfig</code> object containing the <code>timeout</code> parameter
      */
-    def await[T]()(implicit config: TimeoutConfig) {
-      awaitImpl(config.timeout, config.interval)
-    }
-
-    /**
-     * Wait for an exception to be produced by the by-name passed to <code>apply</code>, or one dismissal,
-     * sleeping the specified interval between checks and timing out after a timeout configured
-     * by an implicit <code>TimeoutConfig</code>.
-     *
-     * <p>
-     * This method may only be invoked by the thread that created the <code>Waiter</code>.
-     * Each time this method completes, its internal dismissal count is reset to zero, so it can be invoked multiple times. However,
-     * once <code>await</code> has completed abruptly with an exception produced during a call to <code>apply</code>, it will continue
-     * to complete abruptly with that exception.
-     * </p>
-     *
-     * <p>
-     * The <code>timeout</code> parameter allows you to specify a timeout after which a
-     * <code>TestFailedException</code> will be thrown with a detail message indicating the <code>await</code> call
-     * timed out. If no calls to <code>apply</code> have produced an exception and an insufficient number of
-     * dismissals has been received by the time the <code>timeout</code> has expired, <code>await</code> will
-     * complete abruptly with <code>TestFailedException</code>.
-     * </p>
-     *
-     * <p>
-     * As used here, a "check" is checking to see whether an exception has been thrown by a by-name passed
-     * to <code>apply</code> or a dismissal has occurred. The "interval" is the amount
-     * of time the thread that calls <code>await</code> will sleep between "checks."
-     * </p>
-     *
-     * @param interval:  the <code>Interval</code> configuration parameter containing the specified interval
-     *   of time to sleep between checks
-     * @param config the <code>TimeoutConfig</code> object containing the <code>timeout</code> and
-     *          <code>interval</code> parameters
-     */
-    def await[T](interval: Interval)(implicit config: TimeoutConfig) {
-      awaitImpl(config.timeout, interval.value)
+    def await()(implicit config: PatienceConfig) {
+      awaitImpl(config.timeout)
     }
 
     /**
      * Wait for an exception to be produced by the by-name passed to <code>apply</code>, or one dismissal,
      * timing out after the specified timeout and sleeping an interval between checks configured
-     * by an implicit <code>TimeoutConfig</code>.
+     * by an implicit <code>PatienceConfig</code>.
      *
      * <p>
      * This method may only be invoked by the thread that created the <code>Waiter</code>.
@@ -467,50 +441,15 @@ trait AsyncAssertions extends TimeoutConfiguration {
      * </p>
      *
      * @param timeout:  the <code>Timeout</code> configuration parameter containing the specified timeout
-     * @param config the <code>TimeoutConfig</code> object containing the <code>timeout</code> and
-     *          <code>interval</code> parameters
      */
-    def await[T](timeout: Timeout)(implicit config: TimeoutConfig) {
-      awaitImpl(timeout.value, config.interval)
-    }
-
-    /**
-     * Wait for an exception to be produced by the by-name passed to <code>apply</code>, or one dismissal,
-     * timing out after the specified timeout and sleeping the specified interval between checks.
-     *
-     * <p>
-     * This method may only be invoked by the thread that created the <code>Waiter</code>.
-     * Each time this method completes, its internal dismissal count is reset to zero, so it can be invoked multiple times. However,
-     * once <code>await</code> has completed abruptly with an exception produced during a call to <code>apply</code>, it will continue
-     * to complete abruptly with that exception.
-     * </p>
-     *
-     * <p>
-     * The <code>timeout</code> parameter allows you to specify a timeout after which a
-     * <code>TestFailedException</code> will be thrown with a detail message indicating the <code>await</code> call
-     * timed out. If no calls to <code>apply</code> have produced an exception and an insufficient number of
-     * dismissals has been received by the time the <code>timeout</code> has expired, <code>await</code> will
-     * complete abruptly with <code>TestFailedException</code>.
-     * </p>
-     *
-     * <p>
-     * As used here, a "check" is checking to see whether an exception has been thrown by a by-name passed
-     * to <code>apply</code> or a dismissal has occurred. The "interval" is the amount
-     * of time the thread that calls <code>await</code> will sleep between "checks."
-     * </p>
-     *
-     * @param timeout:  the <code>Timeout</code> configuration parameter containing the specified timeout
-     * @param interval:  the <code>Interval</code> configuration parameter containing the specified interval
-     *   of time to sleep between checks
-     */
-    def await[T](timeout: Timeout, interval: Interval) {
-      awaitImpl(timeout.value, interval.value)
+    def await(timeout: Timeout) {
+      awaitImpl(timeout.value)
     }
 
     /**
      * Wait for an exception to be produced by the by-name passed to <code>apply</code>, or the specified
      * number of dismissals, sleeping an interval between checks and timing out after a timeout, both configured
-     * by an implicit <code>TimeoutConfig</code>.
+     * by an implicit <code>PatienceConfig</code>.
      *
      * <p>
      * This method may only be invoked by the thread that created the <code>Waiter</code>.
@@ -535,54 +474,16 @@ trait AsyncAssertions extends TimeoutConfiguration {
      *
      * @param dismissals:  the <code>Dismissals</code> configuration parameter containing the number of
      *    dismissals for which to wait
-     * @param config the <code>TimeoutConfig</code> object containing the <code>timeout</code> and
-     *          <code>interval</code> parameters
+     * @param config the <code>PatienceConfig</code> object containing the <code>timeout</code> parameter
      */
-    def await[T](dismissals: Dismissals)(implicit config: TimeoutConfig) {
-      awaitImpl(config.timeout, config.interval, dismissals.value)
-    }
-
-    /**
-     * Wait for an exception to be produced by the by-name passed to <code>apply</code>, or the specified number
-     * of dismissals, sleeping the specified interval between checks and timing out after a timeout configured
-     * by an implicit <code>TimeoutConfig</code>.
-     *
-     * <p>
-     * This method may only be invoked by the thread that created the <code>Waiter</code>.
-     * Each time this method completes, its internal dismissal count is reset to zero, so it can be invoked multiple times. However,
-     * once <code>await</code> has completed abruptly with an exception produced during a call to <code>apply</code>, it will continue
-     * to complete abruptly with that exception.
-     * </p>
-     *
-     * <p>
-     * The <code>timeout</code> parameter allows you to specify a timeout after which a
-     * <code>TestFailedException</code> will be thrown with a detail message indicating the <code>await</code> call
-     * timed out. If no calls to <code>apply</code> have produced an exception and an insufficient number of
-     * dismissals has been received by the time the <code>timeout</code> has expired, <code>await</code> will
-     * complete abruptly with <code>TestFailedException</code>.
-     * </p>
-     *
-     * <p>
-     * As used here, a "check" is checking to see whether an exception has been thrown by a by-name passed
-     * to <code>apply</code> or the specified number of dismissals has occurred. The "interval" is the amount
-     * of time the thread that calls <code>await</code> will sleep between "checks."
-     * </p>
-     *
-     * @param interval:  the <code>Interval</code> configuration parameter containing the specified interval
-     *   of time to sleep between checks
-     * @param dismissals:  the <code>Dismissals</code> configuration parameter containing the number of
-     *    dismissals for which to wait
-     * @param config the <code>TimeoutConfig</code> object containing the <code>timeout</code> and
-     *          <code>interval</code> parameters
-     */
-    def await[T](interval: Interval, dismissals: Dismissals)(implicit config: TimeoutConfig) {
-      awaitImpl(config.timeout, interval.value, dismissals.value)
+    def await(dismissals: Dismissals)(implicit config: PatienceConfig) {
+      awaitImpl(config.timeout, dismissals.value)
     }
 
     /**
      * Wait for an exception to be produced by the by-name passed to <code>apply</code>, or the specified
      * number of dismissals, timing out after the specified timeout and sleeping an interval between checks configured
-     * by an implicit <code>TimeoutConfig</code>.
+     * by an implicit <code>PatienceConfig</code>.
      *
      * <p>
      * This method may only be invoked by the thread that created the <code>Waiter</code>.
@@ -608,46 +509,9 @@ trait AsyncAssertions extends TimeoutConfiguration {
      * @param timeout:  the <code>Timeout</code> configuration parameter containing the specified timeout
      * @param dismissals:  the <code>Dismissals</code> configuration parameter containing the number of
      *    dismissals for which to wait
-     * @param config the <code>TimeoutConfig</code> object containing the <code>timeout</code> and
-     *          <code>interval</code> parameters
      */
-    def await[T](timeout: Timeout, dismissals: Dismissals)(implicit config: TimeoutConfig) {
-      awaitImpl(timeout.value, config.interval, dismissals.value)
-    }
-
-    /**
-     * Wait for an exception to be produced by the by-name passed to <code>apply</code>, or the specified
-     * number of dismissals, timing out after the specified timeout and sleeping the specified interval between checks.
-     *
-     * <p>
-     * This method may only be invoked by the thread that created the <code>Waiter</code>.
-     * Each time this method completes, its internal dismissal count is reset to zero, so it can be invoked multiple times. However,
-     * once <code>await</code> has completed abruptly with an exception produced during a call to <code>apply</code>, it will continue
-     * to complete abruptly with that exception.
-     * </p>
-     *
-     * <p>
-     * The <code>timeout</code> parameter allows you to specify a timeout after which a
-     * <code>TestFailedException</code> will be thrown with a detail message indicating the <code>await</code> call
-     * timed out. If no calls to <code>apply</code> have produced an exception and an insufficient number of
-     * dismissals has been received by the time the <code>timeout</code> has expired, <code>await</code> will
-     * complete abruptly with <code>TestFailedException</code>.
-     * </p>
-     *
-     * <p>
-     * As used here, a "check" is checking to see whether an exception has been thrown by a by-name passed
-     * to <code>apply</code> or the specified number of dismissals has occurred. The "interval" is the amount
-     * of time the thread that calls <code>await</code> will sleep between "checks."
-     * </p>
-     *
-     * @param timeout:  the <code>Timeout</code> configuration parameter containing the specified timeout
-     * @param interval:  the <code>Interval</code> configuration parameter containing the specified interval
-     *   of time to sleep between checks
-     * @param dismissals:  the <code>Dismissals</code> configuration parameter containing the number of
-     *    dismissals for which to wait
-     */
-    def await[T](timeout: Timeout, interval: Interval, dismissals: Dismissals) {
-      awaitImpl(timeout.value, interval.value, dismissals.value)
+    def await(timeout: Timeout, dismissals: Dismissals) {
+      awaitImpl(timeout.value, dismissals.value)
     }
 
     /**
@@ -660,6 +524,9 @@ trait AsyncAssertions extends TimeoutConfiguration {
      */
     def dismiss() {
       dismissedCount += 1
+      synchronized {
+        notifyAll()
+      }
     }
   }
 }

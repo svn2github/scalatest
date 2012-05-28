@@ -16,7 +16,6 @@
 package org.scalatest.concurrent
 
 import org.scalatest._
-import Thread.State._
 import PimpedThreadGroup._
 import _root_.java.util.concurrent._
 import _root_.java.util.concurrent.atomic.AtomicReference
@@ -24,8 +23,26 @@ import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.exceptions.NotAllowedException
 
 /**
+ * <strong><code>org.scalatest.concurrent.Conductor</code> has been deprecated and will
+ * be removed in a future version of ScalaTest. Please mix in or import the members
+ * of trait <a href="Conductors.html"><code>Conductors</code></a>, into which <code>Conductor</code> has been moved, instead
+ * of using this class directly.</strong>
+ *
+ * <p>
+ * <strong>The reason <code>Conductor</code> was moved into trait <code>Conductors</code>
+ * was so that it can extend trait
+ * <a href="PatienceConfiguration.html"><code>PatienceConfiguration</code></a>, which was
+ * introduced in ScalaTest 1.8. This will make <code>Conductor</code> configurable in a
+ * way consistent with traits <code>Eventually</code> and <code>AsyncAssertions</code>
+ * (both of which were also introduced in ScalaTest 1.8), and scalable with the
+ * <code>scaled</code> method of trait
+ * <a href="ScaledTimeSpans.html"><code>ScaledTimeSpans</code></a>.</strong>
+ * </p>
+ *
+ * <p>
  * Class that facilitates the testing of classes, traits, and libraries designed
  * to be used by multiple threads concurrently.
+ * </p>
  *
  * <p>
  * A <code>Conductor</code> conducts a multi-threaded scenario by maintaining
@@ -253,6 +270,7 @@ import org.scalatest.exceptions.NotAllowedException
  * @author Josh Cough
  * @author Bill Venners
  */
+@deprecated("org.scalatest.concurrent.Conductor has been deprecated and will be removed in a future version of ScalaTest. Please mix in trait Conductors, which now defines Conductor, instead of using Conductor directly.")
 final class Conductor {
 
   /**
@@ -822,7 +840,7 @@ final class Conductor {
      * Stop the test due to a timeout.
      */
     private def timeout() {
-      val errorMessage = Resources("testTimedOut", maxRunTime.toString)
+      val errorMessage = Resources("testTimedOutDEPRECATED", maxRunTime.toString)
       // The mainThread is likely joined to some test thread, so wake it up. It will look and
       // notice that the firstExceptionThrown is no longer empty, and will stop all live test threads,
       // then rethrow the rirst exception thrown.
@@ -837,7 +855,7 @@ final class Conductor {
       // Should never get to >= before ==, but just playing it safe
       if (deadlockCount >= MaxDeadlockDetectionsBeforeDeadlock) {
         // val errorMessage = "Apparent Deadlock! Threads waiting 50 clock periods (" + (clockPeriod * 50) + "ms)"
-         val errorMessage = Resources("suspectedDeadlock", MaxDeadlockDetectionsBeforeDeadlock.toString, (clockPeriod * MaxDeadlockDetectionsBeforeDeadlock).toString)
+         val errorMessage = Resources("suspectedDeadlockDEPRECATED", MaxDeadlockDetectionsBeforeDeadlock.toString, (clockPeriod * MaxDeadlockDetectionsBeforeDeadlock).toString)
         firstExceptionThrown offer new RuntimeException(errorMessage)
 
         // The mainThread is likely joined to some test thread, so wake it up. It will look and

@@ -84,7 +84,7 @@ import org.scalatest.fixture
  *
  * @author Bill Venners
  */
-trait ConductorFixture { this: fixture.Suite =>
+trait ConductorFixture extends AbstractSuite with Conductors { this: fixture.Suite =>
 
   /**
    * Defines type <code>Fixture</code> to be <code>Conductor</code>.
@@ -104,10 +104,16 @@ trait ConductorFixture { this: fixture.Suite =>
    * this method will invoke <code>conduct</code> to ensure that the
    * multi-threaded scenario is actually conducted.
    * </p>
+   *
+   * <p>
+   * This trait is stackable with other traits that override <code>withFixture(NoArgTest)</code>, because
+   * instead of invoking the test function directly, it delegates responsibility for invoking the test
+   * function to <code>withFixture(NoArgTest)</code>.
+   * </p>
    */
   def withFixture(test: OneArgTest) {
     val conductor = new Conductor
-    test(conductor)
+    withFixture(test.toNoArgTest(conductor))
     if (!conductor.conductingHasBegun)
       conductor.conduct()
   }

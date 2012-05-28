@@ -38,7 +38,8 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       expectedBeginsWithList: List[String],
       expectedTestNGList: List[String],
       expectedSuffixes: Option[Pattern], 
-      expectedChosenStyleList: List[String]
+      expectedChosenStyleList: List[String], 
+      expectedScaleFactorList: List[String]
     ) = {
 
       val (
@@ -54,7 +55,8 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
         beginsWithList,
         testNGList,
         suffixes, 
-        chosenStyleList
+        chosenStyleList, 
+        spanScaleFactorList
       ) = Runner.parseArgs(args)
 
       assert(runpathList === expectedRunpathList)
@@ -69,6 +71,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       assert(beginsWithList === expectedBeginsWithList)
       assert(testNGList === expectedTestNGList)
       assert(chosenStyleList === expectedChosenStyleList)
+      assert(spanScaleFactorList == expectedScaleFactorList)
       if (expectedSuffixes.isEmpty) {
         assert(suffixes.isEmpty)
       } else {
@@ -92,6 +95,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -111,6 +115,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -128,6 +133,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -147,6 +153,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -166,6 +173,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -185,6 +193,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -205,6 +214,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       Nil,
       None, 
+      Nil, 
       Nil
     )
     // Try a TestNGSuite
@@ -225,6 +235,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil
     )
     // Try a junit Suite
@@ -245,6 +256,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil
     )
     // Test -u option
@@ -265,6 +277,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil
     )
     // Test -q option
@@ -285,6 +298,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite)$")), 
+      Nil, 
       Nil
     )
     // Test -q option
@@ -305,6 +319,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite)$")), 
+      Nil, 
       Nil
     )
     // Test -Q option
@@ -325,6 +340,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite|foo)$")), 
+      Nil, 
       Nil
     )
   }
@@ -347,7 +363,8 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       expectedBeginsWithList: List[String],
       expectedTestNGList: List[String],
       expectedSuffixes: Option[Pattern], 
-      expectedChosenStyleList: List[String]
+      expectedChosenStyleList: List[String], 
+      expectedSpanScaleFactorList: List[String]
     ) = {
 
       val (
@@ -363,7 +380,8 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
         beginsWithList,
         testNGList,
         suffixes, 
-        chosenStyleList
+        chosenStyleList, 
+        spanScaleFactorList
       ) = Runner.parseArgs(args)
 
       assert(runpathList === expectedRunpathList)
@@ -378,6 +396,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       assert(beginsWithList === expectedBeginsWithList)
       assert(testNGList === expectedTestNGList)
       assert(chosenStyleList === expectedChosenStyleList)
+      assert(spanScaleFactorList == expectedSpanScaleFactorList)
       if (expectedSuffixes.isEmpty) {
         assert(suffixes.isEmpty)
       } else {
@@ -401,6 +420,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -420,6 +440,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -437,6 +458,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -456,6 +478,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -475,6 +498,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -494,6 +518,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil
     )
 
@@ -514,6 +539,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       Nil,
       None, 
+      Nil, 
       Nil
     )
     // Try a TestNGSuite
@@ -534,6 +560,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil
     )
     // Try a junit Suite
@@ -554,6 +581,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil
     )
     // Test -u option
@@ -574,6 +602,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil
     )
     // Test -q option
@@ -594,6 +623,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite)$")), 
+      Nil, 
       Nil
     )
     // Test -q option
@@ -614,6 +644,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite)$")), 
+      Nil, 
       Nil
     )
     // Test -Q option
@@ -634,7 +665,29 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite|foo)$")), 
+      Nil, 
       Nil
+    )
+    // Test -F option
+    verify(
+      Array("-P", "-g", "-Dincredible=whatshername", "-Ddbname=testdb", "-Dserver=192.168.1.188", "-R",
+          "\"serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar\"", "-g", "-u", "directory/",
+          "-n", "One Two Three", "-l", "SlowTests", "-s", "SuiteOne", "-Q", "-q", "foo",
+          "-m", "com.example.webapp", "-w", "com.example.root", "-b", "some/path/file.xml", "-F", "200"),
+      List("-p", "\"serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar\""),
+      List("-g", "-g", "-u", "directory/"),
+      List("-s", "SuiteOne"),
+      Nil,
+      List("-Dincredible=whatshername", "-Ddbname=testdb", "-Dserver=192.168.1.188"),
+      List("-n", "One Two Three"),
+      List("-l", "SlowTests"),
+      List("-c"),
+      List("-m", "com.example.webapp"),
+      List("-w", "com.example.root"),
+      List("-b", "some/path/file.xml"),
+      Some(Pattern.compile(".*(Spec|Suite|foo)$")), 
+      Nil, 
+      List("-F", "200")
     )
   }
 
@@ -1053,7 +1106,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
     }
   }
   
-  def testParseChosenStylesIntoChosenStyleSet {
+  def testParseChosenStylesIntoChosenStyleSet() {
     intercept[IllegalArgumentException] {
       Runner.parseChosenStylesIntoChosenStyleSet(List("-a", "aStyle"), "-y")
     }
@@ -1071,6 +1124,26 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
     assert(multiStyle.contains("aStyle"))
     assert(multiStyle.contains("bStyle"))
     assert(multiStyle.contains("cStyle"))
+  }
+  
+  def testParseSpanScaleFactor() {
+    intercept[IllegalArgumentException] {
+      Runner.parseSpanScaleFactor(List("-a", "123"), "-F")
+    }
+    intercept[IllegalArgumentException] {
+      Runner.parseSpanScaleFactor(List("-F", "abc"), "-F")
+    }
+    intercept[IllegalArgumentException] {
+      Runner.parseSpanScaleFactor(List("-F"), "-F")
+    }
+    intercept[IllegalArgumentException] {
+      Runner.parseSpanScaleFactor(List("-F", "123", "-F"), "-F")
+    }
+    intercept[IllegalArgumentException] {
+      Runner.parseSpanScaleFactor(List("-F", "123", "-F", "456"), "-F")
+    }
+    val spanScaleFactor = Runner.parseSpanScaleFactor(List("-F", "888"), "-F")
+    assert(spanScaleFactor === 888)
   }
 
 /*

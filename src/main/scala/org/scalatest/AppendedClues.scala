@@ -84,7 +84,7 @@ import exceptions.ModifiableMessage
  * <p>
  * The <code>withClue</code> method will only append the clue string to the detail
  * message of exception types that mix in the <code>ModifiableMessage</code> trait.
- * See the documentation for <a href="ModifiableMessage.html"><code>ModifiableMessage</code></a> for more
+ * See the documentation for <a href="exceptions/ModifiableMessage.html"><code>ModifiableMessage</code></a> for more
  * information.
  * </p>
  *
@@ -99,10 +99,8 @@ import exceptions.ModifiableMessage
  *
  * @author Bill Venners
  */
-trait AppendedClues { // TODO, can't put a comma. Write tests to not put the space if a ,, ., or ; is the first char
+trait AppendedClues {
 
-// TODO: Also, make sure withClue returns whatever is inside there. I think I should do this for the prepended
-// withClue also.
   /**
    * Class that provides a <code>withClue</code> method that appends clue strings to any
    * <a href="ModifiableMessage.html"><code>ModifiableMessage</code></a> exception
@@ -110,7 +108,7 @@ trait AppendedClues { // TODO, can't put a comma. Write tests to not put the spa
    *
    * @author Bill Venners
    */
-  class Clueful(fun: => Any) {
+  class Clueful[T](fun: => T) {
 
     /**
      * Executes the block of code passed as the constructor parameter to this <code>Clueful</code>, and, if it
@@ -138,12 +136,18 @@ trait AppendedClues { // TODO, can't put a comma. Write tests to not put the spa
      * <pre>
      * 2 did not equal 3, not even for very large values of 1
      * </pre>
+     *
+     * @throws NullPointerException if the passed <code>clue</code> is <code>null</code>
      */
-    def withClue(clue: Any) {
+    def withClue(clue: Any): T = {
+      if (clue == null)
+        throw new NullPointerException("clue was null")
       def append(currentMessage: Option[String]) =
         currentMessage match {
           case Some(msg) =>
-            if (clue.toString.head.isWhitespace)
+            // clue.toString.head is guaranteed to work, because append() only called if clue.toString != ""
+            val firstChar = clue.toString.head
+            if (firstChar.isWhitespace || firstChar == '.' || firstChar == ',' || firstChar == ';')
               Some(msg + clue.toString)
             else
               Some(msg + " " + clue.toString)
@@ -154,7 +158,7 @@ trait AppendedClues { // TODO, can't put a comma. Write tests to not put the spa
       }
       catch {
         case e: ModifiableMessage[_] =>
-          if (clue != "")
+          if (clue.toString != "")
             throw e.modifyMessage(append)
           else
             throw e
@@ -162,7 +166,15 @@ trait AppendedClues { // TODO, can't put a comma. Write tests to not put the spa
     }
   }
 
-  implicit def convertToClueful(fun: => Any) = new Clueful(fun)
+  /**
+   * Implicit conversion that allows clues to be place after a block of code.
+   */
+  implicit def convertToClueful[T](fun: => T) = new Clueful(fun)
 }
 
+/**
+ * Companion object that facilitates the importing of <code>AppendedClues</code> members as 
+ * an alternative to mixing it in. One use case is to import <code>AppendedClues</code>
+ * members so you can use them in the Scala interpreter.
+ */
 object AppendedClues extends AppendedClues

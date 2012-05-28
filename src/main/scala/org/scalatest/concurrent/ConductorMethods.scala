@@ -88,7 +88,7 @@ import _root_.java.util.concurrent.Callable
  * @author Josh Cough
  * @author Bill Venners
  */
-trait ConductorMethods extends AbstractSuite { this: Suite =>
+trait ConductorMethods extends AbstractSuite with Conductors { this: Suite =>
 
   private val conductor = new AtomicReference[Conductor]()
 
@@ -172,10 +172,16 @@ trait ConductorMethods extends AbstractSuite { this: Suite =>
    * ensuring it is visible to any thread, invokes the passed test function,
    * and invokes <code>conduct</code> on the <code>Conductor</code>, if it
    * was not already invoked by the test.
+   *
+   * <p>
+   * This trait is stackable with other traits that override <code>withFixture(NoArgTest)</code>, because
+   * instead of invoking the test function directly, it delegates responsibility for invoking the test
+   * function to <code>super.withFixture(NoArgTest)</code>.
+   * </p>
    */
-  override def withFixture(test: NoArgTest) {
+  abstract override def withFixture(test: NoArgTest) {
     conductor.compareAndSet(conductor.get, new Conductor)
-    test()
+    super.withFixture(test)
     if (!conductor.get.conductingHasBegun)
       conductor.get.conduct()
   }

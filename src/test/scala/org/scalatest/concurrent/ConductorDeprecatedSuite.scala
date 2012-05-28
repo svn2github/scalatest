@@ -20,10 +20,10 @@ import matchers.ShouldMatchers
 import Thread.State._
 import java.util.concurrent.atomic.AtomicBoolean
 import org.scalatest.exceptions.NotAllowedException
-import org.scalatest.SharedHelpers.thisLineNumber
-import time.{Millis, Span}
 
-class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with SharedHelpers with SeveredStackTraces {
+class ConductorDeprecatedSuite extends FunSuite with ShouldMatchers with SharedHelpers with SeveredStackTraces {
+
+  val baseLineNumber = 26
 
   test("if conduct is called twice, the second time it throws an NotAllowedException") {
     val conductor = new Conductor
@@ -31,7 +31,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
     val caught = intercept[NotAllowedException] { conductor.conduct() }
     caught.getMessage should be ("A Conductor's conduct method can only be invoked once.")
     caught.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 3))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 5))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
   }
@@ -57,7 +57,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
       }
     caught.getMessage should be ("Cannot invoke the thread method on Conductor after its multi-threaded test has completed.")
     caught.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 4))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 30))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
   }
@@ -72,7 +72,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
       }
     caught.getMessage should be ("Cannot invoke the thread method on Conductor after its multi-threaded test has completed.")
     caught.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 4))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 45))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
   }
@@ -87,7 +87,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
       }
     caught.getMessage should be ("Cannot invoke whenFinished after conduct (which is called by whenFinished) has been invoked.")
     caught.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 4))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 60))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
   }
@@ -104,7 +104,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
       }
     caught.getMessage should be ("Cannot register two threads with the same name. Duplicate name: Fiesta del Mar.")
     caught.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 4))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 77))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
   }
@@ -116,7 +116,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
         conductor.waitForBeat(0)
       }
     caught.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 3))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 90))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
     caught.getMessage should be ("A Conductor starts at beat zero, so you can't wait for beat zero.")
@@ -126,7 +126,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
       }
     caught2.getMessage should be ("A Conductor starts at beat zero, so you can only wait for a beat greater than zero.")
     caught2.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 4))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 99))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
   }
@@ -139,7 +139,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
       }
     caught.getMessage should be ("The clockPeriod passed to conduct must be greater than zero. Value passed was: 0.")
     caught.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 4))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 112))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
     val caught2 =
@@ -147,7 +147,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
         conductor.conduct(-1, 100)
       }
     caught2.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 3))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 121))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
     caught2.getMessage should be ("The clockPeriod passed to conduct must be greater than zero. Value passed was: -1.")
@@ -161,7 +161,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
       }
     caught.getMessage should be ("The timeout passed to conduct must be greater than zero. Value passed was: 0.")
     caught.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 4))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 134))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
     val caught2 =
@@ -169,7 +169,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
         conductor.conduct(100, -1)
       }
     caught2.failedCodeFileNameAndLineNumberString match {
-      case Some(s) => s should equal ("ConductorSuite.scala:" + (thisLineNumber - 3))
+      case Some(s) => s should equal ("ConductorDeprecatedSuite.scala:" + (baseLineNumber + 143))
       case None => fail("Didn't produce a file name and line number string: ", caught)
     }
     caught2.getMessage should be ("The timeout passed to conduct must be greater than zero. Value passed was: -1.")
@@ -287,7 +287,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
       intercept[RuntimeException] {
         conduct()
       }
-    caught.getMessage should be ("Test aborted because of suspected deadlock. No progress has been made (the beat did not advance) for 50 clock periods (750 milliseconds).")
+    caught.getMessage should be ("Test aborted because of suspected deadlock. No progress has been made (the beat did not advance) for 50 clock periods (500 ms).")
   }
 
   test("other threads are killed when one thread throws an exception") {
@@ -335,7 +335,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
       intercept[RuntimeException] {
         conduct(10, 1)
       }
-    caught.getMessage should be ("Test timed out because threads existed that were runnable while no progress was made (the beat did not advance) for 1 second.")
+    caught.getMessage should be ("Test timed out because threads existed that were runnable while no progress was made (the beat did not advance) for 1 seconds.")
   }
 
   test("ConductorFixture is a stackable trait that delegates test function execution to withFixture(NoArgTest)") {
@@ -368,81 +368,5 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
     val a = new MySpec
     a.run(None, SilentReporter,new Stopper {}, Filter(), Map.empty, None, new Tracker)
     calledSuperWithFixtureNoArgTest should be (true)
-  }
-
-  // The next 3 tests just make sure things work when calling the other overloaded conduct methods
-  test("first exception thrown is reported when calling conduct(timeout, interval)") {
-    val e = new RuntimeException("howdy")
-    class MySuite extends FunSuite {
-      test("this will fail") {
-        val conductor = new Conductor
-        import conductor._
-        thread {
-          waitForBeat(1)
-        }
-        thread {
-          throw e
-          ()
-        }
-        conductor.conduct(timeout(Span(300, Millis)), interval(Span(10, Millis)))
-      }
-    }
-    val a = new MySuite
-    val rep = new EventRecordingReporter
-    a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
-    val tf = rep.testFailedEventsReceived
-    tf.size should be === 1
-    tf.head.throwable should be ('defined)
-    tf.head.throwable.get should be theSameInstanceAs e
-  }
-
-  test("first exception thrown is reported when calling conduct(interval)") {
-    val e = new RuntimeException("howdy")
-    class MySuite extends FunSuite {
-      test("this will fail") {
-        val conductor = new Conductor
-        import conductor._
-        thread {
-          waitForBeat(1)
-        }
-        thread {
-          throw e
-          ()
-        }
-        conductor.conduct(interval(Span(10, Millis)))
-      }
-    }
-    val a = new MySuite
-    val rep = new EventRecordingReporter
-    a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
-    val tf = rep.testFailedEventsReceived
-    tf.size should be === 1
-    tf.head.throwable should be ('defined)
-    tf.head.throwable.get should be theSameInstanceAs e
-  }
-
-  test("first exception thrown is reported when calling conduct(timeout)") {
-    val e = new RuntimeException("howdy")
-    class MySuite extends FunSuite {
-      test("this will fail") {
-        val conductor = new Conductor
-        import conductor._
-        thread {
-          waitForBeat(1)
-        }
-        thread {
-          throw e
-          ()
-        }
-        conductor.conduct(timeout(Span(300, Millis)))
-      }
-    }
-    val a = new MySuite
-    val rep = new EventRecordingReporter
-    a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
-    val tf = rep.testFailedEventsReceived
-    tf.size should be === 1
-    tf.head.throwable should be ('defined)
-    tf.head.throwable.get should be theSameInstanceAs e
   }
 }
