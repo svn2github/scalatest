@@ -693,35 +693,31 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     it("should stop nested suites from being executed") {
       class SuiteA extends Suite {
         var executed = false;
-        override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-              configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+        override def run(testName: Option[String], args: RunArgs) {
           executed = true
-          super.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
+          super.run(testName, args)
         }
       }
       class SuiteB extends Suite {
         var executed = false;
-        override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-              configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+        override def run(testName: Option[String], args: RunArgs) {
           executed = true
-          super.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
+          super.run(testName, args)
         }
       }
       class SuiteC extends Suite {
         var executed = false;
-        override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-              configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+        override def run(testName: Option[String], args: RunArgs) {
           executed = true
-          super.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
+          super.run(testName, args)
         }
       }
       class SuiteD extends Suite {
         var executed = false;
-        override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-              configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+        override def run(testName: Option[String], args: RunArgs) {
           executed = true
-          super.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
-          stopper match {
+          super.run(testName, args)
+          args.stopper match {
             case s: MyStopper => s.stop = true
             case _ =>
           }
@@ -729,26 +725,23 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
       class SuiteE extends Suite {
         var executed = false;
-        override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-              configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+        override def run(testName: Option[String], args: RunArgs) {
           executed = true
-          super.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
+          super.run(testName, args)
         }
       }
       class SuiteF extends Suite {
         var executed = false;
-        override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-              configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+        override def run(testName: Option[String], args: RunArgs) {
           executed = true
-          super.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
+          super.run(testName, args)
         }
       }
       class SuiteG extends Suite {
         var executed = false;
-        override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-              configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+        override def run(testName: Option[String], args: RunArgs) {
           executed = true
-          super.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
+          super.run(testName, args)
         }
       }
 

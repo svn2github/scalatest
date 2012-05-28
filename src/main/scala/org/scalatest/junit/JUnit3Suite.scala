@@ -307,8 +307,9 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
         throw new UnsupportedOperationException
   }
 
-  override def run(testName: Option[String], reporter: Reporter, stopper: Stopper,
-      filter: Filter, configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+  override def run(testName: Option[String], args: RunArgs) {
+
+    import args._
 
     theTracker = tracker
 

@@ -2301,11 +2301,8 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
     ListSet(atomic.get.testNamesList.toArray: _*)
   }
 
-  override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-      configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
-
-
-    runImpl(thisSuite, testName, reporter, stopper, filter, configMap, distributor, tracker, super.run)
+  override def run(testName: Option[String], args: RunArgs) {
+   runImpl(thisSuite, testName, args, super.run)
   }
 
   /**

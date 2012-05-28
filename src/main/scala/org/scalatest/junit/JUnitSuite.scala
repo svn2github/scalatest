@@ -247,15 +247,16 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
     Map() ++ elements
   }
 
-  override def run(testName: Option[String], report: Reporter, stopper: Stopper,
-      filter: Filter, configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+  override def run(testName: Option[String], args: RunArgs) {
+
+    import args._
 
     theTracker = tracker
 
     if (!filter.tagsToInclude.isDefined) {
       val jUnitCore = new JUnitCore
-      jUnitCore.addListener(new MyRunListener(report, configMap, tracker))
-      val myClass = getClass
+      jUnitCore.addListener(new MyRunListener(reporter, configMap, tracker))
+      val myClass = this.getClass
       testName match {
         case None => jUnitCore.run(myClass)
         case Some(tn) =>

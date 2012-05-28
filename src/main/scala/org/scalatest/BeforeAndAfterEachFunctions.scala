@@ -144,10 +144,9 @@ trait BeforeAndAfterEachFunctions extends AbstractSuite {
    * any invocation to <code>beforeEach</code> or <code>afterEach</code> will complete abruptly
    * with a <code>NotAllowedException</code>.
    */
-  abstract override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-    configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+  abstract override def run(testName: Option[String], args: RunArgs) {
 
     runHasBeenInvoked = true
-    super.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
+    super.run(testName, args)
   }
 }

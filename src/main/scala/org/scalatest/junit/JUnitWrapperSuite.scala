@@ -51,19 +51,15 @@ class JUnitWrapperSuite(junitClassName: String, loader: ClassLoader) extends Sui
   private var theTracker = new Tracker
   private val junitClass = Class.forName(junitClassName, false, loader)
 
-  override def run(testName: Option[String],
-                   report: Reporter, 
-                   stopper: Stopper,
-                   filter: Filter,
-                   config: Map[String, Any],
-                   distributor: Option[Distributor], 
-                   tracker: Tracker) {
+  override def run(testName: Option[String], args: RunArgs) {
+
+    import args._
 
     theTracker = tracker
 
     val jUnitCore = new JUnitCore
 
-    jUnitCore.addListener(new MyRunListener(report, config, tracker))
+    jUnitCore.addListener(new MyRunListener(reporter, configMap, tracker))
 
     jUnitCore.run(junitClass)
   }

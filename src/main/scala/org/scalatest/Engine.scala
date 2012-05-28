@@ -377,14 +377,11 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
   def runImpl(
     theSuite: Suite,
     testName: Option[String],
-    reporter: Reporter,
-    stopper: Stopper,
-    filter: Filter,
-    configMap: Map[String, Any],
-    distributor: Option[Distributor],
-    tracker: Tracker,
-    superRun: (Option[String], Reporter, Stopper, Filter, Map[String, Any], Option[Distributor], Tracker) => Unit
+    args: RunArgs,
+    superRun: (Option[String], RunArgs) => Unit
   ) {
+    import args._
+
     val stopRequested = stopper
 
     // Set the flag that indicates registration is closed (because run has now been invoked),
@@ -408,7 +405,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
     var swapAndCompareSucceeded = false
     try {
-      superRun(testName, report, stopRequested, filter, configMap, distributor, tracker)
+      superRun(testName, args.copy(reporter = report))
     }
     finally {
       val shouldBeInformerForThisSuite = atomicInformer.getAndSet(zombieInformer)
@@ -805,20 +802,17 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
       updateAtomic(oldBundle, Bundle(oldBranch, testNamesList, testsMap, tagsMap, registrationClosed))
     }
   }
- 
-   def runPathTestsImpl(
+
+  def runPathTestsImpl(
     theSuite: Suite,
     testName: Option[String],
-    reporter: Reporter,
-    stopper: Stopper,
-    filter: Filter,
-    configMap: Map[String, Any],
-    distributor: Option[Distributor],
-    tracker: Tracker,
+    args: RunArgs,
     info: Informer,
     includeIcon: Boolean,
     runTest: (String, Reporter, Stopper, Map[String, Any], Tracker) => Unit
   ) {
+    import args._
+
      // All but one line of code copied from runImpl. Factor out duplication later...
     val stopRequested = stopper
 

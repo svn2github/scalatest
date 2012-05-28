@@ -1422,8 +1422,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
   test("suite durations are included in SuiteAborted events fired from Spec") {
 
     class SuiteThatAborts extends Suite {
-      override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-              config: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+      override def run(testName: Option[String], args: RunArgs) {
         throw new RuntimeException("Aborting for testing purposes")
       }
     }

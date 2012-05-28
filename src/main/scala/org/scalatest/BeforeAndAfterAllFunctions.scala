@@ -100,8 +100,7 @@ trait BeforeAndAfterAllFunctions extends AbstractSuite {
    * exception, this method will complete abruptly with the same exception.
    * </p>
   */
-  abstract override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-                       configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+  abstract override def run(testName: Option[String], args: RunArgs) {
 
     runHasBeenInvoked = true
 
@@ -113,7 +112,7 @@ trait BeforeAndAfterAllFunctions extends AbstractSuite {
     }
 
     try {
-      super.run(testName, reporter, stopper, filter, configMap, distributor, tracker)
+      super.run(testName, args)
     }
     catch {
       case e: Exception => thrownException = Some(e)

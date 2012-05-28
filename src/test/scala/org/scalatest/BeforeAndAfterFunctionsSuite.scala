@@ -32,10 +32,9 @@ class BeforeAndAfterFunctionsSuite extends FunSuite {
       runTestWasCalled = true
       super.runTest(testName, reporter, stopper, properties, tracker)
     }
-    override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-                         properties: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+    override def run(testName: Option[String], args: RunArgs) {
       runWasCalled = true
-      super.run(testName, reporter, stopper, filter, properties, distributor, tracker)
+      super.run(testName, args)
     }
   }
   
@@ -185,8 +184,7 @@ class BeforeAndAfterFunctionsSuite extends FunSuite {
   test("If any call to super.run completes abruptly with an exception, run " +
     "will complete abruptly with the same exception, however, before doing so, it will invoke afterAll") {
     trait FunkySuite extends Suite {
-      override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-                           properties: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+      override def run(testName: Option[String], args: RunArgs) {
         throw new NumberFormatException
       }
     }
@@ -206,8 +204,7 @@ class BeforeAndAfterFunctionsSuite extends FunSuite {
   test("If both super.run and afterAll complete abruptly with an exception, run " + 
     "will complete abruptly with the exception thrown by super.run.") {
     trait FunkySuite extends Suite {
-      override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-                           properties: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+      override def run(testName: Option[String], args: RunArgs) {
         throw new NumberFormatException
       }
     }

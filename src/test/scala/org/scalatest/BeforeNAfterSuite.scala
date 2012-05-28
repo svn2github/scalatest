@@ -29,10 +29,9 @@ class BeforeNAfterSuite extends FunSuite {
       runTestWasCalled = true
       super.runTest(testName, reporter, stopper, properties, tracker)
     }
-    override def run(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-                         properties: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+    override def run(testName: Option[String], args: RunArgs) {
       runWasCalled = true
-      super.run(testName, reporter, stopper, filter, properties, distributor, tracker)
+      super.run(testName, args)
     }
   }
   

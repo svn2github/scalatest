@@ -86,22 +86,10 @@ trait TestNGSuite extends Suite { thisSuite =>
    * 
    * @param testName an optional name of one test to execute. If <code>None</code>, this class will execute all relevant tests.
    *                 I.e., <code>None</code> acts like a wildcard that means execute all relevant tests in this <code>TestNGSuite</code>.
-   * @param   reporter	 The reporter to be notified of test events (success, failure, etc).
-   * @param   groupsToInclude	Contains the names of groups to run. Only tests in these groups will be executed.
-   * @param   groupsToExclude	Tests in groups in this Set will not be executed.
-   *
-   * @param stopper the <code>Stopper</code> may be used to request an early termination of a suite of tests. However, because TestNG does
-   *                not support the notion of aborting a run early, this class ignores this parameter.
-   * @param   properties         a <code>Map</code> of properties that can be used by the executing <code>Suite</code> of tests. This class
-   *                      does not use this parameter.
-   * @param distributor an optional <code>Distributor</code>, into which nested <code>Suite</code>s could be put to be executed
-   *              by another entity, such as concurrently by a pool of threads. If <code>None</code>, nested <code>Suite</code>s will be executed sequentially.
-   *              Because TestNG handles its own concurrency, this class ignores this parameter.
-   * <br><br>
+   * @param args the <code>RunArgs</code> for this run
    */
-  override def run(testName: Option[String], reporter: Reporter, stopper: Stopper,
-      filter: Filter, properties: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
-    
+  override def run(testName: Option[String], args: RunArgs) {
+    import args._
     runTestNG(testName, reporter, filter, tracker)
   }
 
