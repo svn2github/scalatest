@@ -726,7 +726,7 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToRun(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
-    handleTest(thisSuite, specText, testFun, "itCannotAppearInsideAnotherIt", "FreeSpec.scala", methodName, 4, -2, testTags: _*)
+    handleTest(thisSuite, specText, testFun, "itCannotAppearInsideAnotherIt", "FreeSpec.scala", methodName, 4, -3, testTags: _*)
   }
 
   /**
@@ -749,7 +749,7 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToIgnore(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
-    handleIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FreeSpec.scala", methodName, 4, -2, testTags: _*)
+    handleIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FreeSpec.scala", methodName, 4, -3, testTags: _*)
   }
 
   /**

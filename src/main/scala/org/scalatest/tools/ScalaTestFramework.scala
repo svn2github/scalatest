@@ -157,7 +157,7 @@ Tags to include and exclude: -n "CheckinTests FunctionalTests" -l "SlowTests Net
        //println("sbt args: " + args.toList)
       if (isAccessibleSuite(suiteClass) || isRunnable(suiteClass)) {
         // Why are we getting rid of empty strings? Were empty strings coming in from sbt? -bv 11/09/2011
-        val translator = new SbtFriendlyParamsTranslator()
+        val translator = new FriendlyParamsTranslator()
         val (propertiesArgsList, includesArgsList, excludesArgsList, repoArgsList, concurrentList, memberOnlyList, wildcardList, 
             suiteList, junitList, testngList) = translator.parsePropsAndTags(args.filter(!_.equals("")))
         val configMap: Map[String, String] = parsePropertiesArgsIntoMap(propertiesArgsList)
@@ -237,13 +237,16 @@ Tags to include and exclude: -n "CheckinTests FunctionalTests" -l "SlowTests Net
             report(SuiteAborted(tracker.nextOrdinal(), rawString, suite.suiteName, suite.suiteId, Some(suiteClass.getName), suite.decodedSuiteName, Some(e), Some(duration), formatter, Some(SeeStackDepthException)))
           }
         }
+        finally {
+          report.dispose()
+        }
       }
       else throw new IllegalArgumentException("Class is not an accessible org.scalatest.Suite: " + testClassName)
     }
 
     private val emptyClassArray = new Array[java.lang.Class[T] forSome {type T}](0)
     
-    private class SbtReporter(eventHandler: EventHandler, report: Option[Reporter]) extends Reporter {
+    private class SbtReporter(eventHandler: EventHandler, report: Option[DispatchReporter]) extends Reporter {
       
       import org.scalatest.events._
 
@@ -273,72 +276,14 @@ Tags to include and exclude: -n "CheckinTests FunctionalTests" -l "SlowTests Net
           case _ => 
         }
       }
-    }
-
-    private[scalatest] def parsePropsAndTags(args: Array[String]) = {
-
-      import collection.mutable.ListBuffer
-
-      val props = new ListBuffer[String]()
-      val includes = new ListBuffer[String]()
-      val excludes = new ListBuffer[String]()
-      var repoArgs = new ListBuffer[String]()
-
-      val it = args.iterator
-      while (it.hasNext) {
-
-        val s = it.next
-
-        if (s.startsWith("-D")) {
-          props += s
-        }
-        else if (s.startsWith("-n")) {
-          includes += s
-          if (it.hasNext)
-            includes += it.next
-        }
-        else if (s.startsWith("-l")) {
-          excludes += s
-          if (it.hasNext)
-            excludes += it.next
-        }
-        else if (s.startsWith("-o")) {
-          repoArgs += s
-        }
-        else if (s == "sequential") {
-          // To skip as it is passed in from Play 2.0 as arg to specs2.
-          println("Warning: \"sequential\" is ignored by ScalaTest. To get rid of this warning, please add \"testOptions in Test := Nil\" in main defintion of your project build file.")
-        }
-        //      else if (s.startsWith("-b")) {
-        //
-        //        testNGXMLFiles += s
-        //        if (it.hasNext)
-        //          testNGXMLFiles += it.next
-        //      }
-        else {
-          throw new IllegalArgumentException("Unrecognized argument: " + s)
+      
+      def dispose() {
+        report match {
+          case Some(report) => 
+            report.dispatchDisposeAndWaitUntilDone()
+          case None =>
         }
       }
-      (props.toList, includes.toList, excludes.toList, repoArgs.toList)
     }
-  }
-}
-
-private[scalatest] class SbtFriendlyParamsTranslator extends FriendlyParamsTranslator {
-  override private[scalatest] def validateSupportedPropsAndTags(s:String) {
-    if(s.startsWith("-g") || s.startsWith("graphic") || 
-       s.startsWith("-f") || s.startsWith("file") || 
-       s.startsWith("-u") || s.startsWith("junitxml") || 
-       s.startsWith("-d") || s.startsWith("-a") || s.startsWith("dashboard") || 
-       s.startsWith("-x") || s.startsWith("xml") || 
-       s.startsWith("-h") || s.startsWith("html") || 
-       s.startsWith("-r") || s.startsWith("reporterclass") || 
-       s == "-c" || s == "concurrent" || 
-       s == "-m" || s.startsWith("memberonly") || 
-       s == "-w" || s.startsWith("wildcard") || 
-       s == "-s" || s.startsWith("suite") || 
-       s == "-j" || s.startsWith("junit") || 
-       s == "-t" || s.startsWith("testng"))
-      throw new IllegalArgumentException("Argument '" + s + "' is not supported using test/test-only, use scalatest task instead.")
   }
 }
