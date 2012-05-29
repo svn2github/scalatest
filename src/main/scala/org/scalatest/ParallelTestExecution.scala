@@ -61,20 +61,15 @@ trait ParallelTestExecution extends OneInstancePerTest {
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param filter a <code>Filter</code> with which to filter tests based on their tags
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by the executing <code>Suite</code> of tests.
-   * @param distributor an optional <code>Distributor</code>, into which to put nested <code>Suite</code>s to be run
-   *              by another entity, such as concurrently by a pool of threads. If <code>None</code>, nested <code>Suite</code>s will be run sequentially.
-   * @param tracker a <code>Tracker</code> tracking <code>Ordinal</code>s being fired by the current thread.
+   * @param args the <code>RunArgs</code> to which results will be reported
+   *
    * @throws NullPointerException if any of the passed parameters is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in this <code>Suite</code>
    */
-  protected abstract override def runTests(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-                             configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+  protected abstract override def runTests(testName: Option[String], args: RunArgs) {
 
+    import args._
 
     // testName distributor
     //    None    None      call super, because no distributor
@@ -84,14 +79,14 @@ trait ParallelTestExecution extends OneInstancePerTest {
     distributor match {
       // If there's no distributor, then just run sequentially, via the regular OneInstancePerTest
       // algorithm
-      case None => super.runTests(testName, reporter,stopper, filter, configMap, distributor, tracker)
+      case None => super.runTests(testName, args)
       case Some(distribute) =>
         testName match {
           // The only way both testName and distributor should be defined is if someone called from the
           // outside and did this. First run is called with testName None and a defined Distributor, it
           // will not get here. So in this case, just do the usual OneInstancePerTest thing.
           // TODO: Make sure it doesn't get back here. Walk through the scenarios.
-          case Some(tn) => super.runTests(testName, reporter, stopper, filter, configMap, distributor, tracker)
+          case Some(tn) => super.runTests(testName, args)
           case None =>
             for (tn <- testNames) {
               val wrappedInstance =

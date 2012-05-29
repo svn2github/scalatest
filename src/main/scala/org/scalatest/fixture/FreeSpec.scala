@@ -803,18 +803,13 @@ trait FreeSpec extends Suite { thisSuite =>
    *
    * @param testName an optional name of one test to execute. If <code>None</code>, all relevant tests should be executed.
    *                 I.e., <code>None</code> acts like a wildcard that means execute all relevant tests in this <code>FreeSpec</code>.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param tagsToInclude a <code>Set</code> of <code>String</code> tag names to include in the execution of this <code>FreeSpec</code>
-   * @param tagsToExclude a <code>Set</code> of <code>String</code> tag names to exclude in the execution of this <code>FreeSpec</code>
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by this <code>FreeSpec</code>'s executing tests.
+   * @param args the <code>RunArgs</code> for this run
+   *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>tagsToInclude</code>,
    *     <code>tagsToExclude</code>, or <code>configMap</code> is <code>null</code>.
    */
-  protected override def runTests(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-      configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
-
-    runTestsImpl(thisSuite, testName, reporter, stopper, filter, configMap, distributor, tracker, info, true, runTest)
+  protected override def runTests(testName: Option[String], args: RunArgs) {
+    runTestsImpl(thisSuite, testName, args, info, true, runTest)
   }
 
   /**

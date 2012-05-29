@@ -469,10 +469,8 @@ trait FunSuite extends Suite { thisSuite =>
    */
   override def tags: Map[String, Set[String]] = atomic.get.tagsMap
 
-  protected override def runTests(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-      configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
-
-    runTestsImpl(thisSuite, testName, reporter, stopper, filter, configMap, distributor, tracker, info, true, runTest)
+  protected override def runTests(testName: Option[String], args: RunArgs) {
+    runTestsImpl(thisSuite, testName, args, info, true, runTest)
   }
 
   override def run(testName: Option[String], args: RunArgs) {

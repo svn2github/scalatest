@@ -86,20 +86,11 @@ trait AbstractSuite { this: Suite =>
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param filter a <code>Filter</code> with which to filter tests based on their tags
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by the executing <code>Suite</code> of tests.
-   * @param distributor an optional <code>Distributor</code>, into which instances of this <code>Suite</code> class
-   *              that are responsible for executing individual tests contained in this </code>Suite</code>, or groups of this <code>Suite</code>'s
-   *              tests, may be placed so as to be run
-   *              by another entity, such as concurrently by a pool of threads.
-   * @param tracker a <code>Tracker</code> tracking <code>Ordinal</code>s being fired by the current thread.
-   * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>groupsToInclude</code>,
-   *     <code>groupsToExclude</code>, or <code>configMap</code> is <code>null</code>.
+   * @param args the <code>RunArgs</code> for this run
+   *
+   * @throws NullPointerException if either <code>testName</code> or <code>args</code> is <code>null</code>.
    */
-  protected def runTests(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-                             configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker)
+  protected def runTests(testName: Option[String], args: RunArgs)
 
   /**
    * Runs a test.

@@ -321,30 +321,17 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
   def runTestsImpl(
     theSuite: Suite,
     testName: Option[String],
-    reporter: Reporter,
-    stopper: Stopper,
-    filter: Filter,
-    configMap: Map[String, Any],
-    distributor: Option[Distributor],
-    tracker: Tracker,
+    args: RunArgs,
     info: Informer,
     includeIcon: Boolean,
     runTest: (String, Reporter, Stopper, Map[String, Any], Tracker) => Unit
   ) {
     if (testName == null)
       throw new NullPointerException("testName was null")
-    if (reporter == null)
-      throw new NullPointerException("reporter was null")
-    if (stopper == null)
-      throw new NullPointerException("stopper was null")
-    if (filter == null)
-      throw new NullPointerException("filter was null")
-    if (configMap == null)
-      throw new NullPointerException("configMap was null")
-    if (distributor == null)
-      throw new NullPointerException("distributor was null")
-    if (tracker == null)
-      throw new NullPointerException("tracker was null")
+    if (args == null)
+      throw new NullPointerException("args was null")
+
+    import args._
 
     if (theSuite.testNames.size > 0)
       checkChosenStyles(configMap, theSuite.styleName)
@@ -836,7 +823,7 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
 
     var swapAndCompareSucceeded = false
     try {
-     runTestsImpl(theSuite, testName, reporter, stopper, filter, configMap, distributor, tracker, info, true, runTest)
+     runTestsImpl(theSuite, testName, args.copy(reporter = report), info, true, runTest)
     }
     finally {
       val shouldBeInformerForThisSuite = atomicInformer.getAndSet(zombieInformer)

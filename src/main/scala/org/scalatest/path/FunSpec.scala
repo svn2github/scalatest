@@ -1182,8 +1182,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
    * <a href="#sharedFixtures">Shared fixtures</a> section in the main documentation for this trait.
    * </p>
    */
-  final protected override def runTests(testName: Option[String], reporter: Reporter, stopper: Stopper, filter: Filter,
-                             configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+  final protected override def runTests(testName: Option[String], args: RunArgs) {
     throw new UnsupportedOperationException
     // ensureTestResultsRegistered(isAnInitialInstance, this)
     // runTestsImpl(thisSuite, testName, reporter, stopper, filter, configMap, distributor, tracker, info, true, runTest)
