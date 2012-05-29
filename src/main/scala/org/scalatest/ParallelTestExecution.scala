@@ -50,10 +50,8 @@ trait ParallelTestExecution extends OneInstancePerTest {
 
   // Skipping runTests here, but that's OK, because by mixing in ParallelTestExecution, the programmer decided
   // that the super.runTests should be replaced by the one defined in ParallelTestExecution.
-  private[scalatest] def runOneTest(testName: String, reporter: Reporter, stopper: Stopper,
-                         configMap: Map[String, Any], tracker: Tracker) {
-
-    runTest(testName, reporter, stopper, configMap, tracker)
+  private[scalatest] def runOneTest(testName: String, args: RunArgs) {
+    runTest(testName, args)
   }
 
   /**

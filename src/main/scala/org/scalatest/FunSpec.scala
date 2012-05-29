@@ -16,16 +16,7 @@
 package org.scalatest
 
 import scala.collection.immutable.ListSet
-import java.util.ConcurrentModificationException
-import java.util.concurrent.atomic.AtomicReference
-import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepth
-import org.scalatest.events._
-import Suite.anErrorThatShouldCauseAnAbort
-import Suite.checkRunTestParamsForNull
-import Suite.indentation
 import verb.BehaveWord
-import Suite.reportInfoProvided
-import Suite.reportTestIgnored
 
 /**
  * Trait that facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
@@ -1595,16 +1586,15 @@ trait FunSpec extends Suite { thisSuite =>
    * for <code>testNames</code> for an example.)
    *
    * @param testName the name of one test to execute.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param configMap a <code>Map</code> of properties that can be used by this <code>FunSpec</code>'s executing tests.
+   * @param args the <code>RunArgs</code> for this run
+   *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  protected override def runTest(testName: String, reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], tracker: Tracker) {
+  protected override def runTest(testName: String, args: RunArgs) {
 
     def invokeWithFixture(theTest: TestLeaf) {
-      val theConfigMap = configMap
+      val theConfigMap = args.configMap
       withFixture(
         new NoArgTest {
           def name = testName
@@ -1614,7 +1604,7 @@ trait FunSpec extends Suite { thisSuite =>
       )
     }
 
-    runTestImpl(thisSuite, testName, reporter, stopper, configMap, tracker, true, invokeWithFixture)
+    runTestImpl(thisSuite, testName, args, true, invokeWithFixture)
   }
 
   /**

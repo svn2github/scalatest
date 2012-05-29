@@ -144,7 +144,7 @@ trait BeforeAndAfterEach extends AbstractSuite {
    * <code>beforeEach(configMap)</code>
    * before running each test and <code>afterEach(configMap)</code>
    * after running each test. It runs each test by invoking <code>super.runTest</code>, passing along
-   * the five parameters passed to it.
+   * the two parameters passed to it.
    * </p>
    * 
    * <p>
@@ -158,20 +158,20 @@ trait BeforeAndAfterEach extends AbstractSuite {
    * exception, this method will complete abruptly with the exception thrown by <code>afterEach</code>.
    * </p>
   */
-  abstract protected override def runTest(testName: String, reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], tracker: Tracker) {
+  abstract protected override def runTest(testName: String, args: RunArgs) {
 
     var thrownException: Option[Throwable] = None
 
-    beforeEach(configMap)
+    beforeEach(args.configMap)
     try {
-      super.runTest(testName, reporter, stopper, configMap, tracker)
+      super.runTest(testName, args)
     }
     catch {
       case e: Exception => thrownException = Some(e)
     }
     finally {
       try {
-        afterEach(configMap) // Make sure that afterEach is called even if runTest completes abruptly.
+        afterEach(args.configMap) // Make sure that afterEach is called even if runTest completes abruptly.
         thrownException match {
           case Some(e) => throw e
           case None =>

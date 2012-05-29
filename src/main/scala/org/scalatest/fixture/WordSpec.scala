@@ -999,23 +999,22 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * for <code>testNames</code> for an example.)
    *
    * @param testName the name of one test to execute.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param configMap a <code>Map</code> of properties that can be used by this <code>WordSpec</code>'s executing tests.
+   * @param args the <code>RunArgs</code> for this run
+   *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  protected override def runTest(testName: String, reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], tracker: Tracker) {
+  protected override def runTest(testName: String, args: RunArgs) {
 
     def invokeWithFixture(theTest: TestLeaf) {
       theTest.testFun match {
         case wrapper: NoArgTestWrapper[_] =>
-          withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, configMap))
-        case fun => withFixture(new TestFunAndConfigMap(testName, fun, configMap))
+          withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
+        case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
       }
     }
 
-    runTestImpl(thisSuite, testName, reporter, stopper, configMap, tracker, true, invokeWithFixture)
+    runTestImpl(thisSuite, testName, args, true, invokeWithFixture)
   }
 
   /**

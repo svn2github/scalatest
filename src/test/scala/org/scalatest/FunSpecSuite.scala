@@ -798,9 +798,9 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
   test("Config map should make it through to runTest") {
     var foundMyGoodie = false
     class MySpec extends FunSpec with ShouldMatchers {
-      override def runTest(testName: String, reporter: Reporter, stopper: Stopper, config: Map[String, Any], tracker: Tracker) {
-        foundMyGoodie = config.contains("my goodie")
-        super.runTest(testName, reporter, stopper, config, tracker)
+      override def runTest(testName: String, args: RunArgs) {
+        foundMyGoodie = args.configMap.contains("my goodie")
+        super.runTest(testName, args)
       }
       it("it should find my goodie") {}
     }

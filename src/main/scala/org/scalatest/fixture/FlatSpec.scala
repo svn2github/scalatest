@@ -2207,17 +2207,17 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  protected override def runTest(testName: String, reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], tracker: Tracker) {
+  protected override def runTest(testName: String, args: RunArgs) {
 
     def invokeWithFixture(theTest: TestLeaf) {
       theTest.testFun match {
         case wrapper: NoArgTestWrapper[_] =>
-          withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, configMap))
-        case fun => withFixture(new TestFunAndConfigMap(testName, fun, configMap))
+          withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
+        case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
       }
     }
 
-    runTestImpl(thisSuite, testName, reporter, stopper, configMap, tracker, true, invokeWithFixture)
+    runTestImpl(thisSuite, testName, args, true, invokeWithFixture)
   }
 
   /**

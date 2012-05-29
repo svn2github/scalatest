@@ -40,17 +40,13 @@ import Suite.testMethodTakesAnInformer
 import scala.collection.immutable.TreeSet
 import Suite.getIndentedText
 import Suite.getDecodedName
-import Suite.getLineInFile
 import org.scalatest.events._
 import org.scalatest.tools.StandardOutReporter
-import Suite.checkRunTestParamsForNull
-import Suite.getIndentedTextForInfo
 import Suite.getMessageForException
 import Suite.reportTestStarting
 import Suite.reportTestIgnored
 import Suite.reportTestSucceeded
 import Suite.reportTestPending
-import Suite.reportTestCanceled
 import Suite.reportInfoProvided
 import scala.reflect.NameTransformer
 import tools.SuiteDiscoveryHelper
@@ -2030,18 +2026,21 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * @param testName the name of one test to run.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by the executing <code>Suite</code> of tests.
-   * @param tracker a <code>Tracker</code> tracking <code>Ordinal</code>s being fired by the current thread.
+   * @param args the <code>RunArgs</code> for this run
+   *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>configMap</code>
    *     or <code>tracker</code> is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in this <code>Suite</code>
    */
-  protected def runTest(testName: String, reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], tracker: Tracker) {
+  protected def runTest(testName: String, args: RunArgs) {
 
-    checkRunTestParamsForNull(testName, reporter, stopper, configMap, tracker)
+    if (testName == null)
+      throw new NullPointerException("testName was null")
+    if (args == null)
+      throw new NullPointerException("args was null")
+
+    import args._
 
     val (stopRequested, report, method, testStartTime) =
       getSuiteRunTestGoodies(stopper, reporter, testName)
@@ -2063,7 +2062,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, None, 2, location, isConstructingThread, true, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
       )
 
-    val args: Array[Object] =
+    val argsArray: Array[Object] =
       if (testMethodTakesAnInformer(testName)) {
         Array(informerForThisTest)  
       }
@@ -2076,7 +2075,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       withFixture(
         new NoArgTest {
           def name = testName
-          def apply() { method.invoke(thisSuite, args: _*) }
+          def apply() { method.invoke(thisSuite, argsArray: _*) }
           def configMap = theConfigMap
         }
       )
@@ -2198,6 +2197,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     // so that exceptions are caught and transformed
     // into error messages on the standard error stream.
     val report = wrapReporterIfNecessary(reporter)
+    val newArgs = args.copy(reporter = report)
 
     // If a testName is passed to run, just run that, else run the tests returned
     // by testNames.
@@ -2209,7 +2209,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
           if (ignoreTest)
             reportTestIgnored(thisSuite, report, tracker, tn, tn, getDecodedName(tn), 1, Some(getTopOfMethod(tn)))
           else
-            runTest(tn, report, stopRequested, configMap, tracker)
+            runTest(tn, newArgs)
         }
 
       case None =>
@@ -2218,7 +2218,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
             if (ignoreTest)
               reportTestIgnored(thisSuite, report, tracker, tn, tn, getDecodedName(tn), 1, Some(getTopOfMethod(tn)))
             else
-              runTest(tn, report, stopRequested, configMap, tracker)
+              runTest(tn, newArgs)
           }
       }
     }
@@ -2773,19 +2773,6 @@ private[scalatest] object Suite {
 
   def testMethodTakesAnInformer(testName: String) = testName.endsWith(InformerInParens)
 
-  def checkRunTestParamsForNull(testName: String, reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], tracker: Tracker) {
-    if (testName == null)
-      throw new NullPointerException("testName was null")
-    if (reporter == null)
-      throw new NullPointerException("reporter was null")
-    if (stopper == null)
-      throw new NullPointerException("stopper was null")
-    if (configMap == null)
-      throw new NullPointerException("configMap was null")
-    if (tracker == null)
-      throw new NullPointerException("tracker was null")
-  }
- 
   /*
    For info and test names, the formatted text should have one level shaved off so that the text will
    line up correctly, and the icon is over to the left of that even with the enclosing level.

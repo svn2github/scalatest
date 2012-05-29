@@ -283,14 +283,11 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
    * </p>
    *
    * @param testName the name of one test to run.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by the executing <code>Suite</code> of tests.
-   * @param tracker a <code>Tracker</code> tracking <code>Ordinal</code>s being fired by the current thread.
+   * @param args the <code>RunArgs</code> for this run
+   *
    * @throws UnsupportedOperationException always.
    */
-  override protected final def runTest(testName: String, reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], tracker: Tracker) {
-
+  override protected final def runTest(testName: String, args: RunArgs) {
         throw new UnsupportedOperationException
   }
 

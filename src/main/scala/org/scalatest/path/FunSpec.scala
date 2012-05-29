@@ -1101,7 +1101,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  final protected override def runTest(testName: String, reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], tracker: Tracker) {
+  final protected override def runTest(testName: String, args: RunArgs) {
 
     ensureTestResultsRegistered(thisSuite)
     
@@ -1109,7 +1109,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
       theTest.testFun()
     }
 
-    runTestImpl(thisSuite, testName, reporter, stopper, configMap, tracker, true, dontInvokeWithFixture)
+    runTestImpl(thisSuite, testName, args, true, dontInvokeWithFixture)
   }
 
   /**

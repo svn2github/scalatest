@@ -25,9 +25,9 @@ class BeforeNAfterSuite extends FunSuite {
   class TheSuper extends Suite {
     var runTestWasCalled = false
     var runWasCalled = false
-    protected override def runTest(testName: String, reporter: Reporter, stopper: Stopper, properties: Map[String, Any], tracker: Tracker) {
+    protected override def runTest(testName: String, args: RunArgs) {
       runTestWasCalled = true
-      super.runTest(testName, reporter, stopper, properties, tracker)
+      super.runTest(testName, args)
     }
     override def run(testName: Option[String], args: RunArgs) {
       runWasCalled = true
@@ -91,7 +91,7 @@ class BeforeNAfterSuite extends FunSuite {
   test("If any call to super.runTest completes abruptly with an exception, runTest " +
     "will complete abruptly with the same exception, however, before doing so, it will invoke after") {
     trait FunkySuite extends Suite {
-      protected override def runTest(testName: String, reporter: Reporter, stopper: Stopper, properties: Map[String, Any], tracker: Tracker) {
+      protected override def runTest(testName: String, args: RunArgs) {
         throw new NumberFormatException
       }
     }
@@ -111,7 +111,7 @@ class BeforeNAfterSuite extends FunSuite {
   test("If both super.runTest and after complete abruptly with an exception, runTest " + 
     "will complete abruptly with the exception thrown by super.runTest.") {
     trait FunkySuite extends Suite {
-      protected override def runTest(testName: String, reporter: Reporter, stopper: Stopper, properties: Map[String, Any], tracker: Tracker) {
+      protected override def runTest(testName: String, args: RunArgs) {
         throw new NumberFormatException
       }
     }

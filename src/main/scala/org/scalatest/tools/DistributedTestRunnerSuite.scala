@@ -19,7 +19,6 @@ import org.scalatest._
 
 private[scalatest] class DistributedTestRunnerSuite(suite: ParallelTestExecution, testName: String) extends Suite {
   override def run(ignoreThisTestName: Option[String], args: RunArgs) {
-    import args._
-    suite.runOneTest(testName, reporter, stopper, configMap, tracker)
+    suite.runOneTest(testName, args)
   }
 }

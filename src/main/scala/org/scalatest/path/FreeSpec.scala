@@ -1094,13 +1094,12 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    * </p>
    *
    * @param testName the name of one test to execute.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param configMap a <code>Map</code> of properties that can be used by this <code>FreeSpec</code>'s executing tests.
+   * @param args the <code>RunArgs</code> for this run
+   *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  final protected override def runTest(testName: String, reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], tracker: Tracker) {
+  final protected override def runTest(testName: String, args: RunArgs) {
 
     ensureTestResultsRegistered(thisSuite)
     
@@ -1108,7 +1107,7 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
       theTest.testFun()
     }
 
-    runTestImpl(thisSuite, testName, reporter, stopper, configMap, tracker, true, dontInvokeWithFixture)
+    runTestImpl(thisSuite, testName, args, true, dontInvokeWithFixture)
   }
 
   /**
