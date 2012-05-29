@@ -2301,7 +2301,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     val report = wrapReporterIfNecessary(reporter)
 
     testName match {
-      case None => runNestedSuites(report, stopRequested, filter, configMap, distributor, tracker)
+      case None => runNestedSuites(args.copy(reporter = report))
       case Some(_) =>
     }
     runTests(testName, report, stopRequested, filter, configMap, distributor, tracker)
@@ -2358,31 +2358,16 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * or <code>SuiteAborted</code> after executing any nested <code>Suite</code>.
    * </p>
    *
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param filter a <code>Filter</code> with which to filter tests based on their tags
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by the executing <code>Suite</code> of tests.
-   * @param distributor an optional <code>Distributor</code>, into which to put nested <code>Suite</code>s to be run
-   *              by another entity, such as concurrently by a pool of threads. If <code>None</code>, nested <code>Suite</code>s will be run sequentially.
-   * @param tracker a <code>Tracker</code> tracking <code>Ordinal</code>s being fired by the current thread.
-   *         
+   * @param args the <code>RunArgs</code> for this run
+   *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
-  protected def runNestedSuites(reporter: Reporter, stopper: Stopper, filter: Filter, // TODO: Do runargs thing below
-                                configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+  protected def runNestedSuites(args: RunArgs) {
 
-    if (reporter == null)
-      throw new NullPointerException("reporter was null")
-    if (stopper == null)
-      throw new NullPointerException("stopper was null")
-    if (filter == null)
-      throw new NullPointerException("filter was null")
-    if (configMap == null)
-      throw new NullPointerException("configMap was null")
-    if (distributor == null)
-      throw new NullPointerException("distributor was null")
-    if (tracker == null)
-      throw new NullPointerException("tracker was null")
+    if (args == null)
+      throw new NullPointerException("args was null")
+
+    import args._
 
     val stopRequested = stopper
     val report = wrapReporterIfNecessary(reporter)

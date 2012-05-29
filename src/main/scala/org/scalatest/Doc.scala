@@ -123,16 +123,17 @@ println("&&&&&&&&&&&")
     reportMarkupProvided(thisDoc, reporter, tracker, None, trimMarkup(stripMargin(body.text)), 0, true, None, None)
   }
 */
-  override protected def runNestedSuites(reporter: Reporter, stopper: Stopper, filter: Filter,
-      configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) { // TODO Do RunArgs thing below
+  override protected def runNestedSuites(args: RunArgs) {
+
+    import args._
 
     val (_, registeredSuites) = atomic.get.unpack
     snippets foreach {
       case Markup(text) => 
         reportMarkupProvided(thisDoc, reporter, tracker, None, trimMarkup(stripMargin(text)), 0, None, true, None, None)
       case IncludedSuite(suite) =>
-        println("Send SuiteStarting ... ")  // TODO: Why is runTestedSuites even here? Anway, passing Set.empty for chosenStyles for now. Fix later.
-        suite.run(None, RunArgs(reporter, stopper, filter, configMap, distributor, tracker, Set.empty)) // Do the usual thing here
+        println("Send SuiteStarting ... ")  // TODO: Why is runTestedSuites even here?
+        suite.run(None, args)
         println("Send SuiteCompleted or Aborted ...")
     }
   }

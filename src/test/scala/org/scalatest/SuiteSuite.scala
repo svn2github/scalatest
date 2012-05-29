@@ -453,9 +453,8 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     
     class MasterSuite extends Suite {
       override def nestedSuites = List(new NoTagSuite(), new IgnoreSuite(), new SlowAsMolassesSuite(), new FastAsLightSuite())
-      override def runNestedSuites(reporter: Reporter, stopper: Stopper, filter: Filter,
-                                configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
-        super.runNestedSuites(reporter, stopper, filter, configMap, distributor, tracker)
+      override def runNestedSuites(args: RunArgs) {
+        super.runNestedSuites(args)
       }
     }
     
@@ -473,32 +472,32 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     
     val defaultFilter = new Filter(None, Set.empty)
     val defaultReporter = new EventRecordingReporter
-    masterSuite.runNestedSuites(defaultReporter, new Stopper {}, defaultFilter, Map.empty, None, new Tracker(new Ordinal(99)))
+    masterSuite.runNestedSuites(RunArgs(defaultReporter, new Stopper {}, defaultFilter, Map.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(defaultReporter.suiteStartingEventsReceived.size === 4)
     assert(defaultReporter.testIgnoredEventsReceived.size === 3)
     val defaultReporterDist = new EventRecordingReporter
     val defaultDistributor = new CounterDistributor
-    masterSuite.runNestedSuites(defaultReporterDist, new Stopper {}, defaultFilter, Map.empty, Some(defaultDistributor), new Tracker(new Ordinal(99)))
+    masterSuite.runNestedSuites(RunArgs(defaultReporterDist, new Stopper {}, defaultFilter, Map.empty, Some(defaultDistributor), new Tracker(new Ordinal(99)), Set.empty))
     assert(defaultDistributor.count === 4)
     
     val includeFilter = new Filter(Some(Set("org.scalatest.FastAsLight")), Set.empty)
     val includeReporter = new EventRecordingReporter
-    masterSuite.runNestedSuites(includeReporter, new Stopper {}, includeFilter, Map.empty, None, new Tracker(new Ordinal(99)))
+    masterSuite.runNestedSuites(RunArgs(includeReporter, new Stopper {}, includeFilter, Map.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(includeReporter.suiteStartingEventsReceived.size === 4) 
     assert(includeReporter.testIgnoredEventsReceived.size === 0) 
     val includeReporterDist = new EventRecordingReporter
     val includeDistributor = new CounterDistributor
-    masterSuite.runNestedSuites(includeReporterDist, new Stopper {}, includeFilter, Map.empty, Some(includeDistributor), new Tracker(new Ordinal(99)))
+    masterSuite.runNestedSuites(RunArgs(includeReporterDist, new Stopper {}, includeFilter, Map.empty, Some(includeDistributor), new Tracker(new Ordinal(99)), Set.empty))
     assert(includeDistributor.count === 4) 
     
     val excludeFilter = new Filter(None, Set("org.scalatest.SlowAsMolasses"))
     val excludeReporter = new EventRecordingReporter
-    masterSuite.runNestedSuites(excludeReporter, new Stopper {}, excludeFilter, Map.empty, None, new Tracker(new Ordinal(99)))
+    masterSuite.runNestedSuites(RunArgs(excludeReporter, new Stopper {}, excludeFilter, Map.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(excludeReporter.suiteStartingEventsReceived.size === 4)
     assert(excludeReporter.testIgnoredEventsReceived.size === 3)
     val excludeReporterDist = new EventRecordingReporter
     val excludeDistributor = new CounterDistributor
-    masterSuite.runNestedSuites(excludeReporterDist, new Stopper {}, excludeFilter, Map.empty, Some(excludeDistributor), new Tracker(new Ordinal(99)))
+    masterSuite.runNestedSuites(RunArgs(excludeReporterDist, new Stopper {}, excludeFilter, Map.empty, Some(excludeDistributor), new Tracker(new Ordinal(99)), Set.empty))
     assert(excludeDistributor.count === 4)
   }
   
@@ -529,9 +528,8 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     
     class MasterSuite extends Suite {
       override def nestedSuites = List(new NoTagSuite(), new IgnoreSuite(), new SlowAsMolassesSuite(), new FastAsLightSuite())
-      override def runNestedSuites(reporter: Reporter, stopper: Stopper, filter: Filter,
-                                configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
-        super.runNestedSuites(reporter, stopper, filter, configMap, distributor, tracker)
+      override def runNestedSuites(args: RunArgs) {
+        super.runNestedSuites(args)
       }
     }
     
