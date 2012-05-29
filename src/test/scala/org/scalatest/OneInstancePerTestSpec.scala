@@ -58,12 +58,12 @@ class OneInstancePerTestSpec extends FunSpec with SharedHelpers {
         override def newInstance = new MySuite
       }
       val suite = new MySuite
-      suite.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+      suite.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       assert(sideEffectWasNotSeen)
     }
     it("should isolate side effects from one test to the next in an inner Suite class that overrides newInstance") {
       val suite = new TopLevelSuite
-      suite.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+      suite.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       assert(TopLevelSuite.sideEffectWasNotSeen)
     }
     it("should send TestIgnored for an ignored test") {
@@ -78,7 +78,7 @@ class OneInstancePerTestSpec extends FunSpec with SharedHelpers {
       val a = new ASpec
 
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, repA, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(!repA.testIgnoredReceived)
       assert(aTheTestThisCalled)
       assert(aTheTestThatCalled)
@@ -93,7 +93,7 @@ class OneInstancePerTestSpec extends FunSpec with SharedHelpers {
       val b = new BSpec
 
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, repB, new Stopper {}, Filter(), Map(), None, new Tracker)
+      b.run(None, RunArgs(repB, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repB.testIgnoredReceived)
       assert(repB.lastEvent.isDefined)
       assert(repB.lastEvent.get.testName endsWith "test this")
@@ -110,7 +110,7 @@ class OneInstancePerTestSpec extends FunSpec with SharedHelpers {
       val c = new CSpec
 
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, repC, new Stopper {}, Filter(), Map(), None, new Tracker)
+      c.run(None, RunArgs(repC, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repC.testIgnoredReceived)
       assert(repC.lastEvent.isDefined)
       assert(repC.lastEvent.get.testName endsWith "test that", repC.lastEvent.get.testName)
@@ -129,7 +129,7 @@ class OneInstancePerTestSpec extends FunSpec with SharedHelpers {
       val d = new DSpec
 
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, repD, new Stopper {}, Filter(), Map(), None, new Tracker)
+      d.run(None, RunArgs(repD, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repD.testIgnoredReceived)
       assert(repD.lastEvent.isDefined)
       assert(repD.lastEvent.get.testName endsWith "test that") // last because should be in order of appearance
@@ -147,7 +147,7 @@ class OneInstancePerTestSpec extends FunSpec with SharedHelpers {
       val b = new BSpec
 
       val repB = new TestIgnoredTrackingReporter
-      b.run(Some("test this"), repB, new Stopper {}, Filter(), Map(), None, new Tracker)
+      b.run(Some("test this"), RunArgs(repB, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repB.testIgnoredReceived)
       assert(!bTheTestThisCalled)
       assert(!bTheTestThatCalled)

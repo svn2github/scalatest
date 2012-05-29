@@ -34,7 +34,7 @@ class GivenWhenThenSpec extends FunSpec with SharedHelpers {
     }
     val spec = new GivenWhenThenInsideTestSpec
     val myRep = new EventRecordingReporter
-    spec.run(None, myRep, new Stopper {}, Filter(), Map(), None, new Tracker)
+    spec.run(None, RunArgs(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
     val indexedList = myRep.eventsReceived.zipWithIndex
     val infoProvidedList: List[InfoProvided] =
       for ((infoProvided: InfoProvided, _) <- indexedList)

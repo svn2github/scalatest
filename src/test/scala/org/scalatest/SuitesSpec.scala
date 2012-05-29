@@ -43,8 +43,8 @@ class SuitesSpec extends FunSpec with SharedHelpers {
     }
     it("should not care about chosenStyles if it contains no tests directly and only contains nested suites with no tests") {
       val f = new Suites(a, b, c, d, e)
-      f.run(None, SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker)
-      f.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("FunSuite")), None, new Tracker)
+      f.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker, Set.empty))
+      f.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("FunSuite")), None, new Tracker, Set.empty))
     }
 
     it("should care about chosenStyles if it contains tests directly") {
@@ -56,12 +56,12 @@ class SuitesSpec extends FunSpec with SharedHelpers {
 
       val g = new SuitesWithSuiteStyleTests(a, b, c, d, e)
       // OK if no chosen styles specified
-      g.run(None, SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker)
+      g.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker, Set.empty))
       // OK if chosen styles is Suite, because that's the style of *tests* written in this Suites
-      g.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker)
+      g.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker, Set.empty))
       intercept[NotAllowedException] {
         // Should not allow if chosen styles is FunSuite, because Suite is the style of *tests* written in this Suites
-        g.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSuite")), None, new Tracker)
+        g.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSuite")), None, new Tracker, Set.empty))
       }
     }
   }
@@ -82,8 +82,8 @@ class SuitesSpec extends FunSpec with SharedHelpers {
     }
     it("should not care about chosenStyles if it contains no tests directly and only contains nested suites with no tests") {
       val f = new Specs(a, b, c, d, e)
-      f.run(None, SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker)
-      f.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSuite")), None, new Tracker)
+      f.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker, Set.empty))
+      f.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSuite")), None, new Tracker, Set.empty))
     }
 
     it("should care about chosenStyles if it contains tests directly") {
@@ -95,12 +95,12 @@ class SuitesSpec extends FunSpec with SharedHelpers {
 
       val g = new SpecsWithSuiteStyleTests(a, b, c, d, e)
       // OK if no chosen styles specified
-      g.run(None, SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker)
+      g.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker, Set.empty))
       // OK if chosen styles is Suite, because that's the style of *tests* written in this Specs
-      g.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker)
+      g.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker, Set.empty))
       intercept[NotAllowedException] {
         // Should not allow if chosen styles is FunSuite, because Suite is the style of *tests* written in this Specs
-        g.run(None, SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSuite")), None, new Tracker)
+        g.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSuite")), None, new Tracker, Set.empty))
       }
     }
   }

@@ -36,7 +36,7 @@ class InformerSpec extends FlatSpec with SharedHelpers {
     }
     val suite = new MySuite()
     val rep = new EventRecordingReporter()
-    suite.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+    suite.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
     val infoProvidedEvents = rep.infoProvidedEventsReceived
     assert(infoProvidedEvents.length === 1)
     assert(infoProvidedEvents(0).message === "info message")
@@ -49,7 +49,7 @@ class InformerSpec extends FlatSpec with SharedHelpers {
     }
     val suite = new MySuite()
     val rep = new EventRecordingReporter()
-    suite.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+    suite.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
     val infoProvidedEvents = rep.infoProvidedEventsReceived
     assert(infoProvidedEvents.length === 1)
     assert(infoProvidedEvents(0).message === "info message")

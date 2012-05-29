@@ -1,19 +1,13 @@
 package org.scalatest.events
-import org.scalatest.Stopper
-import org.scalatest.Filter
-import org.scalatest.Tracker
-import org.scalatest.Suite
-import org.scalatest.Ignore
-import org.scalatest.MethodSuiteProp
-import org.scalatest.fixture
-import org.scalatest.StringFixture
+
+import org.scalatest._
 
 class LocationMethodSuiteProp extends MethodSuiteProp {
   
   test("Method suites should have correct TopOfMethod location in test events.") {
     forAll(examples) { suite =>
       val reporter = new EventRecordingReporter
-      suite.run(None, reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)))
+      suite.run(None, RunArgs(reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
       val eventList = reporter.eventsReceived
       eventList.foreach { event => suite.checkFun(event) }
       suite.allChecked

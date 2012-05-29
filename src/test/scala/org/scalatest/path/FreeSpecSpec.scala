@@ -277,7 +277,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         }
         val spec = new MySpec
         val myRep = new EventRecordingReporter
-        spec.run(None, myRep, new Stopper {}, Filter(), Map(), None, new Tracker)
+        spec.run(None, RunArgs(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
         intercept[IllegalStateException] {
           spec.callInfo()
         }
@@ -413,7 +413,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
     it("should execute all tests when run is called with testName None") {
 
       val b = new TestWasCalledSuite(TestWasCalledCounts(false, false))
-      b.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
+      b.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(b.counts.theTestThisCalled)
       assert(b.counts.theTestThatCalled)
     }
@@ -422,7 +422,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
 
       val a = new TestWasCalledSuite(TestWasCalledCounts(false, false))
       val rep = new EventRecordingReporter
-      a.run(Some("run this"), rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(Some("run this"), RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(a.counts.theTestThisCalled)
       assert(a.counts.theTestThatCalled)
       rep.testSucceededEventsReceived
@@ -448,7 +448,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       val a = new AFreeSpec(TestWasCalledCounts(false, false))
 
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, repA, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(!repA.testIgnoredReceived)
       assert(a.counts.theTestThisCalled)
       assert(a.counts.theTestThatCalled)
@@ -461,7 +461,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       val b = new BFreeSpec(TestWasCalledCounts(false, false))
 
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, repB, new Stopper {}, Filter(), Map(), None, new Tracker)
+      b.run(None, RunArgs(repB, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repB.testIgnoredReceived)
       assert(repB.lastEvent.isDefined)
       assert(repB.lastEvent.get.testName endsWith "test this")
@@ -476,7 +476,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       val c = new CFreeSpec(TestWasCalledCounts(false, false))
 
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, repC, new Stopper {}, Filter(), Map(), None, new Tracker)
+      c.run(None, RunArgs(repC, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repC.testIgnoredReceived)
       assert(repC.lastEvent.isDefined)
       assert(repC.lastEvent.get.testName endsWith "test that", repC.lastEvent.get.testName)
@@ -493,7 +493,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       val d = new DFreeSpec(TestWasCalledCounts(false, false))
 
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, repD, new Stopper {}, Filter(), Map(), None, new Tracker)
+      d.run(None, RunArgs(repD, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repD.testIgnoredReceived)
       assert(repD.lastEvent.isDefined)
       assert(repD.lastEvent.get.testName endsWith "test that") // last because should be in order of appearance
@@ -514,7 +514,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       val e = new EFreeSpec
 
       val repE = new TestIgnoredTrackingReporter
-      e.run(Some("test this"), repE, new Stopper {}, Filter(), Map(), None, new Tracker)
+      e.run(Some("test this"), RunArgs(repE, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(!e.theTestThatCalled)
@@ -530,7 +530,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val a = new AFreeSpec(TestWasCalledCounts(false, false))
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, repA, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(!repA.testIgnoredReceived)
       assert(a.counts.theTestThisCalled)
       assert(a.counts.theTestThatCalled)
@@ -543,7 +543,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val b = new BFreeSpec(TestWasCalledCounts(false, false))
       val repB = new EventRecordingReporter
-      b.run(None, repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker)
+      b.run(None, RunArgs(repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
       assert(repB.testIgnoredEventsReceived.isEmpty)
       assert(b.counts.theTestThisCalled)
       assert(b.counts.theTestThatCalled)
@@ -558,7 +558,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val c = new CFreeSpec(TestWasCalledCounts(false, false))
       val repC = new EventRecordingReporter
-      c.run(None, repC, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker)
+      c.run(None, RunArgs(repC, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
       assert(repC.testIgnoredEventsReceived.isEmpty)
       assert(c.counts.theTestThisCalled)
       assert(c.counts.theTestThatCalled)
@@ -572,7 +572,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val d = new DFreeSpec(TestWasCalledCounts(false, false))
       val repD = new EventRecordingReporter
-      d.run(None, repD, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.Ignore")), Map(), None, new Tracker)
+      d.run(None, RunArgs(repD, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.Ignore")), Map(), None, new Tracker, Set.empty))
       assert(repD.testIgnoredEventsReceived.size === 1)
       assert(!d.counts.theTestThisCalled)
       assert(d.counts.theTestThatCalled)
@@ -589,8 +589,8 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val e = new EFreeSpec(ThreeCounts(false, false, false))
       val repE = new EventRecordingReporter
-      e.run(None, repE, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker)
+      e.run(None, RunArgs(repE, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
+                Map(), None, new Tracker, Set.empty))
       assert(repE.testIgnoredEventsReceived.isEmpty)
       assert(e.counts.theTestThisCalled)
       assert(e.counts.theTestThatCalled)
@@ -607,8 +607,8 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val f = new FFreeSpec(ThreeCounts(false, false, false))
       val repF = new EventRecordingReporter
-      f.run(None, repF, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker)
+      f.run(None, RunArgs(repF, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
+                Map(), None, new Tracker, Set.empty))
       assert(repE.testIgnoredEventsReceived.isEmpty)
       assert(!f.counts.theTestThisCalled)
       assert(f.counts.theTestThatCalled)
@@ -625,8 +625,8 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val g = new GFreeSpec(ThreeCounts(false, false, false))
       val repG = new EventRecordingReporter
-      g.run(None, repG, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker)
+      g.run(None, RunArgs(repG, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
+                Map(), None, new Tracker, Set.empty))
       assert(repG.testIgnoredEventsReceived.isEmpty)
       assert(g.counts.theTestThisCalled)
       assert(g.counts.theTestThatCalled)
@@ -643,7 +643,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val h = new HFreeSpec(ThreeCounts(false, false, false))
       val repH = new EventRecordingReporter
-      h.run(None, repH, new Stopper {}, Filter(None, Set("org.scalatest.FastAsLight")), Map(), None, new Tracker)
+      h.run(None, RunArgs(repH, new Stopper {}, Filter(None, Set("org.scalatest.FastAsLight")), Map(), None, new Tracker, Set.empty))
       assert(repH.testIgnoredEventsReceived.isEmpty)
       assert(h.counts.theTestThisCalled)
       assert(h.counts.theTestThatCalled)
@@ -661,7 +661,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val i = new IFreeSpec(ThreeCounts(false, false, false))
       val repI = new EventRecordingReporter
-      i.run(None, repI, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker)
+      i.run(None, RunArgs(repI, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
       assert(repI.testIgnoredEventsReceived.isEmpty)
       assert(i.counts.theTestThisCalled)
       assert(i.counts.theTestThatCalled)
@@ -678,7 +678,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val j = new JFreeSpec(ThreeCounts(false, false, false))
       val repJ = new TestIgnoredTrackingReporter
-      j.run(None, repJ, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker)
+      j.run(None, RunArgs(repJ, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
       assert(!repJ.testIgnoredReceived)
       assert(!j.counts.theTestThisCalled)
       assert(!j.counts.theTestThatCalled)
@@ -693,7 +693,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val k = new KFreeSpec(ThreeCounts(false, false, false))
       val repK = new TestIgnoredTrackingReporter
-      k.run(None, repK, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses", "org.scalatest.Ignore")), Map(), None, new Tracker)
+      k.run(None, RunArgs(repK, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses", "org.scalatest.Ignore")), Map(), None, new Tracker, Set.empty))
       assert(repK.testIgnoredReceived)
       assert(!k.counts.theTestThisCalled)
       assert(!k.counts.theTestThatCalled)
@@ -770,7 +770,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val a = new AFreeSpec
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tp = rep.testPendingEventsReceived
       assert(tp.size === 2)
     }
@@ -786,7 +786,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val a = new AFreeSpec
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tf = rep.testFailedEventsReceived
       assert(tf.size === 3)
     }
@@ -801,7 +801,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       // val a = new AFreeSpec
       intercept[OutOfMemoryError] {
         new AFreeSpec
-        // a.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+        // a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       }
     }
     it("should send InfoProvided events with aboutAPendingTest set to true for info " +
@@ -819,7 +819,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val a = new AFreeSpec
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ip = rep.infoProvidedEventsReceived
       val so = rep.scopeOpenedEventsReceived
       val sc = rep.scopeClosedEventsReceived
@@ -845,7 +845,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val a = new AFreeSpec
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ip = rep.infoProvidedEventsReceived
       val so = rep.scopeOpenedEventsReceived
       val sc = rep.scopeClosedEventsReceived
@@ -869,7 +869,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val a = new AFreeSpec
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ts = rep.testSucceededEventsReceived
       assert(ts.size === 1)
       assert(ts.head.testName === "A Stack when empty should chill out")
@@ -885,7 +885,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val a = new AFreeSpec
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ts = rep.testSucceededEventsReceived
       assert(ts.size === 1)
       assert(ts.head.testName === "A Stack should chill out")
@@ -902,7 +902,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val a = new AFreeSpec
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ts = rep.testSucceededEventsReceived
       assert(ts.size === 1)
       import OptionValues._
@@ -927,7 +927,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val rep = new EventRecordingReporter
       val s1 = new TestSpec
-      s1.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      s1.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(rep.testFailedEventsReceived.size === 2)
       assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "FreeSpecSpec.scala")
       assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 14)
@@ -949,7 +949,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val rep = new EventRecordingReporter
       val s = new TestSpec
-      s.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      s.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       val testFailedEvents = rep.testFailedEventsReceived
       assert(testFailedEvents.size === 1)
       assert(testFailedEvents(0).throwable.get.getClass() === classOf[TestRegistrationClosedException])

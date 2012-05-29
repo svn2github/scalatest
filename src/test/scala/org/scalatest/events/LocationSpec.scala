@@ -1,15 +1,9 @@
 package org.scalatest.events
-import org.scalatest.Spec
-import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 import org.scalatest.SharedHelpers.EventRecordingReporter
-import org.scalatest.Stopper
-import org.scalatest.Filter
-import org.scalatest.Tracker
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.Suite
-import org.scalatest.Ignore
+import org.scalatest._
 
 @RunWith(classOf[JUnitRunner])
 class LocationSpec extends Spec with Checkers {
@@ -33,7 +27,7 @@ class LocationSpec extends Spec with Checkers {
     it("should have LineInFile and SeeStackDepthException location with correct line number and source file name") {
       val testLocationSuite = new TestLocationFunSuite
       val testLocationReporter = new EventRecordingReporter
-      testLocationSuite.run(None, testLocationReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)))
+      testLocationSuite.run(None, RunArgs(testLocationReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
       val testLocationEventList = testLocationReporter.eventsReceived
       testLocationEventList.foreach {event => 
         event match {
@@ -77,7 +71,7 @@ class LocationSpec extends Spec with Checkers {
     it("should have TopOfMethod and SeeStackDepthException location with correct line number and source file name") {
       val testLocationSuite = new TestLocationSuite
       val testLocationReporter = new EventRecordingReporter
-      testLocationSuite.run(None, testLocationReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)))
+      testLocationSuite.run(None, RunArgs(testLocationReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
       val testLocationEventList = testLocationReporter.eventsReceived
       testLocationEventList.foreach {event => 
         event match {

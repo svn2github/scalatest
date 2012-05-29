@@ -97,8 +97,8 @@ trait OneInstancePerTest extends AbstractSuite {
       case Some(tn) => super.runTests(testName, reporter, stopper, filter, configMap, None, tracker)
       case None =>
         for (tn <- testNames) {
-          val oneInstance = newInstance
-          oneInstance.run(Some(tn), reporter, stopper, filter, configMap, None, tracker)
+          val oneInstance = newInstance  // TODO: I had to pass Set.empty for chosenStyles for now. Fix this later.
+          oneInstance.run(Some(tn), RunArgs(reporter, stopper, filter, configMap, None, tracker, Set.empty))
         }
     }
   }

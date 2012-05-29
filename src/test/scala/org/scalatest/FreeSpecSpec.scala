@@ -38,7 +38,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
           testWasInvoked = true
         }
       }
-      a.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       assert(a.withFixtureWasInvoked)
       assert(a.testWasInvoked)
     }
@@ -51,7 +51,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
         "do something" in {}
       }
-      a.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       assert(a.correctTestNameWasPassed)
     }
     it("should pass the correct config map in the NoArgTest passed to withFixture") {
@@ -63,7 +63,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
         "do something" in {}
       }
-      a.run(None, SilentReporter, new Stopper {}, Filter(), Map("hi" -> 7), None, new Tracker())
+      a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map("hi" -> 7), None, new Tracker(), Set.empty))
       assert(a.correctConfigMapWasPassed)
     }
 
@@ -296,7 +296,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
         val spec = new MySpec
         val myRep = new EventRecordingReporter
-        spec.run(None, myRep, new Stopper {}, Filter(), Map(), None, new Tracker)
+        spec.run(None, RunArgs(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
         intercept[IllegalStateException] {
           spec.callInfo()
         }
@@ -417,7 +417,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
     it("should execute all tests when run is called with testName None") {
 
       val b = new TestWasCalledSuite
-      b.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
+      b.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(b.theTestThisCalled)
       assert(b.theTestThatCalled)
     }
@@ -425,7 +425,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
     it("should execute one test when run is called with a defined testName") {
 
       val a = new TestWasCalledSuite
-      a.run(Some("run this"), SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(Some("run this"), RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(a.theTestThisCalled)
       assert(!a.theTestThatCalled)
     }
@@ -440,7 +440,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
 
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, repA, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -453,7 +453,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
 
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, repB, new Stopper {}, Filter(), Map(), None, new Tracker)
+      b.run(None, RunArgs(repB, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repB.testIgnoredReceived)
       assert(repB.lastEvent.isDefined)
       assert(repB.lastEvent.get.testName endsWith "test this")
@@ -468,7 +468,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
 
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, repC, new Stopper {}, Filter(), Map(), None, new Tracker)
+      c.run(None, RunArgs(repC, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repC.testIgnoredReceived)
       assert(repC.lastEvent.isDefined)
       assert(repC.lastEvent.get.testName endsWith "test that", repC.lastEvent.get.testName)
@@ -485,7 +485,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
 
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, repD, new Stopper {}, Filter(), Map(), None, new Tracker)
+      d.run(None, RunArgs(repD, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repD.testIgnoredReceived)
       assert(repD.lastEvent.isDefined)
       assert(repD.lastEvent.get.testName endsWith "test that") // last because should be in order of appearance
@@ -504,7 +504,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
 
       val repE = new TestIgnoredTrackingReporter
-      e.run(Some("test this"), repE, new Stopper {}, Filter(), Map(), None, new Tracker)
+      e.run(Some("test this"), RunArgs(repE, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(!e.theTestThatCalled)
@@ -520,7 +520,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test that" in { theTestThatCalled = true }
       }
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, repA, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -533,7 +533,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test that" in { theTestThatCalled = true }
       }
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker)
+      b.run(None, RunArgs(repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
       assert(!repB.testIgnoredReceived)
       assert(b.theTestThisCalled)
       assert(!b.theTestThatCalled)
@@ -546,7 +546,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test that" taggedAs(mytags.SlowAsMolasses) in { theTestThatCalled = true }
       }
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker)
+      c.run(None, RunArgs(repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
       assert(!repC.testIgnoredReceived)
       assert(c.theTestThisCalled)
       assert(c.theTestThatCalled)
@@ -559,7 +559,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test that" taggedAs(mytags.SlowAsMolasses) in { theTestThatCalled = true }
       }
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, repD, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.Ignore")), Map(), None, new Tracker)
+      d.run(None, RunArgs(repD, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.Ignore")), Map(), None, new Tracker, Set.empty))
       assert(repD.testIgnoredReceived)
       assert(!d.theTestThisCalled)
       assert(d.theTestThatCalled)
@@ -574,8 +574,8 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test the other" in { theTestTheOtherCalled = true }
       }
       val repE = new TestIgnoredTrackingReporter
-      e.run(None, repE, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker)
+      e.run(None, RunArgs(repE, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
+                Map(), None, new Tracker, Set.empty))
       assert(!repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(e.theTestThatCalled)
@@ -591,8 +591,8 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test the other" in { theTestTheOtherCalled = true }
       }
       val repF = new TestIgnoredTrackingReporter
-      f.run(None, repF, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker)
+      f.run(None, RunArgs(repF, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
+                Map(), None, new Tracker, Set.empty))
       assert(!repF.testIgnoredReceived)
       assert(!f.theTestThisCalled)
       assert(f.theTestThatCalled)
@@ -608,8 +608,8 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test the other" ignore { theTestTheOtherCalled = true }
       }
       val repG = new TestIgnoredTrackingReporter
-      g.run(None, repG, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker)
+      g.run(None, RunArgs(repG, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
+                Map(), None, new Tracker, Set.empty))
       assert(!repG.testIgnoredReceived)
       assert(!g.theTestThisCalled)
       assert(g.theTestThatCalled)
@@ -625,7 +625,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test the other" in { theTestTheOtherCalled = true }
       }
       val repH = new TestIgnoredTrackingReporter
-      h.run(None, repH, new Stopper {}, Filter(None, Set("org.scalatest.FastAsLight")), Map(), None, new Tracker)
+      h.run(None, RunArgs(repH, new Stopper {}, Filter(None, Set("org.scalatest.FastAsLight")), Map(), None, new Tracker, Set.empty))
       assert(!repH.testIgnoredReceived)
       assert(!h.theTestThisCalled)
       assert(h.theTestThatCalled)
@@ -641,7 +641,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test the other" in { theTestTheOtherCalled = true }
       }
       val repI = new TestIgnoredTrackingReporter
-      i.run(None, repI, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker)
+      i.run(None, RunArgs(repI, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
       assert(!repI.testIgnoredReceived)
       assert(!i.theTestThisCalled)
       assert(!i.theTestThatCalled)
@@ -657,7 +657,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test the other" in { theTestTheOtherCalled = true }
       }
       val repJ = new TestIgnoredTrackingReporter
-      j.run(None, repJ, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker)
+      j.run(None, RunArgs(repJ, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
       assert(!repI.testIgnoredReceived)
       assert(!j.theTestThisCalled)
       assert(!j.theTestThatCalled)
@@ -673,7 +673,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test the other" ignore { theTestTheOtherCalled = true }
       }
       val repK = new TestIgnoredTrackingReporter
-      k.run(None, repK, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses", "org.scalatest.Ignore")), Map(), None, new Tracker)
+      k.run(None, RunArgs(repK, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses", "org.scalatest.Ignore")), Map(), None, new Tracker, Set.empty))
       assert(repK.testIgnoredReceived)
       assert(!k.theTestThisCalled)
       assert(!k.theTestThatCalled)
@@ -738,7 +738,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tp = rep.testPendingEventsReceived
       assert(tp.size === 2)
     }
@@ -756,7 +756,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tp = rep.testCanceledEventsReceived
       assert(tp.size === 2)
     }
@@ -775,7 +775,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tp = rep.testCanceledEventsReceived
       assert(tp.size === 2)
     }
@@ -789,7 +789,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tf = rep.testFailedEventsReceived
       assert(tf.size === 3)
     }
@@ -801,7 +801,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
       intercept[OutOfMemoryError] {
-        a.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+        a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       }
     }
     it("should send InfoProvided events with aboutAPendingTest set to true for info " +
@@ -817,7 +817,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ip = rep.infoProvidedEventsReceived
       assert(ip.size === 3)
       for (event <- ip) {
@@ -847,7 +847,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ip = rep.infoProvidedEventsReceived
       assert(ip.size === 3)
       for (event <- ip) {
@@ -875,7 +875,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ts = rep.testSucceededEventsReceived
       assert(ts.size === 1)
       assert(ts.head.testName === "A Stack when empty should chill out")
@@ -889,7 +889,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ts = rep.testSucceededEventsReceived
       assert(ts.size === 1)
       assert(ts.head.testName === "A Stack should chill out")
@@ -911,7 +911,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
       val rep = new EventRecordingReporter
       val s1 = new TestSpec
-      s1.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      s1.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(rep.testFailedEventsReceived.size === 2)
       assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "FreeSpecSpec.scala")
       assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 13)
@@ -942,7 +942,7 @@ class FreeSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
       val rep = new EventRecordingReporter
       val s = new TestSpec
-      s.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker)
+      s.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(s.registrationClosedThrown == true)
       val testFailedEvents = rep.testFailedEventsReceived
       assert(testFailedEvents.size === 1)

@@ -1,5 +1,4 @@
 package org.scalatest.tools
-import org.scalatest.FunSpec
 import java.net.ServerSocket
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -7,11 +6,7 @@ import scala.xml.XML
 import scala.xml.Elem
 import org.xml.sax.SAXException
 import java.net.Socket
-import org.scalatest.Stopper
-import org.scalatest.Filter
-import org.scalatest.Tracker
 import scala.collection.mutable.ListBuffer
-import org.scalatest.SharedHelpers
 import org.scalatest.events.SuiteStarting
 import org.scalatest.events.Ordinal
 import org.scalatest.events.TopOfClass
@@ -31,6 +26,7 @@ import org.scalatest.events.MarkupProvided
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.Span
 import org.scalatest.time.Seconds
+import org.scalatest._
 
 class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
   
@@ -323,7 +319,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       eventRecorderThread.start()
       val spec = new TestSpec()
       val rep = new SocketReporter("localhost", socket.getLocalPort)
-      spec.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      spec.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       eventRecorder.stopped = true
       rep.dispose()
       eventually(timeout(Span(30, Seconds))) { assert(eventRecorder.ready) } // Wait until the receiver is ready

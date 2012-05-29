@@ -21,7 +21,7 @@ class PathSuiteMatrix extends PropSpec with ShouldMatchers with TableDrivenPrope
   property("A path trait should run each test once, in its own instance") {
     new OnlyFirstTestExecutedOnCreationExamples {
       forAll (examples) { suite =>
-        suite.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+        suite.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
         val expectedFirstTestCount = if (suite.expectedTotalTestsCount >= 1) 1 else 0
         val expectedSecondTestCount = if (suite.expectedTotalTestsCount == 2) 1 else 0
         suite.counts.firstTestCount should be (expectedFirstTestCount)
@@ -34,7 +34,7 @@ class PathSuiteMatrix extends PropSpec with ShouldMatchers with TableDrivenPrope
   property("A path trait should run only the path to and from each test") {
     new PathBeforeAndAfterExamples {
       forAll (examples) { suite =>
-        suite.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+        suite.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
         suite.firstTestCounts should be (suite.expectedFirstTestCounts)
         suite.secondTestCounts should be (suite.expectedSecondTestCounts)
         suite.counts should be (suite.expectedCounts)
@@ -46,7 +46,7 @@ class PathSuiteMatrix extends PropSpec with ShouldMatchers with TableDrivenPrope
     new PathListBufferExamples {
       forAll (examples) { suite =>
         val rec = new EventRecordingReporter
-        suite.run(None, rec, new Stopper {}, Filter(), Map(), None, new Tracker())
+        suite.run(None, RunArgs(rec, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
         rec.testFailedEventsReceived should have size 0
         suite.counts.instanceCount should be (suite.expectedInstanceCount)
       }

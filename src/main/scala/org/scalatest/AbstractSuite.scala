@@ -203,7 +203,7 @@ trait AbstractSuite { this: Suite =>
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
-  final def run(
+ /* final def run(
     testName: Option[String],
     reporter: Reporter,
     stopper: Stopper,
@@ -213,5 +213,5 @@ trait AbstractSuite { this: Suite =>
     tracker: Tracker
   ) {  // TODO: test that this grabs chosenStyles out of config map
     run(testName, RunArgs(reporter, stopper, filter, configMap, distributor, tracker, Set.empty))
-  }
+  }    */
 }

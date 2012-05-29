@@ -169,7 +169,7 @@ trait SharedHelpers extends Assertions {
   def getIndexesForInformerEventOrderTests(suite: Suite, testName: String, infoMsg: String): (Int, Int, Int) = {
 
     val myRep = new EventRecordingReporter
-    suite.run(None, myRep, new Stopper {}, Filter(), Map(), None, new Tracker)
+    suite.run(None, RunArgs(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
 
     val indexedList = myRep.eventsReceived.zipWithIndex
 
@@ -202,7 +202,7 @@ trait SharedHelpers extends Assertions {
   def getIndentedTextFromInfoProvided(suite: Suite): IndentedText = {
 
     val myRep = new EventRecordingReporter
-    suite.run(None, myRep, new Stopper {}, Filter(), Map(), None, new Tracker)
+    suite.run(None, RunArgs(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
 
     val infoProvidedOption = myRep.eventsReceived.find(_.isInstanceOf[InfoProvided])
 
@@ -218,7 +218,7 @@ trait SharedHelpers extends Assertions {
 
   def ensureTestFailedEventReceived(suite: Suite, testName: String) {
     val reporter = new EventRecordingReporter
-    suite.run(None, reporter, new Stopper {}, Filter(), Map(), None, new Tracker)
+    suite.run(None, RunArgs(reporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
     val testFailedEvent = reporter.eventsReceived.find(_.isInstanceOf[TestFailed])
     assert(testFailedEvent.isDefined)
     assert(testFailedEvent.get.asInstanceOf[TestFailed].testName === testName)

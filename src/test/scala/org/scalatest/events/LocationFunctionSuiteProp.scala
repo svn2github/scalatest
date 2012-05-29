@@ -1,26 +1,14 @@
 package org.scalatest.events
 
-import org.scalatest.FunctionSuiteProp
-import org.scalatest.Stopper
-import org.scalatest.Filter
-import org.scalatest.Tracker
-import org.scalatest.FunSuite
-import org.scalatest.FunSpec
-import org.scalatest.FeatureSpec
-import org.scalatest.FlatSpec
-import org.scalatest.FreeSpec
-import org.scalatest.PropSpec
-import org.scalatest.WordSpec
-import org.scalatest.fixture
-import org.scalatest.StringFixture
 import org.scalatest.SharedHelpers.thisLineNumber
+import org.scalatest._
 
 class LocationFunctionSuiteProp extends FunctionSuiteProp {
   
   test("Function suites should have correct LineInFile location in test events.") {
     forAll(examples) { suite =>
       val reporter = new EventRecordingReporter
-      suite.run(None, reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)))
+      suite.run(None, RunArgs(reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
       val eventList = reporter.eventsReceived
       eventList.foreach { event => suite.checkFun(event) }
       suite.allChecked

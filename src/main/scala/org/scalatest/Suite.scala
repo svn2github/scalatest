@@ -1809,14 +1809,15 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       run(
         //if (testName != null) Some(testName) else None,
         Option(testName),
-        dispatch,
+        RunArgs(dispatch,
         new Stopper {},
         filter,
         configMap,
         None,
-        tracker
+        tracker,
+        Set.empty)
       )
-
+    // TODO: Go through and change all "new Stopper {}" with new JustCantStop or something to save class files
       val suiteCompletedFormatter = formatterForSuiteCompleted(thisSuite)
       val duration = System.currentTimeMillis - suiteStartTime
       dispatch(SuiteCompleted(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, Some(duration), suiteCompletedFormatter, Some(getTopOfClass)))
@@ -2367,7 +2368,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    *         
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
-  protected def runNestedSuites(reporter: Reporter, stopper: Stopper, filter: Filter,
+  protected def runNestedSuites(reporter: Reporter, stopper: Stopper, filter: Filter, // TODO: Do runargs thing below
                                 configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
 
     if (reporter == null)
@@ -2400,9 +2401,9 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
         report(SuiteStarting(tracker.nextOrdinal(), nestedSuite.suiteName, nestedSuite.suiteId, Some(nestedSuite.getClass.getName), nestedSuite.decodedSuiteName, formatter, Some(TopOfClass(nestedSuite.getClass.getName)), nestedSuite.rerunner))
 
-        try {
+        try { // TODO: pass runArgs down and that will get the chosenStyles passed down
           // Same thread, so OK to send same tracker
-          nestedSuite.run(None, report, stopRequested, filter, configMap, distributor, tracker)
+          nestedSuite.run(None, RunArgs(report, stopRequested, filter, configMap, distributor, tracker, Set.empty))
 
           val rawString = Resources("suiteCompletedNormally")
           val formatter = formatterForSuiteCompleted(nestedSuite)

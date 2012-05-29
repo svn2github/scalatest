@@ -46,7 +46,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ip = rep.infoProvidedEventsReceived
       assert(ip.size === 3)
       for (event <- ip) {
@@ -65,7 +65,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ip = rep.infoProvidedEventsReceived
       assert(ip.size === 3)
       for (event <- ip) {
@@ -84,7 +84,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val ip = rep.infoProvidedEventsReceived
       assert(ip.size === 3)
       for (event <- ip) {
@@ -140,7 +140,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     it("should execute all tests when run is called with testName None") {
 
       val b = new TestWasCalledSuite
-      b.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
+      b.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(b.theTestThisCalled)
       assert(b.theTestThatCalled)
     }
@@ -148,7 +148,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     it("should execute one test when run is called with a defined testName") {
 
       val a = new TestWasCalledSuite
-      a.run(Some("testThis"), SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(Some("testThis"), RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(a.theTestThisCalled)
       assert(!a.theTestThatCalled)
     }
@@ -163,7 +163,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
 
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, repA, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -177,7 +177,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
 
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, repB, new Stopper {}, Filter(), Map(), None, new Tracker)
+      b.run(None, RunArgs(repB, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repB.testIgnoredReceived)
       assert(repB.lastEvent.isDefined)
       assert(repB.lastEvent.get.testName endsWith "testThis")
@@ -193,7 +193,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
 
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, repC, new Stopper {}, Filter(), Map(), None, new Tracker)
+      c.run(None, RunArgs(repC, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repC.testIgnoredReceived)
       assert(repC.lastEvent.isDefined)
       assert(repC.lastEvent.get.testName endsWith "testThat(Informer)", repC.lastEvent.get.testName)
@@ -210,7 +210,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
 
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, repD, new Stopper {}, Filter(), Map(), None, new Tracker)
+      d.run(None, RunArgs(repD, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repD.testIgnoredReceived)
       assert(repD.lastEvent.isDefined)
       assert(repD.lastEvent.get.testName endsWith "testThis") // last because run alphabetically
@@ -229,7 +229,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
 
       val repE = new TestIgnoredTrackingReporter
-      e.run(Some("testThis"), repE, new Stopper {}, Filter(), Map(), None, new Tracker)
+      e.run(Some("testThis"), RunArgs(repE, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(!e.theTestThatCalled)
@@ -246,7 +246,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
 
       val repE = new TestIgnoredTrackingReporter
-      e.run(Some("testThis"), repE, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker)
+      e.run(Some("testThis"), RunArgs(repE, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
       assert(!repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(!e.theTestThatCalled)
@@ -262,7 +262,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
 
       intercept[IllegalArgumentException] {
         // Here, they forgot that the name is actually testThis(Fixture)
-        suite.run(Some("misspelled"), SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
+        suite.run(Some("misspelled"), RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       }
     }
 
@@ -277,7 +277,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testThat(info: Informer) { theTestThatCalled = true }
       }
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, repA, new Stopper {}, Filter(), Map(), None, new Tracker)
+      a.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -291,7 +291,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testThat(info: Informer) { theTestThatCalled = true }
       }
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker)
+      b.run(None, RunArgs(repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
       assert(!repB.testIgnoredReceived)
       assert(b.theTestThisCalled)
       assert(!b.theTestThatCalled)
@@ -306,7 +306,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testThat(info: Informer) { theTestThatCalled = true }
       }
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker)
+      c.run(None, RunArgs(repB, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
       assert(!repC.testIgnoredReceived)
       assert(c.theTestThisCalled)
       assert(c.theTestThatCalled)
@@ -322,7 +322,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testThat(info: Informer) { theTestThatCalled = true }
       }
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, repD, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.Ignore")), Map(), None, new Tracker)
+      d.run(None, RunArgs(repD, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.Ignore")), Map(), None, new Tracker, Set.empty))
       assert(repD.testIgnoredReceived)
       assert(!d.theTestThisCalled)
       assert(d.theTestThatCalled)
@@ -340,8 +340,8 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testTheOther(info: Informer) { theTestTheOtherCalled = true }
       }
       val repE = new TestIgnoredTrackingReporter
-      e.run(None, repE, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker)
+      e.run(None, RunArgs(repE, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
+                Map(), None, new Tracker, Set.empty))
       assert(!repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(e.theTestThatCalled)
@@ -361,8 +361,8 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testTheOther(info: Informer) { theTestTheOtherCalled = true }
       }
       val repF = new TestIgnoredTrackingReporter
-      f.run(None, repF, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker)
+      f.run(None, RunArgs(repF, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
+                Map(), None, new Tracker, Set.empty))
       assert(!repF.testIgnoredReceived)
       assert(!f.theTestThisCalled)
       assert(f.theTestThatCalled)
@@ -382,8 +382,8 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testTheOther(info: Informer) { theTestTheOtherCalled = true }
       }
       val repG = new TestIgnoredTrackingReporter
-      g.run(None, repG, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker)
+      g.run(None, RunArgs(repG, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
+                Map(), None, new Tracker, Set.empty))
       assert(!repG.testIgnoredReceived)
       assert(!g.theTestThisCalled)
       assert(g.theTestThatCalled)
@@ -402,7 +402,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testTheOther(info: Informer) { theTestTheOtherCalled = true }
       }
       val repH = new TestIgnoredTrackingReporter
-      h.run(None, repH, new Stopper {}, Filter(None, Set("org.scalatest.FastAsLight")), Map(), None, new Tracker)
+      h.run(None, RunArgs(repH, new Stopper {}, Filter(None, Set("org.scalatest.FastAsLight")), Map(), None, new Tracker, Set.empty))
       assert(!repH.testIgnoredReceived)
       assert(!h.theTestThisCalled)
       assert(h.theTestThatCalled)
@@ -421,7 +421,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testTheOther(info: Informer) { theTestTheOtherCalled = true }
       }
       val repI = new TestIgnoredTrackingReporter
-      i.run(None, repI, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker)
+      i.run(None, RunArgs(repI, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
       assert(!repI.testIgnoredReceived)
       assert(!i.theTestThisCalled)
       assert(!i.theTestThatCalled)
@@ -442,7 +442,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testTheOther(info: Informer) { theTestTheOtherCalled = true }
       }
       val repJ = new TestIgnoredTrackingReporter
-      j.run(None, repJ, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker)
+      j.run(None, RunArgs(repJ, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
       assert(!repI.testIgnoredReceived)
       assert(!j.theTestThisCalled)
       assert(!j.theTestThatCalled)
@@ -464,7 +464,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testTheOther(info: Informer) { theTestTheOtherCalled = true }
       }
       val repK = new TestIgnoredTrackingReporter
-      k.run(None, repK, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses", "org.scalatest.Ignore")), Map(), None, new Tracker)
+      k.run(None, RunArgs(repK, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses", "org.scalatest.Ignore")), Map(), None, new Tracker, Set.empty))
       assert(repK.testIgnoredReceived)
       assert(!k.theTestThisCalled)
       assert(!k.theTestThatCalled)
@@ -540,7 +540,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tp = rep.testPendingEventsReceived
       assert(tp.size === 2)
     }
@@ -559,7 +559,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tp = rep.testCanceledEventsReceived
       assert(tp.size === 2)
     }
@@ -578,7 +578,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tp = rep.testCanceledEventsReceived
       assert(tp.size === 2)
     }
@@ -590,7 +590,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testThrowsThrowable() { throw new Throwable }
       }
       val rep = new EventRecordingReporter
-      a.run(None, rep, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       val tf = rep.testFailedEventsReceived
       assert(tf.size === 3)
     }
@@ -600,7 +600,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def testThrowsAssertionError() { throw new OutOfMemoryError }
       }
       intercept[OutOfMemoryError] {
-        a.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+        a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       }
     }
     it("should invoke withFixture from runTest for no-arg test method") {
@@ -615,7 +615,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
           testWasInvoked = true
         }
       }
-      a.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       assert(a.withFixtureWasInvoked)
       assert(a.testWasInvoked)
     }
@@ -631,7 +631,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
           testWasInvoked = true
         }
       }
-      a.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       assert(a.withFixtureWasInvoked)
       assert(a.testWasInvoked)
     }
@@ -644,7 +644,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
         def testSomething(info: Informer) {}
       }
-      a.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker())
+      a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       assert(a.correctTestNameWasPassed)
     }
     it("should pass the correct config map in the NoArgTest passed to withFixture") {
@@ -656,7 +656,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
         def testSomething(info: Informer) {}
       }
-      a.run(None, SilentReporter, new Stopper {}, Filter(), Map("hi" -> 7), None, new Tracker())
+      a.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map("hi" -> 7), None, new Tracker(), Set.empty))
       assert(a.correctConfigMapWasPassed)
     }
 
@@ -754,7 +754,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       val g = new SuiteG
 
       val x = Suites(a, b, c, d, e, f, g)
-      x.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
+      x.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
 
       assert(a.executed)
       assert(b.executed)
@@ -778,7 +778,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       val n = new SuiteG
 
       val y = Suites(h, i, j, k, l, m, n)
-      y.run(None, SilentReporter, new MyStopper, Filter(), Map(), None, new Tracker)
+      y.run(None, RunArgs(SilentReporter, new MyStopper, Filter(), Map(), None, new Tracker, Set.empty))
 
       assert(k.executed)
       assert(i.executed)
@@ -805,7 +805,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
 
       val x = new MySuite
-      x.run(None, SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
+      x.run(None, RunArgs(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(x.testsExecutedCount === 7)
 
       class MyStopper extends Stopper {
@@ -830,7 +830,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
 
       val y = new MyStoppingSuite
-      y.run(None, SilentReporter, myStopper, Filter(), Map(), None, new Tracker)
+      y.run(None, RunArgs(SilentReporter, myStopper, Filter(), Map(), None, new Tracker, Set.empty))
       assert(y.testsExecutedCount === 4)
     }
   }

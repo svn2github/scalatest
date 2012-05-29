@@ -1,31 +1,13 @@
 package org.scalatest.events
-import org.scalatest.Suite
-import org.scalatest.SuiteProp
-import org.scalatest.FunSuite
-import org.scalatest.FunSpec
-import org.scalatest.StringFixtureFunSpec
-import org.scalatest.StringFixtureFunSuite
-import org.scalatest.Stopper
-import org.scalatest.Filter
-import org.scalatest.Tracker
-import org.scalatest.Reporter
-import org.scalatest.Distributor
-import org.scalatest.FeatureSpec
-import org.scalatest.fixture
 import org.scalatest.junit.JUnit3Suite
-import org.scalatest.FlatSpec
-import org.scalatest.FreeSpec
-import org.scalatest.PropSpec
-import org.scalatest.WordSpec
-import org.scalatest.StringFixture
-import org.scalatest.Informer
+import org.scalatest._
 
-class LocationSuiteProp extends SuiteProp 
+class LocationSuiteProp extends SuiteProp
 {
   test("All suite types should have correct location in SuiteStarting, SuiteCompleted, SuiteAborted and TestFailed event.") {
     forAll(examples) { suite =>
       val reporter = new EventRecordingReporter
-      suite.run(None, reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)))
+      suite.run(None, RunArgs(reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
       val eventList = reporter.eventsReceived
       eventList.foreach { event => suite.checkFun(event) }
       suite.allChecked

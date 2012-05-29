@@ -50,8 +50,8 @@ private[scalatest] class SuiteRunner(suite: Suite, dispatch: Reporter, stopper: 
       if (!suite.isInstanceOf[DistributedTestRunnerSuite])
         dispatch(SuiteStarting(tracker.nextOrdinal(), suite.suiteName, suite.suiteId, Some(suite.getClass.getName), suite.decodedSuiteName, formatter, Some(TopOfClass(suite.getClass.getName)), suite.rerunner))
         
-      try {
-        suite.run(None, dispatch, stopRequested, filter, propertiesMap, distributor, tracker)
+      try { // TODO: passed Set.empty for chosenStyles for now. Fix later.
+        suite.run(None, RunArgs(dispatch, stopRequested, filter, propertiesMap, distributor, tracker, Set.empty))
   
         val rawString2 = Resources("suiteCompletedNormally")
         val formatter = formatterForSuiteCompleted(suite)
