@@ -16,9 +16,10 @@
 package org.scalatestexamples.fixture
 
 import org.scalatestexamples._
-import org.scalatest.fixture.MultipleFixtureFunSuite
+import org.scalatest.fixture
+import org.scalatest.fixture.ConfigMapFixture
 
-class MultiFixtureFunSuite extends MultipleFixtureFunSuite {
+class MultiFixtureFunSuite extends fixture.FunSuite with ConfigMapFixture {
 
   implicit def withStringFixture(test: String => Any): FixtureParam => Any =
     () => test("howdy")
