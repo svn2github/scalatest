@@ -29,7 +29,11 @@ import java.util.concurrent.Future
 private[scalatest] class ConcurrentDistributor(reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], execSvc: ExecutorService) extends Distributor {
 
   private val futureQueue = new LinkedBlockingQueue[Future[T] forSome { type T }]
-  
+
+  // TODO: Chee Seng, we can't not use this method. This the public API of Distributor. Must
+  // find a different way. Can you pass Filter to the constructor of ConcurrentDistributor? If not,
+  // we could consider adding Filter as a 3rd argument to apply in Distributor. I don't understand
+  // what you were trying to accomplish enough to know. Let's talk about it.
   def apply(suite: Suite, tracker: Tracker) {
     throw new UnsupportedOperationException("ConcurrentDistributor does not support this operation, please use apply(suite: Suite, tracker: Tracker, filter: Filter) instead.")
   }

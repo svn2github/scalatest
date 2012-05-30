@@ -17,6 +17,7 @@ package org.scalatest.fixture
 
 import org.scalatest._
 
+// TODO: extend AbstractSuite and call withFixture(test.toNoArgTest(test.configMap))
 /**
  * Trait that when mixed into a <code>fixture.Suite</code> ensures the
  * <code>configMap</code> passed to <code>runTest</code> is passed along
