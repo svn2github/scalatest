@@ -24,10 +24,9 @@ import Suite.formatterForSuiteCompleted
 import Suite.formatterForSuiteAborted
 import org.scalatest.exceptions.NotAllowedException
 
-private[scalatest] class SuiteRunner(suite: Suite, dispatch: Reporter, stopper: Stopper, filter: Filter,
-    propertiesMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) extends Runnable {
+private[scalatest] class SuiteRunner(suite: Suite, args: RunArgs) extends Runnable {
 
-  private val stopRequested = stopper
+  private val stopRequested = args.stopper
 
   def run() {
 
@@ -44,14 +43,16 @@ private[scalatest] class SuiteRunner(suite: Suite, dispatch: Reporter, stopper: 
   
       val rawString = Resources("suiteExecutionStarting")
       val formatter = formatterForSuiteStarting(suite)
-  
+      val dispatch = args.reporter
+      val tracker = args.tracker
+
       val suiteStartTime = System.currentTimeMillis
 
       if (!suite.isInstanceOf[DistributedTestRunnerSuite])
         dispatch(SuiteStarting(tracker.nextOrdinal(), suite.suiteName, suite.suiteId, Some(suite.getClass.getName), suite.decodedSuiteName, formatter, Some(TopOfClass(suite.getClass.getName)), suite.rerunner))
         
-      try { // TODO: passed Set.empty for chosenStyles for now. Fix later.
-        suite.run(None, RunArgs(dispatch, stopRequested, filter, propertiesMap, distributor, tracker, Set.empty))
+      try {
+        suite.run(None, args)
   
         val rawString2 = Resources("suiteCompletedNormally")
         val formatter = formatterForSuiteCompleted(suite)

@@ -36,7 +36,7 @@ package org.scalatest
  *
  * @author Bill Venners
  */
-trait Distributor /*extends ((Suite, Tracker, Filter) => Unit)*/  {
+trait Distributor {
   
   /**
    * Puts a <code>Suite</code> into the <code>Distributor</code>.
@@ -46,18 +46,25 @@ trait Distributor /*extends ((Suite, Tracker, Filter) => Unit)*/  {
    *
    * @throws NullPointerException if either <code>suite</code> or <code>tracker</code> is <code>null</code>.
    */
-  @deprecated("Please use the apply method that takes a filter instead, the one with this signature: def apply(suite: Suite, tracker: Tracker, filter: Filter)")
+  @deprecated("Please use the apply method that takes a RunArgs instead, the one with this signature: def apply(Suite, RunArgs)")
   def apply(suite: Suite, tracker: Tracker)
 
   /**
    * Puts a <code>Suite</code> into the <code>Distributor</code>.
    *
+   * <p>
+   * The <code>Distributor</code> can decide which, if any, of the passed <code>RunArgs</code
+   * to pass to the <code>Suite</code>'s apply method. For example, a <code>Distributor</code>
+   * may pass itself wrapped in a <code>Some</code> in the <code>RunArgs</code> it passes to the <code>Suite</code>'s <code>run</code>
+   * method instead of the <code>args.distributor</code> value.
+   * </p>
+   *
    * @param suite the <code>Suite</code> to put into the <code>Distributor</code>.
-   * @param tracker a <code>Tracker</code> to pass to the <code>Suite</code>'s <code>run</code> method.
-   * @param filter a <code>Filter</code> to pass to the <code>Suite</code>'s <code>run</code> method.
-   * 
+   * @param args a <code>RunArgs</code> containing objects that may be passed to the <code>Suite</code>'s
+   *             <code>run</code> method via a <code>RunArgs</code> instance.
+   *
    * @throws NullPointerException if either <code>suite</code> or <code>tracker</code> is <code>null</code>.
    */
-  def apply(suite: Suite, tracker: Tracker, filter: Filter)
+  def apply(suite: Suite, args: RunArgs)
 }
 

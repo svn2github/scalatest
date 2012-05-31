@@ -89,7 +89,8 @@ private[scalatest] class RunnerJFrame(
   testNGList: List[String],
   passFailReporter: Option[Reporter],
   numThreads: Int,
-  suffixes: Option[Pattern]
+  suffixes: Option[Pattern],
+  chosenStyleSet: Set[String]
 ) extends JFrame(Resources("ScalaTestTitle")) with RunDoneListener with RunnerGUI {
   
   // This should only be updated by the event handler thread.
@@ -1438,8 +1439,26 @@ private[scalatest] class RunnerJFrame(
       withClassLoaderAndDispatchReporter(runpathList, reporterConfigurations, Some(graphicRunReporter), passFailReporter) {
         (loader, dispatchReporter) => {
           try {
-            Runner.doRunRunRunDaDoRunRun(dispatchReporter, suitesList, junitsList, stopper, tagsToIncludeSet, tagsToExcludeSet,
-                propertiesMap, concurrent, memberOfList, beginsWithList, testNGList, runpathList, loader, RunnerJFrame.this, nextRunStamp, numThreads, suffixes) 
+            Runner.doRunRunRunDaDoRunRun(
+              dispatchReporter,
+              suitesList,
+              junitsList,
+              stopper,
+              tagsToIncludeSet,
+              tagsToExcludeSet,
+              propertiesMap,
+              concurrent,
+              memberOfList,
+              beginsWithList,
+              testNGList,
+              runpathList,
+              loader,
+              RunnerJFrame.this,
+              nextRunStamp,
+              numThreads,
+              suffixes,
+              chosenStyleSet
+            )
           }
           finally {
             stopper.reset()

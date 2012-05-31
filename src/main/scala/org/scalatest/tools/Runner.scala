@@ -715,9 +715,24 @@ object Runner {
 
         val abq = new ArrayBlockingQueue[RunnerJFrame](1)
         usingEventDispatchThread {
-          val rjf = new RunnerJFrame(graphicEventsToPresent, reporterConfigs, suitesList, junitsList, runpathList,
-            tagsToInclude, tagsToExclude, configMap, concurrent, membersOnlyList, wildcardList, testNGList, passFailReporter, numThreads,
-            suffixes)
+          val rjf = new RunnerJFrame(
+            graphicEventsToPresent,
+            reporterConfigs,
+            suitesList,
+            junitsList,
+            runpathList,
+            tagsToInclude,
+            tagsToExclude,
+            configMap,
+            concurrent,
+            membersOnlyList,
+            wildcardList,
+            testNGList,
+            passFailReporter,
+            numThreads,
+            suffixes,
+            chosenStyleSet
+          )
           rjf.setLocation(RUNNER_JFRAME_START_X, RUNNER_JFRAME_START_Y)
           rjf.setVisible(true)
           rjf.prepUIForRunning()
@@ -732,8 +747,26 @@ object Runner {
       case None => { // Run the test without a GUI
         withClassLoaderAndDispatchReporter(runpathList, reporterConfigs, None, passFailReporter) {
           (loader, dispatchReporter) => {
-            doRunRunRunDaDoRunRun(dispatchReporter, suitesList, junitsList, new Stopper {}, tagsToInclude, tagsToExclude, 
-                configMap, concurrent, membersOnlyList, wildcardList, testNGList, runpathList, loader, new RunDoneListener {}, 1, numThreads, suffixes) 
+            doRunRunRunDaDoRunRun(
+              dispatchReporter,
+              suitesList,
+              junitsList,
+              new Stopper {},
+              tagsToInclude,
+              tagsToExclude,
+              configMap,
+              concurrent,
+              membersOnlyList,
+              wildcardList,
+              testNGList,
+              runpathList,
+              loader,
+              new RunDoneListener {},
+              1,
+              numThreads,
+              suffixes,
+              chosenStyleSet
+            )
           }
         }
       }
@@ -1724,8 +1757,9 @@ object Runner {
     doneListener: RunDoneListener,
     runStamp: Int,
     numThreads: Int,
-    suffixes: Option[Pattern]
-  ) = {
+    suffixes: Option[Pattern],
+    chosenStyleSet: Set[String]
+  ) = { // TODO, either put a type on here or do procedure style if Unit
 
     // TODO: add more, and to RunnerThread too
     if (dispatch == null)
@@ -1753,6 +1787,8 @@ object Runner {
     if (loader == null)
       throw new NullPointerException
     if (doneListener == null)
+      throw new NullPointerException
+    if (chosenStyleSet == null)
       throw new NullPointerException
 
     var tracker = new Tracker(new Ordinal(runStamp))
@@ -1934,26 +1970,30 @@ object Runner {
             val execSvc: ExecutorService = Executors.newFixedThreadPool(poolSize)
             try {
 
-            if (System.getProperty("org.scalatest.tools.Runner.forever", "false") == "true") {
-              val distributor = new ConcurrentDistributor(dispatch, stopRequested, configMap, execSvc)
-              while (true) {
+              val distributor = new ConcurrentDistributor(RunArgs(dispatch, stopRequested, Filter(if (tagsToIncludeSet.isEmpty) None else Some(tagsToIncludeSet), tagsToExcludeSet), configMap, None, tracker, chosenStyleSet), execSvc)
+              if (System.getProperty("org.scalatest.tools.Runner.forever", "false") == "true") {
+
+                while (true) {
+                  for (suiteConfig <- suiteInstances) {
+                    val tagsToInclude = if (suiteConfig.requireSelectedTag) tagsToIncludeSet ++ Set(SELECTED_TAG) else tagsToIncludeSet
+                    val filter = Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExcludeSet, suiteConfig.excludeNestedSuites, suiteConfig.dynaTags)
+                    // TODO: Can't put Some(distributor) here, will cause some weird error in JUnitXmlReporter, to check with Bill
+                    val runArgs = RunArgs(dispatch, stopRequested, filter, configMap, None, tracker.nextTracker, chosenStyleSet)
+                    distributor.apply(suiteConfig.suite, runArgs)
+                  }
+                  distributor.waitUntilDone()
+                }
+              }
+              else {
                 for (suiteConfig <- suiteInstances) {
                   val tagsToInclude = if (suiteConfig.requireSelectedTag) tagsToIncludeSet ++ Set(SELECTED_TAG) else tagsToIncludeSet
                   val filter = Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExcludeSet, suiteConfig.excludeNestedSuites, suiteConfig.dynaTags)
-                  distributor.apply(suiteConfig.suite, tracker.nextTracker(), filter)
+                  // TODO: Can't put Some(distributor) here, will cause some weird error in JUnitXmlReporter, to check with Bill
+                  val runArgs = RunArgs(dispatch, stopRequested, filter, configMap, None, tracker.nextTracker, chosenStyleSet)
+                  distributor.apply(suiteConfig.suite, runArgs)
                 }
                 distributor.waitUntilDone()
               }
-            }
-            else {
-              val distributor = new ConcurrentDistributor(dispatch, stopRequested, configMap, execSvc)
-              for (suiteConfig <- suiteInstances) {
-                val tagsToInclude = if (suiteConfig.requireSelectedTag) tagsToIncludeSet ++ Set(SELECTED_TAG) else tagsToIncludeSet
-                val filter = Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExcludeSet, suiteConfig.excludeNestedSuites, suiteConfig.dynaTags)
-                distributor.apply(suiteConfig.suite, tracker.nextTracker(), filter)
-              }
-              distributor.waitUntilDone()
-            }
             }
             finally {
               execSvc.shutdown()
@@ -1963,8 +2003,8 @@ object Runner {
             for (suiteConfig <- suiteInstances) {
               val tagsToInclude = if (suiteConfig.requireSelectedTag) tagsToIncludeSet ++ Set(SELECTED_TAG) else tagsToIncludeSet
               val filter = Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExcludeSet, suiteConfig.excludeNestedSuites, suiteConfig.dynaTags)
-              val suiteRunner = new SuiteRunner(suiteConfig.suite, dispatch, stopRequested, filter,
-                  configMap, None, tracker)
+              val runArgs = RunArgs(dispatch, stopRequested, filter, configMap, None, tracker, chosenStyleSet)
+              val suiteRunner = new SuiteRunner(suiteConfig.suite, runArgs)
               suiteRunner.run()
             }
           }

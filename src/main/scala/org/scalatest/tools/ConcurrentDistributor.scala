@@ -26,20 +26,20 @@ import java.util.concurrent.Future
  *
  * @author Bill Venners
  */
-private[scalatest] class ConcurrentDistributor(reporter: Reporter, stopper: Stopper, configMap: Map[String, Any], execSvc: ExecutorService) extends Distributor {
+private[scalatest] class ConcurrentDistributor(args: RunArgs, execSvc: ExecutorService) extends Distributor {
 
   private val futureQueue = new LinkedBlockingQueue[Future[T] forSome { type T }]
 
-  // TODO: Chee Seng, we can't not use this method. This the public API of Distributor. Must
-  // find a different way. Can you pass Filter to the constructor of ConcurrentDistributor? If not,
-  // we could consider adding Filter as a 3rd argument to apply in Distributor. I don't understand
-  // what you were trying to accomplish enough to know. Let's talk about it.
   def apply(suite: Suite, tracker: Tracker) {
-    throw new UnsupportedOperationException("ConcurrentDistributor does not support this operation, please use apply(suite: Suite, tracker: Tracker, filter: Filter) instead.")
+    apply(suite, args.copy(tracker = tracker))
   }
  
-  def apply(suite: Suite, tracker: Tracker, filter: Filter) {
-    val suiteRunner = new SuiteRunner(suite, reporter, stopper, filter, configMap, Some(this), tracker)
+  def apply(suite: Suite, args: RunArgs) {
+    if (suite == null)
+      throw new NullPointerException("suite is null")
+    if (args == null)
+      throw new NullPointerException("args is null")
+    val suiteRunner = new SuiteRunner(suite, args)
     val future: Future[_] = execSvc.submit(suiteRunner)
     futureQueue.put(future)
   }
