@@ -11,7 +11,7 @@ class SavesConfigMapSuite(configMap: Map[String, Any]) extends FunSuite {
   test("blue test", org.scalatest.mytags.FastAsLight) {}
   ignore("ignore me") {}
   class NSuite extends Suite
-  override def nestedSuites: List[Suite] = List(new NSuite, new NSuite, new NSuite)
+  override def nestedSuites: Vector[Suite] = Vector(new NSuite, new NSuite, new NSuite)
 }
 
 object SavesConfigMapSuite {

@@ -1462,7 +1462,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   * A <code>List</code> of this <code>Suite</code> object's nested <code>Suite</code>s. If this <code>Suite</code> contains no nested <code>Suite</code>s,
   * this method returns an empty <code>List</code>. This trait's implementation of this method returns an empty <code>List</code>.
   */
-  def nestedSuites: List[Suite] = Nil
+  def nestedSuites: IndexedSeq[Suite] = Vector.empty
 
   /**
    * Executes this <code>Suite</code>, printing results to the standard output.
@@ -2566,13 +2566,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
     // [bv: here was another tricky refactor. How to increment a counter in a loop]
     def countNestedSuiteTests(nestedSuites: List[Suite], filter: Filter): Int =
-      nestedSuites match {
+      nestedSuites.toList match {
         case List() => 0
         case nestedSuite :: nestedSuites => 
           nestedSuite.expectedTestCount(filter) + countNestedSuiteTests(nestedSuites, filter)
     }
 
-    filter.runnableTestCount(testNames, tags, suiteId) + countNestedSuiteTests(nestedSuites, filter)
+    filter.runnableTestCount(testNames, tags, suiteId) + countNestedSuiteTests(nestedSuites.toList, filter)
   }
 
   // Wrap any non-DispatchReporter, non-CatchReporter in a CatchReporter,

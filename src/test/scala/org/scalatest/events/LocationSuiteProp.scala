@@ -41,7 +41,7 @@ class LocationSuiteProp extends SuiteProp
     class FailNestedSuite extends Suite {
       def testFail() { fail }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def fixtureSuite = new TestLocationFixtureSuite
@@ -70,7 +70,7 @@ class LocationSuiteProp extends SuiteProp
     class FailNestedSuite extends StringFixtureSuite {
       def testFail() { fail }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def junit3Suite = new TestLocationJUnit3Suite
@@ -104,7 +104,7 @@ class LocationSuiteProp extends SuiteProp
     class FailNestedSuite extends FunSuite {
       test("fail") { fail }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def fixtureFunSuite = new TestLocationFixtureFunSuite
@@ -132,7 +132,7 @@ class LocationSuiteProp extends SuiteProp
     class FailNestedSuite extends StringFixtureFunSuite {
       test("fail") { fail }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   } 
   
   def funSpec = new LocationTestSpec
@@ -160,7 +160,7 @@ class LocationSuiteProp extends SuiteProp
     class FailNestedSuite extends FunSpec {
       it("fail") { fail }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def fixtureSpec = new TestLocationFixtureSpec
@@ -188,7 +188,7 @@ class LocationSuiteProp extends SuiteProp
     class FailNestedSuite extends FunSpec {
       it("fail") { fail }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def featureSpec = new TestLocationFeatureSpec
@@ -222,7 +222,7 @@ class LocationSuiteProp extends SuiteProp
         }
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def fixtureFeatureSpec = new TestLocationFixtureFeatureSpec
@@ -257,7 +257,7 @@ class LocationSuiteProp extends SuiteProp
         }
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def flatSpec = new TestLocationFlatSpec
@@ -287,7 +287,7 @@ class LocationSuiteProp extends SuiteProp
         fail
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def fixtureFlatSpec = new TestLocationFixtureFlatSpec
@@ -318,7 +318,7 @@ class LocationSuiteProp extends SuiteProp
         fail
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def freeSpec = new TestLocationFreeSpec
@@ -352,7 +352,7 @@ class LocationSuiteProp extends SuiteProp
         }
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def fixtureFreeSpec = new TestLocationFixtureFreeSpec
@@ -387,7 +387,7 @@ class LocationSuiteProp extends SuiteProp
         }
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def propSpec = new TestLocationPropSpec
@@ -417,7 +417,7 @@ class LocationSuiteProp extends SuiteProp
         fail
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def fixturePropSpec = new TestLocationFixturePropSpec
@@ -448,7 +448,7 @@ class LocationSuiteProp extends SuiteProp
         fail
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def wordSpec = new TestLocationWordSpec
@@ -482,7 +482,7 @@ class LocationSuiteProp extends SuiteProp
         }
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
   
   def fixtureWordSpec = new TestLocationFixtureWordSpec
@@ -517,6 +517,6 @@ class LocationSuiteProp extends SuiteProp
         }
       }
     }
-    override def nestedSuites = List(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
+    override def nestedSuites = Vector(new NestedSuite, new AbortNestedSuite, new FailNestedSuite)
   }
 }

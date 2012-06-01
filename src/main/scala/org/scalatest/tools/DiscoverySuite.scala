@@ -30,7 +30,7 @@ private[scalatest] class DiscoverySuite(path: String, accessibleSuites: Set[Stri
   if (path == null || accessibleSuites == null || runpathClassLoader == null)
     throw new NullPointerException
 
-  override val nestedSuites: List[Suite] =
+  override val nestedSuites: IndexedSeq[Suite] =
     for (suiteClassName <- DiscoverySuite.nestedSuiteNames(path, accessibleSuites, wildcard))
       yield {
         try {
@@ -72,11 +72,11 @@ private[scalatest] object DiscoverySuite {
     for (name <- wildcardList(path, accessibleSuites); if name.length > path.length && !name.substring(path.length + 1).contains('.'))
       yield name
 
-  private[scalatest] def nestedSuiteNames(path: String, accessibleSuites: Set[String], wildcard: Boolean): List[String] =
+  private[scalatest] def nestedSuiteNames(path: String, accessibleSuites: Set[String], wildcard: Boolean): IndexedSeq[String] =
     if (wildcard)
-      wildcardList(path, accessibleSuites).toList
+      Vector.empty ++ wildcardList(path, accessibleSuites)
     else
-      narrowList(path, accessibleSuites).toList
+      Vector.empty ++ narrowList(path, accessibleSuites)
 }
 
 

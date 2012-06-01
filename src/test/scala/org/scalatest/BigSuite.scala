@@ -50,13 +50,14 @@ class BigSuite(nestedSuiteCount: Option[Int]) extends Suite { thisSuite =>
 
   //def this() = this(None)
   
-  override def nestedSuites = {
+  override def nestedSuites: IndexedSeq[Suite] = {
 
-    def makeList(remaining: Int, soFar: List[Suite], nestedCount: Int): List[Suite] =
+    def makeList(remaining: Int, soFar: List[Suite], nestedCount: Int): List[Suite] = {
       if (remaining == 0) soFar
       else makeList(remaining - 1, (new BigSuite(Some(nestedCount - 1)) :: soFar), nestedCount)
+    }
 
-    nestedSuiteCount match {
+    val nsList = nestedSuiteCount match {
       case None =>
         val sizeString = System.getProperty("org.scalatest.BigSuite.size", "0")
         val size =
@@ -73,6 +74,8 @@ class BigSuite(nestedSuiteCount: Option[Int]) extends Suite { thisSuite =>
           makeList(n, Nil, n)
         }
     }
+
+    Vector.empty ++ nsList
   }
 
   def testNumber1() {

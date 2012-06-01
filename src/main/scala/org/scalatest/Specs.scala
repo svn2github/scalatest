@@ -40,7 +40,7 @@ package org.scalatest
  * <code>Step3Spec</code>, <code>Step4Spec</code>, and <code>Step5Spec</code>.
  * </p>
  *
- * @param suitesToNest a sequence of <code>Suite</code>s to nest.
+ * @param specsToNest a sequence of <code>Suite</code>s to nest.
  *
  * @throws NullPointerException if <code>suitesToNest</code>, or any suite
  * it contains, is <code>null</code>.
@@ -58,7 +58,7 @@ class Specs(specsToNest: Suite*) extends Suite {
    * Returns a list containing the suites passed to the constructor in
    * the order they were passed.
    */
-  override val nestedSuites = specsToNest.toList
+  override val nestedSuites: IndexedSeq[Suite] = Vector.empty ++ specsToNest
 }
 
 /**

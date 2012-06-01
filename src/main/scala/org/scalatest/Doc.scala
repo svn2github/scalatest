@@ -102,13 +102,13 @@ trait Doc extends Suite { thisDoc =>
 
   // TODO write a test to ensure you get a proper exception when 
   // body is not called
-  private lazy val snippets: List[Snippet] = getSnippets(bodyText.get)
+  private lazy val snippets: Vector[Snippet] = getSnippets(bodyText.get)
 
   /*
    * Returns a list containing the suites mentioned in the body XML element,
    * in the order they were mentioned.
    */
-  final override lazy val nestedSuites = for (IncludedSuite(suite) <- snippets) yield suite
+  final override lazy val nestedSuites: IndexedSeq[Suite] = for (IncludedSuite(suite) <- snippets) yield suite
 /*
 println("^^^^^^^^^^^")
 println(body.text)
@@ -138,9 +138,9 @@ println("&&&&&&&&&&&")
     }
   }
 
-  private[scalatest] def getSnippets(text: String): List[Snippet] = {
+  private[scalatest] def getSnippets(text: String): Vector[Snippet] = {
 //println("text: " + text)
-    val lines = text.lines.toList
+    val lines = Vector.empty ++ text.lines
 //println("lines: " + lines)
     val pairs = lines map { line =>
       val trimmed = line.trim
@@ -158,16 +158,16 @@ println("&&&&&&&&&&&")
     // val insertionIndexes = for (((_, Some(_)), index) <- zipped) yield index
 // Output of my fold left is: List[Snippet] (left is a list of snippets, right is a pair
     val backwards =
-      (List[Snippet](Markup("")) /: pairs) { (left: List[Snippet], right: (String, Option[String])) =>
+      (Vector[Snippet](Markup("")) /: pairs) { (left: Vector[Snippet], right: (String, Option[String])) =>
         right match {
           case (_, Some(key)) =>
             var (_, registeredSuites) = atomic.get.unpack
 // TODO: Maybe give a better error message if this key doesn't exist?
-            IncludedSuite(registeredSuites(key)) :: left
+            IncludedSuite(registeredSuites(key)) +: left
           case (line, None) =>
             left.head match {
-              case Markup(text) => Markup(text + "\n" + line) :: left.tail
-              case _ => Markup(line) :: left
+              case Markup(text) => Markup(text + "\n" + line) +: left.tail
+              case _ => Markup(line) +: left
             }
         }
       }

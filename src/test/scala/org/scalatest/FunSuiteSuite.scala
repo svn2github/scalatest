@@ -328,7 +328,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
   def testThatSuiteDurationsAreIncludedInSuiteCompletedEventsFiredFromFunSuite() {
 
     class MyFunSuite extends FunSuite {
-      override def nestedSuites = List(new Suite {})
+      override def nestedSuites = Vector(new Suite {})
     }
 
     val myFunSuite = new MyFunSuite
@@ -346,7 +346,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     }
 
     class MyFunSuite extends FunSuite {
-      override def nestedSuites = List(new SuiteThatAborts {})
+      override def nestedSuites = Vector(new SuiteThatAborts {})
     }
 
     val myFunSuite = new MyFunSuite

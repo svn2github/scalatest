@@ -1331,7 +1331,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
     }
     class MySpec extends FunSpec {
 
-      override def nestedSuites = List(new TwoTestSpec, new TwoTestSpec, new TwoTestSpec)
+      override def nestedSuites = Vector(new TwoTestSpec, new TwoTestSpec, new TwoTestSpec)
 
       it("should count this here test") {}
     }
@@ -1410,7 +1410,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
   test("suite durations are included in SuiteCompleted events fired from Spec") {
 
     class MySpec extends FunSpec {
-      override def nestedSuites = List(new Suite {})
+      override def nestedSuites = Vector(new Suite {})
     }
 
     val mySuite = new MySpec
@@ -1428,7 +1428,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
     }
 
     class MySpec extends FunSpec {
-      override def nestedSuites = List(new SuiteThatAborts {})
+      override def nestedSuites = Vector(new SuiteThatAborts {})
     }
 
     val mySuite = new MySpec

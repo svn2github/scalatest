@@ -88,7 +88,7 @@ final class ConfigMapWrapperSuite(clazz: Class[_ <: Suite]) extends Suite {
    *
    * @return the result of invoking <code>nestedSuites</code> on an instance of wrapped suite
    */
-  override def nestedSuites: List[Suite] = wrappedSuite.nestedSuites
+  override def nestedSuites: IndexedSeq[Suite] = wrappedSuite.nestedSuites
 
   /**
    * Returns the result obtained from invoking <code>tags</code> on an instance of the wrapped

@@ -58,7 +58,7 @@ class Suites(suitesToNest: Suite*) extends Suite {
    * Returns a list containing the suites passed to the constructor in
    * the order they were passed.
    */
-  override val nestedSuites = suitesToNest.toList
+  override val nestedSuites: IndexedSeq[Suite] = Vector.empty ++ suitesToNest
 }
 
 /**

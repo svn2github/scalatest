@@ -223,7 +223,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     // the suite duration is sent by runNestedSuites, so MySuite needs a
     // nested suite
     class MySuite extends Suite {
-      override def nestedSuites = List(new Suite {})
+      override def nestedSuites = Vector(new Suite {})
       def testSucceeds() = ()
       def testFails() { fail() }
     }
@@ -242,7 +242,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     // the suite duration is sent by runNestedSuites, so MySuite needs a
     // nested suite
     class MyOtherSuite extends Suite {
-      override def nestedSuites = List(new SuiteThatAborts)
+      override def nestedSuites = Vector(new SuiteThatAborts)
       def testSucceeds() = ()
       def testFails() { fail() }
     }
@@ -452,7 +452,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     class FastAsLightSuite extends Suite
     
     class MasterSuite extends Suite {
-      override def nestedSuites = List(new NoTagSuite(), new IgnoreSuite(), new SlowAsMolassesSuite(), new FastAsLightSuite())
+      override def nestedSuites = Vector(new NoTagSuite(), new IgnoreSuite(), new SlowAsMolassesSuite(), new FastAsLightSuite())
       override def runNestedSuites(args: RunArgs) {
         super.runNestedSuites(args)
       }
@@ -527,7 +527,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     }
     
     class MasterSuite extends Suite {
-      override def nestedSuites = List(new NoTagSuite(), new IgnoreSuite(), new SlowAsMolassesSuite(), new FastAsLightSuite())
+      override def nestedSuites = Vector(new NoTagSuite(), new IgnoreSuite(), new SlowAsMolassesSuite(), new FastAsLightSuite())
       override def runNestedSuites(args: RunArgs) {
         super.runNestedSuites(args)
       }
