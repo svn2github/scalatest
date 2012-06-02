@@ -81,12 +81,3 @@ object Suites {
   def apply(suitesToNest: Suite*): Suites = new Suites(suitesToNest: _*)
 }
 
-/**
- * <strong>SuperSuite has been deprecated and will be removed in a future
- * release of ScalaTest. Please change any uses of <code>SuperSuite</code>
- * to a corresponding use of <a href="Suites.html"><code>Suites</code></a> or <a href="Specs.html"><code>Specs</code></a> instead.</strong>
- */
-@deprecated("Please use org.scalatest.Suites or org.scalatest.Specs instead.")
-class SuperSuite(suitesToNest: List[Suite]) extends Suites(suitesToNest: _*)
-// deprecated in 1.5, so remove in 1.7 or later
-

@@ -104,11 +104,5 @@ class SuitesSpec extends FunSpec with SharedHelpers {
       }
     }
   }
-  describe("SuperSuite") {
-    it("should still work after being deprecated and extended from Suites") {
-      val f = new SuperSuite(List(a, b, c, d, e))
-      assert(f.nestedSuites == List(a, b, c, d, e))
-    }
-  }
 }
 
