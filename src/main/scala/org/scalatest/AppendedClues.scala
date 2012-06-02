@@ -18,7 +18,7 @@ package org.scalatest
 import exceptions.ModifiableMessage
 
 /**
- * Trait providing an implicit conversion that allows clues to be place after a block of code.
+ * Trait providing an implicit conversion that allows clues to be placed after a block of code.
  *
  * <p>
  * You can use the <code>withClue</code> construct provided by <code>Assertions</code>, which is
