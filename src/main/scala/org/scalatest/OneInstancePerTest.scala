@@ -99,6 +99,7 @@ trait OneInstancePerTest extends AbstractSuite {
    */
   protected abstract override def runTests(testName: Option[String], args: RunArgs) {
 
+// TODO: Define a better exception to throw if RTINI is in the config map but testName is not defined.
     if (args.configMap.contains(RunTestInNewInstance)) {
       val newConfigMap = args.configMap.filter { case (key, _) => key != RunTestInNewInstance }
       runTest(testName.get, args.copy(configMap = newConfigMap))
