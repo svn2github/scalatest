@@ -400,7 +400,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
       case TestCanceled(ordinal, message, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, throwable, duration, formatter, location, payload, threadName, timeStamp) =>
 
         val lines = stringsToPrintOnError("canceledNote", "testCanceled", message, throwable, formatter, Some(suiteName), Some(testName), duration)
-        for (line <- lines) printPossiblyInColor(line, ansiRed)
+        for (line <- lines) printPossiblyInColor(line, ansiYellow)
 
       case InfoProvided(ordinal, message, nameInfo, aboutAPendingTest, aboutACanceledTest, throwable, formatter, location, payload, threadName, timeStamp) =>
 
