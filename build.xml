@@ -188,9 +188,9 @@
     <target name="compile" depends="compile-main, compile-tests, compile-examples"/>
 
     <!--<target name="compile-main" depends="init">-->
-    <target name="compile-main" depends="get-jvm, init, gentables, gengen">
-        <fail message="Wrong JVM [${ant.java.version}]. Include 'java6' target to use java 6."
-              unless="jvm.ok"/>
+    <target name="compile-main" depends="init, gentables, gengen">
+        <!--<fail message="Wrong JVM [${ant.java.version}]. Include 'java6' target to use java 6."
+              unless="jvm.ok"/>-->
 
         <!-- If ever want to see the typer output, add -Xprint:typer to the addparams like this: -->
         <!--<scalac srcdir="${scalasrc}:${build.generated.src}:${javasrc}" destdir="${classes}" target="jvm-1.5" classpathref="build.class.path" addparams="-no-specialization -Xprint:typer" fork="true" jvmargs="${jvmargs}" />-->
