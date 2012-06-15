@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// TODO: Scaladoc for -F. Forgot this in 1.8. If have a 1.8.1, or a 1.9, then put it in there too.
 package org.scalatest.tools
 
 import org.scalatest._
