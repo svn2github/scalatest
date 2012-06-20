@@ -7,7 +7,7 @@ import scala.collection.mutable
 import scala.xml.XML
 import scala.xml.NodeSeq
 
-case class Durations(file: File) {
+private[scalatest] case class Durations(file: File) {
   val suites = mutable.Set[Suite]()
 
   if (file.exists) {

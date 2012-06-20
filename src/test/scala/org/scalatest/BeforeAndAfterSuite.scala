@@ -19,6 +19,8 @@ import scala.collection.mutable.ListBuffer
 import org.scalatest.events.Event
 import org.scalatest.events.Ordinal
 import org.scalatest.SharedHelpers.SilentReporter
+import org.scalatest.SharedHelpers.EventRecordingReporter
+import org.scalatest.events.InfoProvided
 
 class BeforeAndAfterSuite extends FunSuite {
 
@@ -348,6 +350,62 @@ class BeforeAndAfterExtendingFunSuite extends FunSuite with BeforeAndAfterEach w
   
   // This now fails to compile, as I want
   // class IWantThisToFailToCompile extends Examples with BeforeAndAfter
+}
+
+class BeforeAndAfterInfoSuite extends FunSuite {
+  
+  test("InfoProvided in the before should be fired") {
+    class ExampleSpec extends FunSuite with BeforeAndAfter {
+      before {
+        info("In Before")
+      }
+  
+      test("test 1") {
+        info("info 1")
+      }
+    }
+    
+    val exampleSpec = new ExampleSpec()
+    val rep = new EventRecordingReporter
+    exampleSpec.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+  
+    assert(rep.infoProvidedEventsReceived.size === 1)
+    val infoProvided = rep.infoProvidedEventsReceived(0)
+    assert(infoProvided.message === "In Before")
+    
+    assert(rep.testSucceededEventsReceived.size === 1)
+    val testSucceeded = rep.testSucceededEventsReceived(0)
+    assert(testSucceeded.testName === "test 1")
+    assert(testSucceeded.recordedEvents.size === 1)
+    val testInfoProvided = testSucceeded.recordedEvents(0).asInstanceOf[InfoProvided]
+    assert(testInfoProvided.message === "info 1")
+  }
+  
+  test("InfoProvided in the after should be fired") {
+    class ExampleSpec extends FunSuite with BeforeAndAfter {
+      test("test 1") {
+        info("info 1")
+      }
+      after {
+        info("In After")
+      }
+    }
+    
+    val exampleSpec = new ExampleSpec()
+    val rep = new EventRecordingReporter
+    exampleSpec.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+  
+    assert(rep.infoProvidedEventsReceived.size === 1)
+    val infoProvided = rep.infoProvidedEventsReceived(0)
+    assert(infoProvided.message === "In After")
+    
+    assert(rep.testSucceededEventsReceived.size === 1)
+    val testSucceeded = rep.testSucceededEventsReceived(0)
+    assert(testSucceeded.testName === "test 1")
+    assert(testSucceeded.recordedEvents.size === 1)
+    val testInfoProvided = testSucceeded.recordedEvents(0).asInstanceOf[InfoProvided]
+    assert(testInfoProvided.message === "info 1")
+  }
 }
 
 

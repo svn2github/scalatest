@@ -1,6 +1,7 @@
 package org.scalatest
 
 import SavesConfigMapSuite.theConfigMap
+import java.util.UUID
 
 @WrapWith(classOf[ConfigMapWrapperSuite])
 class SavesConfigMapSuite(configMap: Map[String, Any]) extends FunSuite {
@@ -10,7 +11,9 @@ class SavesConfigMapSuite(configMap: Map[String, Any]) extends FunSuite {
   test("red test") {}
   test("blue test", org.scalatest.mytags.FastAsLight) {}
   ignore("ignore me") {}
-  class NSuite extends Suite
+  class NSuite extends Suite {
+    override val suiteId = getClass.getName + "-" + UUID.randomUUID.toString
+  }
   override def nestedSuites: Vector[Suite] = Vector(new NSuite, new NSuite, new NSuite)
 }
 

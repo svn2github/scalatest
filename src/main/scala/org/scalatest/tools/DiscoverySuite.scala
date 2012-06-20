@@ -16,6 +16,7 @@
 package org.scalatest.tools
 
 import org.scalatest._
+import java.util.UUID
 
 /**
  * A Suite that contains as nested suites accessible suites on the runpath whose fully qualified
@@ -30,6 +31,8 @@ private[scalatest] class DiscoverySuite(path: String, accessibleSuites: Set[Stri
   if (path == null || accessibleSuites == null || runpathClassLoader == null)
     throw new NullPointerException
 
+  override val suiteId = getClass.getName + "-" + UUID.randomUUID.toString
+    
   override val nestedSuites: IndexedSeq[Suite] =
     for (suiteClassName <- DiscoverySuite.nestedSuiteNames(path, accessibleSuites, wildcard))
       yield {

@@ -48,6 +48,8 @@ import Suite.reportTestIgnored
 import Suite.reportTestSucceeded
 import Suite.reportTestPending
 import Suite.reportInfoProvided
+import Suite.createInfoProvided
+import Suite.createMarkupProvided
 import scala.reflect.NameTransformer
 import tools.SuiteDiscoveryHelper
 import tools.Runner
@@ -2049,17 +2051,18 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
     val formatter = getIndentedText(testName, 1, true)
 
-    val messageRecorderForThisTest = new MessageRecorder
+    val messageRecorderForThisTest = new MessageRecorder(report)
     val informerForThisTest =
       MessageRecordingInformer(
         messageRecorderForThisTest, 
-        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, payload, 2, location, isConstructingThread, true, Some(testWasPending), Some(testWasCanceled))
+        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => createInfoProvided(thisSuite, report, tracker, Some(testName), message, payload, 2, location, isConstructingThread, true, Some(testWasPending), Some(testWasCanceled))
       )
 
+    // TODO: Was using reportInfoProvided here before, to double check with Bill for changing to markup provided.
     val documenterForThisTest =
       MessageRecordingDocumenter(
         messageRecorderForThisTest, 
-        (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, None, 2, location, isConstructingThread, true, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
+        (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => createMarkupProvided(thisSuite, report, tracker, Some(testName), message, 2, location, isConstructingThread, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
       )
 
     val argsArray: Array[Object] =
@@ -2068,8 +2071,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       }
       else Array()
 
-    var testWasPending = false
-    var testWasCanceled = false
     try {
       val theConfigMap = configMap
       withFixture(
@@ -2080,7 +2081,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         }
       )
       val duration = System.currentTimeMillis - testStartTime
-      reportTestSucceeded(this, report, tracker, testName, testName, getDecodedName(testName), duration, formatter, rerunner, Some(getTopOfMethod(method)))
+      reportTestSucceeded(this, report, tracker, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, rerunner, Some(getTopOfMethod(method)))
     }
     catch { 
       case ite: InvocationTargetException =>
@@ -2088,27 +2089,24 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         t match {
           case _: TestPendingException =>
             val duration = System.currentTimeMillis - testStartTime
-            reportTestPending(this, report, tracker, testName, testName, getDecodedName(testName), duration, formatter, Some(getTopOfMethod(method)))
-            testWasPending = true // Set so info's printed out in the finally clause show up yellow
+            // testWasPending = true so info's printed out in the finally clause show up yellow
+            reportTestPending(this, report, tracker, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(method)))
           case e: TestCanceledException =>
             val duration = System.currentTimeMillis - testStartTime
             val message = getMessageForException(e)
             val formatter = getIndentedText(testName, 1, true)
+            // testWasCanceled = true so info's printed out in the finally clause show up yellow
             report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, 
-                                testName, testName, getDecodedName(testName), Some(e), Some(duration), Some(formatter), Some(TopOfMethod(thisSuite.getClass.getName, method.toGenericString())), rerunner))
-            testWasCanceled = true // Set so info's printed out in the finally clause show up yellow
+                                testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(TopOfMethod(thisSuite.getClass.getName, method.toGenericString())), rerunner))
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
-            handleFailedTest(t, testName, report, tracker, duration)
+            handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, duration)
           case e => throw e
         }
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
-        handleFailedTest(e, testName, report, tracker, duration)
+        handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, duration)
       case e => throw e  
-    }
-    finally {
-      messageRecorderForThisTest.fireRecordedMessages(testWasPending, testWasCanceled) 
     }
   }
   
@@ -2305,7 +2303,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   }
 
   // TODO see if I can take away the [scalatest] from the private
-  private[scalatest] def handleFailedTest(throwable: Throwable, testName: String, report: Reporter, tracker: Tracker, duration: Long) {
+  private[scalatest] def handleFailedTest(throwable: Throwable, testName: String, recordedEvents: IndexedSeq[RecordableEvent], report: Reporter, tracker: Tracker, duration: Long) {
 
     val message = getMessageForException(throwable)
     val formatter = getIndentedText(testName, 1, true)
@@ -2316,7 +2314,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         case _ => 
           None
       }
-    report(TestFailed(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), Some(throwable), Some(duration), Some(formatter), Some(SeeStackDepthException), rerunner, payload))
+    report(TestFailed(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), recordedEvents, Some(throwable), Some(duration), Some(formatter), Some(SeeStackDepthException), rerunner, payload))
   }
 
   /**
@@ -2410,7 +2408,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
           }
         case Some(distribute) =>
           for (nestedSuite <- nestedSuitesArray) 
-            distribute(nestedSuite, args)
+            distribute(nestedSuite, args.copy(tracker = tracker.nextTracker))
       }
     }
   }
@@ -2898,7 +2896,7 @@ used for test events like succeeded/failed, etc.
   }
 
   def reportTestFailed(theSuite: Suite, report: Reporter, throwable: Throwable, testName: String, testText: String,
-      decodedTestName:Option[String], rerunnable: Option[String], tracker: Tracker, duration: Long, level: Int, includeIcon: Boolean, location: Option[Location]) {
+      decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, level: Int, includeIcon: Boolean, location: Option[Location]) {
 
     val message = getMessageForException(throwable)
     val formatter = getIndentedText(testText, level, includeIcon)
@@ -2909,7 +2907,7 @@ used for test events like succeeded/failed, etc.
         case _ => 
           None
       }
-    report(TestFailed(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName),theSuite.decodedSuiteName, testName, testText, decodedTestName, Some(throwable), Some(duration), Some(formatter), location, theSuite.rerunner, payload))
+    report(TestFailed(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName),theSuite.decodedSuiteName, testName, testText, decodedTestName, recordedEvents, Some(throwable), Some(duration), Some(formatter), location, theSuite.rerunner, payload))
   }
 
   // TODO: Possibly separate these out from method tests and function tests, because locations are different
@@ -2919,8 +2917,8 @@ used for test events like succeeded/failed, etc.
       location, rerunnable))
   }
 
-  def reportTestPending(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, decodedTestName:Option[String], duration: Long, formatter: Formatter, location: Option[Location]) {
-    report(TestPending(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, Some(duration), Some(formatter),
+  def reportTestPending(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], duration: Long, formatter: Formatter, location: Option[Location]) {
+    report(TestPending(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, recordedEvents, Some(duration), Some(formatter),
       location))
   }
 
@@ -2933,15 +2931,15 @@ used for test events like succeeded/failed, etc.
 */
 
   def reportTestCanceled(theSuite: Suite, report: Reporter, throwable: Throwable, testName: String, testText: String,
-      decodedTestName:Option[String], rerunnable: Option[String], tracker: Tracker, duration: Long, level: Int, includeIcon: Boolean, location: Option[Location]) {
+      decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, level: Int, includeIcon: Boolean, location: Option[Location]) {
 
     val message = getMessageForException(throwable)
     val formatter = getIndentedText(testText, level, includeIcon)
-    report(TestCanceled(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, Some(throwable), Some(duration), Some(formatter), location, rerunnable))
+    report(TestCanceled(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, recordedEvents, Some(throwable), Some(duration), Some(formatter), location, rerunnable))
   }
 
-  def reportTestSucceeded(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, decodedTestName:Option[String], duration: Long, formatter: Formatter, rerunnable: Option[String], location: Option[Location]) {
-    report(TestSucceeded(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, Some(duration), Some(formatter),
+  def reportTestSucceeded(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], duration: Long, formatter: Formatter, rerunnable: Option[String], location: Option[Location]) {
+    report(TestSucceeded(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, recordedEvents, Some(duration), Some(formatter),
       location, rerunnable))
   }
 
@@ -2951,10 +2949,8 @@ used for test events like succeeded/failed, etc.
     report(TestIgnored(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, Some(IndentedText(formattedText, testText, level)),
       location))
   }
-
-  // If not fired in the context of a test, then testName will be None
-  def reportInfoProvided(
-    theSuite: Suite,
+  
+  def createInfoProvided(theSuite: Suite,
     report: Reporter,
     tracker: Tracker,
     testName: Option[String],
@@ -2965,10 +2961,8 @@ used for test events like succeeded/failed, etc.
     includeNameInfo: Boolean,
     includeIcon: Boolean = true,
     aboutAPendingTest: Option[Boolean] = None,
-    aboutACanceledTest: Option[Boolean] = None
-  ) {
-    report(
-      InfoProvided(
+    aboutACanceledTest: Option[Boolean] = None) = {
+    InfoProvided(
         tracker.nextOrdinal(),
         message,
         if (includeNameInfo)
@@ -2987,8 +2981,72 @@ used for test events like succeeded/failed, etc.
         location,
         payload
       )
+  }
+
+  // If not fired in the context of a test, then testName will be None
+  def reportInfoProvided(
+    theSuite: Suite,
+    report: Reporter,
+    tracker: Tracker,
+    testName: Option[String],
+    message: String,
+    payload: Option[Any], 
+    level: Int,
+    location: Option[Location],
+    includeNameInfo: Boolean,
+    includeIcon: Boolean = true,
+    aboutAPendingTest: Option[Boolean] = None,
+    aboutACanceledTest: Option[Boolean] = None
+  ) {
+    report(
+      createInfoProvided(
+        theSuite,
+        report,
+        tracker,
+        testName,
+        message,
+        payload, 
+        level,
+        location,
+        includeNameInfo,
+        includeIcon,
+        aboutAPendingTest,
+        aboutACanceledTest
+      )
     )
   }
+  
+  def createMarkupProvided(
+    theSuite: Suite,
+    report: Reporter,
+    tracker: Tracker,
+    testName: Option[String],
+    message: String,
+    level: Int,
+    location: Option[Location],
+    includeNameInfo: Boolean,
+    aboutAPendingTest: Option[Boolean] = None,
+    aboutACanceledTest: Option[Boolean] = None  
+  ) = {
+    MarkupProvided(
+      tracker.nextOrdinal(),
+      message,
+      if (includeNameInfo)
+        Some(NameInfo(theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, 
+            testName match {
+              case Some(name) => Some(TestNameInfo(name, getDecodedName(name)))
+              case None => None
+            }
+          ))
+      else
+        None,
+      aboutAPendingTest,
+      aboutACanceledTest,
+      None, // Some(getIndentedTextForInfo(message, level, includeIcon, testName.isDefined))  for now don't send a formatter
+      location
+    )
+  }
+  
 
   // If not fired in the context of a test, then testName will be None
   def reportMarkupProvided(
@@ -3004,22 +3062,17 @@ used for test events like succeeded/failed, etc.
     aboutACanceledTest: Option[Boolean] = None
   ) {
     report(
-      MarkupProvided(
-        tracker.nextOrdinal(),
+      createMarkupProvided(
+        theSuite,
+        report,
+        tracker,
+        testName,
         message,
-        if (includeNameInfo)
-          Some(NameInfo(theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, 
-              testName match {
-                case Some(name) => Some(TestNameInfo(name, getDecodedName(name)))
-                case None => None
-              }
-            ))
-        else
-          None,
+        level,
+        location,
+        includeNameInfo,
         aboutAPendingTest,
-        aboutACanceledTest,
-        None, // Some(getIndentedTextForInfo(message, level, includeIcon, testName.isDefined))  for now don't send a formatter
-        location
+        aboutACanceledTest
       )
     )
   }

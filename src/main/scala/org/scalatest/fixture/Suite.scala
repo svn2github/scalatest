@@ -524,25 +524,23 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
 
     val formatter = getIndentedText(testName, 1, true)
 
-    val messageRecorderForThisTest = new MessageRecorder
+    val messageRecorderForThisTest = new MessageRecorder(report)
     val informerForThisTest =
       MessageRecordingInformer(
         messageRecorderForThisTest, 
-        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, payload, 2, location, isConstructingThread, true, Some(testWasPending), Some(testWasCanceled))
+        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => createInfoProvided(thisSuite, report, tracker, Some(testName), message, payload, 2, location, isConstructingThread, true, Some(testWasPending), Some(testWasCanceled))
       )
 
     val documenterForThisTest =
       MessageRecordingDocumenter(
         messageRecorderForThisTest, 
-        (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(thisSuite, report, tracker, Some(testName), message, None, 2, location, isConstructingThread, true, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
+        (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => createInfoProvided(thisSuite, report, tracker, Some(testName), message, None, 2, location, isConstructingThread, true, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
       )
 
 // TODO: Use a message recorder in FixtureSuite. Maybe just allow the state and
 // use Engine in Suite, though then I'd have two Engines in everything. Or even three down here.
 // Nah, go ahead and use message recording informer here, and maybe find some other way to
 // reduce the duplication between Suite, FixtureSuite, and Engine.
-    var testWasPending = false
-    var testWasCanceled = false
     try {
       if (testMethodTakesAFixtureAndInformer(testName) || testMethodTakesAFixture(testName)) {
         val testFun: FixtureParam => Unit = {
@@ -564,26 +562,8 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
         val testFun: () => Unit = {
           () => {
             val args: Array[Object] =
-              if (testMethodTakesAnInformer(testName)) {
-                val informer =
-                  new Informer {
-/*
-                    def apply(message: String) {
-                      if (message == null)
-                        throw new NullPointerException
-                      reportInfoProvided(thisSuite, report, tracker, Some(testName), message, None, 2, getLineInFile(Thread.currentThread().getStackTrace, 2), true)
-                    }
-*/
-                    def apply(message: String, payload: Option[Any] = None) {
-                      if (message == null)
-                        throw new NullPointerException
-                      if (payload == null)
-                        throw new NullPointerException
-                      reportInfoProvided(thisSuite, report, tracker, Some(testName), message, payload, 2, getLineInFile(Thread.currentThread().getStackTrace, 2), true)
-                    }
-                  }
-                Array(informer)
-              }
+              if (testMethodTakesAnInformer(testName)) 
+                Array(informerForThisTest)
               else
                 Array()
 
@@ -594,7 +574,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
       }
 
       val duration = System.currentTimeMillis - testStartTime
-      reportTestSucceeded(thisSuite, report, tracker, testName, testName, getDecodedName(testName), duration, formatter, thisSuite.rerunner, Some(getTopOfMethod(method)))
+      reportTestSucceeded(thisSuite, report, tracker, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, thisSuite.rerunner, Some(getTopOfMethod(method)))
     }
     catch { 
       case ite: InvocationTargetException =>
@@ -602,27 +582,23 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
         t match {
           case _: TestPendingException =>
             val duration = System.currentTimeMillis - testStartTime
-            reportTestPending(thisSuite, report, tracker, testName, testName, getDecodedName(testName), duration, formatter, Some(getTopOfMethod(method)))
-            testWasPending = true // Set so info's printed out in the finally clause show up yellow
+            // testWasPending = true so info's printed out in the finally clause show up yellow
+            reportTestPending(thisSuite, report, tracker, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(method)))
           case e: TestCanceledException =>
             val duration = System.currentTimeMillis - testStartTime
             val message = getMessageForException(e)
             val formatter = getIndentedText(testName, 1, true)
-            report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), thisSuite.rerunner))
-            // Set so info's printed out in the finally clause show up yellow
-            testWasCanceled = true // Set so info's printed out in the finally clause show up yellow
+            // testWasCanceled = true so info's printed out in the finally clause show up yellow
+            report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), thisSuite.rerunner))
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
-            handleFailedTest(t, testName, report, tracker, duration)
+            handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, duration)
           case e => throw e
         }
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
-        handleFailedTest(e, testName, report, tracker, duration)
+        handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, duration)
       case e => throw e
-    }
-    finally {
-      messageRecorderForThisTest.fireRecordedMessages(testWasPending, testWasCanceled) 
     }
   }
 

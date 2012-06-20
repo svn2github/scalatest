@@ -23,7 +23,7 @@ import org.scalatest.events.SuiteCompleted
 
 import java.io.File
 
-class JunitXmlReporterSuite extends FunSuite {
+class JUnitXmlReporterSuite extends FunSuite {
 
   val ord1 = new Ordinal(123)
   val ord1a = ord1.next
@@ -87,7 +87,7 @@ class JunitXmlReporterSuite extends FunSuite {
       "thread1",
       123456)
       
-  val reporter = new JunitXmlReporter("target")
+  val reporter = new JUnitXmlReporter("target")
 
   test("SuiteAborted and SuiteCompleted are recognized as test terminators") {
     reporter(start1)

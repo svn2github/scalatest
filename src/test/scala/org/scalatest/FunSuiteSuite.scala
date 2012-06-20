@@ -99,18 +99,6 @@ class FunSuiteSuite extends Suite with SharedHelpers {
   }
   
   def testThatInfoInsideATestMethodGetsOutTheDoor() {
-    class MyReporter extends Reporter {
-      var infoProvidedReceived = false
-      var lastEvent: InfoProvided = null
-      def apply(event: Event) {
-        event match {
-          case event: InfoProvided =>
-            infoProvidedReceived = true
-            lastEvent = event
-          case _ =>
-        }
-      }
-    }
     val msg = "hi there, dude"
     class MySuite extends FunSuite {
       test("test this") {
@@ -118,10 +106,14 @@ class FunSuiteSuite extends Suite with SharedHelpers {
       }
     }
     val a = new MySuite
-    val myRep = new MyReporter
+    val myRep = new EventRecordingReporter
     a.run(None, RunArgs(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
-    assert(myRep.infoProvidedReceived)
-    assert(myRep.lastEvent.message === msg)
+    val testSucceeded = myRep.testSucceededEventsReceived
+    assert(testSucceeded.size === 1)
+    val recordedEvents = testSucceeded(0).recordedEvents
+    assert(recordedEvents.size === 1)
+    val ip = recordedEvents(0).asInstanceOf[InfoProvided]
+    assert(ip.message === msg)
   }
   
   def testThatInfoInTheConstructorGetsOutTheDoor() {

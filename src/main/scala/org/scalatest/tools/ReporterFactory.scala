@@ -144,7 +144,7 @@ private[scalatest] class ReporterFactory {
   }
   
   protected def createJunitXmlReporter(configSet: Set[ReporterConfigParam], directory: String) = {
-    new JunitXmlReporter(directory)
+    new JUnitXmlReporter(directory)
   }
   
   protected def createDashboardReporter(configSet: Set[ReporterConfigParam], directory: String, numFilesToArchive: Int) = {

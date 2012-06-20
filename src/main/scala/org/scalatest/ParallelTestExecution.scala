@@ -15,8 +15,10 @@
  */
 package org.scalatest    
 
-import tools.DistributedTestRunnerSuite
 import OneInstancePerTest.RunTestInNewInstance
+import org.scalatest.time.Span
+import org.scalatest.time.Seconds
+import tools.{DistributorWrapper, DistributedTestRunnerSuite, TestSortingReporter, Runner}
 
 /**
  * Trait that causes that the tests of any suite it is mixed into to be run in parallel if
@@ -46,10 +48,32 @@ import OneInstancePerTest.RunTestInNewInstance
  * @author Bill Venners
  */
 trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
+  
+  protected abstract override def runTests(testName: Option[String], args: RunArgs) {
+    val newArgs =
+      if (args.configMap.contains(RunTestInNewInstance))
+        args
+      else {
+        args.distributor match {
+          case Some(distributor) =>
+            val testSortingReporter = new TestSortingReporter(args.reporter, sortingTimeout)
+            args.copy(reporter = testSortingReporter, distributor = Some(new DistributorWrapper(distributor, testSortingReporter)))
+          case None =>
+            args
+        }
+      }
+
+    // Always call super.runTests, which is OneInstancePerTest's runTests. But if RTINI is NOT
+    // set, that means we are in the initial instance.In that case, we wrap the reporter in
+    // a new TestSortingReporter, and wrap the distributor in a new DistributorWrapper that
+    // knows is passed the TestSortingReporter. We then call super.runTests, which is OIPT's runTests.
+    super.runTests(testName, newArgs)
+  }
 
   protected abstract override def runTest(testName: String, args: RunArgs) {
 
     if (args.configMap.contains(RunTestInNewInstance)) {
+      // In initial instance, so wrap the test in a DistributedTestRunnerSuite and pass it to the Distributor.
       val oneInstance = newInstance
       args.distributor match {
         case None =>
@@ -58,7 +82,8 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
           distribute(new DistributedTestRunnerSuite(oneInstance, testName, args), args.tracker.nextTracker)
       }
     }
-    else
+    else // In test-specific (distributed) instance, so just run the test. (RTINI was
+         // removed by OIPT's implementation of runTests.)
       super.runTest(testName, args)
   }
 
@@ -67,4 +92,6 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
     val instance = getClass.newInstance.asInstanceOf[Suite with ParallelTestExecution]
     instance
   }
+  
+  protected def sortingTimeout: Span = Runner.testSortingReporterTimeout
 }

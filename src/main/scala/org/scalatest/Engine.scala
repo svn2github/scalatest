@@ -26,6 +26,7 @@ import org.scalatest.events.SeeStackDepthException
 import scala.annotation.tailrec
 import org.scalatest.PathEngine.isInTargetPath
 import org.scalatest.Suite.checkChosenStyles
+import org.scalatest.events.Event
 
 // T will be () => Unit for FunSuite and FixtureParam => Any for fixture.FunSuite
 private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResourceName: String, simpleClassName: String)  {
@@ -207,23 +208,23 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     val testTextWithOptionalPrefix = prependChildPrefix(theTest.parent, theTest.testText)
     val formatter = getIndentedText(testTextWithOptionalPrefix, theTest.indentationLevel, includeIcon)
 
-    val messageRecorderForThisTest = new MessageRecorder
+    val messageRecorderForThisTest = new MessageRecorder(report)
     val informerForThisTest =
       MessageRecordingInformer(
         messageRecorderForThisTest,
-        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => reportInfoProvided(theSuite, report, tracker, Some(testName), message, payload, theTest.indentationLevel + 1, location, isConstructingThread, includeIcon, Some(testWasPending), Some(testWasCanceled))
+        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => createInfoProvided(theSuite, report, tracker, Some(testName), message, payload, theTest.indentationLevel + 1, location, isConstructingThread, includeIcon, Some(testWasPending), Some(testWasCanceled))
       )
 
     val documenterForThisTest =
       MessageRecordingDocumenter(
         messageRecorderForThisTest,
-        (message, None, isConstructingThread, testWasPending, testWasCanceled, location) => reportMarkupProvided(theSuite, report, tracker, Some(testName), message, theTest.indentationLevel + 1, location, isConstructingThread, Some(testWasPending), Some(testWasCanceled))
+        (message, None, isConstructingThread, testWasPending, testWasCanceled, location) => createMarkupProvided(theSuite, report, tracker, Some(testName), message, theTest.indentationLevel + 1, location, isConstructingThread, Some(testWasPending), Some(testWasCanceled))
       )
 
     val oldInformer = atomicInformer.getAndSet(informerForThisTest)
     val oldDocumenter = atomicDocumenter.getAndSet(documenterForThisTest)
-    var testWasPending = false
-    var testWasCanceled = false
+    //var testWasPending = false
+    //var testWasCanceled = false
 
     try {
 
@@ -231,27 +232,47 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
       val duration = System.currentTimeMillis - testStartTime
       val durationToReport = theTest.recordedDuration.getOrElse(duration)
-      reportTestSucceeded(theSuite, report, tracker, testName, theTest.testText, None, durationToReport, formatter, theSuite.rerunner, theTest.lineInFile)
+      val recordEvents = messageRecorderForThisTest.recordedEvents(false, false) ++ 
+                         (if (theTest.recordedMessages.isDefined) 
+                            theTest.recordedMessages.get.recordedEvents(false, theSuite, report, tracker, testName, theTest.indentationLevel + 1, includeIcon)
+                          else
+                            Vector.empty)
+      reportTestSucceeded(theSuite, report, tracker, testName, theTest.testText, None, recordEvents, durationToReport, formatter, theSuite.rerunner, theTest.lineInFile)
     }
     catch { // XXX
       case _: TestPendingException =>
         val duration = System.currentTimeMillis - testStartTime
-        reportTestPending(theSuite, report, tracker, testName, theTest.testText, None, duration, formatter, theTest.lineInFile)
-        testWasPending = true // Set so info's printed out in the finally clause show up yellow
+        // testWasPending = true so info's printed out in the finally clause show up yellow
+        val recordEvents = messageRecorderForThisTest.recordedEvents(true, false) ++ 
+                           (if (theTest.recordedMessages.isDefined) 
+                             theTest.recordedMessages.get.recordedEvents(true, theSuite, report, tracker, testName, theTest.indentationLevel + 1, includeIcon)
+                           else
+                             Vector.empty)
+        reportTestPending(theSuite, report, tracker, testName, theTest.testText, None, recordEvents, duration, formatter, theTest.lineInFile)
       case e: TestCanceledException =>
         val duration = System.currentTimeMillis - testStartTime
-        reportTestCanceled(theSuite, report, e, testName, theTest.testText, None, theSuite.rerunner, tracker, duration, theTest.indentationLevel, includeIcon, theTest.lineInFile)
-        testWasCanceled = true // Set so info's printed out in the finally clause show up yellow
+        // testWasCanceled = true so info's printed out in the finally clause show up yellow
+        val recordEvents = messageRecorderForThisTest.recordedEvents(false, true) ++ 
+                           (if (theTest.recordedMessages.isDefined) 
+                             theTest.recordedMessages.get.recordedEvents(false, theSuite, report, tracker, testName, theTest.indentationLevel + 1, includeIcon)
+                           else
+                             Vector.empty)
+        reportTestCanceled(theSuite, report, e, testName, theTest.testText, None, recordEvents, theSuite.rerunner, tracker, duration, theTest.indentationLevel, includeIcon, theTest.lineInFile)
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         val durationToReport = theTest.recordedDuration.getOrElse(duration)
-        reportTestFailed(theSuite, report, e, testName, theTest.testText, None, theSuite.rerunner, tracker, durationToReport, theTest.indentationLevel, includeIcon, Some(SeeStackDepthException))
+        val recordEvents = messageRecorderForThisTest.recordedEvents(false, false) ++ 
+                           (if (theTest.recordedMessages.isDefined)
+                             theTest.recordedMessages.get.recordedEvents(false, theSuite, report, tracker, testName, theTest.indentationLevel + 1, includeIcon)
+                           else
+                             Vector.empty)
+        reportTestFailed(theSuite, report, e, testName, theTest.testText, None, recordEvents, theSuite.rerunner, tracker, durationToReport, theTest.indentationLevel, includeIcon, Some(SeeStackDepthException))
       case e => throw e
     }
     finally {
-      messageRecorderForThisTest.fireRecordedMessages(testWasPending, testWasCanceled)
+      /*messageRecorderForThisTest.fireRecordedMessages(testWasPending, testWasCanceled)
       if (theTest.recordedMessages.isDefined)
-        theTest.recordedMessages.get.fireRecordedMessages(testWasPending, theSuite, report, tracker, testName, theTest.indentationLevel + 1, includeIcon)
+        theTest.recordedMessages.get.fireRecordedMessages(testWasPending, theSuite, report, tracker, testName, theTest.indentationLevel + 1, includeIcon)*/
       val shouldBeInformerForThisTest = atomicInformer.getAndSet(oldInformer)
       val swapAndCompareSucceeded = shouldBeInformerForThisTest eq informerForThisTest
       if (!swapAndCompareSucceeded)
@@ -673,7 +694,7 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
         val informerForThisTest =
           PathMessageRecordingInformer( // TODO: Put locations into path traits!
             (message, payload, wasConstructingThread, testWasPending, theSuite, report, tracker, testName, indentation, includeIcon, thread) =>
-              reportInfoProvided(theSuite, report, tracker, Some(testName), message, payload, indentation, None, wasConstructingThread, includeIcon, Some(testWasPending))
+              createInfoProvided(theSuite, report, tracker, Some(testName), message, payload, indentation, None, wasConstructingThread, includeIcon, Some(testWasPending))
           )
 
         val oldInformer = atomicInformer.getAndSet(informerForThisTest)

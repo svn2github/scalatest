@@ -20,6 +20,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.Future
+import tools.DistributedTestRunnerSuite
 
 /**
  * This Distributor can be used by multiple threads.
@@ -49,6 +50,27 @@ private[scalatest] class ConcurrentDistributor(args: RunArgs, execSvc: ExecutorS
   def waitUntilDone() {
     while (futureQueue.peek != null)
       futureQueue.poll().get()
+  }
+}
+
+private[scalatest] class DistributorWrapper(distributor: Distributor, testSortingReporter: TestSortingReporter) extends Distributor {
+
+  def apply(suite: Suite, tracker: Tracker) {
+    waitForTestCompleted(suite)
+    distributor.apply(suite, tracker)
+  }
+
+  def apply(suite: Suite, args: RunArgs) {
+    waitForTestCompleted(suite)
+    distributor.apply(suite, args)
+  }
+
+  private def waitForTestCompleted(suite: Suite) {
+    suite match {
+      case dtrs: DistributedTestRunnerSuite =>
+        testSortingReporter.waitForTestCompleted(dtrs.testName)
+      case _ =>
+    }
   }
 }
 

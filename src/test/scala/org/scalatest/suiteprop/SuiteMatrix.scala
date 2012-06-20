@@ -21,12 +21,12 @@ import matchers.ShouldMatchers
 
 class SuiteMatrix extends PropSpec with ShouldMatchers with TableDrivenPropertyChecks with SharedHelpers {
 
-  property("When info appears in the code of a successful test, it should be reported after the TestSucceeded.") {
+  property("When info appears in the code of a successful test, it should be reported in the TestSucceeded.") {
     new InfoInsideTestFiredAfterTestExamples {
       forAll (examples) { suite =>
-        val (infoProvidedIndex, testStartingIndex, testSucceededIndex) =
-          getIndexesForInformerEventOrderTests(suite, suite.theTestName, suite.msg)
-        testSucceededIndex should be < infoProvidedIndex
+        val (testStartingIndex, testSucceededIndex) =
+          getIndexesForTestInformerEventOrderTests(suite, suite.theTestName, suite.msg)
+        testStartingIndex should be < testSucceededIndex
       }
     }
   }

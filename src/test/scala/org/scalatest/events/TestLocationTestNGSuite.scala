@@ -10,6 +10,7 @@ class TestLocationTestNGSuite extends TestNGSuite with TestLocationServices {
   val expectedSuiteStartingList = List(TopOfClassPair(suiteTypeName))
   val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName))
   val expectedSuiteAbortedList = Nil
+  val expectedTestSucceededList = Nil
   val expectedTestFailedList = List(SeeStackDepthExceptionPair("testFail"))
   val expectedInfoProvidedList = Nil
   

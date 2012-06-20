@@ -63,7 +63,7 @@ import exceptions._
           case _ => 
             None
         }
-      report(TestFailed(theTracker.nextOrdinal(), message, testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), throwable, None, Some(formatter), Some(SeeStackDepthException), None, payload))
+      report(TestFailed(theTracker.nextOrdinal(), message, testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), Vector.empty, throwable, None, Some(formatter), Some(SeeStackDepthException), None, payload))
       // TODO: can I add a duration?
     }
 
@@ -72,7 +72,7 @@ import exceptions._
         val (testName, testClass, testClassName) =
           parseTestDescription(description)
         val formatter = getIndentedText(testName, 1, true)
-        report(TestSucceeded(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), None, Some(formatter), getTopOfMethod(testClass, testName)))
+        report(TestSucceeded(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), Vector.empty, None, Some(formatter), getTopOfMethod(testClass, testName)))
         // TODO: can I add a duration?
       }
     }

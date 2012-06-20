@@ -41,7 +41,7 @@ import scala.xml
  *
  * @author George Berger
  */
-private[scalatest] class JunitXmlReporter(directory: String) extends Reporter {
+private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
 
   private val events = Set.empty[Event]
   private val propertiesXml = genPropertiesXml
@@ -55,10 +55,10 @@ private[scalatest] class JunitXmlReporter(directory: String) extends Reporter {
 
     event match {
       case e: SuiteCompleted =>
-        writeSuiteFile(e)
+        writeSuiteFile(e, e.suiteId)
 
       case e: SuiteAborted =>
-        writeSuiteFile(e)
+        writeSuiteFile(e, e.suiteId)
 
       case _ =>
     }
@@ -68,11 +68,11 @@ private[scalatest] class JunitXmlReporter(directory: String) extends Reporter {
   // Writes the xml file for a single test suite.  Removes processed
   // events from the events Set as they are used.
   //
-  private def writeSuiteFile(endEvent: Event) {
+  private def writeSuiteFile(endEvent: Event, suiteId: String) {
     require(endEvent.isInstanceOf[SuiteCompleted] ||
             endEvent.isInstanceOf[SuiteAborted])
 
-    val testsuite = getTestsuite(endEvent)
+    val testsuite = getTestsuite(endEvent, suiteId)
     val xmlStr    = xmlify(testsuite)
     val filespec  = directory + "/TEST-" + testsuite.name + ".xml"
 
@@ -97,17 +97,38 @@ private[scalatest] class JunitXmlReporter(directory: String) extends Reporter {
   // that have not yet completed when the parent's SuiteCompleted or
   // SuiteAborted event is processed.
   //
-  private def getTestsuite(endEvent: Event): Testsuite = {
+  private def getTestsuite(endEvent: Event, suiteId: String): Testsuite = {
     require(endEvent.isInstanceOf[SuiteCompleted] ||
             endEvent.isInstanceOf[SuiteAborted])
 
-    val ordinalPrefix = endEvent.ordinal.toList.dropRight(1)
-
-    val samePrefixEvents = 
-      events.toList.filter(
-        e => e.ordinal.toList.dropRight(1) == ordinalPrefix)
-
-    val orderedEvents = samePrefixEvents.sortWith((a, b) => a < b).toArray
+    val orderedEvents = events.toList.filter { e => 
+      e match {
+        case e: TestStarting => e.suiteId == suiteId
+        case e: TestSucceeded  => e.suiteId == suiteId
+        case e: TestIgnored    => e.suiteId == suiteId
+        case e: TestFailed     => e.suiteId == suiteId
+        case e: TestPending    => e.suiteId == suiteId
+        case e: TestCanceled   => e.suiteId == suiteId
+        case e: InfoProvided   => 
+          e.nameInfo match {
+            case Some(nameInfo) => 
+              nameInfo.suiteID == suiteId
+            case None => false
+          }
+        case e: MarkupProvided => 
+          e.nameInfo match {
+            case Some(nameInfo) => 
+              nameInfo.suiteID == suiteId
+            case None => false
+          }
+        case e: ScopeOpened    => e.nameInfo.suiteID == suiteId
+        case e: ScopeClosed    => e.nameInfo.suiteID == suiteId
+        case e: SuiteStarting  => e.suiteId == suiteId
+        case e: SuiteAborted   => e.suiteId == suiteId
+        case e: SuiteCompleted => e.suiteId == suiteId
+        case _    => false
+      }
+    }.sortWith((a, b) => a < b).toArray
 
     val (startIndex, endIndex) = locateSuite(orderedEvents, endEvent)
 
@@ -227,6 +248,9 @@ private[scalatest] class JunitXmlReporter(directory: String) extends Reporter {
     (startIndex, endIndex)
   }
 
+  private def idxAdjustmentForRecordedEvents(recordedEvents: IndexedSeq[RecordableEvent]) =
+    recordedEvents.filter(e => e.isInstanceOf[InfoProvided] || e.isInstanceOf[MarkupProvided]).size
+  
   //
   // Constructs a Testcase object from events in orderedEvents array.
   //
@@ -251,19 +275,23 @@ private[scalatest] class JunitXmlReporter(directory: String) extends Reporter {
         case e: TestSucceeded =>
           endIndex = idx
           testcase.time = e.timeStamp - testcase.timeStamp
+          idx += idxAdjustmentForRecordedEvents(e.recordedEvents)
 
         case e: TestFailed =>
           endIndex = idx
           testcase.failure = Some(e)
           testcase.time = e.timeStamp - testcase.timeStamp
+          idx += idxAdjustmentForRecordedEvents(e.recordedEvents)
 
         case e: TestPending =>
           endIndex = idx
           testcase.pending = true
+          idx += idxAdjustmentForRecordedEvents(e.recordedEvents)
 
         case e: TestCanceled =>
           endIndex = idx
           testcase.canceled = true
+          idx += idxAdjustmentForRecordedEvents(e.recordedEvents)
 
         case e: ScopeOpened    => idx += 1
         case e: ScopeClosed    => idx += 1

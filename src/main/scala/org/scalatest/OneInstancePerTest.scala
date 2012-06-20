@@ -67,10 +67,11 @@ trait OneInstancePerTest extends AbstractSuite {
   protected abstract override def runTest(testName: String, args: RunArgs) {
 
     if (args.configMap.contains(RunTestInNewInstance)) {
+      // In initial instance, so create a new test-specific instance for this test and invoke run on it.
       val oneInstance = newInstance
       oneInstance.run(Some(testName), args)
     }
-    else
+    else // Therefore, in test-specific instance, so run the test.
       super.runTest(testName, args)
   }
 
@@ -101,10 +102,16 @@ trait OneInstancePerTest extends AbstractSuite {
 
 // TODO: Define a better exception to throw if RTINI is in the config map but testName is not defined.
     if (args.configMap.contains(RunTestInNewInstance)) {
+      // In test-specific instance, so run the test. (We are removing RTINI
+      // so that runTest will realize it is in the test-specific instance.)
       val newConfigMap = args.configMap.filter { case (key, _) => key != RunTestInNewInstance }
       runTest(testName.get, args.copy(configMap = newConfigMap))
     }
     else {
+      // In initial instance, so set the RTINI flag and call super.runTests, which
+      // will go through any scopes and call runTest as usual. If this method was called
+      // via super.runTests from PTE, the TestSortingReporter and WrappedDistributor
+      // will already be in place.
       val newConfigMap = args.configMap + (RunTestInNewInstance -> true)
       super.runTests(testName, args.copy(configMap = newConfigMap))
     }

@@ -269,7 +269,7 @@ private[scalatest] class HtmlReporter(pw: PrintWriter, presentAllDurations: Bool
           case None =>
         }
 
-      case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
+      case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
 
         val stringToPrint = stringToPrintWhenNoError("testSucceeded", formatter, suiteName, Some(testName), duration)
 
@@ -277,6 +277,8 @@ private[scalatest] class HtmlReporter(pw: PrintWriter, presentAllDurations: Bool
           case Some(string) => printPossiblyInColor(string, ansiGreen)
           case None =>
         }
+        
+        handleRecordedEvents(recordedEvents)
     
       case TestIgnored(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, formatter, location, payload, threadName, timeStamp) => 
 
@@ -292,14 +294,17 @@ private[scalatest] class HtmlReporter(pw: PrintWriter, presentAllDurations: Bool
           case None =>
         }
 
-      case TestFailed(ordinal, message, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
+      case TestFailed(ordinal, message, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
 
         val lines = stringsToPrintOnError("failedNote", "testFailed", message, throwable, formatter, Some(suiteName), Some(testName), duration)
         for (line <- lines) printPossiblyInColor(line, ansiRed)
+        
+        handleRecordedEvents(recordedEvents)
 
-      case InfoProvided(ordinal, message, nameInfo, aboutAPendingTest, aboutACanceledTest, throwable, formatter, location, payload, threadName, timeStamp) =>
+      case infoEvent: InfoProvided =>
 
-        val (suiteName, testName) =
+        handleInfoProvided(infoEvent)
+        /*val (suiteName, testName) =
           nameInfo match {
             case Some(NameInfo(suiteName, _, _, _, testNameInfo)) => (Some(suiteName), if (testNameInfo.isDefined) Some(testNameInfo.get.testName) else None)
             case None => (None, None)
@@ -310,9 +315,9 @@ private[scalatest] class HtmlReporter(pw: PrintWriter, presentAllDurations: Bool
             case Some(isPending) => isPending
             case None => false
           }
-        for (line <- lines) printPossiblyInColor(line, if (shouldBeYellow) ansiYellow else ansiGreen)
+        for (line <- lines) printPossiblyInColor(line, if (shouldBeYellow) ansiYellow else ansiGreen)*/
 
-      case TestPending(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, duration, formatter, location, payload, threadName, timeStamp) =>
+      case TestPending(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, duration, formatter, location, payload, threadName, timeStamp) =>
 
         val stringToPrint =
           formatter match {
@@ -325,11 +330,54 @@ private[scalatest] class HtmlReporter(pw: PrintWriter, presentAllDurations: Bool
           case Some(string) => printPossiblyInColor(string, ansiYellow)
           case None =>
         }
+        
+        handleRecordedEvents(recordedEvents)
 
      // case _ => throw new RuntimeException("Unhandled event")
     }
 
     pw.flush()
+  }
+  
+  private def handleInfoProvided(event: InfoProvided) {
+    val (suiteName, testName) =
+      event.nameInfo match {
+        case Some(NameInfo(suiteName, _, _, _, testNameInfo)) => (Some(suiteName), if (testNameInfo.isDefined) Some(testNameInfo.get.testName) else None)
+        case None => (None, None)
+      }
+    val lines = stringsToPrintOnError("infoProvidedNote", "infoProvided", event.message, event.throwable, event.formatter, suiteName, testName, None)
+    val shouldBeYellow =
+      event.aboutAPendingTest match {
+        case Some(isPending) => isPending
+        case None => false
+      }
+    for (line <- lines) printPossiblyInColor(line, if (shouldBeYellow) ansiYellow else ansiGreen)
+  }
+  
+  private def handleMarkupProvided(event: MarkupProvided) {
+    val (suiteName, testName) =
+      event.nameInfo match {
+        case Some(NameInfo(suiteName, _, _, _, testNameInfo)) => (Some(suiteName), if (testNameInfo.isDefined) Some(testNameInfo.get.testName) else None)
+        case None => (None, None)
+      }
+    val lines = stringsToPrintOnError("infoProvidedNote", "infoProvided", event.text, None, event.formatter, suiteName, testName, None)
+    val shouldBeYellow =
+      event.aboutAPendingTest match {
+        case Some(isPending) => isPending
+        case None => false
+      }
+    for (line <- lines) printPossiblyInColor(line, if (shouldBeYellow) ansiYellow else ansiGreen)
+  }
+  
+  private def handleRecordedEvents(recordedEvents: IndexedSeq[Event]) {
+    recordedEvents.foreach { e =>
+      e match {
+        case ipEvent: InfoProvided => 
+          handleInfoProvided(ipEvent)
+        case mpEvent: MarkupProvided => 
+          handleMarkupProvided(mpEvent)
+      }
+    }
   }
 
   // Closes the print writer. Subclasses StandardOutReporter and StandardErrReporter override dispose to do nothing

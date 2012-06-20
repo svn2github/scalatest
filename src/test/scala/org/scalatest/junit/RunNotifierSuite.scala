@@ -72,9 +72,9 @@ class RunNotifierSuite extends FunSuite {
     val reporter = new RunNotifierReporter(runNotifier)
     val exception = new IllegalArgumentException
 
-    reporter(TestFailed(ordinal, "No msg", "SuiteClassName", "suite ID", Some("fully.qualified.SuiteClassName"), None, "theTestName", "theTestName", None, Some(exception)))
+    reporter(TestFailed(ordinal, "No msg", "SuiteClassName", "suite ID", Some("fully.qualified.SuiteClassName"), None, "theTestName", "theTestName", None, Vector.empty, Some(exception)))
     assert(runNotifier.passed.get.getDescription.getDisplayName === "theTestName(fully.qualified.SuiteClassName)")
-    reporter(TestFailed(ordinal, "No msg", "SuiteClassName", "suite ID", None, None, "theTestName", "theTestName", None, Some(exception)))
+    reporter(TestFailed(ordinal, "No msg", "SuiteClassName", "suite ID", None, None, "theTestName", "theTestName", None, Vector.empty, Some(exception)))
     assert(runNotifier.passed.get.getDescription.getDisplayName === "theTestName(SuiteClassName)")
   }
 
@@ -91,9 +91,9 @@ class RunNotifierSuite extends FunSuite {
       }
 
     val reporter = new RunNotifierReporter(runNotifier)
-    reporter(TestSucceeded(ordinal, "SuiteClassName", "suite ID", Some("fully.qualified.SuiteClassName"), None, "theTestName", "theTestName", None))
+    reporter(TestSucceeded(ordinal, "SuiteClassName", "suite ID", Some("fully.qualified.SuiteClassName"), None, "theTestName", "theTestName", None, Vector.empty))
     assert(runNotifier.passed.get.getDisplayName === "theTestName(fully.qualified.SuiteClassName)")
-    reporter(TestSucceeded(ordinal, "SuiteClassName", "suite ID", None, None, "theTestName", "theTestName", None))
+    reporter(TestSucceeded(ordinal, "SuiteClassName", "suite ID", None, None, "theTestName", "theTestName", None, Vector.empty))
     assert(runNotifier.passed.get.getDisplayName === "theTestName(SuiteClassName)")
   }
 

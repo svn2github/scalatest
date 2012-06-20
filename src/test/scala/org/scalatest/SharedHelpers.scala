@@ -165,6 +165,35 @@ trait SharedHelpers extends Assertions {
       eventList ::= event
     }
   }
+  
+  def getIndexesForTestInformerEventOrderTests(suite: Suite, testName: String, infoMsg: String): (Int, Int) = {
+    val myRep = new EventRecordingReporter
+    suite.run(None, RunArgs(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+
+    val indexedList = myRep.eventsReceived.zipWithIndex
+
+    val testStartingOption = indexedList.find(_._1.isInstanceOf[TestStarting])
+    val testSucceededOption = indexedList.find(_._1.isInstanceOf[TestSucceeded])
+    
+    assert(testStartingOption.isDefined, "TestStarting for Suite='" + suite.suiteId + "', testName='" + testName + "' not defined.")
+    assert(testSucceededOption.isDefined, "TestSucceeded for Suite='" + suite.suiteId + "', testName='" + testName + "' not defined.")
+    
+    val testStartingIndex = testStartingOption.get._2
+    val testSucceededIndex = testSucceededOption.get._2
+    
+    val testStarting = testStartingOption.get._1.asInstanceOf[TestStarting]
+    val testSucceeded = testSucceededOption.get._1.asInstanceOf[TestSucceeded]
+    
+    val recordedEvents = testSucceeded.recordedEvents
+    
+    val infoProvidedOption = recordedEvents.find {
+      case event: InfoProvided => event.message == infoMsg
+      case _ => false
+    }
+    assert(infoProvidedOption.isDefined, "InfoProvided for Suite='" + suite.suiteId + "', testName='" + testName + "' not defined.")
+    
+    (testStartingIndex, testSucceededIndex)
+  }
 
   def getIndexesForInformerEventOrderTests(suite: Suite, testName: String, infoMsg: String): (Int, Int, Int) = {
 
@@ -211,6 +240,48 @@ trait SharedHelpers extends Assertions {
         infoProvided.formatter match {
           case Some(indentedText: IndentedText) => indentedText
           case _ => fail("An InfoProvided was received that didn't include an IndentedText formatter: " + infoProvided.formatter)
+        }
+      case _ => fail("No InfoProvided was received by the Reporter during the run.")
+    }
+  }
+  
+  def getIndentedTextFromTestInfoProvided(suite: Suite): IndentedText = {
+    val myRep = new EventRecordingReporter
+    suite.run(None, RunArgs(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    val recordedEvents: Seq[Event] = myRep.eventsReceived.find { e => 
+      e match {
+        case testSucceeded: TestSucceeded => 
+          true
+        case testFailed: TestFailed => 
+          true
+        case testPending: TestPending => 
+          true
+        case testCanceled: TestCanceled =>
+          true
+        case _ => 
+          false
+      }
+    } match {
+      case Some(testCompleted) =>
+        testCompleted match {
+          case testSucceeded: TestSucceeded => 
+            testSucceeded.recordedEvents
+          case testFailed: TestFailed => 
+            testFailed.recordedEvents
+          case testPending: TestPending => 
+            testPending.recordedEvents
+          case testCanceled: TestCanceled =>
+            testCanceled.recordedEvents
+        }
+      case None => 
+        fail("Test completed event is expected but not found.")
+    }
+    assert(recordedEvents.size === 1)
+    recordedEvents(0) match {
+      case ip: InfoProvided => 
+        ip.formatter match {
+          case Some(indentedText: IndentedText) => indentedText
+          case _ => fail("An InfoProvided was received that didn't include an IndentedText formatter: " + ip.formatter)
         }
       case _ => fail("No InfoProvided was received by the Reporter during the run.")
     }

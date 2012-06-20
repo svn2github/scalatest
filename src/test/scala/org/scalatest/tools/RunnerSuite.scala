@@ -39,7 +39,8 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       expectedTestNGList: List[String],
       expectedSuffixes: Option[Pattern], 
       expectedChosenStyleList: List[String], 
-      expectedScaleFactorList: List[String]
+      expectedScaleFactorList: List[String], 
+      expectedTestSortingReporterTimeoutList: List[String]
     ) = {
 
       val (
@@ -56,7 +57,8 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
         testNGList,
         suffixes, 
         chosenStyleList, 
-        spanScaleFactorList
+        spanScaleFactorList,
+        testSortingReporterTimeoutList
       ) = Runner.parseArgs(args)
 
       assert(runpathList === expectedRunpathList)
@@ -72,6 +74,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       assert(testNGList === expectedTestNGList)
       assert(chosenStyleList === expectedChosenStyleList)
       assert(spanScaleFactorList == expectedScaleFactorList)
+      assert(testSortingReporterTimeoutList == expectedTestSortingReporterTimeoutList)
       if (expectedSuffixes.isEmpty) {
         assert(suffixes.isEmpty)
       } else {
@@ -96,6 +99,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
 
@@ -116,6 +120,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
 
@@ -133,6 +138,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil, 
       Nil
     )
@@ -154,6 +160,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
 
@@ -174,6 +181,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
 
@@ -193,6 +201,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil, 
       Nil
     )
@@ -215,6 +224,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
     // Try a TestNGSuite
@@ -235,6 +245,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil, 
       Nil
     )
@@ -257,6 +268,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-b", "some/path/file.xml"),
       None, 
       Nil, 
+      Nil, 
       Nil
     )
     // Test -u option
@@ -277,6 +289,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil, 
       Nil
     )
@@ -299,6 +312,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite)$")), 
       Nil, 
+      Nil, 
       Nil
     )
     // Test -q option
@@ -320,6 +334,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite)$")), 
       Nil, 
+      Nil, 
       Nil
     )
     // Test -Q option
@@ -340,6 +355,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite|foo)$")), 
+      Nil, 
       Nil, 
       Nil
     )
@@ -364,7 +380,8 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       expectedTestNGList: List[String],
       expectedSuffixes: Option[Pattern], 
       expectedChosenStyleList: List[String], 
-      expectedSpanScaleFactorList: List[String]
+      expectedSpanScaleFactorList: List[String], 
+      expectedTestSortingReporterTimeoutList: List[String]
     ) = {
 
       val (
@@ -381,7 +398,8 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
         testNGList,
         suffixes, 
         chosenStyleList, 
-        spanScaleFactorList
+        spanScaleFactorList, 
+        testSortingReporterTimeoutList
       ) = Runner.parseArgs(args)
 
       assert(runpathList === expectedRunpathList)
@@ -397,6 +415,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       assert(testNGList === expectedTestNGList)
       assert(chosenStyleList === expectedChosenStyleList)
       assert(spanScaleFactorList == expectedSpanScaleFactorList)
+      assert(testSortingReporterTimeoutList == expectedTestSortingReporterTimeoutList)
       if (expectedSuffixes.isEmpty) {
         assert(suffixes.isEmpty)
       } else {
@@ -421,6 +440,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
 
@@ -441,6 +461,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
 
@@ -458,6 +479,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil, 
       Nil
     )
@@ -479,6 +501,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
 
@@ -499,6 +522,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
 
@@ -518,6 +542,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       Nil,
       None, 
+      Nil, 
       Nil, 
       Nil
     )
@@ -540,6 +565,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil,
       None, 
       Nil, 
+      Nil, 
       Nil
     )
     // Try a TestNGSuite
@@ -560,6 +586,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil, 
       Nil
     )
@@ -582,6 +609,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-b", "some/path/file.xml"),
       None, 
       Nil, 
+      Nil, 
       Nil
     )
     // Test -u option
@@ -602,6 +630,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       None, 
+      Nil, 
       Nil, 
       Nil
     )
@@ -624,6 +653,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite)$")), 
       Nil, 
+      Nil, 
       Nil
     )
     // Test -q option
@@ -644,6 +674,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-w", "com.example.root"),
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite)$")), 
+      Nil, 
       Nil, 
       Nil
     )
@@ -666,6 +697,7 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite|foo)$")), 
       Nil, 
+      Nil, 
       Nil
     )
     // Test -F option
@@ -687,7 +719,30 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       List("-b", "some/path/file.xml"),
       Some(Pattern.compile(".*(Spec|Suite|foo)$")), 
       Nil, 
-      List("-F", "200")
+      List("-F", "200"), 
+      Nil
+    )
+    // Test -T option
+    verify(
+      Array("-P", "-g", "-Dincredible=whatshername", "-Ddbname=testdb", "-Dserver=192.168.1.188", "-R",
+          "\"serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar\"", "-g", "-u", "directory/",
+          "-n", "One Two Three", "-l", "SlowTests", "-s", "SuiteOne", "-Q", "-q", "foo",
+          "-m", "com.example.webapp", "-w", "com.example.root", "-b", "some/path/file.xml", "-T", "20"),
+      List("-p", "\"serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar\""),
+      List("-g", "-g", "-u", "directory/"),
+      List("-s", "SuiteOne"),
+      Nil,
+      List("-Dincredible=whatshername", "-Ddbname=testdb", "-Dserver=192.168.1.188"),
+      List("-n", "One Two Three"),
+      List("-l", "SlowTests"),
+      List("-c"),
+      List("-m", "com.example.webapp"),
+      List("-w", "com.example.root"),
+      List("-b", "some/path/file.xml"),
+      Some(Pattern.compile(".*(Spec|Suite|foo)$")), 
+      Nil, 
+      Nil, 
+      List("-T", "20")
     )
   }
 
@@ -1126,23 +1181,41 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
     assert(multiStyle.contains("cStyle"))
   }
   
-  def testParseSpanScaleFactor() {
+  def testParseDoubleArgument() {
     intercept[IllegalArgumentException] {
-      Runner.parseSpanScaleFactor(List("-a", "123"), "-F")
+      Runner.parseDoubleArgument(List("-a", "123"), "-F", 1.0)
     }
     intercept[IllegalArgumentException] {
-      Runner.parseSpanScaleFactor(List("-F", "abc"), "-F")
+      Runner.parseDoubleArgument(List("-F", "abc"), "-F", 1.0)
     }
     intercept[IllegalArgumentException] {
-      Runner.parseSpanScaleFactor(List("-F"), "-F")
+      Runner.parseDoubleArgument(List("-F"), "-F", 1.0)
     }
     intercept[IllegalArgumentException] {
-      Runner.parseSpanScaleFactor(List("-F", "123", "-F"), "-F")
+      Runner.parseDoubleArgument(List("-F", "123", "-F"), "-F", 1.0)
     }
     intercept[IllegalArgumentException] {
-      Runner.parseSpanScaleFactor(List("-F", "123", "-F", "456"), "-F")
+      Runner.parseDoubleArgument(List("-F", "123", "-F", "456"), "-F", 1.0)
     }
-    val spanScaleFactor = Runner.parseSpanScaleFactor(List("-F", "888"), "-F")
+    val spanScaleFactor = Runner.parseDoubleArgument(List("-F", "888"), "-F", 1.0)
+    assert(spanScaleFactor === 888)
+    
+    intercept[IllegalArgumentException] {
+      Runner.parseDoubleArgument(List("-a", "123"), "-T", 15.0)
+    }
+    intercept[IllegalArgumentException] {
+      Runner.parseDoubleArgument(List("-T", "abc"), "-T", 15.0)
+    }
+    intercept[IllegalArgumentException] {
+      Runner.parseDoubleArgument(List("-T"), "-T", 15.0)
+    }
+    intercept[IllegalArgumentException] {
+      Runner.parseDoubleArgument(List("-T", "123", "-T"), "-T", 15.0)
+    }
+    intercept[IllegalArgumentException] {
+      Runner.parseDoubleArgument(List("-T", "123", "-T", "456"), "-T", 15.0)
+    }
+    val testSortingReporterTimeout = Runner.parseDoubleArgument(List("-T", "888"), "-T", 15.0)
     assert(spanScaleFactor === 888)
   }
 

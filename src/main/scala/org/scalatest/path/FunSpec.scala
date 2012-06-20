@@ -685,7 +685,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
   private final val engine = PathEngine.getEngine()
   import engine._
 
-  override def newInstance = this.getClass.newInstance.asInstanceOf[FunSpec]
+  override def newInstance: FunSpec = this.getClass.newInstance.asInstanceOf[FunSpec]
 
   /**
    * Returns an <code>Informer</code> that during test execution will forward strings (and other objects) passed to its

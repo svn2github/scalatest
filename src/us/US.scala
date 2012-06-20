@@ -10,7 +10,7 @@ class UnitedStates extends Suite {
   import UnitedStates.allStates
   import UnitedStates.nestedSuiteCount
 
-  override def nestedSuites: List[Suite] = allStates.take(nestedSuiteCount).toList
+  override def nestedSuites: IndexedSeq[Suite] = allStates.take(nestedSuiteCount).toIndexedSeq
 
   override def run(testName: Option[String], args: RunArgs) {
 
@@ -100,7 +100,7 @@ trait StateSuite extends Suite {
 
     val message = getMessageForException(throwable)
     val formatter = getIndentedText(testText, level, includeIcon)
-    report(TestFailed(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), getDecodedName(theSuite.suiteName), testName, testText, decodedTestName, Some(throwable), Some(duration), Some(formatter), location, suiteRerunner))
+    report(TestFailed(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), getDecodedName(theSuite.suiteName), testName, testText, decodedTestName, Vector.empty, Some(throwable), Some(duration), Some(formatter), location, suiteRerunner))
   }
 
   private def reportTestCanceled(theSuite: Suite, report: Reporter, throwable: Throwable, testName: String, testText: String,
@@ -108,16 +108,16 @@ trait StateSuite extends Suite {
 
     val message = getMessageForException(throwable)
     val formatter = getIndentedText(testText, level, includeIcon)
-    report(TestCanceled(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), getDecodedName(theSuite.suiteName), testName, testText, getDecodedName(testName), Some(throwable), Some(duration), Some(formatter), location, rerunnable))
+    report(TestCanceled(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), getDecodedName(theSuite.suiteName), testName, testText, getDecodedName(testName), Vector.empty, Some(throwable), Some(duration), Some(formatter), location, rerunnable))
   }
 
   private def reportTestSucceeded(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, decodedTestName: Option[String], duration: Long, formatter: Formatter, suiteRerunner: Option[String], location: Option[Location]) {
-    report(TestSucceeded(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), getDecodedName(theSuite.suiteName), testName, testText, decodedTestName, Some(duration), Some(formatter),
+    report(TestSucceeded(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), getDecodedName(theSuite.suiteName), testName, testText, decodedTestName, Vector.empty, Some(duration), Some(formatter),
       location, suiteRerunner))
   }
 
   private def reportTestPending(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, decodedTestName: Option[String], duration: Long, formatter: Formatter, location: Option[Location]) {
-    report(TestPending(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), getDecodedName(theSuite.suiteName), testName, testText, decodedTestName, Some(duration), Some(formatter),
+    report(TestPending(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), getDecodedName(theSuite.suiteName), testName, testText, decodedTestName, Vector.empty, Some(duration), Some(formatter),
       location))
   }
 
@@ -154,7 +154,7 @@ trait StateSuite extends Suite {
 
     val message = getMessageForException(throwable)
     val formatter = getIndentedText(testName, 1, true)
-    report(TestFailed(tracker.nextOrdinal(), message, suiteName, suiteId, getDecodedName(suiteName), Some(getClass.getName), testName, testName, decodedTestName, Some(throwable), Some(duration), Some(formatter), location, None))
+    report(TestFailed(tracker.nextOrdinal(), message, suiteName, suiteId, getDecodedName(suiteName), Some(getClass.getName), testName, testName, decodedTestName, Vector.empty, Some(throwable), Some(duration), Some(formatter), location, None))
   }
   override def runTest(testName: String, args: RunArgs) {
 
@@ -184,7 +184,7 @@ trait StateSuite extends Suite {
           val e = intercept[TestCanceledException] { cancel("Because of rain") }
           val message = getMessageForException(e)
           val formatter = getIndentedText(testName, 1, true)
-          args.reporter(TestCanceled(args.tracker.nextOrdinal(), message, suiteName, suiteId, getDecodedName(suiteName), Some(getClass.getName), testName, testName, getDecodedName(testName), Some(e), Some(duration), Some(formatter), Some(ToDoLocation), None))
+          args.reporter(TestCanceled(args.tracker.nextOrdinal(), message, suiteName, suiteId, getDecodedName(suiteName), Some(getClass.getName), testName, testName, getDecodedName(testName), Vector.empty, Some(e), Some(duration), Some(formatter), Some(ToDoLocation), None))
 
       case Failed(duration, remaining) =>
         if (remaining > 1)

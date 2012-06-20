@@ -60,7 +60,7 @@ private[junit] class RunNotifierReporter(runNotifier: RunNotifier) extends Repor
       case TestStarting(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, formatter, location, rerunnable, payload, threadName, timeStamp) =>
         runNotifier.fireTestStarted(Description.createSuiteDescription(testDescriptionName(suiteName, suiteClassName, testName)))
 
-      case TestFailed(ordinal, message, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
+      case TestFailed(ordinal, message, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
         val throwableOrNull =
           throwable match {
             case Some(t) => t
@@ -70,7 +70,7 @@ private[junit] class RunNotifierReporter(runNotifier: RunNotifier) extends Repor
         runNotifier.fireTestFailure(new Failure(description, throwableOrNull))
         runNotifier.fireTestFinished(description)
 
-      case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
+      case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
         runNotifier.fireTestFinished(Description.createSuiteDescription(testDescriptionName(suiteName, suiteClassName, testName)))
 
       case TestIgnored(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, formatter, location, payload, threadName, timeStamp) => 
@@ -78,7 +78,7 @@ private[junit] class RunNotifierReporter(runNotifier: RunNotifier) extends Repor
 
 // TODO: I dont see TestCanceled here. Probably need to add it
       // Closest thing we can do with pending is report an ignored test
-      case TestPending(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, duration, formatter, location, payload, threadName, timeStamp) => 
+      case TestPending(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, duration, formatter, location, payload, threadName, timeStamp) =>
         runNotifier.fireTestIgnored(Description.createSuiteDescription(testDescriptionName(suiteName, suiteClassName, testName)))
 
       case SuiteAborted(ordinal, message, suiteName, suiteID, suiteClassName, decodedSuiteName, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 

@@ -18,6 +18,7 @@ package org.scalatest.fixture
 import org.scalatest._
 import events.TestFailed
 import org.scalatest.exceptions.DuplicateTestNameException
+import org.scalatest.events.InfoProvided
 
 class FixtureFreeSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with SharedHelpers {
 
@@ -797,11 +798,14 @@ class FixtureFreeSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && event.aboutAPendingTest.get)
-        assert(event.aboutACanceledTest.isDefined && !event.aboutACanceledTest.get)
+      val testPending = rep.testPendingEventsReceived
+      assert(testPending.size === 1)
+      val recordedEvents = testPending(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && ip.aboutAPendingTest.get)
+        assert(ip.aboutACanceledTest.isDefined && !ip.aboutACanceledTest.get)
       }
       val so = rep.scopeOpenedEventsReceived
       assert(so.size === 1)
@@ -833,11 +837,14 @@ class FixtureFreeSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && !event.aboutAPendingTest.get)
-        assert(event.aboutACanceledTest.isDefined && !event.aboutACanceledTest.get)
+      val testSucceeded = rep.testSucceededEventsReceived
+      assert(testSucceeded.size === 1)
+      val recordedEvents = testSucceeded(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
+        assert(ip.aboutACanceledTest.isDefined && !ip.aboutACanceledTest.get)
       }
       val so = rep.scopeOpenedEventsReceived
       assert(so.size === 1)
@@ -869,11 +876,14 @@ class FixtureFreeSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && !event.aboutAPendingTest.get)
-        assert(event.aboutACanceledTest.isDefined && event.aboutACanceledTest.get)
+      val testCanceled = rep.testCanceledEventsReceived
+      assert(testCanceled.size === 1)
+      val recordedEvents = testCanceled(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
+        assert(ip.aboutACanceledTest.isDefined && ip.aboutACanceledTest.get)
       }
       val so = rep.scopeOpenedEventsReceived
       assert(so.size === 1)

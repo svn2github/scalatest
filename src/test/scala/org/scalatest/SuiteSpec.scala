@@ -47,11 +47,14 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && event.aboutAPendingTest.get)
-        assert(event.aboutACanceledTest.isDefined && !event.aboutACanceledTest.get)
+      val testPending = rep.testPendingEventsReceived
+      assert(testPending.size === 1)
+      val recordedEvents = testPending(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && ip.aboutAPendingTest.get)
+        assert(ip.aboutACanceledTest.isDefined && !ip.aboutACanceledTest.get)
       }
     }
     it("should send InfoProvided events with aboutAPendingTest and aboutACanceledTest set to false for info " +
@@ -66,11 +69,14 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && !event.aboutAPendingTest.get)
-        assert(event.aboutACanceledTest.isDefined && !event.aboutACanceledTest.get)
+      val testSucceeded = rep.testSucceededEventsReceived
+      assert(testSucceeded.size === 1)
+      val recordedEvents = testSucceeded(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
+        assert(ip.aboutACanceledTest.isDefined && !ip.aboutACanceledTest.get)
       }
     }
     it("should send InfoProvided events with aboutAPendingTest set to false and aboutACanceledTest set to true for info " +
@@ -85,11 +91,14 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && !event.aboutAPendingTest.get)
-        assert(event.aboutACanceledTest.isDefined && event.aboutACanceledTest.get)
+      val testCanceled = rep.testCanceledEventsReceived
+      assert(testCanceled.size === 1)
+      val recordedEvents = testCanceled(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
+        assert(ip.aboutACanceledTest.isDefined && ip.aboutACanceledTest.get)
       }
     }
     it("should return the test names in alphabetical order from testNames") {
@@ -676,17 +685,22 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
       }
     }
-    it("should, when a test methods takes an Informer and writes to it, report the info after the test completion event") {
+    it("should, when a test methods takes an Informer and writes to it, report the info in test completion event") {
       val msg = "hi there dude"
       class MySuite extends Suite {
         def testWithInformer(info: Informer) {
           info(msg)
         }
       }
-      val (infoProvidedIndex, testStartingIndex, testSucceededIndex) =
-        getIndexesForInformerEventOrderTests(new MySuite, "testWithInformer(Informer)", msg)
-      assert(testStartingIndex < testSucceededIndex)
-      assert(testSucceededIndex < infoProvidedIndex)
+      val myRep = new EventRecordingReporter
+      new MySuite().run(None, RunArgs(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      val testStarting = myRep.testStartingEventsReceived
+      assert(testStarting.size === 1)
+      val testSucceeded = myRep.testSucceededEventsReceived
+      assert(testSucceeded.size === 1)
+      assert(testSucceeded(0).recordedEvents.size === 1)
+      val ip: InfoProvided = testSucceeded(0).recordedEvents(0).asInstanceOf[InfoProvided]
+      assert(msg === ip.message)
     }
   }
   describe("the stopper") {

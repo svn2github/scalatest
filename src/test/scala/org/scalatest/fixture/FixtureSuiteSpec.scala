@@ -20,6 +20,7 @@ import collection.immutable.TreeSet
 import events.TestFailed
 import events.TestSucceeded
 import mock.MockitoSugar
+import org.scalatest.events.InfoProvided
 
 class FixtureSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with SharedHelpers {
 
@@ -987,11 +988,14 @@ class FixtureSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester wi
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && event.aboutAPendingTest.get)
-        assert(event.aboutACanceledTest.isDefined && !event.aboutACanceledTest.get)
+      val testPending = rep.testPendingEventsReceived
+      assert(testPending.size === 1)
+      val recordedEvents = testPending(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && ip.aboutAPendingTest.get)
+        assert(ip.aboutACanceledTest.isDefined && !ip.aboutACanceledTest.get)
       }
     }
     it("should send InfoProvided events with aboutAPendingTest and aboutACanceledTest set to false for info " +
@@ -1010,11 +1014,14 @@ class FixtureSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester wi
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && !event.aboutAPendingTest.get)
-        assert(event.aboutACanceledTest.isDefined && !event.aboutACanceledTest.get)
+      val testSucceeded = rep.testSucceededEventsReceived
+      assert(testSucceeded.size === 1)
+      val recordedEvents = testSucceeded(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
+        assert(ip.aboutACanceledTest.isDefined && !ip.aboutACanceledTest.get)
       }
     }
     it("should send InfoProvided events with aboutAPendingTest set to false and aboutACanceledTest set to true for info " +
@@ -1033,14 +1040,17 @@ class FixtureSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester wi
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && !event.aboutAPendingTest.get)
-        assert(event.aboutACanceledTest.isDefined && event.aboutACanceledTest.get)
+      val testCanceled = rep.testCanceledEventsReceived
+      assert(testCanceled.size === 1)
+      val recordedEvents = testCanceled(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
+        assert(ip.aboutACanceledTest.isDefined && ip.aboutACanceledTest.get)
       }
     }
-    it("should, when a test method takes an Informer and writes to it, report the info after the test completion event") {
+    it("should, when a test method takes an Informer and writes to it, report the info in the test completion event") {
       val msg = "hi there dude"
       class MySuite extends FixtureSuite {
         type FixtureParam = String
@@ -1051,10 +1061,9 @@ class FixtureSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester wi
           info(msg)
         }
       }
-      val (infoProvidedIndex, testStartingIndex, testSucceededIndex) =
-        getIndexesForInformerEventOrderTests(new MySuite, "testWithInformer(FixtureParam, Informer)", msg)
+      val (testStartingIndex, testSucceededIndex) =
+        getIndexesForTestInformerEventOrderTests(new MySuite, "testWithInformer(FixtureParam, Informer)", msg)
       assert(testStartingIndex < testSucceededIndex)
-      assert(testSucceededIndex < infoProvidedIndex)
     }
   }
   describe("A OneArgTest") {

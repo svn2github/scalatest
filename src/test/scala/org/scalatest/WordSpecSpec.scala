@@ -254,11 +254,11 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       // In a Spec, any InfoProvided's fired during the test should be cached and sent out after the test has
       // suceeded or failed. This makes the report look nicer, because the info is tucked under the "specifier'
       // text for that test.
-      it("should, when the info appears in the code of a successful test, report the info after the TestSucceeded") {
+      it("should, when the info appears in the code of a successful test, report the info in the TestSucceeded") {
         val spec = new InfoInsideTestSpec
-        val (infoProvidedIndex, testStartingIndex, testSucceededIndex) =
-          getIndexesForInformerEventOrderTests(spec, spec.testName, spec.msg)
-        assert(testSucceededIndex < infoProvidedIndex)
+        val (testStartingIndex, testSucceededIndex) =
+          getIndexesForTestInformerEventOrderTests(spec, spec.testName, spec.msg)
+        assert(testStartingIndex < testSucceededIndex)
       }
       class InfoBeforeTestSpec extends WordSpec {
         val msg = "hi there, dude"
@@ -309,7 +309,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
       it("should send an InfoProvided with an IndentedText formatter with level 2 when called within a test") {
         val spec = new InfoInsideTestSpec
-        val indentedText = getIndentedTextFromInfoProvided(spec)
+        val indentedText = getIndentedTextFromTestInfoProvided(spec)
         assert(indentedText === IndentedText("  + " + spec.msg, spec.msg, 1))
       }
     }
@@ -782,10 +782,13 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && event.aboutAPendingTest.get)
+      val testPending = rep.testPendingEventsReceived
+      assert(testPending.size === 1)
+      val recordedEvents = testPending(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && ip.aboutAPendingTest.get)
       }
       val so = rep.scopeOpenedEventsReceived
       assert(so.size === 1)
@@ -812,10 +815,13 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
       val rep = new EventRecordingReporter
       a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
-      val ip = rep.infoProvidedEventsReceived
-      assert(ip.size === 3)
-      for (event <- ip) {
-        assert(event.aboutAPendingTest.isDefined && !event.aboutAPendingTest.get)
+      val testSucceeded = rep.testSucceededEventsReceived
+      assert(testSucceeded.size === 1)
+      val recordedEvents = testSucceeded(0).recordedEvents
+      assert(recordedEvents.size === 3)
+      for (event <- recordedEvents) {
+        val ip = event.asInstanceOf[InfoProvided]
+        assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
       }
       val so = rep.scopeOpenedEventsReceived
       assert(so.size === 1)

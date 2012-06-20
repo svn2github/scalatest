@@ -202,6 +202,11 @@ sealed abstract class Event extends Ordered[Event] with java.io.Serializable {
 }
 
 /**
+ * Marker trait for test completed event's recordedEvents.
+ */
+sealed trait RecordableEvent extends Event
+
+/**
  * Event that indicates a suite (or other entity) is about to start running a test.
  *
  * <p>
@@ -347,6 +352,7 @@ final case class TestStarting (
  * @param testName the name of the test that has succeeded
  * @param testText the text of the test that has succeeded (may be the test name, or a suffix of the test name)
  * @param decodedTestName the decoded name of the test, in case the name is put between backticks.  None if it is same as testName.
+ * @param recordedEvents recorded events in the test.
  * @param duration an optional amount of time, in milliseconds, that was required to run the test that has succeeded
  * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
  *        how to present this event to the user
@@ -369,6 +375,7 @@ final case class TestSucceeded (
   testName: String,
   testText: String,
   decodedTestName: Option[String],
+  recordedEvents: IndexedSeq[RecordableEvent], 
   duration: Option[Long] = None,
   formatter: Option[Formatter] = None,
   location: Option[Location] = None,
@@ -462,6 +469,7 @@ final case class TestSucceeded (
  * @param testName the name of the test that has failed
  * @param testText the text of the test that has failed (may be the test name, or a suffix of the test name)
  * @param decodedTestName the decoded name of the test, in case the name is put between backticks.  None if it is same as testName.
+ * @param recordedEvents recorded events in the test.
  * @param throwable an optional <code>Throwable</code> that, if a <code>Some</code>, indicates why the test has failed,
  *        or a <code>Throwable</code> created to capture stack trace information about the problem.
  * @param duration an optional amount of time, in milliseconds, that was required to run the test that has failed
@@ -487,6 +495,7 @@ final case class TestFailed (
   testName: String,
   testText: String,
   decodedTestName: Option[String],
+  recordedEvents: IndexedSeq[RecordableEvent], 
   throwable: Option[Throwable] = None,
   duration: Option[Long] = None,
   formatter: Option[Formatter] = None,
@@ -685,6 +694,7 @@ final case class TestIgnored (
  * @param testName the name of the test that is pending
  * @param testText the text of the test that is pending (may be the test name, or a suffix of the test name)
  * @param decodedTestName the decoded name of the test, in case the name is put between backticks.  None if it is same as testName.
+ * @param recordedEvents recorded events in the test.
  * @param duration an optional amount of time, in milliseconds, that was required to run the test that is pending
  * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
  *        how to present this event to the user
@@ -705,6 +715,7 @@ final case class TestPending (
   testName: String,
   testText: String,
   decodedTestName: Option[String],
+  recordedEvents: IndexedSeq[RecordableEvent], 
   duration: Option[Long] = None,
   formatter: Option[Formatter] = None,
   location: Option[Location] = None,
@@ -788,6 +799,7 @@ final case class TestPending (
  * @param testName the name of the test that was canceled
  * @param testText the text of the test that was canceled (may be the test name, or a suffix of the test name)
  * @param decodedTestName the decoded name of the test, in case the name is put between backticks.  None if it is same as testName.
+ * @param recordedEvents recorded events in the test.
  * @param throwable an optional <code>Throwable</code> that, if a <code>Some</code>, indicates why the test was canceled,
  *        or a <code>Throwable</code> created to capture stack trace information about the problem.
  * @param duration an optional amount of time, in milliseconds, that was required to run the test that was canceled
@@ -812,6 +824,7 @@ final case class TestCanceled (
   testName: String,
   testText: String,
   decodedTestName: Option[String],
+  recordedEvents: IndexedSeq[RecordableEvent], 
   throwable: Option[Throwable] = None,
   duration: Option[Long] = None,
   formatter: Option[Formatter] = None,
@@ -1598,7 +1611,7 @@ final case class InfoProvided (
   payload: Option[Any] = None,
   threadName: String = Thread.currentThread.getName,
   timeStamp: Long = (new Date).getTime
-) extends Event {
+) extends RecordableEvent {
 
   if (ordinal == null)
     throw new NullPointerException("ordinal was null")
@@ -1689,7 +1702,7 @@ final case class MarkupProvided (
   payload: Option[Any] = None,
   threadName: String = Thread.currentThread.getName,
   timeStamp: Long = (new Date).getTime
-) extends Event {
+) extends RecordableEvent {
 
   if (ordinal == null)
     throw new NullPointerException("ordinal was null")
@@ -2220,7 +2233,7 @@ object DeprecatedTestSucceeded {
     rerunner: Option[Rerunner],
     payload: Option[Any]
   ): TestSucceeded = {
-    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, duration, formatter, None, suiteClassName, payload, Thread.currentThread.getName, (new Date).getTime)
+    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, duration, formatter, None, suiteClassName, payload, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2251,7 +2264,7 @@ object DeprecatedTestSucceeded {
     formatter: Option[Formatter],
     rerunner: Option[Rerunner]
   ): TestSucceeded = {
-    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, duration, formatter, None, suiteClassName, None, Thread.currentThread.getName, (new Date).getTime)
+    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, duration, formatter, None, suiteClassName, None, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2280,7 +2293,7 @@ object DeprecatedTestSucceeded {
     duration: Option[Long],
     formatter: Option[Formatter]
   ): TestSucceeded = {
-    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, duration, formatter, None, None, None, Thread.currentThread.getName, (new Date).getTime)
+    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, duration, formatter, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2306,7 +2319,7 @@ object DeprecatedTestSucceeded {
     testName: String,
     duration: Option[Long]
   ): TestSucceeded = {
-    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, duration, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
+    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, duration, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2330,7 +2343,7 @@ object DeprecatedTestSucceeded {
     suiteClassName: Option[String],
     testName: String
   ): TestSucceeded = {
-    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, None, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
+    TestSucceeded(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, None, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 }
 
@@ -2386,7 +2399,7 @@ object DeprecatedTestFailed {
     rerunner: Option[Rerunner],
     payload: Option[Any]
   ): TestFailed = {
-    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, throwable, duration, formatter, None, suiteClassName, payload, Thread.currentThread.getName, (new Date).getTime)
+    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, throwable, duration, formatter, None, suiteClassName, payload, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2422,7 +2435,7 @@ object DeprecatedTestFailed {
     formatter: Option[Formatter],
     rerunner: Option[Rerunner]
   ): TestFailed = {
-    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, throwable, duration, formatter, None, suiteClassName, None, Thread.currentThread.getName, (new Date).getTime)
+    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, throwable, duration, formatter, None, suiteClassName, None, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2456,7 +2469,7 @@ object DeprecatedTestFailed {
     duration: Option[Long],
     formatter: Option[Formatter]
   ): TestFailed = {
-    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, throwable, duration, formatter, None, None, None, Thread.currentThread.getName, (new Date).getTime)
+    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, throwable, duration, formatter, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2487,7 +2500,7 @@ object DeprecatedTestFailed {
     throwable: Option[Throwable],
     duration: Option[Long]
   ): TestFailed = {
-    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, throwable, duration, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
+    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, throwable, duration, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2516,7 +2529,7 @@ object DeprecatedTestFailed {
     testName: String,
     throwable: Option[Throwable]
   ): TestFailed = {
-    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, throwable, None, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
+    TestFailed(ordinal, message, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, throwable, None, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 }
 
@@ -2658,7 +2671,7 @@ object DeprecatedTestPending {
     formatter: Option[Formatter],
     payload: Option[Any]
   ): TestPending = {
-    TestPending(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, None, formatter, None, payload, Thread.currentThread.getName, (new Date).getTime)
+    TestPending(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, None, formatter, None, payload, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2684,7 +2697,7 @@ object DeprecatedTestPending {
     testName: String,
     formatter: Option[Formatter]
   ): TestPending = {
-    TestPending(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, None, formatter, None, None, Thread.currentThread.getName, (new Date).getTime)
+    TestPending(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, None, formatter, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -2708,7 +2721,7 @@ object DeprecatedTestPending {
     suiteClassName: Option[String],
     testName: String
   ): TestPending = {
-    TestPending(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
+    TestPending(ordinal, suiteName, suiteClassName getOrElse suiteName, suiteClassName, None, testName, testName, None, Vector.empty, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 }
 

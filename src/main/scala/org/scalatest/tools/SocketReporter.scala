@@ -6,7 +6,7 @@ import java.net.Socket
 import java.io.PrintWriter
 import java.io.BufferedOutputStream
 
-class SocketReporter(host: String, port: Int) extends ResourcefulReporter {
+private[scalatest] class SocketReporter(host: String, port: Int) extends ResourcefulReporter {
   
   private val socket = new Socket(host, port)
   private val out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream))

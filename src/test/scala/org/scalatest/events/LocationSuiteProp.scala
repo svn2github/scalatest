@@ -25,6 +25,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(TopOfMethodPair(suiteTypeName + "$NestedSuite", "public void " + suiteTypeName + "$NestedSuite.testInfo(org.scalatest.Informer)"))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("testFail"))
     val expectedInfoProvidedList = List(LineInFilePair("testInfo", "LocationSuiteProp.scala", thisLineNumber + 4))
     
@@ -54,11 +55,12 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(TopOfMethodPair(suiteTypeName + "$NestedSuite", "public void " + suiteTypeName + "$NestedSuite.testInfo(org.scalatest.Informer)"))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("testFail"))
     val expectedInfoProvidedList = List(LineInFilePair("testInfo", "LocationSuiteProp.scala", thisLineNumber + 4))
     
     class NestedSuite extends StringFixtureSuite {
-      def testInfo(info: Informer) {
+      def testInfo(info: Informer) { 
         info("testInfo")
       }
     }
@@ -88,6 +90,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("info", "LocationSuiteProp.scala", thisLineNumber + 5))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 4))
     
@@ -116,6 +119,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("info", "LocationSuiteProp.scala", thisLineNumber + 5))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 4))
     
@@ -144,6 +148,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("info", "LocationSuiteProp.scala", thisLineNumber + 5))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 4))
     
@@ -172,6 +177,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("info", "LocationSuiteProp.scala", thisLineNumber + 5))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 4))
     
@@ -200,6 +206,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("feature Scenario: info", "LocationSuiteProp.scala", thisLineNumber + 6))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("feature Scenario: fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 5))
     
@@ -235,6 +242,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("feature Scenario: info", "LocationSuiteProp.scala", thisLineNumber + 6))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("feature Scenario: fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 5))
     
@@ -269,6 +277,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("Test should info", "LocationSuiteProp.scala", thisLineNumber + 5))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("Test should fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 4))
     
@@ -300,6 +309,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("Test should info", "LocationSuiteProp.scala", thisLineNumber + 5))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("Test should fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 4))
     
@@ -330,6 +340,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("Test should info", "LocationSuiteProp.scala", thisLineNumber + 6))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("Test should fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 5))
     
@@ -365,6 +376,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("Test should info", "LocationSuiteProp.scala", thisLineNumber + 6))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("Test should fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 5))
     
@@ -399,6 +411,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("Test should info", "LocationSuiteProp.scala", thisLineNumber + 5))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("Test should fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 4))
     
@@ -430,6 +443,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("Test should info", "LocationSuiteProp.scala", thisLineNumber + 5))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("Test should fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 4))
     
@@ -460,6 +474,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("Test should info", "LocationSuiteProp.scala", thisLineNumber + 6))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("Test should fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 5))
     
@@ -495,6 +510,7 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
+    val expectedTestSucceededList = List(LineInFilePair("Test should info", "LocationSuiteProp.scala", thisLineNumber + 6))
     val expectedTestFailedList = List(SeeStackDepthExceptionPair("Test should fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 5))
     
