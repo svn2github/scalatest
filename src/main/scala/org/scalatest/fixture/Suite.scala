@@ -21,7 +21,7 @@ import Suite._
 import java.lang.reflect.{InvocationTargetException, Method, Modifier}
 import org.scalatest.events._
 import org.scalatest.Suite._
-import org.scalatest.exceptions.TestPendingException
+import exceptions.{TestCanceledException, TestPendingException}
 
 /**
  * <code>Suite</code> that can pass a fixture object into its tests.

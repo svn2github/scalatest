@@ -15,6 +15,7 @@
  */
 package org.scalatest
 
+import exceptions.TestCanceledException
 import java.util.concurrent.atomic.AtomicReference
 import java.util.ConcurrentModificationException
 import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun

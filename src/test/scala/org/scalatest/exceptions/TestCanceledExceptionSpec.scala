@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest
+package org.scalatest.exceptions
 
 import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Spec
 
 class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
 
@@ -30,7 +31,7 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 6))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 6))
             case None => fail("cancel() didn't produce a file name and line number string: " + e.failedCodeFileNameAndLineNumberString, e)
           }
         case e =>
@@ -45,7 +46,7 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 21))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 21))
             case None => fail("cancel(\"some message\") didn't produce a file name and line number string", e)
           }
         case e =>
@@ -60,7 +61,7 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 36))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 36))
             case None => fail("cancel(throwable) didn't produce a file name and line number string", e)
           }
         case e =>
@@ -75,7 +76,7 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 51))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 51))
             case None => fail("cancel(\"some message\", throwable) didn't produce a file name and line number string", e)
           }
         case e =>
@@ -90,7 +91,7 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 66))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 66))
             case None => fail("assume(false) didn't produce a file name and line number string", e)
           }
         case e =>
@@ -105,7 +106,7 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 81))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 81))
             case None => fail("assume(false, \"some message\") didn't produce a file name and line number string", e)
           }
         case e =>
@@ -120,7 +121,7 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 96))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 96))
             case None => fail("assume(1 === 2) didn't produce a file name and line number string", e)
           }
         case e =>
@@ -135,7 +136,7 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 111))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 111))
             case None => fail("assume(1 === 2, \"some message\") didn't produce a file name and line number string", e)
           }
         case e =>
@@ -145,12 +146,14 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
 
     it("should give the proper line on expect(1) { 2 }") {
       try {
-        expect(1) { 2 }
+        expect(1) {
+          2
+        }
       }
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 126))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 126))
             case None => fail("expect(1) { 2 } didn't produce a file name and line number string", e)
           }
         case e =>
@@ -160,12 +163,14 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
 
     it("should give the proper line on expect(1, \"some message\") { 2 }") {
       try {
-        expect(1, "some message") { 2 }
+        expect(1, "some message") {
+          2
+        }
       }
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 141))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 141))
             case None => fail("expect(1, \"some message\") { 2 } didn't produce a file name and line number string", e)
           }
         case e =>
@@ -180,7 +185,7 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 156))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 156))
             case None => fail("intercept[IllegalArgumentException] {} didn't produce a file name and line number string", e)
           }
         case e =>
@@ -190,12 +195,14 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
 
     it("should give the proper line on intercept[IllegalArgumentException] { throw new RuntimeException }") {
       try {
-        intercept[IllegalArgumentException] { if (false) 1 else throw new RuntimeException }
+        intercept[IllegalArgumentException] {
+          if (false) 1 else throw new RuntimeException
+        }
       }
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 171))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 171))
             case None => fail("intercept[IllegalArgumentException] { throw new RuntimeException } didn't produce a file name and line number string", e)
           }
         case e =>
@@ -223,13 +230,13 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
 
     it("should give the proper line on evaluating {} should produce [IllegalArgumentException] {}") {
       try {
-        evaluating {} should produce [IllegalArgumentException]
+        evaluating {} should produce[IllegalArgumentException]
       }
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
             case Some(s) => // s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 204))
-            if (s != ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 204))) {
+              if (s != ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 204))) {
                 cancel("s was: " + s, e)
               }
             case None => fail("evaluating {} should produce [IllegalArgumentException] didn't produce a file name and line number string", e)
@@ -241,12 +248,14 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
 
     it("should give the proper line on evaluating { throw new RuntimeException } should produce [IllegalArgumentException]") {
       try {
-        evaluating { if (false) 1 else throw new RuntimeException } should produce [IllegalArgumentException]
+        evaluating {
+          if (false) 1 else throw new RuntimeException
+        } should produce[IllegalArgumentException]
       }
       catch {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
-            case Some(s) => s should equal ("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 222))
+            case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 222))
             case None => fail("evaluating { throw new RuntimeException } should produce [IllegalArgumentException] didn't produce a file name and line number string", e)
           }
         case e =>
@@ -274,4 +283,4 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
     }
   }
 }
- 
+

@@ -15,6 +15,7 @@
  */
 package org.scalatest
 
+import exceptions.TestCanceledException
 import scala.reflect.Manifest
 import Assertions.areEqualComparingArraysStructurally
 
