@@ -30,7 +30,7 @@ package org.scalatest
  * @param distributor an optional <code>Distributor</code>, into which to put nested <code>Suite</code>s to be executed
  *              by another entity, such as concurrently by a pool of threads. If <code>None</code>, nested <code>Suite</code>s will be executed sequentially.
  * @param tracker a <code>Tracker</code> tracking <code>Ordinal</code>s being fired by the current thread.
- * @param chosenStyles a (possibly empty) <code>Set</code> of <code>String</code>s specifying the run's <a href="tools/Runner$.html#chosenStyles"><em>chosen styles</em></a>
+ * @param chosenStyles a (possibly empty) <code>Set</code> of <code>String</code>s specifying the run's <a href="tools/Runner$.html#specifyingChosenStyles"><em>chosen styles</em></a>
  *
  * @throws NullPointerException if any passed parameter is <code>null</code>.
  *
