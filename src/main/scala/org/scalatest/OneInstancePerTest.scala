@@ -64,6 +64,17 @@ trait OneInstancePerTest extends AbstractSuite {
   
   this: Suite =>
 
+  /**
+   * Modifies the behavior of <code>super.runTest</code> to facilitate running each test in its
+   * own instance of this <code>Suite</code>'s class.
+   *
+   * <p>
+   * TODO: Discuss...
+   * </p>
+   *
+   * @param testName the name of one test to execute.
+   * @param args the <code>RunArgs</code> for this run
+   */
   protected abstract override def runTest(testName: String, args: RunArgs) {
 
     if (args.configMap.contains(RunTestInNewInstance)) {
@@ -76,9 +87,10 @@ trait OneInstancePerTest extends AbstractSuite {
   }
 
   /**
-   * Run this <code>Suite's</code> tests each in their own instance of this <code>Suite</code>'s class.
+   * Modifies the behavior of <code>super.runTests</code> to facilitate running each test in its
+   * own instance of this <code>Suite</code>'s class.
    *
-   * <p>
+   * <p> TODO: Update
    * If the passed <code>testName</code> is <code>None</code>, this trait's implementation of this
    * method will for each test name returned by <code>testNames</code>, invoke <code>newInstance</code>
    * to get a new instance of this <code>Suite</code>, and call <code>run</code> on it, passing
