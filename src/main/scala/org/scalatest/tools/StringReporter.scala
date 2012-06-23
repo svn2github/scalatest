@@ -525,7 +525,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
     // Won't do anything here, because not reporting these events in the StringReporter.
   }
   
-  private def handleRecordedEvents(recordedEvents: IndexedSeq[Event]) {
+  private def handleRecordedEvents(recordedEvents: IndexedSeq[RecordableEvent]) {
     recordedEvents.foreach { e =>
       e match {
         case ipEvent: InfoProvided => handleInfoProvided(ipEvent)
