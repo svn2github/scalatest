@@ -41,7 +41,7 @@ import Assertions.areEqualComparingArraysStructurally
  *
  * <p>
  * If the passed expression is <code>true</code>, <code>assert</code> will return normally. If <code>false</code>,
- * <code>assert</code> will complete abruptly with an <code>AssertionError</code>. This behavior is provided by
+ * Scala's <code>assert</code> will complete abruptly with an <code>AssertionError</code>. This behavior is provided by
  * the <code>assert</code> method defined in object <code>Predef</code>, whose members are implicitly imported into every
  * Scala source file. This <code>Assertions</code> traits defines another <code>assert</code> method that hides the
  * one in <code>Predef</code>. It behaves the same, except that if <code>false</code> is passed it throws
@@ -95,15 +95,15 @@ import Assertions.areEqualComparingArraysStructurally
  * as the operands become lengthy, the code becomes less readable. In addition, the <code>===</code> comparison
  * doesn't distinguish between actual and expected values. The operands are just called <code>left</code> and <code>right</code>,
  * because if one were named <code>expected</code> and the other <code>actual</code>, it would be difficult for people to
- * remember which was which. To help with these limitations of assertions, <code>Suite</code> includes a method called <code>expect</code> that
- * can be used as an alternative to <code>assert</code> with <code>===</code>. To use <code>expect</code>, you place
- * the expected value in parentheses after <code>expect</code>, followed by curly braces containing code 
+ * remember which was which. To help with these limitations of assertions, <code>Suite</code> includes a method called <code>expectResult</code> that
+ * can be used as an alternative to <code>assert</code> with <code>===</code>. To use <code>expectResult</code>, you place
+ * the expected value in parentheses after <code>expectResult</code>, followed by curly braces containing code
  * that should result in the expected value. For example:
  *
  * <pre class="stHighlight">
  * val a = 5
  * val b = 2
- * expect(2) {
+ * expectResult(2) {
  *   a - b
  * }
  * </pre>
@@ -112,6 +112,24 @@ import Assertions.areEqualComparingArraysStructurally
  * In this case, the expected value is <code>2</code>, and the code being tested is <code>a - b</code>. This expectation will fail, and
  * the detail message in the <code>TestFailedException</code> will read, "Expected 2, but got 3."
  * </p>
+ *
+ * <h2>Forcing failures</h2>
+ *
+ * <p>
+ * If you just need the test to fail, you can write:
+ * </p>
+ *
+ * <pre class="stHiglight">
+ * fail()
+ * </pre>
+ *
+ * <p>
+ * Or, if you want the test to fail with a message, write:
+ * </p>
+ *
+ * <pre class="stHiglight">
+ * fail("I've got a bad feeling about this")
+ * </pre>
  *
  * <h2>Intercepted exceptions</h2>
  *
@@ -158,6 +176,58 @@ import Assertions.areEqualComparingArraysStructurally
  * the exception has the expected values.
  * </p>
  *
+ * <h2>Assumptions</h2>
+ *
+ * <p>
+ * Trait <code>Assertions</code> also provides methods that allow you to <em>cancel</em> a test.
+ * You would cancel a test if a resource required by the test was unavailable. For example, if a test
+ * requires an external database to be online, and it isn't, the test could be canceled to indicate
+ * it was unable to run because of the missing database. Such a test <em>assumes</em> a database is
+ * available, and you can use the <code>assume</code> method to indicate this at the beginning of
+ * the test, like this:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * assume(database.isAvailable)
+ * </pre>
+ *
+ * <p>
+ * For each overloaded <code>assert</code> method, trait <code>Assertions</code> provides an
+ * overloaded <code>assume</code> method with an identical signature and behavior, except the
+ * <code>assume</code> methods throw <code>TestCanceledException</code> whereas the
+ * <code>assert</code> methods throw <code>TestFailedException</code>. As with <code>assert</code>,
+ * <code>assume</code> hides a Scala method in <code>Predef</code> that performs a similar
+ * function, but throws <code>AssertionError</code>. And just as you can with <code>assert</code>,
+ * you can optionally provide a clue string, or use <code>===</code> to get a more detailed
+ * error message. Here are some examples:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * assume(database.isAvailable, "The database was down again")
+ * assume(database.getAllUsers.count === 9)
+ * </pre>
+ *
+ * <h2>Forcing cancelations</h2>
+ *
+ * <p>
+ * For each overloaded <code>fail</code> method, there's a corresponding <code>cancel</code> method
+ * with an identical signature and behavior, except the <code>cancel</code> methods throw
+ * <code>TestCanceledException</code> whereas the <code>fail</code> methods throw
+ * <code>TestFailedException</code>. Thus if you just need to cancel a test, you can write:
+ * </p>
+ *
+ * <pre class="stHiglight">
+ * cancel()
+ * </pre>
+ *
+ * <p>
+ * If you want to cancel the test with a message, just place the message in the parentheses:
+ * </p>
+ *
+ * <pre class="stHiglight">
+ * cancel("Can't run the test because no internet connection was found")
+ * </pre>
+ *
  * <h2>Getting a clue</h2>
  *
  * <p>
@@ -201,6 +271,8 @@ import Assertions.areEqualComparingArraysStructurally
  * The <code>withClue</code> method will only prepend the clue string to the detail
  * message of exception types that mix in the <code>ModifiableMessage</code> trait.
  * See the documentation for <a href="ModifiableMessage.html"><code>ModifiableMessage</code></a> for more information.
+ * If you wish to place a clue string after a block of code, see the documentation for
+ * <a href="AppendedClues.html"><code>AppendedClues</code></a>.
  * </p>
  *
  * @author Bill Venners
@@ -335,7 +407,7 @@ trait Assertions {
    * If the condition is <code>true</code>, this method returns normally.
    * Else, it throws <code>TestFailedException</code> with the
    * <code>String</code> obtained by invoking <code>toString</code> on the
-   * specified <code>message</code> as the exception's detail message.
+   * specified <code>clue</code> as the exception's detail message.
    *
    * @param condition the boolean condition to assert
    * @param clue An objects whose <code>toString</code> method returns a message to include in a failure report.
@@ -353,7 +425,7 @@ trait Assertions {
    * Else, it throws <code>TestFailedException</code> with the <code>String</code>
    * value of the <code>Some</code>, as well as the 
    * <code>String</code> obtained by invoking <code>toString</code> on the
-   * specified <code>message</code>,
+   * specified <code>clue</code>,
    * included in the <code>TestFailedException</code>'s detail message.
    *
    * <p>
@@ -366,7 +438,7 @@ trait Assertions {
    * </pre>
    *
    * <p>
-   * For more information on how this mechanism works, see the <a href="Suite.Equalizer.html">documentation for
+   * For more information on how this mechanism works, see the <a href="Assertions$Equalizer.html">documentation for
    * <code>Equalizer</code></a>.
    * </p>
    *
@@ -399,7 +471,7 @@ trait Assertions {
    * </pre>
    *
    * <p>
-   * For more information on how this mechanism works, see the <a href="Suite.Equalizer.html">documentation for
+   * For more information on how this mechanism works, see the <a href="Assertions$Equalizer.html">documentation for
    * <code>Equalizer</code></a>.
    * </p>
    *
@@ -433,7 +505,7 @@ trait Assertions {
    * If the condition is <code>true</code>, this method returns normally.
    * Else, it throws <code>TestCanceledException</code> with the
    * <code>String</code> obtained by invoking <code>toString</code> on the
-   * specified <code>message</code> as the exception's detail message.
+   * specified <code>clue</code> as the exception's detail message.
    *
    * @param condition the boolean condition to assume
    * @param clue An objects whose <code>toString</code> method returns a message to include in a failure report.
@@ -451,7 +523,7 @@ trait Assertions {
    * Else, it throws <code>TestCanceledException</code> with the <code>String</code>
    * value of the <code>Some</code>, as well as the 
    * <code>String</code> obtained by invoking <code>toString</code> on the
-   * specified <code>message</code>,
+   * specified <code>clue</code>,
    * included in the <code>TestCanceledException</code>'s detail message.
    *
    * <p>
@@ -464,7 +536,7 @@ trait Assertions {
    * </pre>
    *
    * <p>
-   * For more information on how this mechanism works, see the <a href="Suite.Equalizer.html">documentation for
+   * For more information on how this mechanism works, see the <a href="Assertions$Equalizer.html">documentation for
    * <code>Equalizer</code></a>.
    * </p>
    *
@@ -497,7 +569,7 @@ trait Assertions {
    * </pre>
    *
    * <p>
-   * For more information on how this mechanism works, see the <a href="Suite.Equalizer.html">documentation for
+   * For more information on how this mechanism works, see the <a href="Assertions$Equalizer.html">documentation for
    * <code>Equalizer</code></a>.
    * </p>
    *
@@ -561,7 +633,7 @@ trait Assertions {
    * function. If it throws an exception that's an instance of the passed class or one of its
    * subclasses, this method returns that exception. Else, whether the passed function returns normally
    * or completes abruptly with a different exception, this method throws <code>TestFailedException</code>
-   * whose detail message includes the <code>String</code> obtained by invoking <code>toString</code> on the passed <code>message</code>.
+   * whose detail message includes the <code>String</code> obtained by invoking <code>toString</code> on the passed <code>clue</code>.
    *
    * <p>
    * Note that the passed <code>Class</code> may represent any type, not just <code>Throwable</code> or one of its subclasses. In
@@ -692,16 +764,34 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
   /**
    * Expect that the value passed as <code>expected</code> equals the value passed as <code>actual</code>.
    * If the <code>actual</code> equals the <code>expected</code>
-   * (as determined by <code>==</code>), <code>expect</code> returns
-   * normally. Else, if <code>actual</code> is not equal to <code>expected</code>, <code>expect</code> throws an
+   * (as determined by <code>==</code>), <code>expectResult</code> returns
+   * normally. Else, if <code>actual</code> is not equal to <code>expected</code>, <code>expectResult</code> throws a
    * <code>TestFailedException</code> whose detail message includes the expected and actual values, as well as the <code>String</code>
-   * obtained by invoking <code>toString</code> on the passed <code>message</code>.
+   * obtained by invoking <code>toString</code> on the passed <code>clue</code>.
    *
    * @param expected the expected value
    * @param clue An object whose <code>toString</code> method returns a message to include in a failure report.
    * @param actual the actual value, which should equal the passed <code>expected</code> value
    * @throws TestFailedException if the passed <code>actual</code> value does not equal the passed <code>expected</code> value.
    */
+  def expectResult(expected: Any, clue: Any)(actual: Any) {
+    if (actual != expected) {
+      val (act, exp) = Suite.getObjectsForFailureMessage(actual, expected)
+      val s = FailureMessages("expectedButGot", exp, act)
+      throw newAssertionFailedException(Some(clue + "\n" + s), None, 4)
+    }
+  }
+
+  /**
+   * This <code>expect</code> method has been deprecated; Please use <code>expectResult</code> instead.
+   *
+   * <p>
+   * To get rid of the deprecation warning, simply replace <code>expect</code> with
+   * <code>expectResult</code>. The name <code>expect</code> will be used for a different purposes in
+   * a future version of ScalaTest.
+   * </p>
+   */
+  @deprecated("This expect method has been deprecated. Please replace all invocations of expect with an identical invocation of expectResult instead.")
   def expect(expected: Any, clue: Any)(actual: Any) {
     if (actual != expected) {
       val (act, exp) = Suite.getObjectsForFailureMessage(actual, expected)
@@ -713,14 +803,32 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
   /** 
    * Expect that the value passed as <code>expected</code> equals the value passed as <code>actual</code>.
    * If the <code>actual</code> value equals the <code>expected</code> value
-   * (as determined by <code>==</code>), <code>expect</code> returns
-   * normally. Else, <code>expect</code> throws an
+   * (as determined by <code>==</code>), <code>expectResult</code> returns
+   * normally. Else, <code>expect</code> throws a
    * <code>TestFailedException</code> whose detail message includes the expected and actual values.
    *
    * @param expected the expected value
    * @param actual the actual value, which should equal the passed <code>expected</code> value
    * @throws TestFailedException if the passed <code>actual</code> value does not equal the passed <code>expected</code> value.
    */
+  def expectResult(expected: Any)(actual: Any) {
+    if (actual != expected) {
+      val (act, exp) = Suite.getObjectsForFailureMessage(actual, expected)
+      val s = FailureMessages("expectedButGot", exp, act)
+      throw newAssertionFailedException(Some(s), None, 4)
+    }
+  }
+
+  /**
+   * This <code>expect</code> method has been deprecated; Please use <code>expectResult</code> instead.
+   *
+   * <p>
+   * To get rid of the deprecation warning, simply replace <code>expect</code> with
+   * <code>expectResult</code>. The name <code>expect</code> will be used for a different purposes in
+   * a future version of ScalaTest.
+   * </p>
+   */
+  @deprecated("This expect method has been deprecated. Please replace all invocations of expect with an identical invocation of expectResult instead.")
   def expect(expected: Any)(actual: Any) {
     if (actual != expected) {
       val (act, exp) = Suite.getObjectsForFailureMessage(actual, expected)
@@ -818,7 +926,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * Throws <code>TestFailedException</code>, with the passed
    * <code>Throwable</code> cause, to indicate a test failed.
    * The <code>getMessage</code> method of the thrown <code>TestFailedException</code>
-   * will return <code>cause.toString()</code>.
+   * will return <code>cause.toString</code>.
    *
    * @param cause a <code>Throwable</code> that indicates the cause of the failure.
    * @throws NullPointerException if <code>cause</code> is <code>null</code>
@@ -876,7 +984,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * Throws <code>TestCanceledException</code>, with the passed
    * <code>Throwable</code> cause, to indicate a test failed.
    * The <code>getMessage</code> method of the thrown <code>TestCanceledException</code>
-   * will return <code>cause.toString()</code>.
+   * will return <code>cause.toString</code>.
    *
    * @param cause a <code>Throwable</code> that indicates the cause of the cancellation.
    * @throws NullPointerException if <code>cause</code> is <code>null</code>
