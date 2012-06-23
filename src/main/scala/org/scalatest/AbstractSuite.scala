@@ -16,14 +16,14 @@
 package org.scalatest
 
 /**
- * Trait that defines abstract methods that are implemented in <code>Suite</code> that can
- * be overriden in stackable modification traits.
+ * Trait defining abstract "lifecycle" methods that are implemented in <code>Suite</code> and can
+ * be overridden in stackable modification traits.
  *
  * <p>
  * The main purpose of <code>AbstractSuite</code> is to differentiate core <code>Suite</code>
  * traits, such as <code>Suite</code>, <code>FunSuite</code>, and <code>FunSpec</code> from stackable
  * modification traits for <code>Suite</code>s such as <code>BeforeAndAfterEach</code>, <code>OneInstancePerTest</code>,
- * and <code>ParallelNestedSuiteExecution</code>. Because these stackable traits extend <code>AbstractSuite</code> 
+ * and <code>SequentialNestedSuiteExecution</code>. Because these stackable traits extend <code>AbstractSuite</code>
  * instead of <code>Suite</code>, you can't define a suite by simply extending one of the stackable traits:
  * </p>
  *
@@ -52,9 +52,7 @@ trait AbstractSuite { this: Suite =>
    * current suite, invoke the test function, and if needed, perform any clean
    * up needed after the test completes. Because the <code>NoArgTest</code> function
    * passed to this method takes no parameters, preparing the fixture will require
-   * side effects, such as reassigning instance <code>var</code>s in this <code>Suite</code> or initializing
-   * a globally accessible external database. If you want to avoid reassigning instance <code>var</code>s
-   * you can use <a href="Suite.html">fixture.Suite</a>.
+   * side effects, such as initializing an external database.
    * </p>
    *
    * @param test the no-arg test function to run with a fixture
@@ -107,7 +105,7 @@ trait AbstractSuite { this: Suite =>
   )
 
   /**
-  * An <code>Set</code> of test names. If this <code>Suite</code> contains no tests, this method returns an empty <code>Set</code>.
+  * A <code>Set</code> of test names. If this <code>Suite</code> contains no tests, this method returns an empty <code>Set</code>.
   *
   * <p>
   * Although subclass and subtrait implementations of this method may return a <code>Set</code> whose iterator produces <code>String</code>
@@ -149,7 +147,13 @@ trait AbstractSuite { this: Suite =>
   def rerunner: Option[String]
   
   /**
-   * Suite style name.
+   * This suite's style name.
+   *
+   * <p>
+   * This lifecycle method provides a string that is used to determine whether this suite object's
+   * style is one of the <a href="tools/Runner$.html#specifyingChosenStyles">chosen styles</a> for
+   * the project.
+   * </p>
    */
   val styleName: String
 
