@@ -16,6 +16,12 @@
 package org.scalatest
 
 /**
+ * Dynamic tags for a run.
+ *
+ * <p>
+ *
+ * </p>
+ *
  * suiteTags is a map from String suiteId to a set of tags for that suite.
  * testTags is a map from String suiteId to a map, whose keys are testnames and values the tags for that test.
  */
