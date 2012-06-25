@@ -128,7 +128,7 @@ final class Filter(val tagsToInclude: Option[Set[String]], val tagsToExclude: Se
    *
    * @throws IllegalArgumentException if any set contained in the passed <code>tags</code> map is empty
    */
-  @deprecated("Please use the apply method that takes a suiteId instead, the one with this signature: def apply(testNames: Set[String], testTags: Map[String, Set[String]], suite: Suite): List[(String, Boolean)]")
+  @deprecated("Please use the apply method that takes a suiteId instead, the one with this signature: def apply(testNames: Set[String], testTags: Map[String, Set[String]], suiteId: String): List[(String, Boolean)]")
   def apply(testNames: Set[String], tags: Map[String, Set[String]]): List[(String, Boolean)] = {
 
     verifyPreconditionsForMethods(testNames, tags)
@@ -192,7 +192,7 @@ final class Filter(val tagsToInclude: Option[Set[String]], val tagsToExclude: Se
    *
    * @throws IllegalArgumentException if any set contained in the passed <code>tags</code> map is empty
    */
-  @deprecated("Please use the apply method that takes a suite instead, the one with this signature: def apply(testName: String, testTags: Map[String, Set[String]], suite: Suite): (Boolean, Boolean)")
+  @deprecated("Please use the apply method that takes a suite instead, the one with this signature: def apply(testName: String, testTags: Map[String, Set[String]], suiteId: String): (Boolean, Boolean)")
   def apply(testName: String, tags: Map[String, Set[String]]): (Boolean, Boolean) = {
     val list = apply(Set(testName), tags)
     if (list.isEmpty)
