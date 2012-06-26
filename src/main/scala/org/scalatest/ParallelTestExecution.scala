@@ -16,7 +16,6 @@
 package org.scalatest    
 
 import org.scalatest.time.Span
-import org.scalatest.time.Seconds
 import tools.{DistributorWrapper, DistributedTestRunnerSuite, TestSortingReporter, Runner}
 
 /**
@@ -62,9 +61,9 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
   protected abstract override def runTests(testName: Option[String], args: RunArgs) {
     val newArgs =
       if (args.runTestInNewInstance)
-        args
+        args // This is the test-specific instance
       else {
-        args.distributor match {
+        args.distributor match {  // This is the initial instance
           case Some(distributor) =>
             val testSortingReporter = new TestSortingReporter(args.reporter, sortingTimeout)
             args.copy(reporter = testSortingReporter, distributor = Some(new DistributorWrapper(distributor, testSortingReporter)))

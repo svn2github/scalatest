@@ -66,7 +66,7 @@ private[scalatest] class DistributorWrapper(distributor: Distributor, testSortin
   private def waitForTestCompleted(suite: Suite) {
     suite match {
       case dtrs: DistributedTestRunnerSuite =>
-        testSortingReporter.waitForTestCompleted(dtrs.testName)
+        testSortingReporter.distributingTest(dtrs.testName)
       case _ =>
     }
   }

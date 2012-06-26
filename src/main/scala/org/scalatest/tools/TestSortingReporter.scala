@@ -30,8 +30,14 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, timeout: Span) 
   
   private val timer = new Timer()
   private var timeoutTask: Option[TimeoutTask] = None
-  
-  def waitForTestCompleted(testName: String) {
+
+  /**
+   * Called to indicate a test is being distributed. The test will be reported
+   * in the order this is invoked.
+   *
+   * @param testName the name of the test being distributed
+   */
+  def distributingTest(testName: String) {
     synchronized {
       val slot = Slot(UUID.randomUUID, None, None, false)
       waitingBuffer += slot
