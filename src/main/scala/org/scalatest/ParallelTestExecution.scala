@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest    
+package org.scalatest
 
+import events.Event
 import org.scalatest.time.Span
 import tools.{DistributedTestRunnerSuite, TestSortingReporter, Runner}
 
@@ -83,7 +84,9 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    * Modifies the behavior of <code>super.runTest</code> to facilitate parallel test execution.
    *
    * <p>
-   * TODO: Discuss...
+   * TODO: Discuss...  Note this is final because don't want things like before and after to
+   * be executed by the wrong thread, and therefore, at the wrong time. With OIPT, if OIPT is
+   * super to BAA, then still things will happen in the expected order, because all is sequential.
    * </p>
    *
    * @param testName the name of one test to execute.
@@ -97,11 +100,23 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
       args.distributor match {
         case None =>
           oneInstance.run(Some(testName), args)
-        case Some(distribute) => // Right here, it will tell the TSR that the test is being distributed
-          args.distributedTestSorter match {
-            case Some(sorter) => sorter.distributingTest(testName)
-            case None =>
+        case Some(distribute) =>
+          // Tell the TSR that the test is being distributed
+          for (sorter <- args.distributedTestSorter)
+            sorter.distributingTest(testName)
+
+          class TestSpecificReporter(testSortingReporter: TestSortingReporter, testName: String) extends Reporter {
+            def apply(event: Event) {
+              testSortingReporter.apply(testName, event)
+            }
           }
+/*
+          val testSpecificReporter =
+            for (sorter <- args.distributedTestSorter)
+            yield new TestSpecificReporter(sorter, testName)
+*/
+
+          // It will be oneInstance, testName, args.copy(reporter = ...)
           distribute(new DistributedTestRunnerSuite(oneInstance, testName, args), args.copy(tracker = args.tracker.nextTracker))
       }
     }
