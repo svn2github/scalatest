@@ -22,7 +22,7 @@ package org.scalatest
  *
  * @author Bill Venners
  */
-trait Stopper /* extends (() => Boolean) */ {
+trait Stopper {
 
   /**
    * Indicates whether a stop has been requested.  Call this method
@@ -39,7 +39,7 @@ trait Stopper /* extends (() => Boolean) */ {
  */
 object Stopper {
 
-  /**
+  /*
    * Converts a <code>Stopper</code> to a function type that prior to the ScalaTest 1.5 release the
    * <code>Stopper</code> extended.
    *
@@ -58,7 +58,16 @@ object Stopper {
    * be retained. If no one steps forward with a compelling justification, it will be removed in a future version of ScalaTest.
    * </p>
    */
-  @deprecated("See the documentation for Stopper.convertStopperToFunction for information")
-  implicit def convertStopperToFunction(stopper: Stopper): () => Boolean =
-    () => stopper()
+  // @deprecated("See the documentation for Stopper.convertStopperToFunction for information")
+  // implicit def convertStopperToFunction(stopper: Stopper): () => Boolean =
+  //   () => stopper()
+
+  private val defaultStopper = new Stopper {}
+
+  /**
+   * TODO: Flesh out documentation.
+   *
+   * @return
+   */
+  def default: Stopper = defaultStopper
 }

@@ -29,7 +29,7 @@ import Filter.IgnoreTag
  * @throws NullPointerException if either <code>tagsToInclude</code> or <code>tagsToExclude</code> are null
  * @throws IllegalArgumentException if <code>tagsToInclude</code> is defined, but contains an empty set
  */
-final class Filter(val tagsToInclude: Option[Set[String]], val tagsToExclude: Set[String], val excludeNestedSuites: Boolean = false, val dynaTags: DynaTags = DynaTags(Map.empty, Map.empty)) extends Function2[Set[String], Map[String, Set[String]], List[(String, Boolean)]] {
+final class Filter private (val tagsToInclude: Option[Set[String]], val tagsToExclude: Set[String], val excludeNestedSuites: Boolean, val dynaTags: DynaTags) extends Function2[Set[String], Map[String, Set[String]], List[(String, Boolean)]] {
 
   if (tagsToInclude == null)
     throw new NullPointerException("tagsToInclude was null")
@@ -44,6 +44,15 @@ final class Filter(val tagsToInclude: Option[Set[String]], val tagsToExclude: Se
         throw new IllegalArgumentException("tagsToInclude was defined, but contained an empty set")
     case None =>
   }
+
+  /**
+   * <strong>This constructor has been deprecated and will be removed in a future version of ScalaTest. Please use
+   * the factory method, named <code>apply</code>, in the <code>Filter</code> companion object instead.
+   * (<em>I.e.</em>, to get rid of the deprecation warning, just remove <code>new</code> in front
+   * of <code>Filter</code>).</strong>
+   */
+  @deprecated("This overloaded constructor has been deprecated and will be removed in a future version of ScalaTest. Please use the factory method (named apply) in the Filter companion object instead.")
+  def this(tagsToInclude: Option[Set[String]], tagsToExclude: Set[String]) = this(tagsToInclude, tagsToExclude, false, DynaTags(Map.empty, Map.empty))
 
   private def includedTestNames(testNamesAsList: List[String], tags: Map[String, Set[String]]): List[String] = 
     tagsToInclude match {
@@ -271,19 +280,12 @@ object Filter {
  * @throws NullPointerException if either <code>tagsToInclude</code> or <code>tagsToExclude</code> are null
  * @throws IllegalArgumentException if <code>tagsToInclude</code> is defined, but contains an empty set
  */
-  def apply(tagsToInclude: Option[Set[String]], tagsToExclude: Set[String], excludeNestedSuites: Boolean = false, dynaTags: DynaTags = DynaTags(Map.empty, Map.empty)) =
+  def apply(tagsToInclude: Option[Set[String]] = None, tagsToExclude: Set[String] = Set(IgnoreTag), excludeNestedSuites: Boolean = false, dynaTags: DynaTags = DynaTags(Map.empty, Map.empty)) =
     new Filter(tagsToInclude, tagsToExclude, excludeNestedSuites, dynaTags)
 
-/**
- * Factory method for a <code>Filter</code> initialized with <code>None</code> for <code>tagsToInclude</code>
- * and an empty set for <code>tagsToExclude</code>.
- *
- * @param tagsToInclude an optional <code>Set</code> of <code>String</code> tag names to include (<em>i.e.</em>, not filter out) when filtering tests
- * @param tagsToExclude a <code>Set</code> of <code>String</code> tag names to exclude (<em>i.e.</em>, filter out) when filtering tests
- *
- * @throws NullPointerException if either <code>tagsToInclude</code> or <code>tagsToExclude</code> are null
- * @throws IllegalArgumentException if <code>tagsToInclude</code> is defined, but contains an empty set
- */
-  def apply() =
-    new Filter(None, Set("org.scalatest.Ignore"))
+  /**
+   * TODO: Fill in
+   * @return
+   */
+  def default: Filter = apply()
 }

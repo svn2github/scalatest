@@ -38,13 +38,5 @@ class UseAsFunctionSpec extends FreeSpec {
       }
       takesFun(new MyRerunner) // If it compiles, the test passes
     }
-
-    "a Stopper" in {
-      def takesFun(fun: () => Boolean) {}
-      class MyStopper extends Stopper { 
-        override def apply() = true
-      }
-      takesFun(new MyStopper) // If it compiles, the test passes
-    }
   }
 }

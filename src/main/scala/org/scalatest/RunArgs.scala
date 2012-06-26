@@ -37,12 +37,12 @@ package org.scalatest
  */
 case class RunArgs(
   reporter: Reporter,
-  stopper: Stopper,
-  filter: Filter,
-  configMap: Map[String, Any],
-  distributor: Option[Distributor],
-  tracker: Tracker,
-  chosenStyles: Set[String]
+  stopper: Stopper = Stopper.default,
+  filter: Filter = Filter.default,
+  configMap: Map[String, Any] = Map.empty,
+  distributor: Option[Distributor] = None,
+  tracker: Tracker = new Tracker,
+  chosenStyles: Set[String] = Set.empty
 ) {
   if (reporter == null)
     throw new NullPointerException("reporter was null")
