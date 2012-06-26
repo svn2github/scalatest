@@ -52,13 +52,18 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers {
   
   describe("ParallelTestExecution") {
 
-    class OutOfOrderDistributor extends Distributor {
+    class ControlledOrderDistributor extends Distributor {
       val buf = ListBuffer.empty[(Suite, RunArgs)]
       def apply(suite: Suite, args: RunArgs) {
         buf += ((suite, args))
       }
       def executeInOrder() {
         for ((suite, args) <- buf) {
+          suite.run(None, args)
+        }
+      }
+      def executeInReverseOrder() {
+        for ((suite, args) <- buf.reverse) {
           suite.run(None, args)
         }
       }
@@ -70,30 +75,35 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers {
 
     it("should have the events reported in correct order when tests are executed in parallel") {
 
-      val recordingReporter = new EventRecordingReporter
-      val outOfOrderDistributor = new OutOfOrderDistributor
-      (new ExampleParallelSpec).run(None, RunArgs(recordingReporter, distributor = Some(outOfOrderDistributor)))
-      outOfOrderDistributor.executeInOrder()
-      
-      val eventRecorded = recordingReporter.eventsReceived
-      
-      checkScopeOpened(eventRecorded(0), "Subject 1")
-      checkTestStarting(eventRecorded(1), "Subject 1 should have behavior 1a")
-      checkTestSucceeded(eventRecorded(2), "Subject 1 should have behavior 1a")
-      checkTestStarting(eventRecorded(3), "Subject 1 should have behavior 1b")
-      checkTestSucceeded(eventRecorded(4), "Subject 1 should have behavior 1b")
-      checkTestStarting(eventRecorded(5), "Subject 1 should have behavior 1c")
-      checkTestSucceeded(eventRecorded(6), "Subject 1 should have behavior 1c")
-      checkScopeClosed(eventRecorded(7), "Subject 1")
-      
-      checkScopeOpened(eventRecorded(8), "Subject 2")
-      checkTestStarting(eventRecorded(9), "Subject 2 should have behavior 2a")
-      checkTestSucceeded(eventRecorded(10), "Subject 2 should have behavior 2a")
-      checkTestStarting(eventRecorded(11), "Subject 2 should have behavior 2b")
-      checkTestSucceeded(eventRecorded(12), "Subject 2 should have behavior 2b")
-      checkTestStarting(eventRecorded(13), "Subject 2 should have behavior 2c")
-      checkTestSucceeded(eventRecorded(14), "Subject 2 should have behavior 2c")
-      checkScopeClosed(eventRecorded(15), "Subject 2")
+      def withDistributor(fun: ControlledOrderDistributor => Unit) {
+
+        val recordingReporter = new EventRecordingReporter
+        val outOfOrderDistributor = new ControlledOrderDistributor
+        (new ExampleParallelSpec).run(None, RunArgs(recordingReporter, distributor = Some(outOfOrderDistributor)))
+        fun(outOfOrderDistributor)
+
+        val eventRecorded = recordingReporter.eventsReceived
+
+        checkScopeOpened(eventRecorded(0), "Subject 1")
+        checkTestStarting(eventRecorded(1), "Subject 1 should have behavior 1a")
+        checkTestSucceeded(eventRecorded(2), "Subject 1 should have behavior 1a")
+        checkTestStarting(eventRecorded(3), "Subject 1 should have behavior 1b")
+        checkTestSucceeded(eventRecorded(4), "Subject 1 should have behavior 1b")
+        checkTestStarting(eventRecorded(5), "Subject 1 should have behavior 1c")
+        checkTestSucceeded(eventRecorded(6), "Subject 1 should have behavior 1c")
+        checkScopeClosed(eventRecorded(7), "Subject 1")
+
+        checkScopeOpened(eventRecorded(8), "Subject 2")
+        checkTestStarting(eventRecorded(9), "Subject 2 should have behavior 2a")
+        checkTestSucceeded(eventRecorded(10), "Subject 2 should have behavior 2a")
+        checkTestStarting(eventRecorded(11), "Subject 2 should have behavior 2b")
+        checkTestSucceeded(eventRecorded(12), "Subject 2 should have behavior 2b")
+        checkTestStarting(eventRecorded(13), "Subject 2 should have behavior 2c")
+        checkTestSucceeded(eventRecorded(14), "Subject 2 should have behavior 2c")
+        checkScopeClosed(eventRecorded(15), "Subject 2")
+      }
+      withDistributor(_.executeInOrder())
+      withDistributor(_.executeInReverseOrder())
     }
   }
 }
