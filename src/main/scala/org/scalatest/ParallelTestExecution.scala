@@ -16,7 +16,7 @@
 package org.scalatest    
 
 import org.scalatest.time.Span
-import tools.{DistributorWrapper, DistributedTestRunnerSuite, TestSortingReporter, Runner}
+import tools.{DistributedTestRunnerSuite, TestSortingReporter, Runner}
 
 /**
  * Trait that causes that the tests of any suite it is mixed into to be run in parallel if
@@ -66,7 +66,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
         args.distributor match {  // This is the initial instance
           case Some(distributor) =>
             val testSortingReporter = new TestSortingReporter(args.reporter, sortingTimeout)
-            args.copy(reporter = testSortingReporter, distributedTestSorter = Some(testSortingReporter)/*, distributor = Some(new DistributorWrapper(distributor, testSortingReporter))*/)
+            args.copy(reporter = testSortingReporter, distributedTestSorter = Some(testSortingReporter))
           case None =>
             args
         }

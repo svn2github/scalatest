@@ -51,24 +51,3 @@ private[scalatest] class ConcurrentDistributor(args: RunArgs, execSvc: ExecutorS
   }
 }
 
-private[scalatest] class DistributorWrapper(distributor: Distributor, testSortingReporter: TestSortingReporter) extends Distributor {
-
-  def apply(suite: Suite, tracker: Tracker) {
-    waitForTestCompleted(suite)
-    distributor.apply(suite, tracker)
-  }
-
-  def apply(suite: Suite, args: RunArgs) {
-    waitForTestCompleted(suite)
-    distributor.apply(suite, args)
-  }
-
-  private def waitForTestCompleted(suite: Suite) {
-    suite match {
-      case dtrs: DistributedTestRunnerSuite =>
-        testSortingReporter.distributingTest(dtrs.testName)
-      case _ =>
-    }
-  }
-}
-
