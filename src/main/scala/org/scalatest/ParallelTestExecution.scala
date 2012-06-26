@@ -66,7 +66,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
         args.distributor match {  // This is the initial instance
           case Some(distributor) =>
             val testSortingReporter = new TestSortingReporter(args.reporter, sortingTimeout)
-            args.copy(reporter = testSortingReporter, distributor = Some(new DistributorWrapper(distributor, testSortingReporter)))
+            args.copy(reporter = testSortingReporter, distributedTestSorter = Some(testSortingReporter)/*, distributor = Some(new DistributorWrapper(distributor, testSortingReporter))*/)
           case None =>
             args
         }
@@ -98,6 +98,10 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
         case None =>
           oneInstance.run(Some(testName), args)
         case Some(distribute) => // Right here, it will tell the TSR that the test is being distributed
+          args.distributedTestSorter match {
+            case Some(sorter) => sorter.distributingTest(testName)
+            case None =>
+          }
           distribute(new DistributedTestRunnerSuite(oneInstance, testName, args), args.copy(tracker = args.tracker.nextTracker))
       }
     }

@@ -9,7 +9,7 @@ import java.util.Timer
 import java.util.TimerTask
 import java.util.UUID
 
-private[scalatest] class TestSortingReporter(dispatch: Reporter, timeout: Span) extends ResourcefulReporter {
+private[scalatest] class TestSortingReporter(dispatch: Reporter, timeout: Span) extends ResourcefulReporter with DistributedTestSorter {
 
   case class Slot(uuid: UUID, startEvent: Option[Event], completedEvent: Option[Event], ready: Boolean) extends Ordered[Slot] {
     def compare(that: Slot): Int = //ordinal.compare(that.ordinal)
@@ -44,7 +44,15 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, timeout: Span) 
       slotMap.put(testName, slot)
     }
   }
-  
+
+  def apply(testName: String, event: Event) {
+    throw new UnsupportedOperationException()
+  }
+
+  def completedTest(testName: String) {
+    throw new UnsupportedOperationException()
+  }
+
   override def apply(event: Event) {
     synchronized {
       event match {
