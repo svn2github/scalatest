@@ -45,7 +45,9 @@ case class RunArgs(
   distributor: Option[Distributor] = None,
   tracker: Tracker = Tracker.default,
   chosenStyles: Set[String] = Set.empty,
-  runTestInNewInstance: Boolean = false
+  runTestInNewInstance: Boolean = false,
+  distributedTestReporter: Option[DistributedTestReporter] = None,
+  distributedSuiteReporter: Option[DistributedSuiteReporter] = None
 ) {
   if (reporter == null)
     throw new NullPointerException("reporter was null")
@@ -61,4 +63,8 @@ case class RunArgs(
     throw new NullPointerException("tracker was null")
   if (chosenStyles == null)
     throw new NullPointerException("chosenStyles was null")
+  if (distributedTestReporter == null)
+    throw new NullPointerException("distributedTestReporter was null")
+  if (distributedSuiteReporter == null)
+    throw new NullPointerException("distributedSuiteReporter was null")
 }

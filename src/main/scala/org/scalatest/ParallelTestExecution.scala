@@ -97,12 +97,15 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
       args.distributor match {
         case None =>
           oneInstance.run(Some(testName), args)
-        case Some(distribute) =>
+        case Some(distribute) => // Right here, it will tell the TSR that the test is being distributed
           distribute(new DistributedTestRunnerSuite(oneInstance, testName, args), args.tracker.nextTracker)
       }
     }
     else // In test-specific (distributed) instance, so just run the test. (RTINI was
          // removed by OIPT's implementation of runTests.)
+         // New Approach: before calling super.runTest, wrap once again in the
+         // wrapReporter? And after runTest returns, call testCompleted() on
+         // the TSR.
       super.runTest(testName, args)
   }
 
