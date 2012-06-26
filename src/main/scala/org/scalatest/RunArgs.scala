@@ -33,6 +33,10 @@ package org.scalatest
  * @param chosenStyles a (possibly empty) <code>Set</code> of <code>String</code>s specifying the run's <a href="tools/Runner$.html#specifyingChosenStyles"><em>chosen styles</em></a>
  * @param runTestInNewInstance a flag used to pass information between run methods
  *           in <a href="OneInstancePerTest.html"><code>OneInstancePerTest</code></a> and <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a>.
+ * @param distributedTestSorter an optional <a href="DistributedTestSorter.html"><code>DistributedTestSorter</code></a> used by <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a> to sort the events
+ *                              for the parallel-executed tests of one suite back into sequential order, with a timeout in case a test takes a long time
+ * @param distributedSuiteSorter an optional <a href="DistributedSuiteSorter.html"><code>DistributedSuiteSorter</code></a> used by <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a> to ensure the events
+ *                              for the parallel-executed suites are sorted back into sequential order, with a timeout in case a suite takes a long time, even when tests are executed in parallel
  *
  * @throws NullPointerException if any passed parameter is <code>null</code>.
  *
@@ -46,8 +50,8 @@ case class RunArgs(
   tracker: Tracker = Tracker.default,
   chosenStyles: Set[String] = Set.empty,
   runTestInNewInstance: Boolean = false,
-  distributedTestReporter: Option[DistributedTestReporter] = None,
-  distributedSuiteReporter: Option[DistributedSuiteReporter] = None
+  distributedTestSorter: Option[DistributedTestSorter] = None,
+  distributedSuiteSorter: Option[DistributedSuiteSorter] = None
 ) {
   if (reporter == null)
     throw new NullPointerException("reporter was null")
@@ -63,8 +67,8 @@ case class RunArgs(
     throw new NullPointerException("tracker was null")
   if (chosenStyles == null)
     throw new NullPointerException("chosenStyles was null")
-  if (distributedTestReporter == null)
-    throw new NullPointerException("distributedTestReporter was null")
-  if (distributedSuiteReporter == null)
-    throw new NullPointerException("distributedSuiteReporter was null")
+  if (distributedTestSorter == null)
+    throw new NullPointerException("distributedTestSorter was null")
+  if (distributedSuiteSorter == null)
+    throw new NullPointerException("distributedSuiteSorter was null")
 }

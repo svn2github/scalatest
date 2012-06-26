@@ -20,7 +20,7 @@ package org.scalatest
  * a SuiteCompleted message to indicate that the suite is done, but instead
  * will wait for a completedTests invocation.
  */
-trait DistributedSuiteReporter {
+trait DistributedSuiteSorter {
   def distributingTests(suiteId: String)
   def completedTests(suiteId: String)
 }

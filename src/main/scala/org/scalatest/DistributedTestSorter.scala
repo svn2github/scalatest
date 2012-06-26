@@ -17,7 +17,7 @@ package org.scalatest
 
 import events.Event
 
-trait DistributedTestReporter {
+trait DistributedTestSorter {
 
   def distributingTest(testName: String)
   def apply(testName: String, event: Event)

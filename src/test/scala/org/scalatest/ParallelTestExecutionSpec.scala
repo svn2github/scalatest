@@ -9,7 +9,18 @@ import org.scalatest.events.TestSucceeded
 import org.scalatest.events.ScopeClosed
 
 class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers {
+  /*
+  Need 3 tests at least
+  1. should have the events reported in correct order when tests are executed in parallel
+     For that one, pass in a Distributor that runs with just one thread and orders things
+     in a predefined, out of order order.
 
+  2. DistributedSuiteSorter should wait for completedTests instead of moving on when it
+     gets a SuiteCompleted.
+
+  3. Both of these should time out. So we need a test for each that shows the timeout
+     happened. I.e., it will move on when waiting for something.
+   */
   private def checkScopeOpened(event: Event, message: String) {
     event match {
       case scopeOpened: ScopeOpened => assert(scopeOpened.message === message)
@@ -65,5 +76,4 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers {
       checkScopeClosed(eventRecorded(15), "Thing 2")
     }
   }
-  
 }

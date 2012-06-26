@@ -66,7 +66,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
         args.distributor match {  // This is the initial instance
           case Some(distributor) =>
             val testSortingReporter = new TestSortingReporter(args.reporter, sortingTimeout)
-            args.copy(reporter = testSortingReporter, distributor = Some(new DistributorWrapper(distributor, testSortingReporter)))
+            args.copy(reporter = testSortingReporter/*, distributor = Some(new DistributorWrapper(distributor, testSortingReporter))*/)
           case None =>
             args
         }
