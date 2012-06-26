@@ -15,7 +15,6 @@
  */
 package org.scalatest
 
-import OneInstancePerTest.RunTestInNewInstance
 /**
  * Trait that facilitates a style of testing in which each test is run in its own instance
  * of the suite class to isolate each test from the side effects of the other tests in the
@@ -77,7 +76,7 @@ trait OneInstancePerTest extends AbstractSuite {
    */
   protected abstract override def runTest(testName: String, args: RunArgs) {
 
-    if (args.configMap.contains(RunTestInNewInstance)) {
+    if (args.runTestInNewInstance) {
       // In initial instance, so create a new test-specific instance for this test and invoke run on it.
       val oneInstance = newInstance
       oneInstance.run(Some(testName), args)
@@ -113,19 +112,17 @@ trait OneInstancePerTest extends AbstractSuite {
   protected abstract override def runTests(testName: Option[String], args: RunArgs) {
 
 // TODO: Define a better exception to throw if RTINI is in the config map but testName is not defined.
-    if (args.configMap.contains(RunTestInNewInstance)) {
+    if (args.runTestInNewInstance) {
       // In test-specific instance, so run the test. (We are removing RTINI
       // so that runTest will realize it is in the test-specific instance.)
-      val newConfigMap = args.configMap.filter { case (key, _) => key != RunTestInNewInstance }
-      runTest(testName.get, args.copy(configMap = newConfigMap))
+      runTest(testName.get, args.copy(runTestInNewInstance = false))
     }
     else {
       // In initial instance, so set the RTINI flag and call super.runTests, which
       // will go through any scopes and call runTest as usual. If this method was called
       // via super.runTests from PTE, the TestSortingReporter and WrappedDistributor
       // will already be in place.
-      val newConfigMap = args.configMap + (RunTestInNewInstance -> true)
-      super.runTests(testName, args.copy(configMap = newConfigMap))
+      super.runTests(testName, args.copy(runTestInNewInstance = true))
     }
   }
   
@@ -167,6 +164,3 @@ trait OneInstancePerTest extends AbstractSuite {
   def newInstance: Suite with OneInstancePerTest = this.getClass.newInstance.asInstanceOf[Suite with OneInstancePerTest]
 }
 
-private[scalatest] object OneInstancePerTest {
-  val RunTestInNewInstance = "org.scalatest.OneInstancePerTest.RunTestInNewInstance"
-}

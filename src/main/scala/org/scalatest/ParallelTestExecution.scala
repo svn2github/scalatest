@@ -15,7 +15,6 @@
  */
 package org.scalatest    
 
-import OneInstancePerTest.RunTestInNewInstance
 import org.scalatest.time.Span
 import org.scalatest.time.Seconds
 import tools.{DistributorWrapper, DistributedTestRunnerSuite, TestSortingReporter, Runner}
@@ -62,7 +61,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    */
   protected abstract override def runTests(testName: Option[String], args: RunArgs) {
     val newArgs =
-      if (args.configMap.contains(RunTestInNewInstance))
+      if (args.runTestInNewInstance)
         args
       else {
         args.distributor match {
@@ -93,7 +92,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    */
   protected abstract override def runTest(testName: String, args: RunArgs) {
 
-    if (args.configMap.contains(RunTestInNewInstance)) {
+    if (args.runTestInNewInstance) {
       // In initial instance, so wrap the test in a DistributedTestRunnerSuite and pass it to the Distributor.
       val oneInstance = newInstance
       args.distributor match {

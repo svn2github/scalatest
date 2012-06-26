@@ -31,6 +31,8 @@ package org.scalatest
  *              by another entity, such as concurrently by a pool of threads. If <code>None</code>, nested <code>Suite</code>s will be executed sequentially.
  * @param tracker a <code>Tracker</code> tracking <code>Ordinal</code>s being fired by the current thread.
  * @param chosenStyles a (possibly empty) <code>Set</code> of <code>String</code>s specifying the run's <a href="tools/Runner$.html#specifyingChosenStyles"><em>chosen styles</em></a>
+ * @param runTestInNewInstance a flag used to pass information between run methods
+ *           in <a href="OneInstancePerTest.html"><code>OneInstancePerTest</code></a> and <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a>.
  *
  * @throws NullPointerException if any passed parameter is <code>null</code>.
  *
@@ -41,8 +43,9 @@ case class RunArgs(
   filter: Filter = Filter.default,
   configMap: Map[String, Any] = Map.empty,
   distributor: Option[Distributor] = None,
-  tracker: Tracker = new Tracker,
-  chosenStyles: Set[String] = Set.empty
+  tracker: Tracker = Tracker.default,
+  chosenStyles: Set[String] = Set.empty,
+  runTestInNewInstance: Boolean = false
 ) {
   if (reporter == null)
     throw new NullPointerException("reporter was null")
