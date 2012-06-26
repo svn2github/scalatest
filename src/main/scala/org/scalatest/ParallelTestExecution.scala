@@ -66,7 +66,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
         args.distributor match {  // This is the initial instance
           case Some(distributor) =>
             val testSortingReporter = new TestSortingReporter(args.reporter, sortingTimeout)
-            args.copy(reporter = testSortingReporter/*, distributor = Some(new DistributorWrapper(distributor, testSortingReporter))*/)
+            args.copy(reporter = testSortingReporter, distributor = Some(new DistributorWrapper(distributor, testSortingReporter)))
           case None =>
             args
         }
@@ -89,7 +89,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    * @param testName the name of one test to execute.
    * @param args the <code>RunArgs</code> for this run
    */
-  protected abstract override def runTest(testName: String, args: RunArgs) {
+  final protected abstract override def runTest(testName: String, args: RunArgs) {
 
     if (args.runTestInNewInstance) {
       // In initial instance, so wrap the test in a DistributedTestRunnerSuite and pass it to the Distributor.
@@ -98,7 +98,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
         case None =>
           oneInstance.run(Some(testName), args)
         case Some(distribute) => // Right here, it will tell the TSR that the test is being distributed
-          distribute(new DistributedTestRunnerSuite(oneInstance, testName, args), args.tracker.nextTracker)
+          distribute(new DistributedTestRunnerSuite(oneInstance, testName, args), args.copy(tracker = args.tracker.nextTracker))
       }
     }
     else // In test-specific (distributed) instance, so just run the test. (RTINI was

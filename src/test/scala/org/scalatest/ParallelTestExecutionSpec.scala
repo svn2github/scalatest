@@ -7,6 +7,7 @@ import org.scalatest.events.ScopeOpened
 import org.scalatest.events.TestStarting
 import org.scalatest.events.TestSucceeded
 import org.scalatest.events.ScopeClosed
+import collection.mutable.ListBuffer
 
 class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers {
   /*
@@ -50,30 +51,49 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers {
   }
   
   describe("ParallelTestExecution") {
-    
+
+    class OutOfOrderDistributor extends Distributor {
+      val buf = ListBuffer.empty[(Suite, RunArgs)]
+      def apply(suite: Suite, args: RunArgs) {
+        buf += ((suite, args))
+      }
+      def executeInOrder() {
+        for ((suite, args) <- buf) {
+          suite.run(None, args)
+        }
+      }
+
+      def apply(suite: Suite, tracker: Tracker) {
+        throw new UnsupportedOperationException("Hey, we're not supposed to be calling this anymore!")
+      }
+    }
+
     it("should have the events reported in correct order when tests are executed in parallel") {
-      val recordingReporter = new EventRecordingReporter()
-      new ExampleParallelSpec().run(None, RunArgs(recordingReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+
+      val recordingReporter = new EventRecordingReporter
+      val outOfOrderDistributor = new OutOfOrderDistributor
+      (new ExampleParallelSpec).run(None, RunArgs(recordingReporter, distributor = Some(outOfOrderDistributor)))
+      outOfOrderDistributor.executeInOrder()
       
       val eventRecorded = recordingReporter.eventsReceived
       
-      checkScopeOpened(eventRecorded(0), "Thing 1")
-      checkTestStarting(eventRecorded(1), "Thing 1 should do thing 1a")
-      checkTestSucceeded(eventRecorded(2), "Thing 1 should do thing 1a")
-      checkTestStarting(eventRecorded(3), "Thing 1 should do thing 1b")
-      checkTestSucceeded(eventRecorded(4), "Thing 1 should do thing 1b")
-      checkTestStarting(eventRecorded(5), "Thing 1 should do thing 1c")
-      checkTestSucceeded(eventRecorded(6), "Thing 1 should do thing 1c")
-      checkScopeClosed(eventRecorded(7), "Thing 1")
+      checkScopeOpened(eventRecorded(0), "Subject 1")
+      checkTestStarting(eventRecorded(1), "Subject 1 should have behavior 1a")
+      checkTestSucceeded(eventRecorded(2), "Subject 1 should have behavior 1a")
+      checkTestStarting(eventRecorded(3), "Subject 1 should have behavior 1b")
+      checkTestSucceeded(eventRecorded(4), "Subject 1 should have behavior 1b")
+      checkTestStarting(eventRecorded(5), "Subject 1 should have behavior 1c")
+      checkTestSucceeded(eventRecorded(6), "Subject 1 should have behavior 1c")
+      checkScopeClosed(eventRecorded(7), "Subject 1")
       
-      checkScopeOpened(eventRecorded(8), "Thing 2")
-      checkTestStarting(eventRecorded(9), "Thing 2 should do thing 2a")
-      checkTestSucceeded(eventRecorded(10), "Thing 2 should do thing 2a")
-      checkTestStarting(eventRecorded(11), "Thing 2 should do thing 2b")
-      checkTestSucceeded(eventRecorded(12), "Thing 2 should do thing 2b")
-      checkTestStarting(eventRecorded(13), "Thing 2 should do thing 2c")
-      checkTestSucceeded(eventRecorded(14), "Thing 2 should do thing 2c")
-      checkScopeClosed(eventRecorded(15), "Thing 2")
+      checkScopeOpened(eventRecorded(8), "Subject 2")
+      checkTestStarting(eventRecorded(9), "Subject 2 should have behavior 2a")
+      checkTestSucceeded(eventRecorded(10), "Subject 2 should have behavior 2a")
+      checkTestStarting(eventRecorded(11), "Subject 2 should have behavior 2b")
+      checkTestSucceeded(eventRecorded(12), "Subject 2 should have behavior 2b")
+      checkTestStarting(eventRecorded(13), "Subject 2 should have behavior 2c")
+      checkTestSucceeded(eventRecorded(14), "Subject 2 should have behavior 2c")
+      checkScopeClosed(eventRecorded(15), "Subject 2")
     }
   }
 }
