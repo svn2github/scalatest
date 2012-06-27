@@ -38,7 +38,7 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
     val s3t3Succeeded = TestSucceeded(tracker.nextOrdinal, "aSuite", "aSuite", Some("a.b.aSuite"), None, "Scope 3 Test 3", "Test 3", None, Vector.empty)
     val scope3Closed = ScopeClosed(tracker.nextOrdinal, "Scope 3", NameInfo("aSuite", "aSuite", Some("a.b.aSuite"), None, None))
     
-    it("should fire event passed to it in the order they arrive if waitForTestCompleted is not called.") {
+    it("should fire event passed to it in the order they arrive if distributingTest, apply and completedTest is not called.") {
       val recordingReporter = new EventRecordingReporter()
       val dispatch = new TestSortingReporter(recordingReporter, Span(15, Seconds))
       
@@ -82,34 +82,40 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
       recordedEvents(16) should be (s3t3Succeeded)
     }
     
-    it("should wait and fire event based on the order of waitForTestCompleted is called.") {
+    it("should wait and fire event based on the order of distributingTest, apply and completedTest is called.") {
       val recordingReporter = new EventRecordingReporter()
       val dispatch = new TestSortingReporter(recordingReporter, Span(15, Seconds))
       
       dispatch(scope1Opened)
       dispatch(scope2Opened)
       dispatch.distributingTest(s1s2t1Starting.testName)
-      dispatch(s1s2t1Starting)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Starting)
       dispatch.distributingTest(s1s2t2Starting.testName)
-      dispatch(s1s2t2Starting)
+      dispatch("Scope 1 Scope 2 Test 2", s1s2t2Starting)
       dispatch.distributingTest(s1s2t3Starting.testName)
-      dispatch(s1s2t3Starting)
-      dispatch(s1s2t3Succeeded)
-      dispatch(s1s2t1Succeeded)
-      dispatch(s1s2t2Succeeded)
+      dispatch("Scope 1 Scope 2 Test 3", s1s2t3Starting)
+      dispatch("Scope 1 Scope 2 Test 3", s1s2t3Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 3")
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 1")
+      dispatch("Scope 1 Scope 2 Test 2", s1s2t2Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 2")
       dispatch(scope2Closed)
       dispatch(scope1Closed)
       
       dispatch(scope3Opened)
       dispatch.distributingTest(s3t1Starting.testName)
-      dispatch(s3t1Starting)
+      dispatch("Scope 3 Test 1", s3t1Starting)
       dispatch.distributingTest(s3t2Starting.testName)
-      dispatch(s3t2Starting)
+      dispatch("Scope 3 Test 2", s3t2Starting)
       dispatch.distributingTest(s3t3Starting.testName)
-      dispatch(s3t3Starting)
-      dispatch(s3t3Succeeded)
-      dispatch(s3t1Succeeded)
-      dispatch(s3t2Succeeded)
+      dispatch("Scope 3 Test 3", s3t3Starting)
+      dispatch("Scope 3 Test 3", s3t3Succeeded)
+      dispatch.completedTest("Scope 3 Test 3")
+      dispatch("Scope 3 Test 1", s3t1Succeeded)
+      dispatch.completedTest("Scope 3 Test 1")
+      dispatch("Scope 3 Test 2", s3t2Succeeded)
+      dispatch.completedTest("Scope 3 Test 2")
       dispatch(scope3Closed)
       
       val recordedEvents = recordingReporter.eventsReceived
@@ -140,16 +146,19 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
       dispatch(scope1Opened)
       dispatch(scope2Opened)
       dispatch.distributingTest(s1s2t1Starting.testName)
-      dispatch(s1s2t1Starting)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Starting)
       dispatch.distributingTest(s1s2t2Starting.testName)
-      dispatch(s1s2t2Starting)
+      dispatch("Scope 1 Scope 2 Test 2", s1s2t2Starting)
       dispatch.distributingTest(s1s2t3Starting.testName)
-      dispatch(s1s2t3Starting)
-      dispatch(s1s2t3Succeeded)
-      dispatch(s1s2t2Succeeded)
+      dispatch("Scope 1 Scope 2 Test 3", s1s2t3Starting)
+      dispatch("Scope 1 Scope 2 Test 3", s1s2t3Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 3")
+      dispatch("Scope 1 Scope 2 Test 2", s1s2t2Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 2")
       
       Thread.sleep(4000)
-      dispatch(s1s2t1Succeeded)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 1")
       
       dispatch(scope2Closed)
       dispatch(scope1Closed)

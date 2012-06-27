@@ -105,27 +105,23 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
           for (sorter <- args.distributedTestSorter)
             sorter.distributingTest(testName)
 
-          class TestSpecificReporter(testSortingReporter: TestSortingReporter, testName: String) extends Reporter {
-            def apply(event: Event) {
-              testSortingReporter.apply(testName, event)
-            }
-          }
-/*
-          val testSpecificReporter =
-            for (sorter <- args.distributedTestSorter)
-            yield new TestSpecificReporter(sorter, testName)
-*/
-
           // It will be oneInstance, testName, args.copy(reporter = ...)
           distribute(new DistributedTestRunnerSuite(oneInstance, testName, args), args.copy(tracker = args.tracker.nextTracker))
       }
     }
-    else // In test-specific (distributed) instance, so just run the test. (RTINI was
+    else {// In test-specific (distributed) instance, so just run the test. (RTINI was
          // removed by OIPT's implementation of runTests.)
          // New Approach: before calling super.runTest, wrap once again in the
          // wrapReporter? And after runTest returns, call testCompleted() on
          // the TSR.
       super.runTest(testName, args)
+      args.distributedTestSorter match {
+        case Some(testSorter) => 
+          testSorter.completedTest(testName)
+        case None => 
+      }
+      
+    }
   }
 
   /**
@@ -181,4 +177,24 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    * @return a maximum amount of time to wait for events while resorting them into sequential order
    */
   protected def sortingTimeout: Span = Runner.testSortingReporterTimeout
+  
+  abstract override def run(testName: Option[String], args: RunArgs) {
+    val newArgs = testName match {
+      case Some(testName) => 
+        args.distributedTestSorter match {
+          case Some(testSorter) => 
+            class TestSpecificReporter(testSorter: DistributedTestSorter, testName: String) extends Reporter {
+              def apply(event: Event) {
+                testSorter.apply(testName, event)
+              }
+            }
+            args.copy(reporter = new TestSpecificReporter(testSorter, testName))
+          case None =>
+            args
+        }
+      case None =>
+        args
+    }
+    super.run(testName, newArgs)
+  }
 }
