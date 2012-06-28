@@ -222,5 +222,28 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
       val tsr = new TestSortingReporter(recordingReporter, Span(3, Seconds))
       evaluating { tsr.distributingTest(null) } should produce [NullPointerException]
     }
+
+    it("should throw an IAE from distributingTest if that test was already passed to distributingTest and it hasn't completed") {
+      val recordingReporter = new EventRecordingReporter()
+      val dispatch = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      dispatch(scope1Opened)
+      dispatch(scope2Opened)
+      dispatch.distributingTest(s1s2t1Starting.testName)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Starting)
+      dispatch.distributingTest(s1s2t2Starting.testName)
+      evaluating { dispatch.distributingTest(s1s2t2Starting.testName) } should produce [IllegalArgumentException]
+    }
+
+    it("should throw an IAE from distributingTest if that test was already passed to distributingTest and its events haven't yet been completely reported about") {
+      val recordingReporter = new EventRecordingReporter()
+      val dispatch = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      dispatch(scope1Opened)
+      dispatch(scope2Opened)
+      dispatch.distributingTest(s1s2t1Starting.testName)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Starting)
+      dispatch.distributingTest(s1s2t2Starting.testName)
+      dispatch.completedTest(s1s2t2Starting.testName)
+      evaluating { dispatch.distributingTest(s1s2t2Starting.testName) } should produce [IllegalArgumentException]
+    }
   }
 }

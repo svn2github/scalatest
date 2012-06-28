@@ -33,15 +33,20 @@ trait DistributedTestSorter {
    * <p>
    * For example, trait <code>ParallelTestExecution</code> invokes this method prior to
    * passing a suite that will execute the specified test to the <code>Distributor</code>.
+   * Even though the tests are run in parallel, the events for the tests will be reported
+   * in the order this method is invoked.
    * </p>
    *
    * @throws IllegalArgumentException if the specified test name has already
-   *     completed (was already passed to <code>distributingTest</code>.
+   *     completed (was already passed to <code>distributingTest</code>), but its events
+   *     have not yet been fully reported.
    * @throws NullPointerException if <code>testName</code> is null.
    *
    * @param testName the name of the test that has completed
    */
   def distributingTest(testName: String)
+
+
   def apply(testName: String, event: Event)
 
   /**

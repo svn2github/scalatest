@@ -39,6 +39,8 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout:
     if (testName == null)
       throw new NullPointerException("testName was null")
     synchronized {
+      if (slotMap.contains(testName))
+        throw new IllegalArgumentException("The passed testname: " + testName + ", was already passed to distributedTests.")
       val slot = Slot(UUID.randomUUID, new ListBuffer[Event](), false)
       slotMap.put(testName, slot)
       waitingBuffer += slot
