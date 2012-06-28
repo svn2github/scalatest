@@ -36,6 +36,8 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout:
    * @param testName the name of the test being distributed
    */
   def distributingTest(testName: String) {
+    if (testName == null)
+      throw new NullPointerException("testName was null")
     synchronized {
       val slot = Slot(UUID.randomUUID, new ListBuffer[Event](), false)
       slotMap.put(testName, slot)

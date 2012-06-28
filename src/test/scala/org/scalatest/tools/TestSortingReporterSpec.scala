@@ -216,5 +216,11 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
       val tsr = new TestSortingReporter(recordingReporter, Span(3, Seconds))
       evaluating { tsr.completedTest(null) } should produce [NullPointerException]
     }
+
+    it("should throw an NPE from distributingTest if null is passed") {
+      val recordingReporter = new EventRecordingReporter()
+      val tsr = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      evaluating { tsr.distributingTest(null) } should produce [NullPointerException]
+    }
   }
 }
