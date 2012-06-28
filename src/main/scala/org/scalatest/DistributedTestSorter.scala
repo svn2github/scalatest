@@ -17,6 +17,13 @@ package org.scalatest
 
 import events.Event
 
+/**
+ * Object used to sort events of one suite's distributed tests.
+ *
+ * <p>
+ * This trait is used, for example, by <code>Parallel
+ * </p>
+ */
 trait DistributedTestSorter {
 
   def distributingTest(testName: String)

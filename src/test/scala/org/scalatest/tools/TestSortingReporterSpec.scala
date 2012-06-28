@@ -177,6 +177,12 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
       recordedEvents(8) should be (scope2Closed)
       recordedEvents(9) should be (scope1Closed)
     }
+
+    it("should throw an IAE from completedTest if that test does not exist in the waiting list") {
+      val recordingReporter = new EventRecordingReporter()
+      val tsr = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      evaluating { tsr.completedTest("fred") } should produce [IllegalArgumentException]
+    }
   }
-  
+
 }

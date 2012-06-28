@@ -11,7 +11,8 @@ import java.util.UUID
 
 private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout: Span) extends ResourcefulReporter with DistributedTestSorter {
 
-  // Each test gets one slot
+  // Chee Seng: What's the UUID for?
+  // Each test gets one slot, but other events such as an info from an after an also get a slot i think.
   case class Slot(uuid: UUID, eventList: ListBuffer[Event], ready: Boolean)
   
   private val waitingBuffer = new ListBuffer[Slot]()
@@ -25,7 +26,7 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout:
     }
   }
   
-  private val timer = new Timer()
+  private val timer = new Timer
   private var timeoutTask: Option[TimeoutTask] = None
 
   /**
@@ -55,8 +56,15 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout:
     }
   }
 
+  // Need a test where completedTest is called with a testName that is not in
+  // the map. I think it should just return quietly? I don't want it to blow up. Maybe
+  // output an error message somewhere? Could fire an InfoProvided out the door. Actually
+  // maybe not. It should really throw an exception, such as a NotAllowedException? No,
+  // this is an IllegalArgumentException.
   def completedTest(testName: String) {
     synchronized {
+      if (!slotMap.contains(testName))
+        throw new IllegalArgumentException("The passed testname: " + testName + ", was either never started or already completed.")
       val slot = slotMap(testName)  // How do you know a slot exists?
       val newSlot = slot.copy(ready = true)
       val slotIdx = waitingBuffer.indexOf(slot)
