@@ -9,7 +9,7 @@ import java.util.Timer
 import java.util.TimerTask
 import java.util.UUID
 
-private[scalatest] class TestSortingReporter(dispatch: Reporter, timeout: Span) extends ResourcefulReporter with DistributedTestSorter {
+private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout: Span) extends ResourcefulReporter with DistributedTestSorter {
 
   // Each test gets one slot
   case class Slot(uuid: UUID, eventList: ListBuffer[Event], ready: Boolean)
@@ -180,11 +180,11 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, timeout: Span) 
           if (head.uuid != task.slot.uuid) {
             task.cancel()
             timeoutTask = Some(new TimeoutTask(head)) // Replace the old with the new
-            timer.schedule(timeoutTask.get, timeout.millisPart)
+            timer.schedule(timeoutTask.get, sortingTimeout.millisPart)
           }
         case None => 
           timeoutTask = Some(new TimeoutTask(head)) // Just create a new one
-          timer.schedule(timeoutTask.get, timeout.millisPart)
+          timer.schedule(timeoutTask.get, sortingTimeout.millisPart)
       }
   }
   
