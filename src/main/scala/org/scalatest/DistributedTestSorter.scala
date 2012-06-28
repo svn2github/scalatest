@@ -21,12 +21,38 @@ import events.Event
  * Object used to sort events of one suite's distributed tests.
  *
  * <p>
- * This trait is used, for example, by <code>Parallel
+ * This trait is used, for example, by <code>ParallelTestExecution</code> to sort the
+ * events of tests back into sequential order, with a timeout if an event takes too long.
  * </p>
  */
 trait DistributedTestSorter {
 
+  /**
+   * Indicates a test with the specified name is about to be distributed.
+   *
+   * <p>
+   * For example, trait <code>ParallelTestExecution</code> invokes this method prior to
+   * passing a suite that will execute the specified test to the <code>Distributor</code>.
+   * </p>
+   *
+   * @throws IllegalArgumentException if the specified test name has already
+   *     completed (was already passed to <code>distributingTest</code>.
+   * @throws NullPointerException if <code>testName</code> is null.
+   *
+   * @param testName the name of the test that has completed
+   */
   def distributingTest(testName: String)
   def apply(testName: String, event: Event)
+
+  /**
+   * Indicates the events for the distributed test with the specified name have all been fired.
+   *
+   * @throws IllegalArgumentException if the specified test name was never distributed
+   *     (<em>i.e.</em>, was never passed to <code>distributingTest</code>), or has already
+   *     completed (was already passed to <code>completedTest</code>.
+   * @throws NullPointerException if <code>testName</code> is null.
+   *
+   * @param testName the name of the test that has completed
+   */
   def completedTest(testName: String)
 }

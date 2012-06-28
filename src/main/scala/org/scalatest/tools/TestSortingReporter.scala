@@ -62,10 +62,14 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout:
   // maybe not. It should really throw an exception, such as a NotAllowedException? No,
   // this is an IllegalArgumentException.
   def completedTest(testName: String) {
+    if (testName == null)
+      throw new NullPointerException("testName was null")
     synchronized {
       if (!slotMap.contains(testName))
-        throw new IllegalArgumentException("The passed testname: " + testName + ", was either never started or already completed.")
-      val slot = slotMap(testName)  // How do you know a slot exists?
+        throw new IllegalArgumentException("The passed testname: " + testName + ", has either never started or already completed.")
+      if (slotMap(testName).ready)
+        throw new IllegalArgumentException("The passed testname: " + testName + ", has already completed.")
+      val slot = slotMap(testName)
       val newSlot = slot.copy(ready = true)
       val slotIdx = waitingBuffer.indexOf(slot)
       if (slotIdx >= 0)
@@ -214,3 +218,7 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout:
     propagateDispose(dispatch)
   }
 }
+
+// Maybe can use a LinkedHashMap instead of two structures.
+// Could maybe let the timeout use the actual object instead of the uuid, and just use
+// eq instead of equal. Then don't need a uuid.

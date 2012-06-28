@@ -178,11 +178,43 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
       recordedEvents(9) should be (scope1Closed)
     }
 
-    it("should throw an IAE from completedTest if that test does not exist in the waiting list") {
+    it("should throw an IAE from completedTest if no tests have been passed to distributingTest") {
       val recordingReporter = new EventRecordingReporter()
       val tsr = new TestSortingReporter(recordingReporter, Span(3, Seconds))
       evaluating { tsr.completedTest("fred") } should produce [IllegalArgumentException]
     }
-  }
 
+    it("should throw an IAE from completedTest if that test is not among those passed to distributingTest") {
+      val recordingReporter = new EventRecordingReporter()
+      val dispatch = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      dispatch(scope1Opened)
+      dispatch(scope2Opened)
+      dispatch.distributingTest(s1s2t1Starting.testName)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Starting)
+      dispatch.distributingTest(s1s2t2Starting.testName)
+      evaluating { dispatch.completedTest("fred") } should produce [IllegalArgumentException]
+    }
+
+    it("should throw an IAE from completedTest if that test does not exist in the waiting list") {
+      val recordingReporter = new EventRecordingReporter()
+      val dispatch = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      dispatch(scope1Opened)
+      dispatch(scope2Opened)
+      dispatch.distributingTest(s1s2t1Starting.testName)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Starting)
+      dispatch.distributingTest(s1s2t2Starting.testName)
+      dispatch("Scope 1 Scope 2 Test 2", s1s2t2Starting)
+      dispatch.distributingTest(s1s2t3Starting.testName)
+      dispatch("Scope 1 Scope 2 Test 3", s1s2t3Starting)
+      dispatch("Scope 1 Scope 2 Test 3", s1s2t3Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 3")
+      evaluating { dispatch.completedTest("Scope 1 Scope 2 Test 3") } should produce [IllegalArgumentException]
+    }
+
+    it("should throw an NPE from completedTest if null is passed") {
+      val recordingReporter = new EventRecordingReporter()
+      val tsr = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      evaluating { tsr.completedTest(null) } should produce [NullPointerException]
+    }
+  }
 }
