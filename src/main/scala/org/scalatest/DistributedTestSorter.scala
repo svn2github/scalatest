@@ -46,7 +46,6 @@ trait DistributedTestSorter {
    */
   def distributingTest(testName: String)
 
-
   def apply(testName: String, event: Event)
 
   /**

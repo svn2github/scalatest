@@ -50,4 +50,3 @@ private[scalatest] class ConcurrentDistributor(args: RunArgs, execSvc: ExecutorS
       futureQueue.poll().get()
   }
 }
-
