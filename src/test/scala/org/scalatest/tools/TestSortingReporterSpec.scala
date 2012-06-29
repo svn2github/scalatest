@@ -40,7 +40,7 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
     
     it("should fire event passed to it in the order they arrive if distributingTest, apply and completedTest is not called.") {
       val recordingReporter = new EventRecordingReporter()
-      val dispatch = new TestSortingReporter(recordingReporter, Span(15, Seconds))
+      val dispatch = new TestSortingReporter("aSuite", recordingReporter, Span(15, Seconds), 7, None)
       
       dispatch(scope1Opened)
       dispatch(scope2Opened)
@@ -84,7 +84,7 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
     
     it("should wait and fire event based on the order of distributingTest, apply and completedTest is called.") {
       val recordingReporter = new EventRecordingReporter()
-      val dispatch = new TestSortingReporter(recordingReporter, Span(15, Seconds))
+      val dispatch = new TestSortingReporter("aSuite", recordingReporter, Span(15, Seconds), 7, None)
       
       dispatch(scope1Opened)
       dispatch(scope2Opened)
@@ -141,7 +141,7 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
     it("should wait and fire blocking event when timeout, and just fire the missing event directly without waiting when received later.") {
     
       val recordingReporter = new EventRecordingReporter()
-      val dispatch = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      val dispatch = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
       
       dispatch(scope1Opened)
       dispatch(scope2Opened)
@@ -180,13 +180,13 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
 
     it("should throw an IAE from completedTest if no tests have been passed to distributingTest") {
       val recordingReporter = new EventRecordingReporter()
-      val tsr = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      val tsr = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
       evaluating { tsr.completedTest("fred") } should produce [IllegalArgumentException]
     }
 
     it("should throw an IAE from completedTest if that test is not among those passed to distributingTest") {
       val recordingReporter = new EventRecordingReporter()
-      val dispatch = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      val dispatch = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
       dispatch(scope1Opened)
       dispatch(scope2Opened)
       dispatch.distributingTest(s1s2t1Starting.testName)
@@ -197,7 +197,7 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
 
     it("should throw an IAE from completedTest if that test does not exist in the waiting list") {
       val recordingReporter = new EventRecordingReporter()
-      val dispatch = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      val dispatch = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
       dispatch(scope1Opened)
       dispatch(scope2Opened)
       dispatch.distributingTest(s1s2t1Starting.testName)
@@ -213,19 +213,19 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
 
     it("should throw an NPE from completedTest if null is passed") {
       val recordingReporter = new EventRecordingReporter()
-      val tsr = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      val tsr = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
       evaluating { tsr.completedTest(null) } should produce [NullPointerException]
     }
 
     it("should throw an NPE from distributingTest if null is passed") {
       val recordingReporter = new EventRecordingReporter()
-      val tsr = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      val tsr = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
       evaluating { tsr.distributingTest(null) } should produce [NullPointerException]
     }
 
     it("should throw an IAE from distributingTest if that test was already passed to distributingTest and it hasn't completed") {
       val recordingReporter = new EventRecordingReporter()
-      val dispatch = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      val dispatch = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
       dispatch(scope1Opened)
       dispatch(scope2Opened)
       dispatch.distributingTest(s1s2t1Starting.testName)
@@ -236,7 +236,7 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
 
     it("should throw an IAE from distributingTest if that test was already passed to distributingTest and its events haven't yet been completely reported about") {
       val recordingReporter = new EventRecordingReporter()
-      val dispatch = new TestSortingReporter(recordingReporter, Span(3, Seconds))
+      val dispatch = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
       dispatch(scope1Opened)
       dispatch(scope2Opened)
       dispatch.distributingTest(s1s2t1Starting.testName)

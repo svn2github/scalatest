@@ -9,7 +9,7 @@ import java.util.Timer
 import java.util.TimerTask
 import java.util.UUID
 
-private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout: Span) extends ResourcefulReporter with DistributedTestSorter {
+private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter, sortingTimeout: Span, testCount: Int, suiteSorter: Option[DistributedSuiteSorter]) extends ResourcefulReporter with DistributedTestSorter {
 
   // Chee Seng: What's the UUID for?
   // Each test gets one slot, but other events such as an info from an after an also get a slot i think.
@@ -186,6 +186,12 @@ private[scalatest] class TestSortingReporter(dispatch: Reporter, sortingTimeout:
         case None =>
       }
     }
+    if (completedTestCount == testCount)
+      suiteSorter match {
+        case Some(suiteSorter) => 
+          suiteSorter.completedTests(suiteId)
+        case None =>
+      }
   }
 
   // Also happening inside synchronized block
