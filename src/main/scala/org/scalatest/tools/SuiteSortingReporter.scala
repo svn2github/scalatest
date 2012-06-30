@@ -9,14 +9,12 @@ import org.scalatest.time.Span
 
 private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends ResourcefulReporter with DistributedSuiteSorter {
 
-  // the testSortingReporter is only used for isDefined. Can change that to a flag:
-  // suiteHasDistributedTests
   case class Slot(suiteId: String, doneEvent: Option[Event], includesDistributedTests: Boolean, testsCompleted: Boolean)
 
-  @volatile private var slotList = new ListBuffer[Slot]()
+  @volatile private var slotListBuf = new ListBuffer[Slot]()
   private val slotMap = collection.mutable.HashMap[String, Slot]()
   // suiteEventMap is suite Id -> events for that suite (should be a Vector)
-  private val suiteEventMap = collection.mutable.HashMap[String, List[Event]]()
+  private val suiteEventMap = collection.mutable.HashMap[String, Vector[Event]]()
 
   override def apply(event: Event) {
     try {
@@ -24,7 +22,7 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
         event match {
           case suiteStarting: SuiteStarting =>
             val slot = Slot(suiteStarting.suiteId, None, false, false)
-            slotList += slot // Why put this in the list then throw an exception?
+            slotListBuf += slot // Why put this in the ListBuffer then throw an exception?
             slotMap.get(suiteStarting.suiteId) match {
               case Some(slot) =>
                 throw new RuntimeException("2 SuiteStarting (" + slot.suiteId + ", " + suiteStarting.suiteId + ") having same suiteId '" + suiteStarting.suiteId + "'.")
@@ -87,30 +85,30 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
     //slot.doneEvent = Some(event)
     val newSlot = slot.copy(doneEvent = Some(event))  // Assuming here that a done event hasn't already arrived
     slotMap.put(suiteId, newSlot)                     // Probably should fail on the second one
-    val slotIdx = slotList.indexOf(slot)
+    val slotIdx = slotListBuf.indexOf(slot)
     if (slotIdx >= 0)                                 // In what case would it not be there?
-      slotList.update(slotIdx, newSlot)  // Why not fire ready events here? Oh, at end of apply
+      slotListBuf.update(slotIdx, newSlot)  // Why not fire ready events here? Oh, at end of apply
   }
   // Handles SuiteStarting, TestStarting, TestIgnored, TestSucceeded, TestFailed, TestPending,
   // TestCanceled, InfoProvided, MarkupProvided, ScopeOpened, ScopeClosed.
   private def handleTestEvents(suiteId: String, event: Event) {
     suiteEventMap.get(suiteId) match { // Can probably use the transform or some such method
       case Some(eventList) =>
-        suiteEventMap.put(suiteId, eventList ::: List(event)) // Linear operation. Change to vector
-      case None =>                                            // oldest events at front of list
-        suiteEventMap.put(suiteId, List(event))
+        suiteEventMap.put(suiteId, eventList :+ event)
+      case None =>                                     // oldest events at front of vector
+        suiteEventMap.put(suiteId, Vector(event))
     }
     fireReadyEvents() // Then if at end of apply, why have it here too?
   }
 
   // Only called within synchronized
   private def fireReadyEvents() {
-    if (slotList.size > 0) {
-      val head = slotList.head
+    if (slotListBuf.size > 0) {
+      val head = slotListBuf.head
       fireSuiteEvents(head.suiteId)
       if (isDone(head)) {
         dispatch(head.doneEvent.get)  // Assuming it is existing again.
-        slotList = fireReadySuiteEvents(slotList.tail)
+        slotListBuf = fireReadySuiteEvents(slotListBuf.tail)
       }
     }
   }
@@ -120,9 +118,9 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
     suiteEventMap.get(suiteId) match {
       case Some(eventList) =>
         eventList.foreach(dispatch(_)) // Fire all of them and empty it out. The done event is stored elsewhere
-        suiteEventMap.put(suiteId, List.empty[Event]) // Just fire in order they appear. (Could sort them here.)
+        suiteEventMap.put(suiteId, Vector.empty[Event]) // Just fire in order they appear. (Could sort them here.)
       case None =>
-      // Unable to get event list from map, shouldn't happen
+      // Unable to get event vector from map, shouldn't happen
     }
   }
 
@@ -155,9 +153,9 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
     val slot = slotMap(suiteId)
     val newSlot = slot.copy(testsCompleted = true)
     slotMap.put(suiteId, newSlot)
-    val slotIdx = slotList.indexOf(slot)
+    val slotIdx = slotListBuf.indexOf(slot)
     if (slotIdx >= 0)
-      slotList.update(slotIdx, newSlot)
+      slotListBuf.update(slotIdx, newSlot)
     fireReadyEvents()
   }
 
@@ -169,9 +167,9 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
     val slot = slotMap(suiteId)
     val newSlot = slot.copy(includesDistributedTests = true)
     slotMap.put(suiteId, newSlot)
-    val slotIdx = slotList.indexOf(slot)
+    val slotIdx = slotListBuf.indexOf(slot)
     if (slotIdx >= 0)
-      slotList.update(slotIdx, newSlot)
+      slotListBuf.update(slotIdx, newSlot)
   }
 /*
   def distributingTests(suiteId: String, timeout: Span, testCount: Int) = {

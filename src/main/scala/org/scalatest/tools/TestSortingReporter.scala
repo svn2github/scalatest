@@ -48,6 +48,10 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
   }
 
   def apply(testName: String, event: Event) {
+    if (testName == null)
+      throw new NullPointerException("testName was null")
+    if (event == null)
+      throw new NullPointerException("event was null")
     synchronized {
       event match {
         case _: InfoProvided | _: MarkupProvided =>  // This can happen if there's an info in before or after. Inside the test these will be recorded. Oh, it will also happen if multi-threaded info's going out from the test.

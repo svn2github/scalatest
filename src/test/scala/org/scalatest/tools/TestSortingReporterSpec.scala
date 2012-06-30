@@ -3,15 +3,15 @@ package org.scalatest.tools
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSpec
 import org.scalatest.SharedHelpers.EventRecordingReporter
-import org.scalatest.events.Ordinal
-import org.scalatest.events.ScopeOpened
-import org.scalatest.events.NameInfo
-import org.scalatest.events.TestStarting
-import org.scalatest.events.TestSucceeded
-import org.scalatest.events.ScopeClosed
+import org.scalatest.events._
 import org.scalatest.time.Span
 import org.scalatest.time.Seconds
 import org.scalatest.Tracker
+import scala.Some
+import org.scalatest.events.ScopeClosed
+import org.scalatest.events.TestStarting
+import org.scalatest.events.ScopeOpened
+import org.scalatest.events.TestSucceeded
 
 class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
 
@@ -244,6 +244,14 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
       dispatch.distributingTest(s1s2t2Starting.testName)
       dispatch.completedTest(s1s2t2Starting.testName)
       evaluating { dispatch.distributingTest(s1s2t2Starting.testName) } should produce [IllegalArgumentException]
+    }
+
+    it("should throw an NPE from apply(String, Event) if null is passed for either param") {
+      val recordingReporter = new EventRecordingReporter()
+      val tsr = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
+      evaluating { tsr.apply(null, scope1Opened) } should produce [NullPointerException]
+      evaluating { tsr.apply("howdy", null) } should produce [NullPointerException]
+      evaluating { tsr.apply(null, null) } should produce [NullPointerException]
     }
   }
 }
