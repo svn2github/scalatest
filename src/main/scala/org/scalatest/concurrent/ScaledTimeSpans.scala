@@ -180,9 +180,13 @@ trait ScaledTimeSpans {
   final def scaled(span: Span): Span = span scaledBy spanScaleFactor
 
   /**
-   * The factor by which the <code>scaled<code> method will scale <code>Span</code>s.
+   * The factor by which the <code>scaled</code> method will scale <code>Span</code>s.
    *
-   * The default implementation of this method...
+   * <p>
+   * The default implementation of this method will return the <em>span scale factor</em> that 
+   * was specified for the run, or 1.0 if no factor was specified. For example, you can specify a span scale factor when invoking ScalaTest
+   * via the command line by passing a <a href="../tools/Runner$.html#scalingTimeSpans"><code>-F</code> argument</a> to <a href="../tools/Runner$.html"><code>Runner</code></a>.
+   * </p>
    */
   def spanScaleFactor: Double = Runner.spanScaleFactor
 }
