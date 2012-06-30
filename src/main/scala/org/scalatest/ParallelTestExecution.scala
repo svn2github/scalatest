@@ -66,7 +66,6 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
       else {
         args.distributor match {  // This is the initial instance
           case Some(distributor) =>
-            // val testSortingReporter = new TestSortingReporter(args.reporter, sortingTimeout)
             val testSortingReporter = new TestSortingReporter(suiteId, args.reporter, sortingTimeout, testNames.size, args.distributedSuiteSorter)
             args.copy(reporter = testSortingReporter, distributedTestSorter = Some(testSortingReporter))
           case None =>
@@ -172,7 +171,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    *
    * <p>
    * The default implementation of this method returns the value specified via <code>-T</code> to
-   * <a href="tools/Runner$.html"></code>Runner</code></a>, or 15 seconds, if no <code>-T</code> was given.
+   * <a href="tools/Runner$.html"></code>Runner</code></a>, or 2 seconds, if no <code>-T</code> was given.
    * </p>
    *
    * @return a maximum amount of time to wait for events while resorting them into sequential order

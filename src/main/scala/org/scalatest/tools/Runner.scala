@@ -43,8 +43,49 @@ private[tools] case class SuiteParam(className: String, testNames: Array[String]
 private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[String], wildcardTestNames: Array[String])
 
 /**
- * <p>
  * Application that runs a suite of tests.
+ *
+ * <p>
+ * Note: this application offers the full range of ScalaTest features via command line arguments described below. If you just want
+ * to run a suite of tests from the command line and see results on the standard output, you may prefer to use <a href="../run$.html">ScalaTest's simple runner</a>.
+ * </p>
+ *
+ * <p>
+ * The basic form of a <code>Runner</code> invocation is:
+ * </p>
+ *
+ * <pre class="stExamples">
+ * scala [-cp scalatest-&lt;version&gt;.jar:...] org.scalatest.tools.Runner [arguments]
+ * </pre>
+ *
+ * <p>
+ * The arguments <code>Runner</code> accepts are described in the following table:
+ * </p>
+ *
+ * <table style="border-collapse: collapse; border: 1px solid black">
+ * <tr><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">argument</th><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">description</th><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">example</th></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-D<em>key</em>=<em>value</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">defines a key/value pair for the <a href="#configMapSection"><em>config map</em></a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-DmaxConnections=100</code></a></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-R <em>&lt;runpath elements&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">the <a href="#specifyingARunpath"><em>runpath</em></a> from which tests classes will be discovered and loaded<br/>(Note: only one <code>-R</code> allowed)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><em>Unix</em>: <code>-R target/classes:target/generated/classes</code><br/><em>Windows</em>: <code>-R target/classes;target/generated/classes</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-n &lt;tag name&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">tag to include (Note: only one tag name allowed per <code>-n</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-n UnitTests -n FastTests</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-l &lt;tag name&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">tag to exclude (Note: only one tag name allowed per <code>-l</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-l SlowTests -l PerfTests</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-P[integer thread count]</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">run in parallel, with optional thread count<br/>(Note: only one <code>-P</code> allowed)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-P</code> <em>or</em> <code>-P8</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-j &lt;JUnit class name&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">instantiate and run a JUnit class</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-j StackTests</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-s &lt;suite class name&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">instantiate and run the specified <a href="executingSuites">suite class</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-s com.company.project.StackSpec</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW &lt;XXX&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW &lt;XXX&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW &lt;XXX&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW &lt;XXX&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW &lt;XXX&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW &lt;XXX&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW &lt;XXX&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW &lt;XXX&gt;</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
+ * </table>
+ *
+ * <p>
+ * Mathias Doenitz
+ * </p>
+ *
+ * <p>
  * The application accepts command line arguments that specify optional <em>config map</em> (key-value pairs), an optional 
  * <em>runpath</em>, zero to many <code>Reporter</code>s, optional lists of tags to include and/or exclude, zero to many
  * <code>Suite</code> class names, zero to many "members-only" <code>Suite</code> paths, zero to many "wildcard" <code>Suite</code> paths,
@@ -58,6 +99,7 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * [-n &lt;includes&gt;] [-l &lt;excludes&gt;] [-P] [-s &lt;suite class name&gt;
  * [...]] [-j &lt;junit class name&gt; [...]] [-m &lt;members-only suite path&gt;
  * [...]] [-w &lt;wildcard suite path&gt; [...]] [-q &lt;suffixes&gt;] [-Q] [-y &lt;chosen styles&gt;]
+ * [-F span scale factor] [-T sorting timeout]
  * [-b &lt;TestNG config file path&gt; [...]]
  * </pre>
  *
@@ -70,6 +112,14 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * <p>
  * Given the previous command, <code>Runner</code> will discover and execute all <code>Suite</code>s in the <code>compiled_tests</code> directory and its subdirectories,
  * and show results in graphical user interface (GUI).
+ * </p>
+ *
+ * <a name="executingSuites"></a>
+ * <h2>Executing suites</h2>
+ *
+ * <p>
+ * Each <code>-s</code> argument must be followed by one and only one fully qualified class name. The class must either extend <code>Suite</code> and
+ * have a public, no-arg constructor, or be annotated by a valid <code>WrapWith</code> annotation.
  * </p>
  *
  * <a name="configMapSection"></a>
@@ -512,7 +562,7 @@ object Runner {
 
   private final val DefaultNumFilesToArchive = 2
 
-  @volatile private[scalatest] var testSortingReporterTimeout = Span(15, Seconds)
+  @volatile private[scalatest] var testSortingReporterTimeout = Span(2, Seconds)
   
   //                     TO
   // We always include a PassFailReporter on runs in order to determine

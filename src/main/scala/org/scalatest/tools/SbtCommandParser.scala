@@ -3,7 +3,7 @@ package org.scalatest.tools
 import scala.util.parsing.combinator.syntactical.StandardTokenParsers
 import scala.util.parsing.combinator.lexical.StdLexical
 
-class SbtCommandParser extends StandardTokenParsers {
+private[scalatest] class SbtCommandParser extends StandardTokenParsers {
 
   lexical.delimiters ++= List("(", ")", "--", ",", "=", "\"")
   lexical.reserved ++= List("st", "include", "exclude", "membersonly", "wildcard", "suite", "junit", "testng", "dashboard", "file", "filename",
@@ -95,7 +95,7 @@ class SbtCommandParser extends StandardTokenParsers {
 */
 }
 
-object SbtCommandParser {
+private[scalatest] object SbtCommandParser {
   def main(args: Array[String]) {
     
     (new SbtCommandParser).parseCommand("""st""")

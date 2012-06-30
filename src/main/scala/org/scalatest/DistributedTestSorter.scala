@@ -46,6 +46,13 @@ trait DistributedTestSorter {
    */
   def distributingTest(testName: String)
 
+  /**
+   * Report an event for a distributed test.
+   *
+   * @param testName the name of the distributed test that produced this event
+   * @param event the event to report
+   * @throws NullPointerException if either <code>testName</code> or <code>event</code> is null.
+   */
   def apply(testName: String, event: Event)
 
   /**
