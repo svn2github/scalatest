@@ -65,13 +65,13 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * <table style="border-collapse: collapse; border: 1px solid black">
  * <tr><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">argument</th><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">description</th><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">example</th></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-D<em>key</em>=<em>value</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">defines a key/value pair for the <a href="#configMapSection"><em>config map</em></a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-DmaxConnections=100</code></a></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-R <em>&lt;runpath elements&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">the <a href="#specifyingARunpath"><em>runpath</em></a> from which tests classes will be discovered and loaded<br/>(Note: only one <code>-R</code> allowed)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><em>Unix</em>: <code>-R target/classes:target/generated/classes</code><br/><em>Windows</em>: <code>-R target\classes;target\generated\classes</code></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-n <em>&lt;tag name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#specifyingTagsToIncludeAndExclude">tag to include</a> (Note: only one tag name allowed per <code>-n</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-n UnitTests -n FastTests</code></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-l <em>&lt;tag name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#specifyingTagsToIncludeAndExclude">tag to exclude</a> (Note: only one tag name allowed per <code>-l</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-l SlowTests -l PerfTests</code></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-P<em>[integer thread count]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#executingSuitesInParallel">run in parallel</a>, with optional thread count<br/>(Note: only one <code>-P</code> allowed)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-P</code> <em>or</em> <code>-P8</code></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-s <em>&lt;suite class name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">instantiate and run the specified <a href="executingSuites">suite class</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-s com.company.project.StackSpec</code></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-m <em>&lt;members-only package&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">discover and run suites that are <a href="#membersOnlyWildcard">members of<br/>the specified package</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-m com.company.project</code></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-w <em>&lt;wildcard package&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">discover and run suite classes that are <a href="#membersOnlyWildcard">members of<br/>the specified package or its subpackages</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-w com.company.project</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-R <em>&lt;runpath elements&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">the <a href="#specifyingARunpath">specifies the <em>runpath</em></a> from which tests classes will be<br/>discovered and loaded (Note: only one <code>-R</code> allowed)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><em>Unix</em>: <code>-R target/classes:target/generated/classes</code><br/><em>Windows</em>: <code>-R target\classes;target\generated\classes</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-n <em>&lt;tag name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#specifyingTagsToIncludeAndExclude">specifies a tag to include</a> (Note: only one tag name allowed per <code>-n</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-n UnitTests -n FastTests</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-l <em>&lt;tag name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#specifyingTagsToIncludeAndExclude">specifies a tag to exclude</a> (Note: only one tag name allowed per <code>-l</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-l SlowTests -l PerfTests</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-P<em>[integer thread count]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#executingSuitesInParallel">specifies a parallel run</a>, with optional thread count<br/>(Note: only one <code>-P</code> allowed)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-P</code> <em>or</em> <code>-P8</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-s <em>&lt;suite class name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">specifies a <a href="executingSuites">suite class</a> to run</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-s com.company.project.StackSpec</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-m <em>&lt;members-only package&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">requests that suites that are <a href="#membersOnlyWildcard">direct members of the specified package</a><br/> be discovered and run</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-m com.company.project</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-w <em>&lt;wildcard package&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">requests that suites that are <a href="#membersOnlyWildcard">members of the specified package or its subpackages</a><br/>be discovered and run</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-w com.company.project</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-q <em>&lt;suffixes&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">specify <a href="#specifyingSuffixesToDiscover">suffixes to discover</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-q Spec -q Suite</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-Q</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">discover only classes whose names end with <code>Spec</code> or <code>Suite</code><br/>(or other suffixes specified by <code>-q</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-Q</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-j <em>&lt;JUnit class name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">instantiate and run a <a href="#specifyingJUnitTests">JUnit test class</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-j StackTestClass</code></td></tr>
@@ -79,31 +79,13 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-F <em>&lt;span scale factor&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">a factor by which to <a href="#scalingTimeSpans">scale time spans</a><br/>(Note: only one <code>-F</code> is allowed)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-F 10</code> <em>or</em> <code>-F 2.5</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-T <em>&lt;sorting timeout&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">specifies a integer timeout (in seconds) for sorting the events of<br/>parallel runs back into sequential order</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-T 5</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-y <em>&lt;chosen styles&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">specifies <a href="#specifyingChosenStyles">chosen styles</a> for your project</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-y org.scalatest.FlatSpec</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-i <em>&lt;suite ID&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">specifies a <a href="selectingSuitesAndTests">suite to run by ID</a> (Note: must follow <code>-s</code>, <br/>and is intended to be used primarily by tools such as IDEs.)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-i com.company.project.FileSpec-file1.txt</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-t <em>&lt;test name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#selectingSuitesAndTests">select the test</a> with the specified name<br/>(Note: must follow <code>-s</code> or <code>-i</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-t "An empty Stack should complain when popped"</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-z <em>&lt;test name substring&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#selectingSuitesAndTests">select tests</a> whose names include the specified substring<br/>(Note: must follow <code>-s</code> or <code>-i</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-z "popped"</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW <em>&lt;XXX&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW <em>&lt;XXX&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>WWW <em>&lt;XXX&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">YYY</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>ZZZ</code></td></tr>
  * </table>
- *
- * <p>
- * Mathias Doenitz
- * </p>
- *
- * <p>
- * The application accepts command line arguments that specify optional <em>config map</em> (key-value pairs), an optional 
- * <em>runpath</em>, zero to many <code>Reporter</code>s, optional lists of tags to include and/or exclude, zero to many
- * <code>Suite</code> class names, zero to many "members-only" <code>Suite</code> paths, zero to many "wildcard" <code>Suite</code> paths,
- * and zero to many TestNG XML config file paths.
- * All of these arguments are described in more detail below. Here's a summary:
- * </p>
- *
- * <pre class="stExamples">
- * scala [-classpath scalatest-&lt;version&gt;.jar:...] org.scalatest.tools.Runner
- * [-D&lt;key&gt;=&lt;value&gt; [...]] [-R &lt;runpath&gt;] [reporter [...]]
- * [-n &lt;includes&gt;] [-l &lt;excludes&gt;] [-P] [-s &lt;suite class name&gt;
- * [...]] [-j &lt;junit class name&gt; [...]] [-m &lt;members-only suite path&gt;
- * [...]] [-w &lt;wildcard suite path&gt; [...]] [-q &lt;suffixes&gt;] [-Q] [-y &lt;chosen styles&gt;]
- * [-F span scale factor] [-T sorting timeout]
- * [-b &lt;TestNG config file path&gt; [...]]
- * </pre>
  *
  * <p>
  * The simplest way to start <code>Runner</code> is to specify the directory containing your compiled tests as the sole element of the runpath, for example:
@@ -523,6 +505,38 @@ private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[Str
  * Because ScalaTest is so customizable, a determined programmer could circumvent
  * the chosen styles check, but in practice <code>-y</code> should be persuasive enough tool
  * to keep most team members in line.
+ * </p>
+ *
+ * <a name="selectingSuitesAndTests"></a>
+ * <h2>Selecting suites and tests</h2>
+ *
+ * <p>
+ * <code>Runner</code> accepts three arguments that facilitate selecting suites and tests: <code>-i</code>, <code>-t</code>, and </code>-z</code>.
+ * The <code>-i</code> option enables a suite to be selected by suite ID. This argument is intended to allow tools such as IDEs or build tools to
+ * rerun specific tests or suites from information included in the results of a previous run.  A <code>-i</code> must follow a <code>-s</code>
+ * that specifies a class with a public, no-arg constructor. The <code>-i</code> parameter can be used, for example, to rerun a nested suite that
+ * declares no zero-arg constructor, which was created by containing suite that does declare a no-arg constructor. In this case, <code>-s</code> would be
+ * used to specify the class ScalaTest can instantiate directly, the containing suite that has a public, no-arg constructor, and <code>-i</code> would be
+ * used to select the desired nested suite. One important use case for <code>-i</code> is to enable such a nested suite that aborted during the previous run
+ * to be rerun. <!-- TODO: Need to point them to more info, maybe in AbstractSuite's rerunner method description? -->
+ * </p>
+ *
+ * <p>
+ * The <code>-t</code> argument allows a test to be selected by its (complete) test name. Like <code>-i</code>, the <code>-t</code> argument is primarily intented
+ * to be used by tools such as IDEs or build tools, to rerun selected tests based on information obtained from the results of a previous run.
+ * For example, <code>-t</code> could be used to rerun a test that failed in the previous run.
+ * The <code>-t</code> argument can be used directly by users, but because descriptive test names are usually rather long, the <code>-z</code> argument (described next), will
+ * usually be a more practical choice for users. A <code>-t</code> must follow either <code>-s</code> or <code>-i</code>, which identifies the suite
+ * to which the test belongs.
+ * </p>
+ *
+ * <p>
+ * The <code>-z</code> option allows tests to be selected by a simplified wildcard: any test whose name includes the substring specified after <code>-z</code>
+ * will be selected. For example, <code>-z popped</code> would select tests named <code>"An empty stack should complain when popped"</code> and <code>"A non-empty stack
+ * should return the last-pushed value when popped</code>, but not <code>"An empty stack should be empty"</code>. In short, <code>-z popped</code> would select any
+ * tests whose name includes the substring <code>"popped"</code>, and not select any tests whose names don't include <code>"popped"</code>. (Note: this simplified
+ * approach to test name wildcards works around the difficulty of finding an actual wildcard character that will work reliably on different operating systems. The
+ * <code>-z</code> argument was named after the last letter in the name of the user who suggested this approach: Mathias Doenitz.)
  * </p>
  *
  * <a name="scalingTimeSpans"></a>
