@@ -18,10 +18,10 @@ package org.scalatest
 import events.Event
 
 /**
- * Object used to sort events of one suite's distributed tests.
+ * A sorter for the events of a suite's distributed tests.
  *
  * <p>
- * This trait is used, for example, by <code>ParallelTestExecution</code> to sort the
+ * This trait is used, for example, by <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a> to sort the
  * events of tests back into sequential order, with a timeout if an event takes too long.
  * </p>
  */
