@@ -25,7 +25,7 @@ import java.util.concurrent.Future
  *
  * @author Bill Venners
  */
-private[scalatest] class ConcurrentDistributor(args: RunArgs, execSvc: ExecutorService) extends Distributor {
+private[scalatest] class ConcurrentDistributor(args: Args, execSvc: ExecutorService) extends Distributor {
 
   private val futureQueue = new LinkedBlockingQueue[Future[T] forSome { type T }]
 
@@ -33,7 +33,7 @@ private[scalatest] class ConcurrentDistributor(args: RunArgs, execSvc: ExecutorS
     apply(suite, args.copy(tracker = tracker))
   }
  
-  def apply(suite: Suite, args: RunArgs) {
+  def apply(suite: Suite, args: Args) {
     if (suite == null)
       throw new NullPointerException("suite is null")
     if (args == null)

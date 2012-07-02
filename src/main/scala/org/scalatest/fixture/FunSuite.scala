@@ -430,13 +430,13 @@ trait FunSuite extends Suite { thisSuite =>
    * Run a test. This trait's implementation runs the test registered with the name specified by <code>testName</code>.
    *
    * @param testName the name of one test to run.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws IllegalArgumentException if <code>testName</code> is defined but a test with that name does not exist on this <code>fixture.FunSuite</code>
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  protected override def runTest(testName: String, args: RunArgs) {
+  protected override def runTest(testName: String, args: Args) {
 
     def invokeWithFixture(theTest: TestLeaf) {
       theTest.testFun match {
@@ -461,12 +461,12 @@ trait FunSuite extends Suite { thisSuite =>
    */
   override def tags: Map[String, Set[String]] = atomic.get.tagsMap
 
-  protected override def runTests(testName: Option[String], args: RunArgs) {
+  protected override def runTests(testName: Option[String], args: Args) {
     runTestsImpl(thisSuite, testName, args, info, true, runTest)
   }
 
-  override def run(testName: Option[String], args: RunArgs) {
-    runImpl(thisSuite, testName, args: RunArgs, super.run)
+  override def run(testName: Option[String], args: Args) {
+    runImpl(thisSuite, testName, args: Args, super.run)
   }
 
   /**

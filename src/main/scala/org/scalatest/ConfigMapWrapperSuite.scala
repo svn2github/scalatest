@@ -107,13 +107,13 @@ final class ConfigMapWrapperSuite(clazz: Class[_ <: Suite]) extends Suite {
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in the <code>Suite</code>
    */
-  override def run(testName: Option[String], args: RunArgs) {
+  override def run(testName: Option[String], args: Args) {
     val constructor = clazz.getConstructor(classOf[Map[_, _]])
     val suite = constructor.newInstance(args.configMap)
     suite.run(testName, args)

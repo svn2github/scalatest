@@ -7,7 +7,7 @@ class LocationSuiteProp extends SuiteProp
   test("All suite types should have correct location in SuiteStarting, SuiteCompleted, SuiteAborted and TestFailed event.") {
     forAll(examples) { suite =>
       val reporter = new EventRecordingReporter
-      suite.run(None, RunArgs(reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+      suite.run(None, Args(reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
       val eventList = reporter.eventsReceived
       eventList.foreach { event => suite.checkFun(event) }
       suite.allChecked
@@ -35,7 +35,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends Suite {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -65,7 +65,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends StringFixtureSuite {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -100,7 +100,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends FunSuite {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -129,7 +129,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends StringFixtureFunSuite {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -158,7 +158,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends FunSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -187,7 +187,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends StringFixtureFunSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -218,7 +218,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends FeatureSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -254,7 +254,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends StringFixtureFeatureSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -287,7 +287,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends FlatSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -319,7 +319,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends StringFixtureFlatSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -352,7 +352,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends FreeSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -388,7 +388,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends StringFixtureFreeSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -421,7 +421,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends PropSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -453,7 +453,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends StringFixturePropSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -486,7 +486,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends WordSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }
@@ -522,7 +522,7 @@ class LocationSuiteProp extends SuiteProp
       }
     }
     class AbortNestedSuite extends StringFixtureWordSpec {
-      override protected def runNestedSuites(args: RunArgs) {
+      override protected def runNestedSuites(args: Args) {
         throw new RuntimeException
       }
     }

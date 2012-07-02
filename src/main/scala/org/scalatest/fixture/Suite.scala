@@ -508,7 +508,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
     TreeSet[String]() ++ testNameArray
   }
 
-  protected override def runTest(testName: String, args: RunArgs) {
+  protected override def runTest(testName: String, args: Args) {
 
     if (testName == null)
       throw new NullPointerException("testName was null")

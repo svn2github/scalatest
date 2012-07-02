@@ -202,7 +202,7 @@ class ConductorDeprecatedSuite extends FunSuite with ShouldMatchers with SharedH
     }
     val a = new MySuite
     val rep = new EventRecordingReporter
-    a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+    a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
     val tf = rep.testFailedEventsReceived
     tf.size should be === 1
     tf.head.throwable should be ('defined)
@@ -349,7 +349,7 @@ class ConductorDeprecatedSuite extends FunSuite with ShouldMatchers with SharedH
     }
 
     val a = new MySpec
-    a.run(None, RunArgs(SilentReporter,new Stopper {}, Filter(), Map.empty, None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter,new Stopper {}, Filter(), Map.empty, None, new Tracker, Set.empty))
     calledSuperWithFixtureNoArgTest should be (true)
   }
 
@@ -366,7 +366,7 @@ class ConductorDeprecatedSuite extends FunSuite with ShouldMatchers with SharedH
     }
 
     val a = new MySpec
-    a.run(None, RunArgs(SilentReporter,new Stopper {}, Filter(), Map.empty, None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter,new Stopper {}, Filter(), Map.empty, None, new Tracker, Set.empty))
     calledSuperWithFixtureNoArgTest should be (true)
   }
 }

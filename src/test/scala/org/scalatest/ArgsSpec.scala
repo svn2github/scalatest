@@ -3,8 +3,8 @@ package org.scalatest
 import matchers.ShouldMatchers
 import prop.TableDrivenPropertyChecks
 
-class RunArgsSpec extends WordSpec with TableDrivenPropertyChecks with ShouldMatchers with SharedHelpers with SeveredStackTraces {
-  "The RunArgs constructor" should {
+class ArgsSpec extends WordSpec with TableDrivenPropertyChecks with ShouldMatchers with SharedHelpers with SeveredStackTraces {
+  "The Args constructor" should {
     "throw NullPointerExcepion when passed a null" in {
 
       val rep = SilentReporter
@@ -29,7 +29,7 @@ class RunArgsSpec extends WordSpec with TableDrivenPropertyChecks with ShouldMat
 
       forAll (invalidCombos) { (reporter, stopper, filter, configMap, distributor, tracker, chosenStyles) =>
         evaluating {
-          RunArgs(reporter, stopper, filter, configMap, distributor, tracker, chosenStyles)
+          Args(reporter, stopper, filter, configMap, distributor, tracker, chosenStyles)
         } should produce [NullPointerException]
       }
     }
@@ -39,7 +39,7 @@ class RunArgsSpec extends WordSpec with TableDrivenPropertyChecks with ShouldMat
     "call the new run method" in {
       class MySuite extends Suite {
         var newRunGotCalled = false
-        override def run(testName: Option[String], args: RunArgs) {
+        override def run(testName: Option[String], args: Args) {
           newRunGotCalled = true
         }
       }

@@ -158,7 +158,7 @@ trait BeforeAndAfterEach extends AbstractSuite {
    * exception, this method will complete abruptly with the exception thrown by <code>afterEach</code>.
    * </p>
   */
-  abstract protected override def runTest(testName: String, args: RunArgs) {
+  abstract protected override def runTest(testName: String, args: Args) {
 
     var thrownException: Option[Throwable] = None
 

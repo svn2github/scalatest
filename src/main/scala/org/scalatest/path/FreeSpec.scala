@@ -1094,12 +1094,12 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    * </p>
    *
    * @param testName the name of one test to execute.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  final protected override def runTest(testName: String, args: RunArgs) {
+  final protected override def runTest(testName: String, args: Args) {
 
     ensureTestResultsRegistered(thisSuite)
     
@@ -1160,13 +1160,13 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in this <code>Suite</code>
    */
-  final override def run(testName: Option[String], args: RunArgs) {
+  final override def run(testName: Option[String], args: Args) {
     // TODO enforce those throws specs
 
     ensureTestResultsRegistered(thisSuite)
@@ -1182,7 +1182,7 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    * <a href="#sharedFixtures">Shared fixtures</a> section in the main documentation for this trait.
    * </p>
    */
-  final protected override def runTests(testName: Option[String], args: RunArgs) {
+  final protected override def runTests(testName: Option[String], args: Args) {
     throw new UnsupportedOperationException
   }
 
@@ -1208,7 +1208,7 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    * <a href="#sharedFixtures">Shared fixtures</a> section in the main documentation for this trait.
    * </p>
    */
-  final protected override def runNestedSuites(args: RunArgs) {
+  final protected override def runNestedSuites(args: Args) {
   }
 
   /**

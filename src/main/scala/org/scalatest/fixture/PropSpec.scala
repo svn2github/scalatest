@@ -542,7 +542,7 @@ trait PropSpec extends Suite { thisSuite =>
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  protected override def runTest(testName: String, args: RunArgs) {
+  protected override def runTest(testName: String, args: Args) {
 
     def invokeWithFixture(theTest: TestLeaf) {
       theTest.testFun match {
@@ -567,11 +567,11 @@ trait PropSpec extends Suite { thisSuite =>
    */
   override def tags: Map[String, Set[String]] = atomic.get.tagsMap
 
-  protected override def runTests(testName: Option[String], args: RunArgs) {
+  protected override def runTests(testName: Option[String], args: Args) {
     runTestsImpl(thisSuite, testName, args, info, true, runTest)
   }
 
-  override def run(testName: Option[String], args: RunArgs) {
+  override def run(testName: Option[String], args: Args) {
     runImpl(thisSuite, testName, args, super.run)
   }
 

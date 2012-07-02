@@ -57,9 +57,9 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    */
-  protected abstract override def runTests(testName: Option[String], args: RunArgs) {
+  protected abstract override def runTests(testName: Option[String], args: Args) {
     val newArgs =
       if (args.runTestInNewInstance)
         args // This is the test-specific instance
@@ -90,9 +90,9 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    * </p>
    *
    * @param testName the name of one test to execute.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    */
-  final protected abstract override def runTest(testName: String, args: RunArgs) {
+  final protected abstract override def runTest(testName: String, args: Args) {
 
     if (args.runTestInNewInstance) {
       // In initial instance, so wrap the test in a DistributedTestRunnerSuite and pass it to the Distributor.
@@ -178,7 +178,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    */
   protected def sortingTimeout: Span = Runner.testSortingReporterTimeout
   
-  abstract override def run(testName: Option[String], args: RunArgs) {
+  abstract override def run(testName: Option[String], args: Args) {
     val newArgs = testName match {
       case Some(testName) => 
         args.distributedTestSorter match {

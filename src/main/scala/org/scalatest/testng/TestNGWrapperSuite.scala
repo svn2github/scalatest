@@ -56,9 +56,9 @@ class TestNGWrapperSuite(xmlSuiteFilenames: List[String]) extends TestNGSuite {
    * Runs TestNG with the XML config file or files provided to the primary constructor, passing reports to the specified <code>Reporter</code>.
    * 
    * @param testName If present (Some), then only the method with the supplied name is executed and groups will be ignored.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    */
-  override def run(testName: Option[String], args: RunArgs) {
+  override def run(testName: Option[String], args: Args) {
 
     import args._
 

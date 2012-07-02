@@ -46,25 +46,25 @@ trait Distributor {
    *
    * @throws NullPointerException if either <code>suite</code> or <code>tracker</code> is <code>null</code>.
    */
-  @deprecated("Please use the apply method that takes a RunArgs instead, the one with this signature: def apply(Suite, RunArgs)")
+  @deprecated("Please use the apply method that takes a Args instead, the one with this signature: def apply(Suite, Args)")
   def apply(suite: Suite, tracker: Tracker)
 
   /**
    * Puts a <code>Suite</code> into the <code>Distributor</code>.
    *
    * <p>
-   * The <code>Distributor</code> can decide which, if any, of the passed <code>RunArgs</code
+   * The <code>Distributor</code> can decide which, if any, of the passed <code>Args</code
    * to pass to the <code>Suite</code>'s apply method. For example, a <code>Distributor</code>
-   * may pass itself wrapped in a <code>Some</code> in the <code>RunArgs</code> it passes to the <code>Suite</code>'s <code>run</code>
+   * may pass itself wrapped in a <code>Some</code> in the <code>Args</code> it passes to the <code>Suite</code>'s <code>run</code>
    * method instead of the <code>args.distributor</code> value.
    * </p>
    *
    * @param suite the <code>Suite</code> to put into the <code>Distributor</code>.
-   * @param args a <code>RunArgs</code> containing objects that may be passed to the <code>Suite</code>'s
-   *             <code>run</code> method via a <code>RunArgs</code> instance.
+   * @param args a <code>Args</code> containing objects that may be passed to the <code>Suite</code>'s
+   *             <code>run</code> method via a <code>Args</code> instance.
    *
    * @throws NullPointerException if either <code>suite</code> or <code>tracker</code> is <code>null</code>.
    */
-  def apply(suite: Suite, args: RunArgs)
+  def apply(suite: Suite, args: Args)
 }
 

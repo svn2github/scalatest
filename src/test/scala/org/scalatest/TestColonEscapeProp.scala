@@ -73,7 +73,7 @@ class TestColonEscapeProp extends FunSuite with TestColonEscapeExamples with Tab
   test("Suite and fixture.Suite should escape 'test:' prefix in its IndentedText's formattedText") {
     forAll(examples) { (suite, expected) =>
       val reporter = new EventRecordingReporter
-      suite.run(None, RunArgs(reporter))
+      suite.run(None, Args(reporter))
       assert(reporter.testSucceededEventsReceived.size === 1)
       val testSucceeded = reporter.testSucceededEventsReceived(0)
       testSucceeded.formatter match {
@@ -119,7 +119,7 @@ class NonTestColonEscapeProp extends FunSuite with NonTestColonEscapeExamples wi
   test("All others style trais besides Suite and fixture.Suite should not escape 'test:' prefix in its IndentedText's formattedText") {
     forAll(examples) { (suite, expected) =>
       val reporter = new EventRecordingReporter
-      suite.run(None, RunArgs(reporter))
+      suite.run(None, Args(reporter))
       assert(reporter.testSucceededEventsReceived.size === 1)
       val testSucceeded = reporter.testSucceededEventsReceived(0)
       testSucceeded.formatter match {

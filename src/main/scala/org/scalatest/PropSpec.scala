@@ -441,13 +441,13 @@ trait PropSpec extends Suite { thisSuite =>
    * Run a test. This trait's implementation runs the test registered with the name specified by <code>testName</code>.
    *
    * @param testName the name of one test to run.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws IllegalArgumentException if <code>testName</code> is defined but a test with that name does not exist on this <code>PropSpec</code>
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  protected override def runTest(testName: String, args: RunArgs) {
+  protected override def runTest(testName: String, args: Args) {
 
     def invokeWithFixture(theTest: TestLeaf) {
       val theConfigMap = args.configMap
@@ -479,17 +479,17 @@ trait PropSpec extends Suite { thisSuite =>
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any of the passed parameters is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in this <code>Suite</code>
    */
-  protected override def runTests(testName: Option[String], args: RunArgs) {
+  protected override def runTests(testName: Option[String], args: Args) {
     runTestsImpl(thisSuite, testName, args, info, true, runTest)
   }
 
-  override def run(testName: Option[String], args: RunArgs) {
+  override def run(testName: Option[String], args: Args) {
     runImpl(thisSuite, testName, args, super.run)
   }
 

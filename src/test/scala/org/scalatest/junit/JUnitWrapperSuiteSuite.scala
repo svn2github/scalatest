@@ -50,7 +50,7 @@ package org.scalatest.junit {
                               this.getClass.getClassLoader)
       val repA = new MyReporter
 
-      jRap.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      jRap.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
 
       //
       // verify one of the TestStarting events
@@ -98,7 +98,7 @@ package org.scalatest.junit {
                               this.getClass.getClassLoader)
       val repA = new MyReporter
 
-      jRap.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      jRap.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
 
       //
       // verify the TestStarting event
@@ -132,7 +132,7 @@ package org.scalatest.junit {
                               this.getClass.getClassLoader)
       val repA = new MyReporter
 
-      jRap.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      jRap.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
 
       //
       // verify the TestStarting event
@@ -162,7 +162,7 @@ package org.scalatest.junit {
                                        this.getClass.getClassLoader)
       val repA = new MyReporter
 
-      jRap.run(None, RunArgs(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      jRap.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
 
       //
       // verify one of the TestStarting events

@@ -51,7 +51,7 @@ class JUnitWrapperSuite(junitClassName: String, loader: ClassLoader) extends Sui
   private var theTracker = new Tracker
   private val junitClass = Class.forName(junitClassName, false, loader)
 
-  override def run(testName: Option[String], args: RunArgs) {
+  override def run(testName: Option[String], args: Args) {
 
     import args._
 
@@ -148,11 +148,11 @@ class JUnitWrapperSuite(junitClassName: String, loader: ClassLoader) extends Sui
    * in behavior would very likely not work.
    * </p>
    *
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws UnsupportedOperationException always.
    */
-  override final protected def runNestedSuites(args: RunArgs) {
+  override final protected def runNestedSuites(args: Args) {
 
     throw new UnsupportedOperationException
   }
@@ -171,11 +171,11 @@ class JUnitWrapperSuite(junitClassName: String, loader: ClassLoader) extends Sui
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws UnsupportedOperationException always.
    */
-  override protected final def runTests(testName: Option[String], args: RunArgs) {
+  override protected final def runTests(testName: Option[String], args: Args) {
     throw new UnsupportedOperationException
   }
 
@@ -192,11 +192,11 @@ class JUnitWrapperSuite(junitClassName: String, loader: ClassLoader) extends Sui
    * </p>
    *
    * @param testName the name of one test to run.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws UnsupportedOperationException always.
    */
-  override protected final def runTest(testName: String, args: RunArgs) {
+  override protected final def runTest(testName: String, args: Args) {
         throw new UnsupportedOperationException
   }
 }

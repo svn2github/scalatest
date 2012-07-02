@@ -63,7 +63,7 @@ This is a paragraph later...
       "should send the markup unindented out the door" in {
         forAll (examples) { doc =>
           val rep = new EventRecordingReporter
-          doc.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+          doc.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
           val mp = rep.markupProvidedEventsReceived
           assert(mp.size === 1)
           val event = mp(0)
@@ -106,7 +106,7 @@ This is a paragraph later...
       }
       "should send a MarkupProvided event before and after running the nested suite" in {
         val reporter = new EventRecordingReporter
-        a.run(None, RunArgs(reporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+        a.run(None, Args(reporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
         val indexedList = reporter.eventsReceived
 println("##### " + indexedList)
       }

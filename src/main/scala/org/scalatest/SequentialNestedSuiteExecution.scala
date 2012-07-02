@@ -29,11 +29,11 @@ trait SequentialNestedSuiteExecution extends AbstractSuite { this: Suite =>
    * This trait's implementation of <code>runNestedSuites</code>s invokes <code>runNestedSuites</code> on <code>super</code>,
    * passing in <code>None</code> for the <code>Distributor</code>.
    *
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
-  abstract override protected def runNestedSuites(args: RunArgs) {
+  abstract override protected def runNestedSuites(args: Args) {
     if (args == null)
       throw new NullPointerException("args was null")
 

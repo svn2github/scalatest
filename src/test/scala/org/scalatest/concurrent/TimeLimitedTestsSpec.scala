@@ -31,7 +31,7 @@ class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelper
               test("plain old success") { assert(1 + 1 === 2) }
             }
           val rep = new EventRecordingReporter
-          a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+          a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
           val ts = rep.testSucceededEventsReceived
           ts.size should be (1)
         }
@@ -44,7 +44,7 @@ class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelper
               test("plain old failure") { assert(1 + 1 === 3) }
             }
           val rep = new EventRecordingReporter
-          a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+          a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
           val tf = rep.testFailedEventsReceived
           tf.size should be (1)
         }
@@ -58,7 +58,7 @@ class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelper
             test("time out failure") { Thread.sleep(500) }
           }
         val rep = new EventRecordingReporter
-        a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+        a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
         val tf = rep.testFailedEventsReceived
         tf.size should be (1)
         val tfe = tf(0)
@@ -75,7 +75,7 @@ class TimeLimitedTestsSpec extends FunSpec with ShouldMatchers with SharedHelper
             }
           }
         val rep = new EventRecordingReporter
-        a.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+        a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
         val tf = rep.testFailedEventsReceived
         tf.size should be (1)
         val tfe = tf(0)

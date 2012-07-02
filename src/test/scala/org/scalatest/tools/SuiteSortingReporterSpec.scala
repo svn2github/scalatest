@@ -6,7 +6,7 @@ import events._
 import events.SuiteCompleted
 import events.SuiteStarting
 import org.scalatest.SharedHelpers.EventRecordingReporter
-import org.scalatest.RunArgs
+import org.scalatest.Args
 
 class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHelpers {
 
@@ -35,14 +35,14 @@ class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHel
 
     reporter(SuiteStarting(tracker.nextOrdinal, spec1.suiteName, spec1.suiteId, Some(spec1.getClass.getName), None))
 
-    spec1.run(None, RunArgs(reporter, tracker = tracker, distributedSuiteSorter = dss))
+    spec1.run(None, Args(reporter, tracker = tracker, distributedSuiteSorter = dss))
     reporter(SuiteStarting(tracker.nextOrdinal, spec2.suiteName, spec2.suiteId, Some(spec2.getClass.getName), None))
-    spec2.run(None, RunArgs(reporter, tracker = tracker, distributedSuiteSorter = dss))
+    spec2.run(None, Args(reporter, tracker = tracker, distributedSuiteSorter = dss))
     spec1.batch = 1
-    spec1.run(None, RunArgs(reporter, tracker = tracker, distributedSuiteSorter = dss))
+    spec1.run(None, Args(reporter, tracker = tracker, distributedSuiteSorter = dss))
     reporter(SuiteCompleted(tracker.nextOrdinal, spec1.suiteName, spec1.suiteId, Some(spec1.getClass.getName), None))
     spec2.batch = 1
-    spec2.run(None, RunArgs(reporter, tracker = tracker, distributedSuiteSorter = dss))
+    spec2.run(None, Args(reporter, tracker = tracker, distributedSuiteSorter = dss))
     reporter(SuiteCompleted(tracker.nextOrdinal, spec2.suiteName, spec2.suiteId, Some(spec2.getClass.getName), None))
   }
 

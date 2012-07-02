@@ -17,8 +17,8 @@ package org.scalatest.tools
 
 import org.scalatest._
 
-private[scalatest] class DistributedTestRunnerSuite(suite: ParallelTestExecution, val testName: String, args: RunArgs) extends Suite {
-  override def run(ignoreThisTestName: Option[String], ignoreExceptForTheTracker: RunArgs) {
+private[scalatest] class DistributedTestRunnerSuite(suite: ParallelTestExecution, val testName: String, args: Args) extends Suite {
+  override def run(ignoreThisTestName: Option[String], ignoreExceptForTheTracker: Args) {
     suite.run(Some(testName), args.copy(tracker = ignoreExceptForTheTracker.tracker))
   }
 }

@@ -8,7 +8,7 @@ class LocationFunctionSuiteProp extends FunctionSuiteProp {
   test("Function suites should have correct LineInFile location in test events.") {
     forAll(examples) { suite =>
       val reporter = new EventRecordingReporter
-      suite.run(None, RunArgs(reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+      suite.run(None, Args(reporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
       val eventList = reporter.eventsReceived
       eventList.foreach { event => suite.checkFun(event) }
       suite.allChecked

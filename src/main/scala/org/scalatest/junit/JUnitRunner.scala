@@ -91,7 +91,7 @@ final class JUnitRunner(suiteClass: java.lang.Class[Suite]) extends org.junit.ru
    * this suite of tests
    */
   def run(notifier: RunNotifier) {
-    suiteToRun.run(None, RunArgs(new RunNotifierReporter(notifier), new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty)) // TODO: What should this Tracker be?
+    suiteToRun.run(None, Args(new RunNotifierReporter(notifier), new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty)) // TODO: What should this Tracker be?
   }
 
   /**

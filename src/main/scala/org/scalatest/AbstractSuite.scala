@@ -64,44 +64,44 @@ trait AbstractSuite { this: Suite =>
    *
    * @param testName an optional name of one test to execute. If <code>None</code>, all relevant tests should be executed.
    *                 I.e., <code>None</code> acts like a wildcard that means execute all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
-  def run(testName: Option[String], args: RunArgs)
+  def run(testName: Option[String], args: Args)
 
   /**
    * Runs zero to many of this suite's nested suites.
    *
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if <code>args</code> is <code>null</code>.
    */
-  protected def runNestedSuites(args: RunArgs)
+  protected def runNestedSuites(args: Args)
 
   /**
    * Runs zero to many of this suite's tests.
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if either <code>testName</code> or <code>args</code> is <code>null</code>.
    */
-  protected def runTests(testName: Option[String], args: RunArgs)
+  protected def runTests(testName: Option[String], args: Args)
 
   /**
    * Runs a test.
    *
    * @param testName the name of one test to execute.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>configMap</code>,
    *     or <code>tracker</code> is <code>null</code>.
    */
   protected def runTest(
     testName: String,
-    args: RunArgs
+    args: Args
   )
 
   /**
@@ -163,10 +163,10 @@ trait AbstractSuite { this: Suite =>
    * version of ScalaTest. Please use the <code>run</code> method that takes two parameters instead.</strong>
    *
    * <p>
-   * This final implementation of this method constructs a <code>RunArgs</code> instance from the passed
+   * This final implementation of this method constructs a <code>Args</code> instance from the passed
    * <code>reporter</code>, <code>stopper</code>, <code>filter</code>, <code>configMap</code>, <code>distributor</code>,
    * and <code>tracker</code>, and invokes the overloaded <code>run</code> method that takes two parameters,
-   * passing in the specified <code>testName</code> and the newly constructed <code>RunArgs</code>. This method
+   * passing in the specified <code>testName</code> and the newly constructed <code>Args</code>. This method
    * implementation enables existing code that called into the old <code>run</code> method to continue to work
    * during the deprecation cycle. Subclasses and subtraits that overrode this method, however, will need to
    * be changed to use the new two-parameter form instead.
@@ -193,6 +193,6 @@ trait AbstractSuite { this: Suite =>
     distributor: Option[Distributor],
     tracker: Tracker
   ) {  // TODO: test that this grabs chosenStyles out of config map
-    run(testName, RunArgs(reporter, stopper, filter, configMap, distributor, tracker, Set.empty))
+    run(testName, Args(reporter, stopper, filter, configMap, distributor, tracker, Set.empty))
   } 
 }

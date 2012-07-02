@@ -19,7 +19,7 @@ package org.scalatest
  * Container for run arguments.
  *
  * <p>
- * An instance of <code>RunArgs</code> is passed to the <code>run</code>, <code>runNestedSuites</code>, <code>runTests</code>, and <code>runTest</code> methods
+ * An instance of <code>Args</code> is passed to the <code>run</code>, <code>runNestedSuites</code>, <code>runTests</code>, and <code>runTest</code> methods
  * of trait <a href="AbstractSuite.html".<code>AbstractSuite</code></a>.
  * </p>
  *
@@ -41,7 +41,7 @@ package org.scalatest
  * @throws NullPointerException if any passed parameter is <code>null</code>.
  *
  */
-case class RunArgs(
+case class Args(
   reporter: Reporter,
   stopper: Stopper = Stopper.default,
   filter: Filter = Filter.default,

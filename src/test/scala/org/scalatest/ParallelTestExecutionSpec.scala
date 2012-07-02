@@ -27,8 +27,8 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHe
   describe("ParallelTestExecution") {
 
     class ControlledOrderDistributor extends Distributor {
-      val buf = ListBuffer.empty[(Suite, RunArgs)]
-      def apply(suite: Suite, args: RunArgs) {
+      val buf = ListBuffer.empty[(Suite, Args)]
+      def apply(suite: Suite, args: Args) {
         buf += ((suite, args))
       }
       def executeInOrder() {
@@ -50,7 +50,7 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHe
     class ControlledOrderConcurrentDistributor(poolSize: Int) extends Distributor {
       val buf = ListBuffer.empty[SuiteRunner]
       val execSvc: ExecutorService = Executors.newFixedThreadPool(2)
-      def apply(suite: Suite, args: RunArgs) {
+      def apply(suite: Suite, args: Args) {
         buf += new SuiteRunner(suite, args)
       }
       def executeInOrder() {
@@ -75,7 +75,7 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHe
 
         val recordingReporter = new EventRecordingReporter
         val outOfOrderDistributor = new ControlledOrderDistributor
-        (new ExampleParallelSpec).run(None, RunArgs(recordingReporter, distributor = Some(outOfOrderDistributor)))
+        (new ExampleParallelSpec).run(None, Args(recordingReporter, distributor = Some(outOfOrderDistributor)))
         fun(outOfOrderDistributor)
 
         val eventRecorded = recordingReporter.eventsReceived
@@ -108,7 +108,7 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHe
 
         val recordingReporter = new EventRecordingReporter
         val outOfOrderDistributor = new ControlledOrderDistributor
-        (new ExampleBeforeAfterParallelSpec).run(None, RunArgs(recordingReporter, distributor = Some(outOfOrderDistributor)))
+        (new ExampleBeforeAfterParallelSpec).run(None, Args(recordingReporter, distributor = Some(outOfOrderDistributor)))
         fun(outOfOrderDistributor)
 
         val eventRecorded = recordingReporter.eventsReceived
@@ -151,9 +151,9 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHe
     it("should have the blocking event fired without waiting when timeout reaches, and when the missing event finally reach later, it should just get fired") {
       def withDistributor(fun: ControlledOrderConcurrentDistributor => Unit) {
         val recordingReporter = new EventRecordingReporter
-        val args = RunArgs(recordingReporter)
+        val args = Args(recordingReporter)
         val outOfOrderConcurrentDistributor = new ControlledOrderConcurrentDistributor(2)
-        (new ExampleTimeoutParallelSpec).run(None, RunArgs(recordingReporter, distributor = Some(outOfOrderConcurrentDistributor)))
+        (new ExampleTimeoutParallelSpec).run(None, Args(recordingReporter, distributor = Some(outOfOrderConcurrentDistributor)))
         fun(outOfOrderConcurrentDistributor)
         Thread.sleep(3000)  // Get enough time for the timeout to reach, and the missing event to fire.
 
@@ -198,8 +198,8 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHe
         suiteSortingReporter(SuiteStarting(tracker.nextOrdinal, spec1.suiteName, spec1.suiteId, Some(spec1.getClass.getName), None))
         suiteSortingReporter(SuiteStarting(tracker.nextOrdinal, spec2.suiteName, spec2.suiteId, Some(spec2.getClass.getName), None))
         
-        spec1.run(None, RunArgs(suiteSortingReporter, distributor = Some(outOfOrderConcurrentDistributor), distributedSuiteSorter = Some(suiteSortingReporter)))
-        spec2.run(None, RunArgs(suiteSortingReporter, distributor = Some(outOfOrderConcurrentDistributor), distributedSuiteSorter = Some(suiteSortingReporter)))
+        spec1.run(None, Args(suiteSortingReporter, distributor = Some(outOfOrderConcurrentDistributor), distributedSuiteSorter = Some(suiteSortingReporter)))
+        spec2.run(None, Args(suiteSortingReporter, distributor = Some(outOfOrderConcurrentDistributor), distributedSuiteSorter = Some(suiteSortingReporter)))
         
         suiteSortingReporter(SuiteCompleted(tracker.nextOrdinal, spec1.suiteName, spec1.suiteId, Some(spec1.getClass.getName), None))
         suiteSortingReporter(SuiteCompleted(tracker.nextOrdinal, spec2.suiteName, spec2.suiteId, Some(spec2.getClass.getName), None))

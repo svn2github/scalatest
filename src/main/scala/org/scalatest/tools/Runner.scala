@@ -2066,14 +2066,14 @@ object Runner {
             val execSvc: ExecutorService = Executors.newFixedThreadPool(poolSize)
             try {
 
-              val distributor = new ConcurrentDistributor(RunArgs(dispatch, stopRequested, Filter(if (tagsToIncludeSet.isEmpty) None else Some(tagsToIncludeSet), tagsToExcludeSet), configMap, None, tracker, chosenStyleSet), execSvc)
+              val distributor = new ConcurrentDistributor(Args(dispatch, stopRequested, Filter(if (tagsToIncludeSet.isEmpty) None else Some(tagsToIncludeSet), tagsToExcludeSet), configMap, None, tracker, chosenStyleSet), execSvc)
               if (System.getProperty("org.scalatest.tools.Runner.forever", "false") == "true") {
 
                 while (true) {
                   for (suiteConfig <- suiteInstances) {
                     val tagsToInclude = if (suiteConfig.requireSelectedTag) tagsToIncludeSet ++ Set(SELECTED_TAG) else tagsToIncludeSet
                     val filter = Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExcludeSet, suiteConfig.excludeNestedSuites, suiteConfig.dynaTags)
-                    val runArgs = RunArgs(dispatch, stopRequested, filter, configMap, Some(distributor), tracker.nextTracker, chosenStyleSet)
+                    val runArgs = Args(dispatch, stopRequested, filter, configMap, Some(distributor), tracker.nextTracker, chosenStyleSet)
                     distributor.apply(suiteConfig.suite, runArgs)
                   }
                   distributor.waitUntilDone()
@@ -2083,7 +2083,7 @@ object Runner {
                 for (suiteConfig <- suiteInstances) {
                   val tagsToInclude = if (suiteConfig.requireSelectedTag) tagsToIncludeSet ++ Set(SELECTED_TAG) else tagsToIncludeSet
                   val filter = Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExcludeSet, suiteConfig.excludeNestedSuites, suiteConfig.dynaTags)
-                  val runArgs = RunArgs(dispatch, stopRequested, filter, configMap, Some(distributor), tracker.nextTracker, chosenStyleSet)
+                  val runArgs = Args(dispatch, stopRequested, filter, configMap, Some(distributor), tracker.nextTracker, chosenStyleSet)
                   distributor.apply(suiteConfig.suite, runArgs)
                 }
                 distributor.waitUntilDone()
@@ -2097,7 +2097,7 @@ object Runner {
             for (suiteConfig <- suiteInstances) {
               val tagsToInclude = if (suiteConfig.requireSelectedTag) tagsToIncludeSet ++ Set(SELECTED_TAG) else tagsToIncludeSet
               val filter = Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExcludeSet, suiteConfig.excludeNestedSuites, suiteConfig.dynaTags)
-              val runArgs = RunArgs(dispatch, stopRequested, filter, configMap, None, tracker, chosenStyleSet)
+              val runArgs = Args(dispatch, stopRequested, filter, configMap, None, tracker, chosenStyleSet)
               val suiteRunner = new SuiteRunner(suiteConfig.suite, runArgs)
               suiteRunner.run()
             }

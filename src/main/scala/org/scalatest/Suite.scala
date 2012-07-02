@@ -1808,7 +1808,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       run(
         //if (testName != null) Some(testName) else None,
         Option(testName),
-        RunArgs(dispatch,
+        Args(dispatch,
         new Stopper {},
         filter,
         configMap,
@@ -2029,14 +2029,14 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * @param testName the name of one test to run.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>configMap</code>
    *     or <code>tracker</code> is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in this <code>Suite</code>
    */
-  protected def runTest(testName: String, args: RunArgs) {
+  protected def runTest(testName: String, args: Args) {
 
     if (testName == null)
       throw new NullPointerException("testName was null")
@@ -2171,13 +2171,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any of the passed parameters is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in this <code>Suite</code>
    */
-  protected def runTests(testName: Option[String], args: RunArgs) {
+  protected def runTests(testName: Option[String], args: Args) {
 
     if (testName == null)
       throw new NullPointerException("testName was null")
@@ -2267,13 +2267,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *         
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in this <code>Suite</code>
    */
-  def run(testName: Option[String], args: RunArgs) {
+  def run(testName: Option[String], args: Args) {
 
     if (testName == null)
       throw new NullPointerException("testName was null")
@@ -2344,11 +2344,11 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * or <code>SuiteAborted</code> after executing any nested <code>Suite</code>.
    * </p>
    *
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
-  protected def runNestedSuites(args: RunArgs) {
+  protected def runNestedSuites(args: Args) {
 
     if (args == null)
       throw new NullPointerException("args was null")
@@ -2374,7 +2374,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
         try { // TODO: pass runArgs down and that will get the chosenStyles passed down
           // Same thread, so OK to send same tracker
-          nestedSuite.run(None, RunArgs(report, stopRequested, filter, configMap, distributor, tracker, Set.empty))
+          nestedSuite.run(None, Args(report, stopRequested, filter, configMap, distributor, tracker, Set.empty))
 
           val rawString = Resources("suiteCompletedNormally")
           val formatter = formatterForSuiteCompleted(nestedSuite)

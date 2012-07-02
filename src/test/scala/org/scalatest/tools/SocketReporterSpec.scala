@@ -319,7 +319,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       eventRecorderThread.start()
       val spec = new TestSpec()
       val rep = new SocketReporter("localhost", socket.getLocalPort)
-      spec.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      spec.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       eventRecorder.stopped = true
       rep.dispose()
       eventually(timeout(Span(30, Seconds))) { assert(eventRecorder.ready) } // Wait until the receiver is ready

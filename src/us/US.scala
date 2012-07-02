@@ -13,7 +13,7 @@ class UnitedStates extends Suite {
 
   override def nestedSuites: IndexedSeq[Suite] = allStates.take(nestedSuiteCount).toIndexedSeq
 
-  override def run(testName: Option[String], args: RunArgs) {
+  override def run(testName: Option[String], args: Args) {
 
     if (nestedSuiteCount < allStates.length)
       nestedSuiteCount += 1
@@ -36,7 +36,7 @@ trait StateSuite extends Suite {
 
   override def tags: Map[String, Set[String]] = Map()
 
-  override def run(testName: Option[String], args: RunArgs) {
+  override def run(testName: Option[String], args: Args) {
 
     val testCount = testCounts(simpleName)
 
@@ -157,7 +157,7 @@ trait StateSuite extends Suite {
     val formatter = getIndentedText(testName, 1, true)
     report(TestFailed(tracker.nextOrdinal(), message, suiteName, suiteId, getDecodedName(suiteName), Some(getClass.getName), testName, testName, decodedTestName, Vector.empty, Some(throwable), Some(duration), Some(formatter), location, None))
   }
-  override def runTest(testName: String, args: RunArgs) {
+  override def runTest(testName: String, args: Args) {
 
     if (!testStatuses(simpleName)(testName).isInstanceOf[Ignored])
       reportTestStarting(this, args.reporter, args.tracker, testName, testName, getDecodedName(testName), None, None)

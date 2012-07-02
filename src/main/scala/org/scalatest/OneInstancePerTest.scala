@@ -72,9 +72,9 @@ trait OneInstancePerTest extends AbstractSuite {
    * </p>
    *
    * @param testName the name of one test to execute.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    */
-  protected abstract override def runTest(testName: String, args: RunArgs) {
+  protected abstract override def runTest(testName: String, args: Args) {
 
     if (args.runTestInNewInstance) {
       // In initial instance, so create a new test-specific instance for this test and invoke run on it.
@@ -103,13 +103,13 @@ trait OneInstancePerTest extends AbstractSuite {
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>RunArgs</code> for this run
+   * @param args the <code>Args</code> for this run
    *
    * @throws NullPointerException if any of the passed parameters is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in this <code>Suite</code>
    */
-  protected abstract override def runTests(testName: Option[String], args: RunArgs) {
+  protected abstract override def runTests(testName: Option[String], args: Args) {
 
 // TODO: Define a better exception to throw if RTINI is in the config map but testName is not defined.
     if (args.runTestInNewInstance) {

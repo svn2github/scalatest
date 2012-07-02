@@ -123,7 +123,7 @@ println("&&&&&&&&&&&")
     reportMarkupProvided(thisDoc, reporter, tracker, None, trimMarkup(stripMargin(body.text)), 0, true, None, None)
   }
 */
-  override protected def runNestedSuites(args: RunArgs) {
+  override protected def runNestedSuites(args: Args) {
 
     import args._
 

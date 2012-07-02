@@ -28,7 +28,7 @@ class CanVerbSuite extends FunSuite with SharedHelpers {
     }
     val suite = new MySpec
     val rep = new EventRecordingReporter
-    suite.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+    suite.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
     val testSucceededEvents = rep.testSucceededEventsReceived
     assert(testSucceededEvents.size === 2)
     assert(rep.testSucceededEventsReceived.head.testName === "A thingy can do this thing")
@@ -41,7 +41,7 @@ class CanVerbSuite extends FunSuite with SharedHelpers {
     }
     val suite = new MySpec
     val rep = new EventRecordingReporter
-    suite.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+    suite.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
     val testSucceededEvents = rep.testSucceededEventsReceived
     assert(testSucceededEvents.size === 2)
     assert(rep.testSucceededEventsReceived.head.testName === "A thingy can do this thing")
@@ -54,7 +54,7 @@ class CanVerbSuite extends FunSuite with SharedHelpers {
     }
     val suite = new MySpec
     val rep = new EventRecordingReporter
-    suite.run(None, RunArgs(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+    suite.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
     val testSucceededEvents = rep.testSucceededEventsReceived
     assert(testSucceededEvents.size === 2)
     assert(rep.testSucceededEventsReceived.head.testName === "A thingy can do this thing")

@@ -204,7 +204,7 @@ trait BeforeAndAfterAll  extends AbstractSuite {
    * exception, this method will complete abruptly with the same exception.
    * </p>
   */
-  abstract override def run(testName: Option[String], args: RunArgs) {
+  abstract override def run(testName: Option[String], args: Args) {
     var thrownException: Option[Throwable] = None
 
     beforeAll(args.configMap)

@@ -184,7 +184,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
   def runTestImpl(
     theSuite: Suite,
     testName: String,
-    args: RunArgs,
+    args: Args,
     includeIcon: Boolean,
     invokeWithFixture: TestLeaf => Unit
   ) {
@@ -284,9 +284,9 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
   private def runTestsInBranch(
     theSuite: Suite,
     branch: Branch,
-    args: RunArgs,
+    args: Args,
     includeIcon: Boolean,
-    runTest: (String, RunArgs) => Unit
+    runTest: (String, Args) => Unit
   ) {
 
     val stopRequested = args.stopper
@@ -343,10 +343,10 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
   def runTestsImpl(
     theSuite: Suite,
     testName: Option[String],
-    args: RunArgs,
+    args: Args,
     info: Informer,
     includeIcon: Boolean,
-    runTest: (String, RunArgs) => Unit
+    runTest: (String, Args) => Unit
   ) {
     if (testName == null)
       throw new NullPointerException("testName was null")
@@ -387,8 +387,8 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
   def runImpl(
     theSuite: Suite,
     testName: Option[String],
-    args: RunArgs,
-    superRun: (Option[String], RunArgs) => Unit
+    args: Args,
+    superRun: (Option[String], Args) => Unit
   ) {
     import args._
 
@@ -816,10 +816,10 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
   def runPathTestsImpl(
     theSuite: Suite,
     testName: Option[String],
-    args: RunArgs,
+    args: Args,
     info: Informer,
     includeIcon: Boolean,
-    runTest: (String, RunArgs) => Unit
+    runTest: (String, Args) => Unit
   ) {
     import args._
 
