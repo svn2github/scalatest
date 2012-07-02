@@ -29,7 +29,7 @@ import org.scalatest.events.TestStarting
 import org.scalatest.events.TestSucceeded
 import org.scalatest.events.TestFailed
 import org.scalatest.events.MotionToSuppress
-import Suite.getIndentedText
+import Suite.getIndentedTextForTest
 import Suite.getDecodedName
 import org.scalatest.events._
 import exceptions._
@@ -354,7 +354,7 @@ private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker) exte
     if (throwable == null)
       throw new NullPointerException("throwable was null")
 
-    val formatter = getIndentedText(testCase.toString, 1, true)
+    val formatter = getIndentedTextForTest(testCase.toString, 1, true)
     val suiteName = getSuiteNameForTestCase(testCase)
     val payload = 
       throwable match {
@@ -375,7 +375,7 @@ private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker) exte
     if (assertionFailedError == null)
       throw new NullPointerException("throwable was null")
 
-    val formatter = getIndentedText(testCase.toString, 1, true)
+    val formatter = getIndentedTextForTest(testCase.toString, 1, true)
     val suiteName = getSuiteNameForTestCase(testCase)
     report(TestFailed(tracker.nextOrdinal(), getMessageGivenThrowable(assertionFailedError, true), suiteName, testCase.getClass.getName, Some(testCase.getClass.getName), getDecodedName(suiteName), testCase.toString, testCase.toString, getDecodedName(testCase.toString), Vector.empty, Some(assertionFailedError), None, Some(formatter), Some(SeeStackDepthException), None))
 
@@ -389,7 +389,7 @@ private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker) exte
     if (!testHadFailed) {
       if (testCase == null)
         throw new NullPointerException("testCase was null")
-      val formatter = getIndentedText(testCase.toString, 1, true)
+      val formatter = getIndentedTextForTest(testCase.toString, 1, true)
       val suiteName = getSuiteNameForTestCase(testCase)
       report(TestSucceeded(tracker.nextOrdinal(), suiteName, testCase.getClass.getName, Some(testCase.getClass.getName), getDecodedName(suiteName), testCase.toString, testCase.toString, getDecodedName(testCase.toString), Vector.empty, None, Some(formatter), getTopOfMethod(testCase.getClass.getName, testCase.asInstanceOf[TestCase].getName)))
     }

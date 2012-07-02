@@ -522,7 +522,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
 
     reportTestStarting(thisSuite, report, tracker, testName, testName, getDecodedName(testName), thisSuite.rerunner, Some(getTopOfMethod(testName)))
 
-    val formatter = getIndentedText(testName, 1, true)
+    val formatter = getEscapedIndentedTextForTest(testName, 1, true)
 
     val messageRecorderForThisTest = new MessageRecorder(report)
     val informerForThisTest =
@@ -587,7 +587,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
           case e: TestCanceledException =>
             val duration = System.currentTimeMillis - testStartTime
             val message = getMessageForException(e)
-            val formatter = getIndentedText(testName, 1, true)
+            val formatter = getEscapedIndentedTextForTest(testName, 1, true)
             // testWasCanceled = true so info's printed out in the finally clause show up yellow
             report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), thisSuite.rerunner))
           case e if !anErrorThatShouldCauseAnAbort(e) =>

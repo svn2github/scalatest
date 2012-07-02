@@ -207,7 +207,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     reportTestStarting(theSuite, report, tracker, testName, theTest.testText, None, theSuite.rerunner, theTest.lineInFile)
 
     val testTextWithOptionalPrefix = prependChildPrefix(theTest.parent, theTest.testText)
-    val formatter = getIndentedText(testTextWithOptionalPrefix, theTest.indentationLevel, includeIcon)
+    val formatter = getIndentedTextForTest(testTextWithOptionalPrefix, theTest.indentationLevel, includeIcon)
 
     val messageRecorderForThisTest = new MessageRecorder(report)
     val informerForThisTest =

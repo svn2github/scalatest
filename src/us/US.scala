@@ -4,6 +4,7 @@ import scala.collection.mutable
 import org.scalatest.events._
 import scala.util.Random
 import scala.reflect.NameTransformer
+import org.scalatest.exceptions.TestCanceledException
 
 class UnitedStates extends Suite {
 

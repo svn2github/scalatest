@@ -17,7 +17,7 @@ package org.scalatest.testng
 
 import org.scalatest._
 import org.scalatest.events._
-import Suite.getIndentedText
+import Suite.getIndentedTextForTest
 import Suite.formatterForSuiteAborted
 import Suite.formatterForSuiteStarting
 import Suite.formatterForSuiteCompleted
@@ -251,7 +251,7 @@ trait TestNGSuite extends Suite { thisSuite =>
      */
     override def onTestSuccess(result: ITestResult) = {
       val testName = result.getName + params(result)
-      val formatter = getIndentedText(testName, 1, true)
+      val formatter = getIndentedTextForTest(testName, 1, true)
       report(TestSucceeded(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.getClass.getName, thisSuite.decodedSuiteName, Some(thisSuite.getClass.getName), testName, testName, 
           getDecodedName(testName), Vector.empty, None, Some(formatter), getTopOfMethod(thisSuite.getClass.getName, result.getName), Some(className))) // Can I add a duration?
     }
@@ -262,7 +262,7 @@ trait TestNGSuite extends Suite { thisSuite =>
      */
     override def onTestSkipped(result: ITestResult) = {
       val testName = result.getName + params(result)
-      val formatter = getIndentedText(testName, 1, true)
+      val formatter = getIndentedTextForTest(testName, 1, true)
       report(TestIgnored(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.getClass.getName, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), Some(formatter), getTopOfMethod(thisSuite.getClass.getName, result.getName)))
     }
 
@@ -274,7 +274,7 @@ trait TestNGSuite extends Suite { thisSuite =>
       val throwable = if (throwableOrNull != null) Some(throwableOrNull) else None
       val message = if (throwableOrNull != null && throwableOrNull.getMessage != null) throwableOrNull.getMessage else Resources("testNGConfigFailed")
       val testName = result.getName + params(result)
-      val formatter = getIndentedText(testName, 1, true)
+      val formatter = getIndentedTextForTest(testName, 1, true)
       val payload = 
       throwable match {
         case optPayload: PayloadField => 

@@ -38,7 +38,8 @@ import Suite.takesInformer
 import Suite.isTestMethodGoodies
 import Suite.testMethodTakesAnInformer
 import scala.collection.immutable.TreeSet
-import Suite.getIndentedText
+import Suite.getIndentedTextForTest
+import Suite.getEscapedIndentedTextForTest
 import Suite.getDecodedName
 import org.scalatest.events._
 import org.scalatest.tools.StandardOutReporter
@@ -2049,7 +2050,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
     reportTestStarting(this, report, tracker, testName, testName, getDecodedName(testName), rerunner, Some(getTopOfMethod(testName)))
 
-    val formatter = getIndentedText(testName, 1, true)
+    val formatter = getEscapedIndentedTextForTest(testName, 1, true)
 
     val messageRecorderForThisTest = new MessageRecorder(report)
     val informerForThisTest =
@@ -2094,7 +2095,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
           case e: TestCanceledException =>
             val duration = System.currentTimeMillis - testStartTime
             val message = getMessageForException(e)
-            val formatter = getIndentedText(testName, 1, true)
+            val formatter = getEscapedIndentedTextForTest(testName, 1, true)
             // testWasCanceled = true so info's printed out in the finally clause show up yellow
             report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, 
                                 testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(TopOfMethod(thisSuite.getClass.getName, method.toGenericString())), rerunner))
@@ -2306,7 +2307,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   private[scalatest] def handleFailedTest(throwable: Throwable, testName: String, recordedEvents: IndexedSeq[RecordableEvent], report: Reporter, tracker: Tracker, duration: Long) {
 
     val message = getMessageForException(throwable)
-    val formatter = getIndentedText(testName, 1, true)
+    val formatter = getEscapedIndentedTextForTest(testName, 1, true)
     val payload = 
       throwable match {
         case optPayload: PayloadField => 
@@ -2838,7 +2839,7 @@ without icons.
 This should really be named getIndentedTextForTest maybe, because I think it is just
 used for test events like succeeded/failed, etc.
   */
-  def getIndentedText(testText: String, level: Int, includeIcon: Boolean) = {
+  def getIndentedTextForTest(testText: String, level: Int, includeIcon: Boolean) = {
     val decodedTestText = NameTransformer.decode(testText)
     val formattedText =
       if (includeIcon) {
@@ -2847,6 +2848,24 @@ used for test events like succeeded/failed, etc.
       }
       else {
         ("  " * level) + decodedTestText
+      }
+    IndentedText(formattedText, decodedTestText, level)
+  }
+  
+  def getEscapedIndentedTextForTest(testText: String, level: Int, includeIcon: Boolean) = {
+    val decodedTestText = NameTransformer.decode(testText)
+    val escapedTestText = 
+      if (decodedTestText.startsWith("test: "))
+        decodedTestText.drop(6)
+      else
+        decodedTestText
+    val formattedText =
+      if (includeIcon) {
+        val testSucceededIcon = Resources("testSucceededIconChar")
+        ("  " * (if (level == 0) 0 else (level - 1))) + Resources("iconPlusShortName", testSucceededIcon, escapedTestText)
+      }
+      else {
+        ("  " * level) + escapedTestText
       }
     IndentedText(formattedText, decodedTestText, level)
   }
@@ -2899,7 +2918,7 @@ used for test events like succeeded/failed, etc.
       decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, level: Int, includeIcon: Boolean, location: Option[Location]) {
 
     val message = getMessageForException(throwable)
-    val formatter = getIndentedText(testText, level, includeIcon)
+    val formatter = getEscapedIndentedTextForTest(testText, level, includeIcon)
     val payload = 
       throwable match {
         case optPayload: PayloadField => 
@@ -2934,7 +2953,7 @@ used for test events like succeeded/failed, etc.
       decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, level: Int, includeIcon: Boolean, location: Option[Location]) {
 
     val message = getMessageForException(throwable)
-    val formatter = getIndentedText(testText, level, includeIcon)
+    val formatter = getEscapedIndentedTextForTest(testText, level, includeIcon)
     report(TestCanceled(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, recordedEvents, Some(throwable), Some(duration), Some(formatter), location, rerunnable))
   }
 

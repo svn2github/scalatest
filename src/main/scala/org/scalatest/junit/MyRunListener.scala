@@ -26,7 +26,7 @@ import org.scalatest.events._
 import java.util.Collections
 import java.util.HashSet
 import java.util.regex.Pattern
-import Suite.getIndentedText
+import Suite.getIndentedTextForTest
 import Suite.getDecodedName
 import org.scalatest.events.TopOfMethod
 import exceptions._
@@ -55,7 +55,7 @@ import exceptions._
         else
           Resources("jUnitTestFailed")
 
-      val formatter = getIndentedText(testName, 1, true)
+      val formatter = getIndentedTextForTest(testName, 1, true)
       val payload = 
         throwable match {
           case optPayload: PayloadField => 
@@ -71,7 +71,7 @@ import exceptions._
       if (!failedTests.contains(description.getDisplayName)) {
         val (testName, testClass, testClassName) =
           parseTestDescription(description)
-        val formatter = getIndentedText(testName, 1, true)
+        val formatter = getIndentedTextForTest(testName, 1, true)
         report(TestSucceeded(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), Vector.empty, None, Some(formatter), getTopOfMethod(testClass, testName)))
         // TODO: can I add a duration?
       }
