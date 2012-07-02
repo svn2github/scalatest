@@ -592,12 +592,12 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
             report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), thisSuite.rerunner))
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
-            handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, duration)
+            handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
           case e => throw e
         }
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
-        handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, duration)
+        handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
       case e => throw e
     }
   }

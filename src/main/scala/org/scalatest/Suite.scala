@@ -2101,12 +2101,12 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
                                 testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(TopOfMethod(thisSuite.getClass.getName, method.toGenericString())), rerunner))
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
-            handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, duration)
+            handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
           case e => throw e
         }
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
-        handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, duration)
+        handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
       case e => throw e  
     }
   }
@@ -2206,7 +2206,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         val (filterTest, ignoreTest) = filter(tn, tags, suiteId)
         if (!filterTest) {
           if (ignoreTest)
-            reportTestIgnored(thisSuite, report, tracker, tn, tn, getDecodedName(tn), 1, Some(getTopOfMethod(tn)))
+            reportTestIgnored(thisSuite, report, tracker, tn, tn, getDecodedName(tn), getEscapedIndentedTextForTest(tn, 1, true), Some(getTopOfMethod(tn)))
           else
             runTest(tn, newArgs)
         }
@@ -2215,7 +2215,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         for ((tn, ignoreTest) <- filter(theTestNames, tags, suiteId)) {
           if (!stopRequested()) {
             if (ignoreTest)
-              reportTestIgnored(thisSuite, report, tracker, tn, tn, getDecodedName(tn), 1, Some(getTopOfMethod(tn)))
+              reportTestIgnored(thisSuite, report, tracker, tn, tn, getDecodedName(tn), getEscapedIndentedTextForTest(tn, 1, true), Some(getTopOfMethod(tn)))
             else
               runTest(tn, newArgs)
           }
@@ -2304,10 +2304,10 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   }
 
   // TODO see if I can take away the [scalatest] from the private
-  private[scalatest] def handleFailedTest(throwable: Throwable, testName: String, recordedEvents: IndexedSeq[RecordableEvent], report: Reporter, tracker: Tracker, duration: Long) {
+  private[scalatest] def handleFailedTest(throwable: Throwable, testName: String, recordedEvents: IndexedSeq[RecordableEvent], report: Reporter, tracker: Tracker, formatter: Formatter, duration: Long) {
 
     val message = getMessageForException(throwable)
-    val formatter = getEscapedIndentedTextForTest(testName, 1, true)
+    //val formatter = getEscapedIndentedTextForTest(testName, 1, true)
     val payload = 
       throwable match {
         case optPayload: PayloadField => 
@@ -2915,10 +2915,10 @@ used for test events like succeeded/failed, etc.
   }
 
   def reportTestFailed(theSuite: Suite, report: Reporter, throwable: Throwable, testName: String, testText: String,
-      decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, level: Int, includeIcon: Boolean, location: Option[Location]) {
+      decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, formatter: Formatter, location: Option[Location]) {
 
     val message = getMessageForException(throwable)
-    val formatter = getEscapedIndentedTextForTest(testText, level, includeIcon)
+    //val formatter = getEscapedIndentedTextForTest(testText, level, includeIcon)
     val payload = 
       throwable match {
         case optPayload: PayloadField => 
@@ -2950,10 +2950,10 @@ used for test events like succeeded/failed, etc.
 */
 
   def reportTestCanceled(theSuite: Suite, report: Reporter, throwable: Throwable, testName: String, testText: String,
-      decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, level: Int, includeIcon: Boolean, location: Option[Location]) {
+      decodedTestName:Option[String], recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, formatter: Formatter, location: Option[Location]) {
 
     val message = getMessageForException(throwable)
-    val formatter = getEscapedIndentedTextForTest(testText, level, includeIcon)
+    //val formatter = getEscapedIndentedTextForTest(testText, level, includeIcon)
     report(TestCanceled(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, recordedEvents, Some(throwable), Some(duration), Some(formatter), location, rerunnable))
   }
 
@@ -2962,10 +2962,9 @@ used for test events like succeeded/failed, etc.
       location, rerunnable))
   }
 
-  def reportTestIgnored(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, decodedTestName:Option[String], level: Int, location: Option[Location]) {
+  def reportTestIgnored(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, decodedTestName:Option[String], formatter: Formatter, location: Option[Location]) {
     val testSucceededIcon = Resources("testSucceededIconChar")
-    val formattedText = indentation(level - 1) + Resources("iconPlusShortName", testSucceededIcon, testText)
-    report(TestIgnored(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, Some(IndentedText(formattedText, testText, level)),
+    report(TestIgnored(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), theSuite.decodedSuiteName, testName, testText, decodedTestName, Some(formatter),
       location))
   }
   

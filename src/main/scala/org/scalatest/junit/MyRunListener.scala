@@ -80,9 +80,8 @@ import exceptions._
     override def testIgnored(description: Description) {
       val (testName, testClass, testClassName) =
         parseTestDescription(description)
-      val testSucceededIcon = Resources("testSucceededIconChar")
-      val formattedText = Resources("iconPlusShortName", testSucceededIcon, testName)
-      report(TestIgnored(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), Some(IndentedText(formattedText, testName, 1)), getTopOfMethod(testClass, testName)))
+      val formatter = getIndentedTextForTest(testName, 1, true)
+      report(TestIgnored(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), Some(formatter), getTopOfMethod(testClass, testName)))
     }
 
     override def testRunFinished(result: Result) {
