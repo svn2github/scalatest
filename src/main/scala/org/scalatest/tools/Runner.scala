@@ -754,7 +754,7 @@ object Runner {
     val testNGList: List[String] = parseSuiteArgsIntoNameStrings(testNGArgsList, "-b")
     val chosenStyleSet: Set[String] = parseChosenStylesIntoChosenStyleSet(chosenStyles, "-y")
     spanScaleFactor = parseDoubleArgument(spanScaleFactors, "-F", 1.0)
-    testSortingReporterTimeout = Span(parseDoubleArgument(testSortingReporterTimeouts, "-T", 15.0), Seconds)
+    testSortingReporterTimeout = Span(parseDoubleArgument(testSortingReporterTimeouts, "-T", 2.0), Seconds)
 
     // If there's a graphic reporter, we need to leave it out of
     // reporterSpecs, because we want to pass all reporterSpecs except
