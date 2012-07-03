@@ -16,13 +16,25 @@
 package org.scalatest
 
 /**
- * Container for run arguments.
+ * Arguments bundle passed to four of ScalaTest's lifecycle methods: <code>run</code>, <code>runNestedSuites</code>,
+ * <code>runTests</code>, and <code>runTest</code>.
  *
  * <p>
- * An instance of <code>Args</code> is passed to the <code>run</code>, <code>runNestedSuites</code>, <code>runTests</code>, and <code>runTest</code> methods
- * of trait <a href="AbstractSuite.html".<code>AbstractSuite</code></a>.
+ * The signatures of these methods, defined in trait <a href="AbstractSuite.html"><code>AbstractSuite</code></a>, are:
  * </p>
  *
+ * <pre>
+ * def run(testName: Option[String], args: Args)
+ * def runNestedSuites(args: Args)
+ * def runTests(testName: Option[String], args: Args)
+ * def runTess(testName: String, args: Args)
+ * </pre>
+ *
+ * <p>
+ * The purpose of bundling these arguments into an <code>Args</code> object instead of passing them in individually is to make the signature
+ * of these four lifecycle methods easier to read, and write, and remember, to make the methods more pleasant to override in user code.
+ * </p>
+ * 
  * @param reporter the <code>Reporter</code> to which results will be reported
  * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
  * @param filter a <code>Filter</code> with which to filter tests based on their tags
