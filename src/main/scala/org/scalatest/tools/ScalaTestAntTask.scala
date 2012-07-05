@@ -243,6 +243,7 @@ class ScalaTestAntTask extends Task {
   private var suffixes:  String = null
 
   private var parallel      = false
+  private var sortSuites    = false
   private var haltonfailure = false
   private var fork          = false
   private var spanScaleFactor = 1.0
@@ -342,7 +343,7 @@ class ScalaTestAntTask extends Task {
   //
   private def addParallelArg(args: ListBuffer[String]) {
     if (parallel) {
-      args += "-P" + (if (numthreads > 0) ("" + numthreads) else "")
+      args += (if (sortSuites) "-PS" else "-P") + (if (numthreads > 0) ("" + numthreads) else "")
     }
   }
   
@@ -663,6 +664,13 @@ class ScalaTestAntTask extends Task {
    */
   def setParallel(parallel: Boolean) {
       this.parallel = parallel
+  }
+  
+  /**
+   * Sets value of the <code>sortSuites</code> attribute.
+   */
+  def setSortSuites(sortSuites: Boolean) {
+    this.sortSuites = sortSuites
   }
   
   /**

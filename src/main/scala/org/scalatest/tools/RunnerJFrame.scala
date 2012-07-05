@@ -88,7 +88,7 @@ private[scalatest] class RunnerJFrame(
   beginsWithList: List[String],
   testNGList: List[String],
   passFailReporter: Option[Reporter],
-  numThreads: Int,
+  concurrentConfig: ConcurrentConfig,
   suffixes: Option[Pattern],
   chosenStyleSet: Set[String]
 ) extends JFrame(Resources("ScalaTestTitle")) with RunDoneListener with RunnerGUI {
@@ -1463,7 +1463,7 @@ private[scalatest] class RunnerJFrame(
               loader,
               RunnerJFrame.this,
               nextRunStamp,
-              numThreads,
+              concurrentConfig,
               suffixes,
               chosenStyleSet
             )

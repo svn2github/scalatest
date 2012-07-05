@@ -1218,6 +1218,44 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
     val testSortingReporterTimeout = Runner.parseDoubleArgument(List("-T", "888"), "-T", 15.0)
     assert(spanScaleFactor === 888)
   }
+  
+  def testParseConcurrentConfig() {
+    val emptyConcurrentConfig = Runner.parseConcurrentConfig(List.empty)
+    assert(emptyConcurrentConfig.numThreads === 0)
+    assert(emptyConcurrentConfig.enableSuiteSortingReporter === false)
+    
+    val singleDashP = Runner.parseConcurrentConfig(List("-c"))
+    assert(singleDashP.numThreads === 0)
+    assert(singleDashP.enableSuiteSortingReporter === false)
+    
+    val multiDashP = Runner.parseConcurrentConfig(List("-c", "-c"))
+    assert(multiDashP.numThreads === 0)
+    assert(multiDashP.enableSuiteSortingReporter === false)
+    
+    val singleDashPThreadNum = Runner.parseConcurrentConfig(List("-c10"))
+    assert(singleDashPThreadNum.numThreads === 10)
+    assert(singleDashPThreadNum.enableSuiteSortingReporter === false)
+    
+    val multiDashPThreadNum = Runner.parseConcurrentConfig(List("-c10", "-c5"))
+    assert(multiDashPThreadNum.numThreads === 10)
+    assert(multiDashPThreadNum.enableSuiteSortingReporter === false)
+    
+    val singleDashPS = Runner.parseConcurrentConfig(List("-cS"))
+    assert(singleDashPS.numThreads === 0)
+    assert(singleDashPS.enableSuiteSortingReporter === true)
+    
+    val multiDashPS = Runner.parseConcurrentConfig(List("-c", "-cS"))
+    assert(multiDashPS.numThreads === 0)
+    assert(multiDashPS.enableSuiteSortingReporter === true)
+    
+    val singleDashPSThreadNum = Runner.parseConcurrentConfig(List("-cS8"))
+    assert(singleDashPSThreadNum.numThreads === 8)
+    assert(singleDashPSThreadNum.enableSuiteSortingReporter === true)
+    
+    val multipDashPSThreadNum = Runner.parseConcurrentConfig(List("-cS8", "-c10"))
+    assert(multipDashPSThreadNum.numThreads === 8)
+    assert(multipDashPSThreadNum.enableSuiteSortingReporter === true)
+  }
 
 /*
   def testRunpathPropertyAddedToPropertiesMap() {

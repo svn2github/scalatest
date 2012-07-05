@@ -253,5 +253,42 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
       evaluating { tsr.apply("howdy", null) } should produce [NullPointerException]
       evaluating { tsr.apply(null, null) } should produce [NullPointerException]
     }
+    
+    it("should timeout if a test with no event fired is blocking") {
+      val recordingReporter = new EventRecordingReporter()
+      val dispatch = new TestSortingReporter("aSuite", recordingReporter, Span(3, Seconds), 7, None)
+      
+      dispatch(scope1Opened)
+      dispatch(scope2Opened)
+      dispatch.distributingTest(s1s2t1Starting.testName)
+      dispatch.distributingTest(s1s2t2Starting.testName)
+      dispatch.distributingTest(s1s2t3Starting.testName)
+      Thread.sleep(4000)
+      dispatch("Scope 1 Scope 2 Test 2", s1s2t2Starting)
+      dispatch("Scope 1 Scope 2 Test 3", s1s2t3Starting)
+      dispatch("Scope 1 Scope 2 Test 3", s1s2t3Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 3")
+      dispatch("Scope 1 Scope 2 Test 2", s1s2t2Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 2")
+      
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Starting)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 1")
+      
+      dispatch(scope2Closed)
+      dispatch(scope1Closed)
+      
+      val recordedEvents = recordingReporter.eventsReceived
+      recordedEvents(0) should be (scope1Opened)
+      recordedEvents(1) should be (scope2Opened)
+      recordedEvents(2) should be (s1s2t2Starting)
+      recordedEvents(3) should be (s1s2t2Succeeded)
+      recordedEvents(4) should be (s1s2t3Starting)
+      recordedEvents(5) should be (s1s2t3Succeeded)
+      recordedEvents(6) should be (s1s2t1Starting)
+      recordedEvents(7) should be (s1s2t1Succeeded)
+      recordedEvents(8) should be (scope2Closed)
+      recordedEvents(9) should be (scope1Closed)
+    }
   }
 }

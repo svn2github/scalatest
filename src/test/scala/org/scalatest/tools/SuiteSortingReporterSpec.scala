@@ -7,6 +7,9 @@ import events.SuiteCompleted
 import events.SuiteStarting
 import org.scalatest.SharedHelpers.EventRecordingReporter
 import org.scalatest.Args
+import org.scalatest.time.Span
+import org.scalatest.time.Second
+import org.scalatest.time.Seconds
 
 class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHelpers {
 
@@ -184,7 +187,7 @@ class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHel
 
       val recordingReporter = new EventRecordingReporter()
 
-      val ssr = new SuiteSortingReporter(recordingReporter)
+      val ssr = new SuiteSortingReporter(recordingReporter, Span(5, Seconds))
 
       runSuites(ssr, Some(ssr))
 
@@ -304,6 +307,37 @@ class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHel
       checkInfoProvided(recordedEvents(113), "In After")
       checkScopeClosed(recordedEvents(114), "Thing 2")
       checkSuiteCompleted(recordedEvents(115), "org.scalatest.RunInSpurtsSpec2")
+    }
+    
+    it("should fire blocking suite's events when timeout, and just fire the missing event directly without waiting when received later.") {
+      val recordingReporter = new EventRecordingReporter()
+      val dispatch = new SuiteSortingReporter(recordingReporter, Span(1, Second))
+      
+      val tracker = new Tracker()
+      
+      dispatch(SuiteStarting(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), None))
+      dispatch(SuiteStarting(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), None))
+      dispatch(TestStarting(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), None, "Suite 2 Test", "Suite 2 Test", None))
+      dispatch(SuiteCompleted(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), None))
+      dispatch(TestStarting(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), None, "Suite 1 Test", "Suite 1 Test", None))
+      dispatch(TestSucceeded(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), None, "Suite 1 Test", "Suite 1 Test", None, Vector.empty))
+      dispatch(TestSucceeded(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), None, "Suite 2 Test", "Suite 2 Test", None, Vector.empty))
+      
+      Thread.sleep(1500) // Wait for the SuiteSortingReporter timeout, which is 1 second (set above)
+      dispatch(SuiteCompleted(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), None))
+      
+      val recordedEvents = recordingReporter.eventsReceived
+      assert(recordedEvents.size === 8)
+      checkSuiteStarting(recordedEvents(0), "suite1")
+      checkTestStarting(recordedEvents(1), "Suite 1 Test")
+      checkTestSucceeded(recordedEvents(2), "Suite 1 Test")
+      // From here the SuiteCompleted from Suite 1 will not come until after timeout, after timeout, Suite 2 events will go out first.
+      checkSuiteStarting(recordedEvents(3), "suite2")
+      checkTestStarting(recordedEvents(4), "Suite 2 Test")
+      checkTestSucceeded(recordedEvents(5), "Suite 2 Test")
+      checkSuiteCompleted(recordedEvents(6), "suite2")
+      // Now this guy finally arrive
+      checkSuiteCompleted(recordedEvents(7), "suite1")
     }
   }
 }

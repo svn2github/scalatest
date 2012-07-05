@@ -6,29 +6,46 @@ import DispatchReporter.propagateDispose
 import scala.collection.mutable.ListBuffer
 import scala.annotation.tailrec
 import org.scalatest.time.Span
+import java.util.Timer
+import java.util.TimerTask
 
-private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends ResourcefulReporter with DistributedSuiteSorter {
+private[scalatest] class SuiteSortingReporter(dispatch: Reporter, sortingTimeout: Span) extends ResourcefulReporter with DistributedSuiteSorter {
 
-  case class Slot(suiteId: String, doneEvent: Option[Event], includesDistributedTests: Boolean, testsCompleted: Boolean)
+  case class Slot(suiteId: String, doneEvent: Option[Event], includesDistributedTests: Boolean, testsCompleted: Boolean, ready: Boolean)
 
   @volatile private var slotListBuf = new ListBuffer[Slot]()
   private val slotMap = collection.mutable.HashMap[String, Slot]()
   // suiteEventMap is suite Id -> events for that suite (should be a Vector)
   private val suiteEventMap = collection.mutable.HashMap[String, Vector[Event]]()
+  
+  // Passed slot will always be the head of waitingBuffer
+  class TimeoutTask(val slot: Slot) extends TimerTask {
+    override def run() {
+      timeout()
+    }
+  }
+  
+  private val timer = new Timer
+  private var timeoutTask: Option[TimeoutTask] = None
 
   override def apply(event: Event) {
     try {
       synchronized {
         event match {
           case suiteStarting: SuiteStarting =>
-            val slot = Slot(suiteStarting.suiteId, None, false, false)
-            slotListBuf += slot // Why put this in the ListBuffer then throw an exception?
-            slotMap.get(suiteStarting.suiteId) match {
-              case Some(slot) =>
-                throw new RuntimeException("2 SuiteStarting (" + slot.suiteId + ", " + suiteStarting.suiteId + ") having same suiteId '" + suiteStarting.suiteId + "'.")
-              case None =>
-                slotMap.put(suiteStarting.suiteId, slot)
+            // if distributingTests is called (in case of the suite is ParallelTestExecution), the slot is already exists
+            val slot = slotMap.get(suiteStarting.suiteId) match {
+              case Some(s) => s
+              case None => 
+                val newSlot = Slot(suiteStarting.suiteId, None, false, false, false)
+                slotMap.put(suiteStarting.suiteId, newSlot)
+                newSlot
             }
+            slotListBuf += slot
+            // if it is the head, we should start the timer, because it is possible that this slot has no event coming later and it keeps blocking 
+            // without the timer.
+            if (slotListBuf.size == 1) 
+              scheduleTimeoutTask()
             handleTestEvents(suiteStarting.suiteId, suiteStarting)
 
           case suiteCompleted: SuiteCompleted =>
@@ -82,23 +99,30 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
   // Handles just SuiteCompleted and SuiteAborted
   private def handleSuiteEvents(suiteId: String, event: Event) {
     val slot = slotMap(suiteId)
-    //slot.doneEvent = Some(event)
-    val newSlot = slot.copy(doneEvent = Some(event))  // Assuming here that a done event hasn't already arrived
+    val newSlot = slot.copy(doneEvent = Some(event), ready = (if (slot.includesDistributedTests) slot.testsCompleted else true))  // Assuming here that a done event hasn't already arrived
     slotMap.put(suiteId, newSlot)                     // Probably should fail on the second one
     val slotIdx = slotListBuf.indexOf(slot)
     if (slotIdx >= 0)                                 // In what case would it not be there?
       slotListBuf.update(slotIdx, newSlot)  // Why not fire ready events here? Oh, at end of apply
+    else
+      dispatch(event)  // could happens after timeout
   }
   // Handles SuiteStarting, TestStarting, TestIgnored, TestSucceeded, TestFailed, TestPending,
   // TestCanceled, InfoProvided, MarkupProvided, ScopeOpened, ScopeClosed.
   private def handleTestEvents(suiteId: String, event: Event) {
-    suiteEventMap.get(suiteId) match { // Can probably use the transform or some such method
-      case Some(eventList) =>
-        suiteEventMap.put(suiteId, eventList :+ event)
-      case None =>                                     // oldest events at front of vector
-        suiteEventMap.put(suiteId, Vector(event))
+    val slot = slotMap(suiteId)
+    val slotIdx = slotListBuf.indexOf(slot)
+    if (slotIdx >= 0) {
+      // Only keep the events if the slot is still in slotListBuf
+      suiteEventMap.get(suiteId) match { // Can probably use the transform or some such method
+        case Some(eventList) =>
+          suiteEventMap.put(suiteId, eventList :+ event)
+        case None =>                                     // oldest events at front of vector
+          suiteEventMap.put(suiteId, Vector(event))
+      }
     }
-    fireReadyEvents() // Then if at end of apply, why have it here too?
+    else
+      dispatch(event)
   }
 
   // Only called within synchronized
@@ -106,9 +130,12 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
     if (slotListBuf.size > 0) {
       val head = slotListBuf.head
       fireSuiteEvents(head.suiteId)
-      if (isDone(head)) {
-        dispatch(head.doneEvent.get)  // Assuming it is existing again.
+      if (head.ready) {
+        for (doneEvent<- head.doneEvent)
+          dispatch(doneEvent)
         slotListBuf = fireReadySuiteEvents(slotListBuf.tail)
+        if (slotListBuf.size > 0) 
+          scheduleTimeoutTask()
       }
     }
   }
@@ -124,23 +151,8 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
     }
   }
 
-  private def isDone(slot: Slot) = {
-    if (slot.includesDistributedTests)
-        slot.doneEvent.isDefined && slot.testsCompleted
-    else
-        slot.doneEvent.isDefined
-/*
-    slot.testSortingReporter match {    // This should just be a flag
-      case Some(testSortingReporter) => // Only look at testCompleted flag if there's a TSR
-        slot.doneEvent.isDefined && slot.testsCompleted
-      case None =>
-        slot.doneEvent.isDefined
-    }
-*/
-  }
-
   private def fireReadySuiteEvents(remainingSlotList: ListBuffer[Slot]): ListBuffer[Slot] = {
-    val (done, undone) = remainingSlotList.span(isDone(_)) // Grab all the done slots
+    val (done, undone) = remainingSlotList.span(_.ready) // Grab all the done slots
     done.foreach {
       slot =>
         fireSuiteEvents(slot.suiteId)
@@ -150,13 +162,15 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
   }
   
   def completedTests(suiteId: String) {
-    val slot = slotMap(suiteId)
-    val newSlot = slot.copy(testsCompleted = true)
-    slotMap.put(suiteId, newSlot)
-    val slotIdx = slotListBuf.indexOf(slot)
-    if (slotIdx >= 0)
-      slotListBuf.update(slotIdx, newSlot)
-    fireReadyEvents()
+    synchronized {
+      val slot = slotMap(suiteId)
+      val newSlot = slot.copy(testsCompleted = true, ready = slot.doneEvent.isDefined)
+      slotMap.put(suiteId, newSlot)
+      val slotIdx = slotListBuf.indexOf(slot)
+      if (slotIdx >= 0)
+        slotListBuf.update(slotIdx, newSlot)
+      fireReadyEvents()
+    }
   }
 
   // Will need a timeout. Hmm. Because can change it. Hmm. This is an issue. I wanted
@@ -164,27 +178,19 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
   // that's no prob. But if it is longer, then the suiteTimeout will timeout first. I think that's fine. I'll
   // just document that behavior.
   def distributingTests(suiteId: String) {
-    val slot = slotMap(suiteId)
-    val newSlot = slot.copy(includesDistributedTests = true)
-    slotMap.put(suiteId, newSlot)
-    val slotIdx = slotListBuf.indexOf(slot)
-    if (slotIdx >= 0)
-      slotListBuf.update(slotIdx, newSlot)
+    synchronized {
+      slotMap.get(suiteId) match {
+        case Some(slot) => 
+          val newSlot = slot.copy(includesDistributedTests = true)
+          slotMap.put(suiteId, newSlot)
+           val slotIdx = slotListBuf.indexOf(slot)
+          if (slotIdx >= 0)
+            slotListBuf.update(slotIdx, newSlot)
+        case None =>
+          slotMap.put(suiteId, Slot(suiteId, None, true, false, false))
+      }
+    }
   }
-/*
-  def distributingTests(suiteId: String, timeout: Span, testCount: Int) = {
-    val testSortingReporter = new TestSortingReporter(suiteId, this, timeout, testCount, Some(this))
-    val slot = slotMap(suiteId)
-    val newSlot = slot.copy(testSortingReporter = Some(testSortingReporter))
-    slotMap.put(suiteId, newSlot)
-    val slotIdx = slotList.indexOf(slot)
-    if (slotIdx >= 0)
-      slotList.update(slotIdx, newSlot)
-    testSortingReporter
-  }
-*/
-  
-  // def getDistributedTestSorter(suiteId: String) = slotMap(suiteId).testSortingReporter.get
 
   override def dispose() = {
     try {
@@ -195,6 +201,35 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter) extends Resour
         val stringToPrint = Resources("reporterDisposeThrew")
         System.err.println(stringToPrint)
         e.printStackTrace(System.err)
+    }
+  }
+  
+  // Also happening inside synchronized block
+  private def scheduleTimeoutTask() {
+    val head = slotListBuf.head  // Assumes waitingBuffer is non-empty. Put a require there to make that obvious.
+    timeoutTask match {
+        case Some(task) => 
+          if (head.suiteId != task.slot.suiteId) {
+            task.cancel()
+            timeoutTask = Some(new TimeoutTask(head)) // Replace the old with the new
+            timer.schedule(timeoutTask.get, sortingTimeout.millisPart)
+          }
+        case None => 
+          timeoutTask = Some(new TimeoutTask(head)) // Just create a new one
+          timer.schedule(timeoutTask.get, sortingTimeout.millisPart)
+      }
+  }
+  
+  private def timeout() {
+    synchronized {
+      if (slotListBuf.size > 0) {
+        val head = slotListBuf.head
+        if (timeoutTask.get.slot.suiteId == head.suiteId) { // Probably a double check, or just in case there's race condition
+          val newSlot = head.copy(ready = true) // Essentially, if time out, just say that one is ready. This test's events go out, and
+          slotListBuf.update(0, newSlot)
+        }
+        fireReadyEvents()
+      }
     }
   }
 }

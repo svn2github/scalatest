@@ -38,9 +38,11 @@ import scala.collection.mutable.ArrayBuffer
 import SuiteDiscoveryHelper._
 import org.scalatest.time.Span
 import org.scalatest.time.Seconds
+import org.scalatest.time.Millis
 
 private[tools] case class SuiteParam(className: String, testNames: Array[String], wildcardTestNames: Array[String], nestedSuites: Array[NestedSuiteParam])
 private[tools] case class NestedSuiteParam(suiteId: String, testNames: Array[String], wildcardTestNames: Array[String])
+private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSortingReporter: Boolean)
 
 /**
  * Application that runs a suite of tests.
@@ -748,7 +750,7 @@ object Runner {
     val tagsToInclude: Set[String] = parseCompoundArgIntoSet(includesArgsList, "-n")
     val tagsToExclude: Set[String] = parseCompoundArgIntoSet(excludesArgsList, "-l")
     val concurrent: Boolean = !concurrentList.isEmpty
-    val numThreads: Int = parseConcurrentNumArg(concurrentList)
+    val concurrentConfig: ConcurrentConfig = parseConcurrentConfig(concurrentList)
     val membersOnlyList: List[String] = parseSuiteArgsIntoNameStrings(membersOnlyArgsList, "-m")
     val wildcardList: List[String] = parseSuiteArgsIntoNameStrings(wildcardArgsList, "-w")
     val testNGList: List[String] = parseSuiteArgsIntoNameStrings(testNGArgsList, "-b")
@@ -816,7 +818,7 @@ object Runner {
             wildcardList,
             testNGList,
             passFailReporter,
-            numThreads,
+            concurrentConfig,
             suffixes,
             chosenStyleSet
           )
@@ -850,7 +852,7 @@ object Runner {
               loader,
               new RunDoneListener {},
               1,
-              numThreads,
+              concurrentConfig,
               suffixes,
               chosenStyleSet
             )
@@ -922,20 +924,30 @@ object Runner {
   //
   // Examines concurrent option arg to see if it contains an optional numeric
   // value representing the number of threads to use, e.g. -P10 for 10 threads.
+  // 
+  // It also examines for the 'S' argument, e.g. -PS or -PS10, which when specified,
+  // will enable the SuiteSortingReporter.
   //
   // It's possible for user to specify the -P option multiple times on the
   // command line, although it isn't particularly useful.  This method scans
   // through multiples until it finds one with a number appended and uses
-  // that.  If none have a number it just returns 0.
+  // that.  If none have a number it just returns 0.  If anyone of the -P comes 
+  // with the 'S' option, SuiteSortingReporter will be enabled.
   //
-  private[scalatest] def parseConcurrentNumArg(concurrentList: List[String]):
-  Int = {
-    val opt = concurrentList.find(_.matches("-c\\d+"))
-
-    opt match {
-      case Some(arg) => arg.replace("-c", "").toInt
+  private[scalatest] def parseConcurrentConfig(concurrentList: List[String]): ConcurrentConfig = {
+    val threadOpt = concurrentList.find(s => s.matches("-c\\d+") || s.matches("-cS\\d+"))
+    val numThreads = threadOpt match {
+      case Some(arg) => 
+        if (arg.startsWith("-cS"))
+          arg.substring(3).toInt
+        else
+          arg.substring(2).toInt
       case None      => 0
     }
+    
+    val enableSuiteSortingReporter = concurrentList.find(_.startsWith("-cS")).isDefined
+    
+    ConcurrentConfig(numThreads, enableSuiteSortingReporter)
   }
 
   //
@@ -1852,7 +1864,7 @@ object Runner {
     loader: ClassLoader,
     doneListener: RunDoneListener,
     runStamp: Int,
-    numThreads: Int,
+    concurrentConfig: ConcurrentConfig,
     suffixes: Option[Pattern],
     chosenStyleSet: Set[String]
   ) = { // TODO, either put a type on here or do procedure style if Unit
@@ -1890,7 +1902,7 @@ object Runner {
     var tracker = new Tracker(new Ordinal(runStamp))
 
     val runStartTime = System.currentTimeMillis
-
+    
     try {
       val loadProblemsExist =
         try {
@@ -2060,9 +2072,21 @@ object Runner {
             // Because some tests may do IO, will create a pool of 2 times the number of processors reported
             // by the Runtime's availableProcessors method.
             val poolSize =
-              if (numThreads > 0) numThreads
+              if (concurrentConfig.numThreads > 0) concurrentConfig.numThreads
               else Runtime.getRuntime.availableProcessors * 2
 
+            val distributedSuiteSorter = 
+              if (concurrentConfig.enableSuiteSortingReporter)
+                Some(new SuiteSortingReporter(dispatch, Span(testSortingReporterTimeout.millisPart + 1000, Millis)))
+              else
+                None
+              
+            val concurrentDispatch = 
+              distributedSuiteSorter match {
+                case Some(dss) => dss
+                case None => dispatch
+              }
+                
             val execSvc: ExecutorService = Executors.newFixedThreadPool(poolSize)
             try {
 
@@ -2073,7 +2097,7 @@ object Runner {
                   for (suiteConfig <- suiteInstances) {
                     val tagsToInclude = if (suiteConfig.requireSelectedTag) tagsToIncludeSet ++ Set(SELECTED_TAG) else tagsToIncludeSet
                     val filter = Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExcludeSet, suiteConfig.excludeNestedSuites, suiteConfig.dynaTags)
-                    val runArgs = Args(dispatch, stopRequested, filter, configMap, Some(distributor), tracker.nextTracker, chosenStyleSet)
+                    val runArgs = Args(concurrentDispatch, stopRequested, filter, configMap, Some(distributor), tracker.nextTracker, chosenStyleSet, false, None, distributedSuiteSorter)
                     distributor.apply(suiteConfig.suite, runArgs)
                   }
                   distributor.waitUntilDone()
@@ -2083,7 +2107,7 @@ object Runner {
                 for (suiteConfig <- suiteInstances) {
                   val tagsToInclude = if (suiteConfig.requireSelectedTag) tagsToIncludeSet ++ Set(SELECTED_TAG) else tagsToIncludeSet
                   val filter = Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExcludeSet, suiteConfig.excludeNestedSuites, suiteConfig.dynaTags)
-                  val runArgs = Args(dispatch, stopRequested, filter, configMap, Some(distributor), tracker.nextTracker, chosenStyleSet)
+                  val runArgs = Args(concurrentDispatch, stopRequested, filter, configMap, Some(distributor), tracker.nextTracker, chosenStyleSet, false, None, distributedSuiteSorter)
                   distributor.apply(suiteConfig.suite, runArgs)
                 }
                 distributor.waitUntilDone()
