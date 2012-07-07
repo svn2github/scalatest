@@ -43,7 +43,16 @@ import tools.{DistributedTestRunnerSuite, TestSortingReporter, Runner}
  * For the details on how <code>ParallelTestExecution</code> works, see the documentation for methods <code>run</code>, <code>runTests</code>, and <code>runTest</code>,
  * which this trait overrides.
  * </p>
- * 
+ *
+ * <p>
+ * Note: This trait's implementation of <code>runTest</code> is <code>final</code>, to ensure that behavior
+ * related to individual tests are executed by the same thread that executes the actual test. This means,
+ * for example, that you won't be allowed to write <code>...with ParallelTestExecution with BeforeAndAfter</code>.
+ * Instead, you'd need to put <code>ParallelTestExecution</code> last, as
+ * in: <code>with BeforeAndAfter with ParallelTestExecution</code>. For more details, see the documentation
+ * for the <code>runTest</code> method.
+ * </p>
+ *
  * @author Bill Venners
  */
 trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
