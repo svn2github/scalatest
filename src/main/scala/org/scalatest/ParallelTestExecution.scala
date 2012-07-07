@@ -137,48 +137,18 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
         else {
           // In test-specific (distributed) instance, so just run the test. (RTINI was
           // removed by OIPT's implementation of runTests.)
-          super.runTest(testName, args)
-          args.distributedTestSorter match {  // Refactor and add finally
-            case Some(testSorter) => 
-              testSorter.completedTest(testName)
-            case None =>
+          try {
+            super.runTest(testName, args)
+          }
+          finally {
+            // Tell the TSR that the distributed test has completed
+            for (sorter <- args.distributedTestSorter)
+              sorter.completedTest(testName)
           }
         }
       case None => super.runTest(testName, args)
     }
   }
-/*
-  final protected abstract override def runTest(testName: String, args: Args) {
-
-    if (args.runTestInNewInstance) {
-      // In initial instance, so wrap the test in a DistributedTestRunnerSuite and pass it to the Distributor.
-      val oneInstance = newInstance
-      args.distributor match {
-        case None =>
-          oneInstance.run(Some(testName), args)
-        case Some(distribute) =>
-          // Tell the TSR that the test is being distributed
-          for (sorter <- args.distributedTestSorter)
-            sorter.distributingTest(testName)
-
-          // It will be oneInstance, testName, args.copy(reporter = ...)
-          distribute(new DistributedTestRunnerSuite(oneInstance, testName, args), args.copy(tracker = args.tracker.nextTracker))
-      }
-    }
-    else {// In test-specific (distributed) instance, so just run the test. (RTINI was
-         // removed by OIPT's implementation of runTests.)
-         // New Approach: before calling super.runTest, wrap once again in the
-         // wrapReporter? And after runTest returns, call testCompleted() on
-         // the TSR.
-      super.runTest(testName, args)
-      args.distributedTestSorter match {
-        case Some(testSorter) => 
-          testSorter.completedTest(testName)
-        case None => 
-      }
-    }
-  }
-*/
 
   /**
    * Construct a new instance of this <code>Suite</code>.
