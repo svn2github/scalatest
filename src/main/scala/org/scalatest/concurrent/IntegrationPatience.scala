@@ -48,10 +48,6 @@ import org.scalatest.time.{Millis, Seconds, Span}
  * }
  * </pre>
  *
- * @param timeout the maximum amount of time to retry before giving up and throwing
- *   <code>TestFailedException</code>.
- * @param interval the amount of time to sleep between each attempt
- *
  * @author Bill Venners
  * @author Chua Chee Seng
  */
@@ -66,5 +62,5 @@ trait IntegrationPatience extends AbstractPatienceConfiguration { this: Patience
   /**
    * Implicit <code>PatienceConfig</code> value providing default configuration values suitable for integration testing.
    */
-  implicit val patienceConfig: PatienceConfig = defaultPatienceConfig
+  implicit abstract override val patienceConfig: PatienceConfig = defaultPatienceConfig
 }
