@@ -24,7 +24,7 @@ package org.scalatest
  * A sorter for the events of a run's distributed suites.
  *
  * <p>
- * This trait is used, for example, when <code>-?</code> is passed to <a href="Runner$.html"><code>Runner</code></a>, to sort the
+ * This trait is used, for example, when <code>-PS</code> is passed to <a href="tools/Runner$.html"><code>Runner</code></a>, to sort the
  * events of distributed suites such that each suite's events are propagated together, with a timeout if an event takes too long.
  * </p>
  */

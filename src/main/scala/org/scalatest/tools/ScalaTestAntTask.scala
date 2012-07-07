@@ -198,7 +198,9 @@ import org.apache.tools.ant.taskdefs.Java
  * <p>
  * Use attribute <code>parallel="true"</code> to specify parallel execution of suites.
  * (If the <code>parallel</code> attribute is left out or set to false, suites will be executed sequentially by one thread.)
- * When <code>parallel</code> is true, you can include an optional <code>numthreads</code> attribute to specify the number
+ * When <code>parallel</code> is true, you can include an optional <code>sortSuites</code> attribute to request that events be sorted on-the-fly so that
+ * events for the same suite are reported together, with a timeout, (<em>e.g.</em>, <code>sortSuites="true"),
+ * and an optional <code>numthreads</code> attribute to specify the number
  * of threads to be created in thread pool (<em>e.g.</em>, <code>numthreads="10"</code>).
  * </p>
  *
@@ -336,7 +338,7 @@ class ScalaTestAntTask extends Task {
       args += style
     }
   }
-  
+
   //
   // Adds '-C' arg to args list if 'parallel' attribute was
   // specified true for task.
@@ -346,7 +348,7 @@ class ScalaTestAntTask extends Task {
       args += (if (sortSuites) "-PS" else "-P") + (if (numthreads > 0) ("" + numthreads) else "")
     }
   }
-  
+
   //
   // Add -F arg to args list if spanScaleFactor attribute was 
   // specified for task
