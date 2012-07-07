@@ -32,9 +32,20 @@ import tools.{DistributedTestRunnerSuite, TestSortingReporter, Runner}
  * </p>
  *
  * <p>
- * Because this trait extends <code>OneInstancePerTest</code>,
- * each test will be run its own instance of the suite's class. This trait overrides the 
- * <code>runTests</code> method. If no <code>Distributor</code> is passed to <code>runTests</code>, 
+ * To make it easier for users to write tests that run in parallel, this trait runs each test in its own instance of the class.
+ * Running each test in its own instance enables tests to use the same instance <code>vars</code> and mutable objects referenced from
+ * instance variables without needing to synchronize. Although ScalaTest provides functional approaches to
+ * factoring out common test code that can help avoid such issues, running each test in its own instance is an insurance policy that makes 
+ * running tests in parallel easier and less error prone.
+ * </p>
+ *
+ * <p>
+ * For the details on how <code>ParallelTestExecution</code> works, see the documentation for methods <code>run</code>, <code>runTests</code>, and <code>runTest</code>,
+ * which this trait overrides.
+ * </p>
+ * 
+ * <p>
+ * FIX: If no <code>Distributor</code> is passed to <code>runTests</code>, 
  * this trait's implementation simply invokes its supertrait <code>OneInstancePerTest</code>'s implementation
  * of <code>runTests</code>, which will run each test in its own instance sequentially. If a <code>Distributor</code>
  * is passed, however, this traits' implementation of <code>runTests</code> will, for each test, wrap a new instance of the

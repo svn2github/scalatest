@@ -1,3 +1,18 @@
+
+In Runner.parseConcurrenConfig method
+val enableSuiteSortingReporter = concurrentList.find(_.startsWith("-cS")).isDefined
+can be:
+val enableSuiteSortingReporter = concurrentList.exists(_.startsWith("-cS"))
+
+Could probably use a for expression for the concurrentDispatch thing
+
+Probably need to allow SSR in sbt?
+
+Need to document sortSuites in ant task.
+
+I need to carefully review SSR.
+
+
 Testing ability to check in...
 
 - sheesh looks like testng has some problem. Expected test count is wrong for one. Also, was firing a lame info provided report on configuration success.

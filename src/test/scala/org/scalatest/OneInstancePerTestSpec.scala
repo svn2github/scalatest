@@ -152,5 +152,22 @@ class OneInstancePerTestSpec extends FunSpec with SharedHelpers {
       assert(!bTheTestThisCalled)
       assert(!bTheTestThatCalled)
     }
+
+    it("should throw IllegalArgumentException from runTests if runTestInNewInstance is set but testName is empty") {
+
+      class ASpec extends WordSpec with OneInstancePerTest {
+        "test this" ignore { }
+        "test that" in { }
+        override def newInstance = new ASpec
+        def invokeRunTests() {
+          this.runTests(None, Args(SilentReporter, runTestInNewInstance = true))
+        }
+      }
+
+      val aSpec = new ASpec
+      intercept[IllegalArgumentException] {
+        aSpec.invokeRunTests()
+      }
+    }
   }
 }

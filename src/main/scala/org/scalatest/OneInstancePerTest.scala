@@ -20,12 +20,20 @@ package org.scalatest
  * of the suite class to isolate each test from the side effects of the other tests in the
  * suite.
  *
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>: Trait <code>OneInstancePerTest</code> is intended primarily to serve as a superclass for
+ * <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a> and the <a href="path/package.html">path traits</a>, to
+ * facilitate porting JUnit tests to ScalaTest, and to make it easy for users who prefer JUnit's approach to isolation to obtain similar
+ * behavior in ScalaTest.
+ * </td></tr></table>
+ * 
  * <p>
  * If you mix this trait into a <code>Suite</code>, you can initialize shared reassignable
  * fixture variables as well as shared mutable fixture objects in the constructor of the
  * class. Because each test will run in its own instance of the class, each test will
  * get a fresh copy of the instance variables. This is the approach to test isolation taken,
- * for example, by the JUnit framework.
+ * for example, by the JUnit framework. <code>OneInstancePerTest</code> can, therefore,
+ * be handy when porting JUnit tests to ScalaTest.
  * </p>
  *
  * <p>
@@ -57,6 +65,19 @@ package org.scalatest
  * }
  * </pre>
  *
+ * <p>
+ * <code>OneInstancePerTest</code> is supertrait to <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a>, in which
+ * running each test in its own instance is intended to make it easier to write suites of tests that run in parallel (by reducing the likelihood
+ * of concurrency bugs in those suites.) <code>OneInstancePerTest</code> is also supertrait to the <em>path</em> traits,
+ * <a href="path/FunSpec.html"><code>path.FunSpec</code></a> and <a href="path/FunSpec.html"><code>path.FreeSpec</code></a>, to make it obvious
+ * these traits run each test in a new, isolated instance.
+ * </p>
+ * 
+ * <p>
+ * For the details on how <code>OneInstancePerTest</code> works, see the documentation for methods <code>runTests</code> and <code>runTest</code>,
+ * which this trait overrides.
+ * </p>
+ * 
  * @author Bill Venners
  */
 trait OneInstancePerTest extends AbstractSuite {
@@ -68,7 +89,29 @@ trait OneInstancePerTest extends AbstractSuite {
    * own instance of this <code>Suite</code>'s class.
    *
    * <p>
-   * TODO: Discuss...
+   * This trait's implementation of <code>runTest</code> 
+   * uses the <code>runTestInNewInstance</code> flag of the passed <code>Args</code> object to determine whether this instance is the general instance responsible
+   * for running all tests in the suite (<code>runTestInNewInstance</code> is <code>true</code>), or a test-specific instance
+   * responsible for running just one test (<code>runTestInNewInstance</code> is <code>false</code>).
+   * Note that these <code>Boolean</code> values are reverse those used by <code>runTests</code>, because <code>runTests</code> always inverts the <code>Boolean</code> value
+   * of <code>runTestInNewInstance</code> when invoking <code>runTest</code>.
+   * </p>
+   * 
+   * <p>
+   * If <code>runTestInNewInstance</code> is <code>true</code>, this trait's implementation of this method creates a new instance of this class (by
+   * invoking <code>newInstance</code> on itself), then invokes <code>run</code> on the new instance,
+   * passing in <code>testName</code>, wrapped in a <code>Some</code>, and <code>args</code> unchanged.
+   * (<em>I.e.</em>, the <code>Args</code> object passed to <code>runTest</code> is forwarded as is to <code>run</code>
+   * on the new instance, including with <code>runTestInNewInstance</code> set.)
+   * If the invocation of either <code>newInstance</code> on this
+   * <code>Suite</code> or <code>run</code> on a newly created instance of this <code>Suite</code>
+   * completes abruptly with an exception, then this <code>runTests</code> method will complete
+   * abruptly with the same exception.
+   * </p>
+   * 
+   * <p>
+   * If <code>runTestInNewInstance</code> is <code>false</code>, this trait's implementation of this method simply invokes <code>super.runTest</code>,
+   * passing along the same <code>testName</code> and <code>args</code> objects.
    * </p>
    *
    * @param testName the name of one test to execute.
@@ -89,16 +132,28 @@ trait OneInstancePerTest extends AbstractSuite {
    * Modifies the behavior of <code>super.runTests</code> to facilitate running each test in its
    * own instance of this <code>Suite</code>'s class.
    *
-   * <p> TODO: Update
-   * If the passed <code>testName</code> is <code>None</code>, this trait's implementation of this
-   * method will for each test name returned by <code>testNames</code>, invoke <code>newInstance</code>
-   * to get a new instance of this <code>Suite</code>, and call <code>run</code> on it, passing
-   * in the test name wrapped in a <code>Some</code>. If the passed <code>testName</code> is defined,
-   * this trait's implementation of this method will simply forward all passed parameters
-   * to <code>super.run</code>. If the invocation of either <code>newInstance</code> on this
-   * <code>Suite</code> or <code>run</code> on a newly created instance of this <code>Suite</code>
-   * completes abruptly with an exception, then this <code>runTests</code> method will complete
-   * abruptly with the same exception.
+   * <p>
+   * This trait's implementation of <code>runTest</code> 
+   * uses the <code>runTestInNewInstance</code> flag of the passed <code>Args</code> object to determine whether this instance is the general instance responsible
+   * for running all tests in the suite (<code>runTestInNewInstance</code> is <code>false</code>), or a test-specific instance
+   * responsible for running just one test (<code>runTestInNewInstance</code> is <code>true</code>). Note that these <code>Boolean</code> values are
+   * reverse those used by <code>runTest</code>, because <code>runTests</code> always inverts the <code>Boolean</code> value of
+   * <code>runTestInNewInstance</code> when invoking <code>runTest</code>.
+   * </p>
+   * 
+   * <p>
+   * If <code>runTestInNewInstance</code> is <code>false</code>, this trait's implementation of this method will invoke
+   * <code>super.runTests</code>, passing along <code>testName</code> and <code>args</code>, but with the 
+   * <code>runTestInNewInstance</code> flag set to <code>true</code>. By setting <code>runTestInNewInstance</code> to
+   * <code>true</code>, <code>runTests</code> is telling <code>runTest</code> to create a new instance to run each test.
+   * </p>
+   *
+   * <p>
+   * If <code>runTestInNewInstance</code> is <code>true</code>, this trait's implementation of this method will invoke
+   * <code>runTest</code> directly, passing in <code>testName.get</code> and the <code>args</code> object, with
+   * the <code>runTestInNewInstance</code> flag set to <code>false</code>. By setting <code>runTestInNewInstance</code> to
+   * <code>false</code>, <code>runTests</code> is telling <code>runTest</code> that this is the test-specific instance,
+   * so it should just run the specified test.
    * </p>
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
@@ -107,12 +162,14 @@ trait OneInstancePerTest extends AbstractSuite {
    *
    * @throws NullPointerException if any of the passed parameters is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
-   *     exists in this <code>Suite</code>
+   *     exists in this <code>Suite</code>, or if <code>runTestInNewInstance</code> is <code>true</code>, but <code>testName</code>
+   *     is empty.
    */
   protected abstract override def runTests(testName: Option[String], args: Args) {
 
-// TODO: Define a better exception to throw if RTINI is in the config map but testName is not defined.
     if (args.runTestInNewInstance) {
+      if (testName.isEmpty)
+        throw new IllegalArgumentException("args.runTestInNewInstance was true, but testName was not defined")
       // In test-specific instance, so run the test. (We are removing RTINI
       // so that runTest will realize it is in the test-specific instance.)
       runTest(testName.get, args.copy(runTestInNewInstance = false))

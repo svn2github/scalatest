@@ -78,3 +78,9 @@ td.stTableCell {
   border: 1px solid black;
 }
 
+td.usage {
+  background-color: #EEEEEE;
+  border-width: 1px;
+  padding: 0.5em;
+  border: 1px solid black;
+}
