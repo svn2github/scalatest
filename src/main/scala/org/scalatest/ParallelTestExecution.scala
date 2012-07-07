@@ -63,7 +63,15 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    * Modifies the behavior of <code>super.runTests</code> to facilitate parallel test execution.
    *
    * <p>
-   * TODO: Discuss...
+   * This trait's implementation of this method always invokes <code>super.runTests</code> to delegate
+   * to <code>OneInstancePerTest</code>'s implementation, but it may pass in a modified <code>args</code> object.
+   * If <code>args.runTestInNewInstance</code> is <code>false</code> and <code>args.distributor</code> is defined,
+   * this trait's implementation of this method will wrap the passed <code>args.reporter</code> in a new <code>Reporter</code>
+   * that can sort events fired by parallel tests back into sequential order, with a timeout. It will pass this new reporter to
+   * <code>super.runTests</code> (in <code>args.reporter</code>) as well as a defined <code>DistributedTestSorter</code>
+   * (in args.distributedTestSorter) that can be used to communicate with the sorting reporter. Otherwise, if <code>args.runTestInNewInstance</code> is
+   * <code>true</code> or <code>args.distributor</code> is empty, this trait's implementation of this method simply calls <code>super.runTests</code>,
+   * passing along the same <code>testName</code> and <code>args</code>.
    * </p>
    *
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
@@ -85,7 +93,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
       }
 
     // Always call super.runTests, which is OneInstancePerTest's runTests. But if RTINI is NOT
-    // set, that means we are in the initial instance.In that case, we wrap the reporter in
+    // set, that means we are in the initial instance. In that case, we wrap the reporter in
     // a new TestSortingReporter, and wrap the distributor in a new DistributorWrapper that
     // knows is passed the TestSortingReporter. We then call super.runTests, which is OIPT's runTests.
     super.runTests(testName, newArgs)
@@ -93,6 +101,17 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
 
   /**
    * Modifies the behavior of <code>super.runTest</code> to facilitate parallel test execution.
+   *
+   * <p>
+   * This trait's implementation of this method only changes the supertrait implementation if
+   * <code>args.distributor</code> is defined. If <code>args.distributor</code> is empty, it
+   * simply invokes <code>super.runTests</code>, passing along the same <code>testName</code>
+   * and <code>args</code> object.
+   * </p>
+   *
+   * <p>
+   * If <code>args.distributor</code> is defined, 
+   * </p>
    *
    * <p>
    * TODO: Discuss...  Note this is final because don't want things like before and after to
@@ -103,6 +122,32 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    * @param testName the name of one test to execute.
    * @param args the <code>Args</code> for this run
    */
+  final protected abstract override def runTest(testName: String, args: Args) {
+
+    args.distributor match {
+      case Some(distribute) =>
+        if (args.runTestInNewInstance) {
+          // Tell the TSR that the test is being distributed
+          for (sorter <- args.distributedTestSorter)
+            sorter.distributingTest(testName)
+
+          // It will be oneInstance, testName, args.copy(reporter = ...)
+          distribute(new DistributedTestRunnerSuite(newInstance, testName, args), args.copy(tracker = args.tracker.nextTracker))
+        }
+        else {
+          // In test-specific (distributed) instance, so just run the test. (RTINI was
+          // removed by OIPT's implementation of runTests.)
+          super.runTest(testName, args)
+          args.distributedTestSorter match {  // Refactor and add finally
+            case Some(testSorter) => 
+              testSorter.completedTest(testName)
+            case None =>
+          }
+        }
+      case None => super.runTest(testName, args)
+    }
+  }
+/*
   final protected abstract override def runTest(testName: String, args: Args) {
 
     if (args.runTestInNewInstance) {
@@ -131,9 +176,9 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
           testSorter.completedTest(testName)
         case None => 
       }
-      
     }
   }
+*/
 
   /**
    * Construct a new instance of this <code>Suite</code>.
