@@ -140,12 +140,12 @@ import exceptions._
  *
  * class ExampleSuite extends Suite {
  *
- *   def testAddition {
+ *   def &#96;test: the + operator should add&#96; {
  *     val sum = 1 + 1
  *     assert(sum === 2)
  *   }
  *
- *   def testSubtraction {
+ *   def &#96;test: the - operator should subtract&#96; {
  *     val diff = 4 - 1
  *     assert(diff === 3)
  *   }
@@ -169,8 +169,8 @@ import exceptions._
  *
  * <pre class="stREPL">
  * <span class="stGreen">ExampleSuite:
- * - testAddition
- * - testSubtraction</span>
+ * - the + operator should add
+ * - the - operator should subtract</span>
  * </pre>
  *
  * <p>
