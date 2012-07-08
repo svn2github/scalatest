@@ -1660,7 +1660,14 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   ) {
     if (configMap == null)
       throw new NullPointerException("configMap was null")
-    if (testName != null && !testNames.contains(testName) && !testNames.exists(_.indexOf(testName) >= 0))
+    val SelectedTag = "Selected"
+    val SelectedSet = Set(SelectedTag)
+    val desiredTests: Set[String] =
+      if (testName == null) Set.empty
+      else {
+        testNames.filter(_.indexOf(testName) >= 0)
+      }
+    if (testName != null && desiredTests.isEmpty)
       throw new IllegalArgumentException(Resources("testNotFound", testName))
 
     val dispatch = new DispatchReporter(List(new StandardOutReporter(durations, color, shortstacks, fullstacks)))
@@ -1668,9 +1675,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     val filter =
       if (testName == null) Filter()
       else {
-        val SelectedTag = "Selected"
-        val SelectedSet = Set(SelectedTag)
-        val desiredTests = testNames.filter(_.indexOf(testName) >= 0)
         val taggedTests: Map[String, Set[String]] = desiredTests.map(_ -> SelectedSet).toMap
         Filter(
           tagsToInclude = Some(SelectedSet),
