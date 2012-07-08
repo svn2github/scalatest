@@ -27,6 +27,7 @@ class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHel
       case e: SuiteCompleted => e.suiteId
       case e: SuiteAborted => e.suiteId
       case e: InfoProvided => e.message
+      case _ => throw new RuntimeException("should never get here")
     }
   }
 

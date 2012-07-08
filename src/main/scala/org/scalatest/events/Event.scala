@@ -81,7 +81,7 @@ sealed abstract class Event extends Ordered[Event] with java.io.Serializable {
   /**
    * 
    */
-  def toXml: Elem
+  private [scalatest] def toXml: Elem
   
   private[events] object EventXmlHelper {
     def stringOption(strOption: Option[String]) = strOption.getOrElse("")
@@ -295,7 +295,7 @@ final case class TestStarting (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <TestStarting>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -411,7 +411,7 @@ final case class TestSucceeded (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <TestSucceeded>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -536,7 +536,7 @@ final case class TestFailed (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <TestFailed>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -644,7 +644,7 @@ final case class TestIgnored (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <TestIgnored>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -748,7 +748,7 @@ final case class TestPending (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <TestPending>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -864,7 +864,7 @@ final case class TestCanceled (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <TestCanceled>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -965,7 +965,7 @@ final case class SuiteStarting (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <SuiteStarting>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1066,7 +1066,7 @@ final case class SuiteCompleted (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <SuiteCompleted>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1180,7 +1180,7 @@ final case class SuiteAborted (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <SuiteAborted>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1263,7 +1263,7 @@ final case class RunStarting (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <RunStarting>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1362,7 +1362,7 @@ final case class RunCompleted (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <RunCompleted>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1453,7 +1453,7 @@ final case class RunStopped (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <RunStopped>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1543,7 +1543,7 @@ final case class RunAborted (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <RunAborted>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1635,7 +1635,7 @@ final case class InfoProvided (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <InfoProvided>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1724,7 +1724,7 @@ final case class MarkupProvided (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <MarkupProvided>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1810,7 +1810,7 @@ final case class ScopeOpened (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <ScopeOpened>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>
@@ -1896,7 +1896,7 @@ final case class ScopeClosed (
     throw new NullPointerException("threadName was null")
   
   import EventXmlHelper._
-  def toXml = 
+  private [scalatest] def toXml = 
     <ScopeClosed>
       <ordinal>
         <runStamp>{ ordinal.runStamp }</runStamp>

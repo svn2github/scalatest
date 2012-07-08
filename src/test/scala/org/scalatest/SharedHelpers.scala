@@ -272,6 +272,7 @@ trait SharedHelpers extends Assertions {
             testPending.recordedEvents
           case testCanceled: TestCanceled =>
             testCanceled.recordedEvents
+          case _ => throw new RuntimeException("should never get here")
         }
       case None => 
         fail("Test completed event is expected but not found.")
