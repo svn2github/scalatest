@@ -144,33 +144,33 @@ class TestFailedExceptionWithImportSpec extends FunSpec {
       }
     }
 
-    it("should give the proper line on expect(1) { 2 }") {
+    it("should give the proper line on expectResult(1) { 2 }") {
       try {
-        expect(1) { 2 }
+        expectResult(1) { 2 }
       }
       catch {
         case e: TestFailedException =>
           e.failedCodeFileNameAndLineNumberString match {
             case Some(s) => s should equal ("TestFailedExceptionWithImportSpec.scala:" + (baseLineNumber + 126))
-            case None => fail("expect(1) { 2 } didn't produce a file name and line number string", e)
+            case None => fail("expectResult(1) { 2 } didn't produce a file name and line number string", e)
           }
         case e =>
-          fail("expect(1) { 2 } didn't produce a TestFailedException", e)
+          fail("expectResult(1) { 2 } didn't produce a TestFailedException", e)
       }
     }
 
-    it("should give the proper line on expect(1, \"some message\") { 2 }") {
+    it("should give the proper line on expectResult(1, \"some message\") { 2 }") {
       try {
-        expect(1, "some message") { 2 }
+        expectResult(1, "some message") { 2 }
       }
       catch {
         case e: TestFailedException =>
           e.failedCodeFileNameAndLineNumberString match {
             case Some(s) => s should equal ("TestFailedExceptionWithImportSpec.scala:" + (baseLineNumber + 141))
-            case None => fail("expect(1, \"some message\") { 2 } didn't produce a file name and line number string", e)
+            case None => fail("expectResult(1, \"some message\") { 2 } didn't produce a file name and line number string", e)
           }
         case e =>
-          fail("expect(1, \"some message\") { 2 } didn't produce a TestFailedException", e)
+          fail("expectResult(1, \"some message\") { 2 } didn't produce a TestFailedException", e)
       }
     }
 

@@ -67,12 +67,12 @@ class SeveredStackTracesFailureSpec extends FunSpec with ShouldMatchers with Sev
       assert(1 === 2, "some message")
     }
 
-    it("should be properly severed on expect(1) { 2 }") {
-      expect(1) { 2 }
+    it("should be properly severed on expectResult(1) { 2 }") {
+      expectResult(1) { 2 }
     }
 
-    it("should be properly severed on expect(1, \"some message\") { 2 }") {
-      expect(1, "some message") { 2 }
+    it("should be properly severed on expectResult(1, \"some message\") { 2 }") {
+      expectResult(1, "some message") { 2 }
     }
 
     it("should be properly severed on intercept[IllegalArgumentException] {}") {

@@ -144,9 +144,9 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
       }
     }
 
-    it("should give the proper line on expect(1) { 2 }") {
+    it("should give the proper line on expectResult(1) { 2 }") {
       try {
-        expect(1) {
+        expectResult(1) {
           2
         }
       }
@@ -154,16 +154,16 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
             case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 126))
-            case None => fail("expect(1) { 2 } didn't produce a file name and line number string", e)
+            case None => fail("expectResult(1) { 2 } didn't produce a file name and line number string", e)
           }
         case e =>
-          cancel("expect(1) { 2 } didn't produce a TestCanceledException", e)
+          cancel("expectResult(1) { 2 } didn't produce a TestCanceledException", e)
       }
     }
 
-    it("should give the proper line on expect(1, \"some message\") { 2 }") {
+    it("should give the proper line on expectResult(1, \"some message\") { 2 }") {
       try {
-        expect(1, "some message") {
+        expectResult(1, "some message") {
           2
         }
       }
@@ -171,10 +171,10 @@ class TestCanceledExceptionSpec extends Spec with ShouldMatchers {
         case e: TestCanceledException =>
           e.failedCodeFileNameAndLineNumberString match {
             case Some(s) => s should equal("TestCanceledExceptionSpec.scala:" + (baseLineNumber + 141))
-            case None => fail("expect(1, \"some message\") { 2 } didn't produce a file name and line number string", e)
+            case None => fail("expectResult(1, \"some message\") { 2 } didn't produce a file name and line number string", e)
           }
         case e =>
-          cancel("expect(1, \"some message\") { 2 } didn't produce a TestCanceledException", e)
+          cancel("expectResult(1, \"some message\") { 2 } didn't produce a TestCanceledException", e)
       }
     }
 

@@ -1468,123 +1468,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   def nestedSuites: IndexedSeq[Suite] = Vector.empty
 
   /**
-   * Executes this <code>Suite</code>, printing results to the standard output.
-   *
-   * <p>
-   * This method implementation calls <code>run</code> on this <code>Suite</code>, passing in:
-   * </p>
-   *
-   * <ul>
-   * <li><code>testName</code> - <code>None</code></li>
-   * <li><code>reporter</code> - a reporter that prints to the standard output</li>
-   * <li><code>stopper</code> - a <code>Stopper</code> whose <code>apply</code> method always returns <code>false</code></li>
-   * <li><code>filter</code> - a <code>Filter</code> constructed with <code>None</code> for <code>tagsToInclude</code> and <code>Set()</code>
-   *   for <code>tagsToExclude</code></li>
-   * <li><code>configMap</code> - an empty <code>Map[String, Any]</code></li>
-   * <li><code>distributor</code> - <code>None</code></li>
-   * <li><code>tracker</code> - a new <code>Tracker</code></li>
-   * </ul>
-   *
-   * <p>
-   * This method serves as a convenient way to execute a <code>Suite</code>, especially from
-   * within the Scala interpreter.
-   * </p>
-   *
-   * <p>
-   * Note:  In ScalaTest, the terms "execute" and "run" basically mean the same thing and
-   * can be used interchangably. The reason this convenience method and its three overloaded forms
-   * aren't named <code>run</code>
-   * is because <code>junit.framework.TestCase</code> declares a <code>run</code> method
-   * that takes no arguments but returns a <code>junit.framework.TestResult</code>. That
-   * <code>run</code> method would not overload with this method if it were named <code>run</code>,
-   * because it would have the same parameters but a different return type than the one
-   * defined in <code>TestCase</code>. To facilitate integration with JUnit 3, therefore,
-   * these convenience "run" methods are named <code>execute</code>. In particular, this allows trait
-   * <code>org.scalatest.junit.JUnit3Suite</code> to extend both <code>org.scalatest.Suite</code> and
-   * <code>junit.framework.TestCase</code>, which enables the creating of classes that
-   * can be run with either ScalaTest or JUnit 3.
-   * </p>
-   *
-  final def execute() {
-    run(None, new StandardOutReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
-  }
-
-   * Executes this <code>Suite</code> with the specified <code>configMap</code>, printing results to the standard output.
-   *
-   * <p>
-   * This method implementation calls <code>run</code> on this <code>Suite</code>, passing in:
-   * </p>
-   *
-   * <ul>
-   * <li><code>testName</code> - <code>None</code></li>
-   * <li><code>reporter</code> - a reporter that prints to the standard output</li>
-   * <li><code>stopper</code> - a <code>Stopper</code> whose <code>apply</code> method always returns <code>false</code></li>
-   * <li><code>filter</code> - a <code>Filter</code> constructed with <code>None</code> for <code>tagsToInclude</code> and <code>Set()</code>
-   *   for <code>tagsToExclude</code></li>
-   * <li><code>configMap</code> - the specified <code>configMap</code> <code>Map[String, Any]</code></li>
-   * <li><code>distributor</code> - <code>None</code></li>
-   * <li><code>tracker</code> - a new <code>Tracker</code></li>
-   * </ul>
-   *
-   * <p>
-   * This method serves as a convenient way to execute a <code>Suite</code>, passing in some objects via the <code>configMap</code>, especially from within the Scala interpreter.
-   * </p>
-   *
-   * <p>
-   * Note:  In ScalaTest, the terms "execute" and "run" basically mean the same thing and
-   * can be used interchangably. The reason this convenience method and its three overloaded forms
-   * aren't named <code>run</code> is described the documentation of the overloaded form that
-   * takes no parameters: <a href="#execute%28%29">execute()</a>.
-   * </p>
-   *
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by the executing <code>Suite</code> of tests.
-   *
-   * @throws NullPointerException if the passed <code>configMap</code> parameter is <code>null</code>.
-   *
-  final def execute(configMap: Map[String, Any]) {
-    run(None, new StandardOutReporter, new Stopper {}, Filter(), configMap, None, new Tracker)
-  }
-
-   * Executes the test specified as <code>testName</code> in this <code>Suite</code>, printing results to the standard output.
-   *
-   * <p>
-   * This method implementation calls <code>run</code> on this <code>Suite</code>, passing in:
-   * </p>
-   *
-   * <ul>
-   * <li><code>testName</code> - <code>Some(testName)</code></li>
-   * <li><code>reporter</code> - a reporter that prints to the standard output</li>
-   * <li><code>stopper</code> - a <code>Stopper</code> whose <code>apply</code> method always returns <code>false</code></li>
-   * <li><code>filter</code> - a <code>Filter</code> constructed with <code>None</code> for <code>tagsToInclude</code> and <code>Set()</code>
-   *   for <code>tagsToExclude</code></li>
-   * <li><code>configMap</code> - an empty <code>Map[String, Any]</code></li>
-   * <li><code>distributor</code> - <code>None</code></li>
-   * <li><code>tracker</code> - a new <code>Tracker</code></li>
-   * </ul>
-   *
-   * <p>
-   * This method serves as a convenient way to run a single test, especially from within the Scala interpreter.
-   * </p>
-   *
-   * <p>
-   * Note:  In ScalaTest, the terms "execute" and "run" basically mean the same thing and
-   * can be used interchangably. The reason this convenience method and its three overloaded forms
-   * aren't named <code>run</code> is described the documentation of the overloaded form that
-   * takes no parameters: <a href="#execute%28%29">execute()</a>.
-   * </p>
-   *
-   * @param testName the name of one test to run.
-   *
-   * @throws NullPointerException if the passed <code>testName</code> parameter is <code>null</code>.
-   * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
-   *     exists in this <code>Suite</code>
-   *
-  final def execute(testName: String) {
-    run(Some(testName), new StandardOutReporter, new Stopper {}, Filter(), Map(), None, new Tracker)
-  }
-*/
-
-  /**
    * Executes one or more tests in this <code>Suite</code>, printing results to the standard output.
    *
    * <p>
@@ -1777,12 +1660,24 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   ) {
     if (configMap == null)
       throw new NullPointerException("configMap was null")
-    if (testName != null && !testNames.contains(testName))
+    if (testName != null && !testNames.contains(testName) && !testNames.exists(_.indexOf(testName) >= 0))
       throw new IllegalArgumentException(Resources("testNotFound", testName))
 
     val dispatch = new DispatchReporter(List(new StandardOutReporter(durations, color, shortstacks, fullstacks)))
     val tracker = new Tracker
-    val filter = Filter()
+    val filter =
+      if (testName == null) Filter()
+      else {
+        val SelectedTag = "Selected"
+        val SelectedSet = Set(SelectedTag)
+        val desiredTests = testNames.filter(_.indexOf(testName) >= 0)
+        val taggedTests: Map[String, Set[String]] = desiredTests.map(_ -> SelectedSet).toMap
+        Filter(
+          tagsToInclude = Some(SelectedSet),
+          excludeNestedSuites = true,
+          dynaTags = DynaTags(Map.empty, Map(suiteId -> taggedTests))
+        )
+      }
     val runStartTime = System.currentTimeMillis
     if (stats)
       dispatch(RunStarting(tracker.nextOrdinal(), expectedTestCount(filter), configMap))
@@ -1806,8 +1701,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       dispatch(SuiteStarting(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.suiteId, thisSuite.decodedSuiteName, Some(thisSuite.getClass.getName), formatter, Some(getTopOfClass)))
 
       run(
-        //if (testName != null) Some(testName) else None,
-        Option(testName),
+        None,
         Args(dispatch,
         new Stopper {},
         filter,

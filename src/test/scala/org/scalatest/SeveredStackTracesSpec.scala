@@ -168,9 +168,9 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
       }
     }
 
-    it("should give the proper line on expect(1) { 2 }") {
+    it("should give the proper line on expectResult(1) { 2 }") {
       try {
-        expect(1) { 2 }
+        expectResult(1) { 2 }
       }
       catch {
         case e: TestFailedException =>
@@ -178,17 +178,17 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case Some(s) =>
               s should equal ("SeveredStackTracesSpec.scala:" + (thisLineNumber - 6))
               checkFileNameAndLineNumber(e, s)
-            case None => fail("expect(1) { 2 } didn't produce a file name and line number string", e)
+            case None => fail("expectResult(1) { 2 } didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
         case e =>
-          fail("expect(1) { 2 } didn't produce a TestFailedException", e)
+          fail("expectResult(1) { 2 } didn't produce a TestFailedException", e)
       }
     }
 
-    it("should give the proper line on expect(1, \"some message\") { 2 }") {
+    it("should give the proper line on expectResult(1, \"some message\") { 2 }") {
       try {
-        expect(1, "some message") { 2 }
+        expectResult(1, "some message") { 2 }
       }
       catch {
         case e: TestFailedException =>
@@ -196,11 +196,11 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case Some(s) =>
               s should equal ("SeveredStackTracesSpec.scala:" + (thisLineNumber - 6))
               checkFileNameAndLineNumber(e, s)
-            case None => fail("expect(1, \"some message\") { 2 } didn't produce a file name and line number string", e)
+            case None => fail("expectResult(1, \"some message\") { 2 } didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
         case e =>
-          fail("expect(1, \"some message\") { 2 } didn't produce a TestFailedException", e)
+          fail("expectResult(1, \"some message\") { 2 } didn't produce a TestFailedException", e)
       }
     }
 

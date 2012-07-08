@@ -159,7 +159,7 @@ class TestFailedExceptionSpec extends FunSpec with ShouldMatchers {
 
     it("should give the proper line on expect(1, \"some message\") { 2 }") {
       try {
-        expect(1, "some message") { 2 }
+        expectResult(1, "some message") { 2 }
       }
       catch {
         case e: TestFailedException =>

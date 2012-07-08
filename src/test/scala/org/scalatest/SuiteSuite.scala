@@ -282,68 +282,220 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(prettifyArrays(Array(Array(1, 2), Array(3, 4))) === "Array(Array(1, 2), Array(3, 4))")
   }
 
+  class TestWasCalledSuite extends Suite {
+    var theTestThisCalled = false
+    var theTestThatCalled = false
+    var theTestTheOtherCalled = false
+    var theTestThisConfigMapWasEmpty = true
+    var theTestThatConfigMapWasEmpty = true
+    var theTestTheOtherConfigMapWasEmpty = true
+    override def withFixture(test: NoArgTest) {
+      if (test.configMap.size > 0)
+        test.name match {
+          case "testThis" => theTestThisConfigMapWasEmpty = false
+          case "testThat" => theTestThatConfigMapWasEmpty = false
+          case "testTheOther" => theTestTheOtherConfigMapWasEmpty = false
+          case _ => throw new Exception("Should never happen")
+        }
+      test()
+    }
+    def testThis() { theTestThisCalled = true }
+    def testThat() { theTestThatCalled = true }
+    def testTheOther() { theTestTheOtherCalled = true }
+  }
+
   def testExecute() {
+
+    val s1 = new TestWasCalledSuite
+    s1.execute()
+    assert(s1.theTestThisCalled)
+    assert(s1.theTestThatCalled)
+    assert(s1.theTestTheOtherCalled)
+    assert(s1.theTestThisConfigMapWasEmpty)
+    assert(s1.theTestThatConfigMapWasEmpty)
+    assert(s1.theTestTheOtherConfigMapWasEmpty)
+
+    val s2 = new TestWasCalledSuite
+    s2.execute("testThis")
+    assert(s2.theTestThisCalled)
+    assert(!s2.theTestThatCalled)
+    assert(!s2.theTestTheOtherCalled)
+    assert(s2.theTestThisConfigMapWasEmpty)
+    assert(s2.theTestThatConfigMapWasEmpty)
+    assert(s2.theTestTheOtherConfigMapWasEmpty)
+
+    val s3 = new TestWasCalledSuite
+    s3.execute(configMap = Map("s" -> "s"))
+    assert(s3.theTestThisCalled)
+    assert(s3.theTestThatCalled)
+    assert(s3.theTestTheOtherCalled)
+    assert(!s3.theTestThisConfigMapWasEmpty)
+    assert(!s3.theTestThatConfigMapWasEmpty)
+    assert(!s3.theTestTheOtherConfigMapWasEmpty)
+
+    val s4 = new TestWasCalledSuite
+    s4.execute("testThis", Map("s" -> "s"))
+    assert(s4.theTestThisCalled)
+    assert(!s4.theTestThatCalled)
+    assert(!s4.theTestTheOtherCalled)
+    assert(!s4.theTestThisConfigMapWasEmpty)
+    assert(s4.theTestThatConfigMapWasEmpty)
+    assert(s4.theTestTheOtherConfigMapWasEmpty)
+
+    val s5 = new TestWasCalledSuite
+    s5.execute(testName = "testThis")
+    assert(s5.theTestThisCalled)
+    assert(!s5.theTestThatCalled)
+    assert(!s5.theTestTheOtherCalled)
+    assert(s5.theTestThisConfigMapWasEmpty)
+    assert(s5.theTestThatConfigMapWasEmpty)
+    assert(s5.theTestTheOtherConfigMapWasEmpty)
+
+    val s6 = new TestWasCalledSuite
+    s6.execute(testName = "testThis", configMap = Map("s" -> "s"))
+    assert(s6.theTestThisCalled)
+    assert(!s6.theTestThatCalled)
+    assert(!s6.theTestTheOtherCalled)
+    assert(!s6.theTestThisConfigMapWasEmpty)
+    assert(s6.theTestThatConfigMapWasEmpty)
+    assert(s6.theTestTheOtherConfigMapWasEmpty)
+  }
+
+  def `test: execute should use dynamic tagging to enable Doenitz wildcards for non-encoded test names` {
+    val s1 = new TestWasCalledSuite
+    s1.execute("Th")
+    assert(s1.theTestThisCalled)
+    assert(s1.theTestThatCalled)
+    assert(s1.theTestTheOtherCalled)
+    assert(s1.theTestThisConfigMapWasEmpty)
+    assert(s1.theTestThatConfigMapWasEmpty)
+    assert(s1.theTestTheOtherConfigMapWasEmpty)
+
+    val s2 = new TestWasCalledSuite
+    s2.execute("This")
+    assert(s2.theTestThisCalled)
+    assert(!s2.theTestThatCalled)
+    assert(!s2.theTestTheOtherCalled)
+    assert(s2.theTestThisConfigMapWasEmpty)
+    assert(s2.theTestThatConfigMapWasEmpty)
+    assert(s2.theTestTheOtherConfigMapWasEmpty)
+
+    val s3 = new TestWasCalledSuite
+    s3.execute("Th", configMap = Map("s" -> "s"))
+    assert(s3.theTestThisCalled)
+    assert(s3.theTestThatCalled)
+    assert(s3.theTestTheOtherCalled)
+    assert(!s3.theTestThisConfigMapWasEmpty)
+    assert(!s3.theTestThatConfigMapWasEmpty)
+    assert(!s3.theTestTheOtherConfigMapWasEmpty)
+
+    val s4 = new TestWasCalledSuite
+    s4.execute("Th", Map("s" -> "s"))
+    assert(s4.theTestThisCalled)
+    assert(s4.theTestThatCalled)
+    assert(s4.theTestTheOtherCalled)
+    assert(!s4.theTestThisConfigMapWasEmpty)
+    assert(!s4.theTestThatConfigMapWasEmpty)
+    assert(!s4.theTestTheOtherConfigMapWasEmpty)
+
+    val s5 = new TestWasCalledSuite
+    s5.execute(testName = "Th")
+    assert(s5.theTestThisCalled)
+    assert(s5.theTestThatCalled)
+    assert(s5.theTestTheOtherCalled)
+    assert(s5.theTestThisConfigMapWasEmpty)
+    assert(s5.theTestThatConfigMapWasEmpty)
+    assert(s5.theTestTheOtherConfigMapWasEmpty)
+
+    val s6 = new TestWasCalledSuite
+    s6.execute(testName = "This", configMap = Map("s" -> "s"))
+    assert(s6.theTestThisCalled)
+    assert(!s6.theTestThatCalled)
+    assert(!s6.theTestTheOtherCalled)
+    assert(!s6.theTestThisConfigMapWasEmpty)
+    assert(s6.theTestThatConfigMapWasEmpty)
+    assert(s6.theTestTheOtherConfigMapWasEmpty)
+  }
+
+  @Ignore def `test: execute should use dynamic tagging to enable Doenitz wildcards for encoded test names` {
+
     class TestWasCalledSuite extends Suite {
       var theTestThisCalled = false
       var theTestThatCalled = false
+      var theTestTheOtherCalled = false
       var theTestThisConfigMapWasEmpty = true
       var theTestThatConfigMapWasEmpty = true
+      var theTestTheOtherConfigMapWasEmpty = true
       override def withFixture(test: NoArgTest) {
         if (test.configMap.size > 0)
           test.name match {
-            case "testThis" => theTestThisConfigMapWasEmpty = false
-            case "testThat" => theTestThatConfigMapWasEmpty = false
+            case "test this" => theTestThisConfigMapWasEmpty = false
+            case "test that" => theTestThatConfigMapWasEmpty = false
+            case "test the other" => theTestTheOtherConfigMapWasEmpty = false
             case _ => throw new Exception("Should never happen")
           }
         test()
       }
       def testThis() { theTestThisCalled = true }
       def testThat() { theTestThatCalled = true }
+      def testTheOther() { theTestTheOtherCalled = true }
     }
 
     val s1 = new TestWasCalledSuite
-    s1.execute()
+    s1.execute(" th")
     assert(s1.theTestThisCalled)
     assert(s1.theTestThatCalled)
+    assert(s1.theTestTheOtherCalled)
     assert(s1.theTestThisConfigMapWasEmpty)
     assert(s1.theTestThatConfigMapWasEmpty)
+    assert(s1.theTestTheOtherConfigMapWasEmpty)
 
     val s2 = new TestWasCalledSuite
-    s2.execute("testThis")
+    s2.execute(" this")
     assert(s2.theTestThisCalled)
     assert(!s2.theTestThatCalled)
+    assert(!s2.theTestTheOtherCalled)
     assert(s2.theTestThisConfigMapWasEmpty)
     assert(s2.theTestThatConfigMapWasEmpty)
+    assert(s2.theTestTheOtherConfigMapWasEmpty)
 
     val s3 = new TestWasCalledSuite
-    s3.execute(configMap = Map("s" -> "s"))
+    s3.execute(" th", configMap = Map("s" -> "s"))
     assert(s3.theTestThisCalled)
     assert(s3.theTestThatCalled)
+    assert(s3.theTestTheOtherCalled)
     assert(!s3.theTestThisConfigMapWasEmpty)
     assert(!s3.theTestThatConfigMapWasEmpty)
+    assert(!s3.theTestTheOtherConfigMapWasEmpty)
 
     val s4 = new TestWasCalledSuite
-    s4.execute("testThis", Map("s" -> "s"))
+    s4.execute(" th", Map("s" -> "s"))
     assert(s4.theTestThisCalled)
-    assert(!s4.theTestThatCalled)
+    assert(s4.theTestThatCalled)
+    assert(s4.theTestTheOtherCalled)
     assert(!s4.theTestThisConfigMapWasEmpty)
-    assert(s4.theTestThatConfigMapWasEmpty)
+    assert(!s4.theTestThatConfigMapWasEmpty)
+    assert(!s4.theTestTheOtherConfigMapWasEmpty)
 
     val s5 = new TestWasCalledSuite
-    s5.execute(testName = "testThis")
+    s5.execute(testName = " th")
     assert(s5.theTestThisCalled)
-    assert(!s5.theTestThatCalled)
+    assert(s5.theTestThatCalled)
+    assert(s5.theTestTheOtherCalled)
     assert(s5.theTestThisConfigMapWasEmpty)
     assert(s5.theTestThatConfigMapWasEmpty)
+    assert(s5.theTestTheOtherConfigMapWasEmpty)
 
     val s6 = new TestWasCalledSuite
-    s6.execute(testName = "testThis", configMap = Map("s" -> "s"))
+    s6.execute(testName = " this", configMap = Map("s" -> "s"))
     assert(s6.theTestThisCalled)
     assert(!s6.theTestThatCalled)
+    assert(!s6.theTestTheOtherCalled)
     assert(!s6.theTestThisConfigMapWasEmpty)
     assert(s6.theTestThatConfigMapWasEmpty)
+    assert(s6.theTestTheOtherConfigMapWasEmpty)
   }
-  
+
   def testDecodedSuiteName() {
     expect("My Test") { new My$u0020Test().decodedSuiteName.get }
     expect(None) { new SuiteSuite().decodedSuiteName }
