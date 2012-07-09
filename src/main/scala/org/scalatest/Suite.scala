@@ -61,6 +61,13 @@ import exceptions._
  * A suite of tests. A <code>Suite</code> instance encapsulates a conceptual
  * suite (<em>i.e.</em>, a collection) of tests.
  *
+ * <p>
+ * This trait provides an interface composed of "lifecycle methods" that allow suites of tests to be run.
+ * Its implementation enables a default way of writing and executing tests.  Subtraits and subclasses can
+ * override <code>Suite</code>'s lifecycle methods to enable other ways of writing and executing tests.
+ * This trait's default approach allows tests to be defined as methods whose name is given in backticks and starts with "<code>test: </code>".
+ * </p>
+ *
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
  * Trait <code>Suite</code> allows you to define tests as methods, which saves one generated class file per test compared to style traits that represent tests as functions.
@@ -69,17 +76,9 @@ import exceptions._
  * </td></tr></table>
  * 
  * <p>
- * This trait provides an interface that allows suites of tests to be run.
- * Its implementation enables a default way of writing and executing tests.  Subtraits and subclasses can
- * override <code>Suite</code>'s methods to enable other ways of writing and executing tests.
- * This trait's default approach allows tests to be defined as methods whose name starts with "<code>test</code>", and gives
- * special treatment to methods whose names are given in backticks starting with "<code>test: </code>".
- * </p>
- *
- * <p>
  * To use this trait's approach to writing tests, simply create classes that
- * extend <code>Suite</code> and define test methods. Test methods have names of the form <code>testX</code>, 
- * where <code>X</code> is some unique, hopefully meaningful, string. A test method must be public and
+ * extend <code>Suite</code> and define test methods. Test methods have names of the form <code>`test: ...`</code>, 
+ * where <code>...</code> is a string that specifies a bit of behavior required of the subject under test. A test method must be public and
  * can have any result type, but the most common result type is <code>Unit</code>. Here's an example:
  * </p>
  *
@@ -145,6 +144,53 @@ import exceptions._
  * as <code>org.scalatest.tools.Runner</code> or a build tool or IDE. See the <a href="tools/Runner$.html">documentation
  * for <code>Runner</code></a> for more details.
  * </p>
+ *
+ * <a name="specialTreatment"></a>
+ * <h2>Deprecation of old-style test method names</h2>
+ * 
+ * <p>
+ * Prior to ScalaTest 2.0, trait <code>Suite</code> considered any method whose name begins with "test" as a test method. This form of test
+ * method has been deprecated, to encourage more descriptive test names. Old-style test method names will continue to work during the deprecation period, but you'll
+ * get a deprecation warning. Support for old-style method names will be removed in a future version of ScalaTest, so please change all old-style methods to
+ * the new form. If a test name is given in backticks and starts with <code>"test: "</code>, the name will be shown by ScalaTest's reporters without
+ * the <code>"test: "</code> prefix to increase readability. Old-style test method names will show up intact, as they did before. Here's an example:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * import org.scalatest.Suite
+ *
+ * class ExampleSuite extends Suite {
+ *
+ *   // This is the new style
+ *   def &#96;test: this will be reported without the prefix&#96; {
+ *     assert(1 + 1 === 2)
+ *   }
+ *
+ *   // This is the deprecated form, because the space is missing
+ *   def &#96;test:missing space&#96; {
+ *     assert(1 + 1 === 2)
+ *   }
+ *
+ *   // This is an example of the deprecated form
+ *   def &#96;testThisFormIsSoOneDotOh&#96; {
+ *     assert(1 + 1 === 2)
+ *   }
+ * }
+ * </pre>
+ *
+ * <p>
+ * Running the above class in the interpreter would give you:
+ * </p>
+ *
+ * <pre class="stREPL">
+ * scala&gt; new ExampleSuite execute
+ * <span class="stGreen">ExampleSuite:</span>
+ * The name "test:missing space" has been deprecated. Please use the &#96;test: ...&#96; form instead.
+ * The name "testThisIsSoOneDotOh" has been deprecated. Please use the &#96;test: ...&#96; form instead.
+ * <span class="stGreen">- this will be reported without the prefix
+ * - test:missing space
+ * - testThisFormIsSoOneDotOh</span>
+ * </pre>
  *
  * <h2>Assertions and <code>=</code><code>=</code><code>=</code></h2>
  *
@@ -1886,6 +1932,9 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       throw new NullPointerException("testName was null")
     if (args == null)
       throw new NullPointerException("args was null")
+
+    if (!testName.startsWith("test$colon$u0020"))
+      println("The name \"" + NameTransformer.decode(testName) + "\" has been deprecated. Please use the `test: ...` form instead.")
 
     import args._
 
