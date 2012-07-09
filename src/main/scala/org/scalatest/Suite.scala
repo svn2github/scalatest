@@ -135,7 +135,7 @@ import exceptions._
  * You can also pass to <code>execute</code> a <a href="#configMapSection"><em>config map</em></a> of key-value
  * pairs, which will be passed down into suites and tests, as well as other parameters that configure the run itself.
  * For more information on running in the Scala interpreter, see the documentation for <code>execute</code> (below) and the
- * <a href="Shell.html">ScalaTest shell</a>.</code>
+ * <a href="Shell.html">ScalaTest shell</a>.
  * </p>
  *
  * <p>
@@ -143,6 +143,11 @@ import exceptions._
  * parameters. This <code>run</code> method, which actually executes the suite, will usually be invoked by a test runner, such
  * as <code>org.scalatest.tools.Runner</code> or a build tool or IDE. See the <a href="tools/Runner$.html">documentation
  * for <code>Runner</code></a> for more details.
+ * </p>
+ *
+ * <p>
+ * <em>Note: The approach of using backticks around test method names to make it easier to write descriptive test names was
+ * inspired by the <a href="http://github.com/SimpleFinance/simplespec" target="_blank"><code>SimpleSpec</code></a> test framework, originally created by Coda Hale.</em>
  * </p>
  *
  * <a name="specialTreatment"></a>
@@ -172,7 +177,7 @@ import exceptions._
  *   }
  *
  *   // This is an example of the deprecated form
- *   def &#96;testThisFormIsSoOneDotOh&#96; {
+ *   def testThisFormIsSoOneDotOh {
  *     assert(1 + 1 === 2)
  *   }
  * }
