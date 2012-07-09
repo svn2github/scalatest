@@ -63,8 +63,8 @@ import exceptions._
  *
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * Because it allows you to define tests as methods, saving one class file per test over style traits that represent tests as functions,
- * <code>Suite</code> can be useful as a style trait in large projects where class file generation is a concern as well as when generating tests programatically
+ * Trait <code>Suite</code> allows you to define tests as methods, which saves one generated class file per test compared to style traits that represent tests as functions.
+ * As a result, using <code>Suite</code> can be a good choice in large projects where class file generation is a concern as well as when generating tests programatically
  * via a static code generator.
  * </td></tr></table>
  * 
@@ -72,8 +72,8 @@ import exceptions._
  * This trait provides an interface that allows suites of tests to be run.
  * Its implementation enables a default way of writing and executing tests.  Subtraits and subclasses can
  * override <code>Suite</code>'s methods to enable other ways of writing and executing tests.
- * This trait's default approach allows tests to be defined as methods whose name starts with "<code>test</code>," and gives
- * special treatment to methods whose names are given in backticks starting with "<code>test: </code>."
+ * This trait's default approach allows tests to be defined as methods whose name starts with "<code>test</code>", and gives
+ * special treatment to methods whose names are given in backticks starting with "<code>test: </code>".
  * </p>
  *
  * <p>
@@ -1793,7 +1793,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       for (m <- getClass.getMethods; if isTestMethod(m)) 
         yield if (takesInformer(m)) m.getName + InformerInParens else m.getName
 
-    TreeSet[String]() ++ testNameArray
+    TreeSet.empty[String](EncodedOrdering) ++ testNameArray
   }
 
   private[scalatest] def getMethodForTestName(testName: String) =

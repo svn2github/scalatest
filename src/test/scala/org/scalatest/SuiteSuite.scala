@@ -105,59 +105,59 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
   }
 
   def testStripDollars() {
-    expect("MySuite") {
+    expectResult("MySuite") {
      Suite.stripDollars("line8$object$$iw$$iw$$iw$$iw$$iw$MySuite")
     }
-    expect("MySuite") {
+    expectResult("MySuite") {
      Suite.stripDollars("MySuite")
     }
-    expect("nested.MySuite") {
+    expectResult("nested.MySuite") {
      Suite.stripDollars("nested.MySuite")
     }
-    expect("$$$") {
+    expectResult("$$$") {
      Suite.stripDollars("$$$") 
     }
-    expect("DollarAtEnd") {
+    expectResult("DollarAtEnd") {
      Suite.stripDollars("DollarAtEnd$") 
     }
-    expect("DollarAtEnd") {
+    expectResult("DollarAtEnd") {
      Suite.stripDollars("line8$object$$iw$$iw$$iw$$iw$$iw$DollarAtEnd$")
     }
-    expect("MySuite$1") {
+    expectResult("MySuite$1") {
      Suite.stripDollars("MySuite$1")
     }
-    expect("ExampleSuite") {
+    expectResult("ExampleSuite") {
       Suite.stripDollars("$read$$iw$$iw$$iw$$iw$ExampleSuite")
     }
-    expect("Fred") {
+    expectResult("Fred") {
       Suite.stripDollars("$line19.$read$$iw$$iw$Fred$")
     }
   }
   
   def testDiffStrings() {
-    expect(("[]", "[a]")) { Suite.diffStrings("", "a") }
-    expect(("[a]", "[]")) { Suite.diffStrings("a", "") }
-    expect(("a[]", "a[b]")) { Suite.diffStrings("a", "ab") }
-    expect(("a[b]", "a[]")) { Suite.diffStrings("ab", "a") }
-    expect(("[a]", "[b]")) { Suite.diffStrings("a", "b") }
-    expect(("[a]big", "[]big")) { Suite.diffStrings("abig", "big") }
-    expect(("[]big", "[a]big")) { Suite.diffStrings("big", "abig") }
-    expect(("big[a]", "big[]")) { Suite.diffStrings("biga", "big") }
-    expect(("big[]", "big[a]")) { Suite.diffStrings("big", "biga") }
-    expect(("small[a]big", "small[]big")) { Suite.diffStrings("smallabig", "smallbig") }
-    expect(("0123456789[]0123456789", "0123456789[a]0123456789")) {
+    expectResult(("[]", "[a]")) { Suite.diffStrings("", "a") }
+    expectResult(("[a]", "[]")) { Suite.diffStrings("a", "") }
+    expectResult(("a[]", "a[b]")) { Suite.diffStrings("a", "ab") }
+    expectResult(("a[b]", "a[]")) { Suite.diffStrings("ab", "a") }
+    expectResult(("[a]", "[b]")) { Suite.diffStrings("a", "b") }
+    expectResult(("[a]big", "[]big")) { Suite.diffStrings("abig", "big") }
+    expectResult(("[]big", "[a]big")) { Suite.diffStrings("big", "abig") }
+    expectResult(("big[a]", "big[]")) { Suite.diffStrings("biga", "big") }
+    expectResult(("big[]", "big[a]")) { Suite.diffStrings("big", "biga") }
+    expectResult(("small[a]big", "small[]big")) { Suite.diffStrings("smallabig", "smallbig") }
+    expectResult(("0123456789[]0123456789", "0123456789[a]0123456789")) {
       Suite.diffStrings("01234567890123456789", "0123456789a0123456789")
     }
-    expect(("...01234567890123456789[]0123456789", "...01234567890123456789[a]0123456789")) {
+    expectResult(("...01234567890123456789[]0123456789", "...01234567890123456789[a]0123456789")) {
       Suite.diffStrings("X012345678901234567890123456789", "X01234567890123456789a0123456789")
     }
-    expect(("01234567890123456789[]01234567890123456789...", "01234567890123456789[a]01234567890123456789...")) {
+    expectResult(("01234567890123456789[]01234567890123456789...", "01234567890123456789[a]01234567890123456789...")) {
         Suite.diffStrings("0123456789012345678901234567890123456789X", "01234567890123456789a01234567890123456789X")
     }
-    expect(("...01234567890123456789[]01234567890123456789...", "...01234567890123456789[a]01234567890123456789...")) {
+    expectResult(("...01234567890123456789[]01234567890123456789...", "...01234567890123456789[a]01234567890123456789...")) {
         Suite.diffStrings("XXXX0123456789012345678901234567890123456789XX", "XXXX01234567890123456789a01234567890123456789XX")
     }
-    expect(("...01234567890123456789[]01234567890123456789...", "...01234567890123456789[a]01234567890123456789...")) {
+    expectResult(("...01234567890123456789[]01234567890123456789...", "...01234567890123456789[a]01234567890123456789...")) {
         Suite.diffStrings("X0123456789012345678901234567890123456789X", "X01234567890123456789a01234567890123456789X")
     }
   }
@@ -166,40 +166,40 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
 
     val decorateToStringValue = PrivateMethod[String]('decorateToStringValue)
 
-    expect("1") {
+    expectResult("1") {
       FailureMessages invokePrivate decorateToStringValue(1.toByte)
     }
-    expect("1") {
+    expectResult("1") {
       FailureMessages invokePrivate decorateToStringValue(1.toShort)
     }
-    expect("1") {
+    expectResult("1") {
       FailureMessages invokePrivate decorateToStringValue(1)
     }
-    expect("10") {
+    expectResult("10") {
       FailureMessages invokePrivate decorateToStringValue(10L)
     }
-    expect("1.0") {
+    expectResult("1.0") {
       FailureMessages invokePrivate decorateToStringValue(1.0f)
     }
-    expect("1.0") {
+    expectResult("1.0") {
       FailureMessages invokePrivate decorateToStringValue(1.0)
     }
-    expect("false") {
+    expectResult("false") {
       FailureMessages invokePrivate decorateToStringValue(false)
     }
-    expect("true") {
+    expectResult("true") {
       FailureMessages invokePrivate decorateToStringValue(true)
     }
-    expect("<(), the Unit value>") {
+    expectResult("<(), the Unit value>") {
       FailureMessages invokePrivate decorateToStringValue(())
     }
-    expect("\"Howdy!\"") {
+    expectResult("\"Howdy!\"") {
       FailureMessages invokePrivate decorateToStringValue("Howdy!")
     }
-    expect("'c'") {
+    expectResult("'c'") {
       FailureMessages invokePrivate decorateToStringValue('c')
     }
-    expect("Hey!") {
+    expectResult("Hey!") {
       FailureMessages invokePrivate decorateToStringValue(new AnyRef { override def toString = "Hey!"})
     }
   }
@@ -496,9 +496,34 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(s6.theTestTheOtherConfigMapWasEmpty)
   }
 
+  def `test: Suite should order encoded names in alphabetical decoded order` {
+
+    // + comes before -
+    // but $plus comes after $minus
+    class ASuite extends Suite {
+
+      def `test: the + operator should add` {
+        val sum = 1 + 1
+        assert(sum === 2)
+      }
+
+      def `test: the - operator should subtract` {
+        val diff = 4 - 1
+        assert(diff === 3)
+      }
+    }
+
+    val a = new ASuite
+    val expectedTestNames = List("" +
+      "test$colon$u0020the$u0020$plus$u0020operator$u0020should$u0020add",
+      "test$colon$u0020the$u0020$minus$u0020operator$u0020should$u0020subtract"
+    )
+    assert(a.testNames.iterator.toList === expectedTestNames)
+  }
+
   def testDecodedSuiteName() {
-    expect("My Test") { new My$u0020Test().decodedSuiteName.get }
-    expect(None) { new SuiteSuite().decodedSuiteName }
+    expectResult("My Test") { new My$u0020Test().decodedSuiteName.get }
+    expectResult(None) { new SuiteSuite().decodedSuiteName }
   }
   
   def testDecodedTestName() {
@@ -515,24 +540,24 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     val normalReporter = new EventRecordingReporter
     normalSuite.run(None, Args(normalReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     val normalEventList:List[Event] = normalReporter.eventsReceived
-    expect(7) { normalEventList.size }
+    expectResult(7) { normalEventList.size }
     normalEventList.foreach {event =>
       event match {
         case testStarting:TestStarting => 
-          expect(None) { testStarting.decodedTestName }
-          expect(None) { testStarting.decodedSuiteName }
+          expectResult(None) { testStarting.decodedTestName }
+          expectResult(None) { testStarting.decodedSuiteName }
         case testSucceed:TestSucceeded => 
-          expect("testSucceed") { testSucceed.testName }
-          expect(None) { testSucceed.decodedTestName }
+          expectResult("testSucceed") { testSucceed.testName }
+          expectResult(None) { testSucceed.decodedTestName }
         case testFail:TestFailed =>
-          expect("testFail") { testFail.testName }
-          expect(None) { testFail.decodedTestName }
+          expectResult("testFail") { testFail.testName }
+          expectResult(None) { testFail.decodedTestName }
         case testPending:TestPending =>
-          expect("testPending") { testPending.testName }
-          expect(None) { testPending.decodedTestName }
+          expectResult("testPending") { testPending.testName }
+          expectResult(None) { testPending.decodedTestName }
         case testIgnore:TestIgnored => 
-          expect("testIgnore") { testIgnore.testName }
-          expect(None) { testIgnore.decodedTestName }
+          expectResult("testIgnore") { testIgnore.testName }
+          expectResult(None) { testIgnore.decodedTestName }
         case _ =>
       }
     }
@@ -549,7 +574,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     val decodedReporter = new EventRecordingReporter
     decodedSuite.run(None, Args(decodedReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     val decodedEventList:List[Event] = decodedReporter.eventsReceived
-    expect(7) { decodedEventList.size }
+    expectResult(7) { decodedEventList.size }
     decodedEventList.foreach {event =>
       event match {
         case testStarting:TestStarting => 
@@ -557,19 +582,19 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
             case Some(name) => assert(name.length() > 0, "decodedTestName should not be empty.")
             case None => fail("decodedTestName should not be empty.")
           }
-          expect(None) { testStarting.decodedSuiteName }
+          expectResult(None) { testStarting.decodedSuiteName }
         case testSucceed:TestSucceeded => 
-          expect("test$u0020Succeed") { testSucceed.testName }
-          expect(Some("test Succeed")) { testSucceed.decodedTestName }
+          expectResult("test$u0020Succeed") { testSucceed.testName }
+          expectResult(Some("test Succeed")) { testSucceed.decodedTestName }
         case testFail:TestFailed =>
-          expect("test$u0020Fail") { testFail.testName }
-          expect(Some("test Fail")) { testFail.decodedTestName }
+          expectResult("test$u0020Fail") { testFail.testName }
+          expectResult(Some("test Fail")) { testFail.decodedTestName }
         case testPending:TestPending =>
-          expect("test$u0020Pending") { testPending.testName }
-          expect(Some("test Pending")) { testPending.decodedTestName }
+          expectResult("test$u0020Pending") { testPending.testName }
+          expectResult(Some("test Pending")) { testPending.decodedTestName }
         case testIgnore:TestIgnored => 
-          expect("test$u0020Ignore") { testIgnore.testName }
-          expect(Some("test Ignore")) { testIgnore.decodedTestName }
+          expectResult("test$u0020Ignore") { testIgnore.testName }
+          expectResult(Some("test Ignore")) { testIgnore.decodedTestName }
         case _ =>
       }
     }
@@ -755,19 +780,19 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
   }
 
   def testAnErrorThatShouldCauseAnAbort() {
-    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new AnnotationFormatError("oops")) }
-    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new AWTError("ouch")) }
-    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new CoderMalfunctionError(new Exception)) }
-    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new FactoryConfigurationError) }
-    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new LinkageError) }
-    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new ThreadDeath) }
-    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new TransformerFactoryConfigurationError) }
-    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new VirtualMachineError {}) }
-    expect(true) { Suite.anErrorThatShouldCauseAnAbort(new OutOfMemoryError) }
-    expect(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
-    expect(false) { Suite.anErrorThatShouldCauseAnAbort(new RuntimeException) }
-    expect(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
-    expect(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
+    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new AnnotationFormatError("oops")) }
+    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new AWTError("ouch")) }
+    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new CoderMalfunctionError(new Exception)) }
+    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new FactoryConfigurationError) }
+    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new LinkageError) }
+    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new ThreadDeath) }
+    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new TransformerFactoryConfigurationError) }
+    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new VirtualMachineError {}) }
+    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new OutOfMemoryError) }
+    expectResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
+    expectResult(false) { Suite.anErrorThatShouldCauseAnAbort(new RuntimeException) }
+    expectResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
+    expectResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
   }
 }
 
