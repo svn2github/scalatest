@@ -43,12 +43,12 @@ import org.scalatest.exceptions.TimeoutField
  * </pre>
  * 
  * <p>
- * 2. Invoking <code>awaitResult</code>, to obtain a futures result within a specified or implicit time period,
+ * 2. Invoking <code>futureValue</code>, to obtain a futures result within a specified or implicit time period,
  * like this:
  * </p>
  * 
  * <pre class="stHighlight">
- * val result = future.awaitResult
+ * val result = future.futureValue
  * assert(result === 7)
  * </pre>
  * 
@@ -239,7 +239,7 @@ trait Futures extends PatienceConfiguration {
    */
   trait FutureConcept[T] { thisFuture =>
 
-    /**
+    /*
      * Queries this future for its value.
      *
      * <p>
@@ -247,7 +247,7 @@ trait Futures extends PatienceConfiguration {
      * or a <code>T</code>.
      * </p>
      */
-    def value: Option[Either[Throwable, T]]
+    private[scalatest] def value: Option[Either[Throwable, T]]
 
     /**
      * Indicates whether this future has expired (timed out).
@@ -271,7 +271,7 @@ trait Futures extends PatienceConfiguration {
 
     final def isReadyWithin(timeout: Span)(implicit config: PatienceConfig): Boolean = {
       try {
-        awaitResult(PatienceConfig(timeout, config.interval))
+        futureValue(PatienceConfig(timeout, config.interval))
         true
       }
       catch {
@@ -293,7 +293,7 @@ trait Futures extends PatienceConfiguration {
      * </p>
      *
      * <p>
-     * This method invokes the overloaded <code>awaitResult</code> form with only one (implicit) argument
+     * This method invokes the overloaded <code>futureValue</code> form with only one (implicit) argument
      * list that contains only one argument, a <code>PatienceConfig</code>, passing a new
      * <code>PatienceConfig</code> with the <code>Timeout</code> specified as <code>timeout</code> and
      * the <code>Interval</code> specified as <code>interval</code>.
@@ -307,8 +307,8 @@ trait Futures extends PatienceConfiguration {
      * @throws TestFailedException if the future is cancelled, expires, or is still not ready after
      *     the specified timeout has been exceeded
      */
-    final def awaitResult(timeout: Timeout, interval: Interval): T =
-      awaitResult(PatienceConfig(timeout.value, interval.value))
+    final def futureValue(timeout: Timeout, interval: Interval): T =
+      futureValue(PatienceConfig(timeout.value, interval.value))
 
     /**
      * Returns the result of this <code>FutureConcept</code>, once it is ready, or throws either the
@@ -324,7 +324,7 @@ trait Futures extends PatienceConfiguration {
      * </p>
      *
      * <p>
-     * This method invokes the overloaded <code>awaitResult</code> form with only one (implicit) argument
+     * This method invokes the overloaded <code>futureValue</code> form with only one (implicit) argument
      * list that contains only one argument, a <code>PatienceConfig</code>, passing a new
      * <code>PatienceConfig</code> with the <code>Timeout</code> specified as <code>timeout</code> and
      * the <code>Interval</code> specified as <code>interval</code>.
@@ -338,8 +338,8 @@ trait Futures extends PatienceConfiguration {
      * @throws TestFailedException if the future is cancelled, expires, or is still not ready after
      *     the specified timeout has been exceeded
      */
-    final def awaitResult(interval: Interval, timeout: Timeout): T =
-      awaitResult(PatienceConfig(timeout.value, interval.value))
+    final def futureValue(interval: Interval, timeout: Timeout): T =
+      futureValue(PatienceConfig(timeout.value, interval.value))
 
     /**
      * Returns the result of this <code>FutureConcept</code>, once it is ready, or throws either the
@@ -355,7 +355,7 @@ trait Futures extends PatienceConfiguration {
      * </p>
      *
      * <p>
-     * This method invokes the overloaded <code>awaitResult</code> form with only one (implicit) argument
+     * This method invokes the overloaded <code>futureValue</code> form with only one (implicit) argument
      * list that contains only one argument, a <code>PatienceConfig</code>, passing a new
      * <code>PatienceConfig</code> with the <code>Timeout</code> specified as <code>timeout</code> and
      * the <code>Interval</code> specified as <code>config.interval</code>.
@@ -370,8 +370,8 @@ trait Futures extends PatienceConfiguration {
      * @throws TestFailedException if the future is cancelled, expires, or is still not ready after
      *     the specified timeout has been exceeded
      */
-    final def awaitResult(timeout: Timeout)(implicit config: PatienceConfig): T =
-      awaitResult(PatienceConfig(timeout.value, config.interval))
+    final def futureValue(timeout: Timeout)(implicit config: PatienceConfig): T =
+      futureValue(PatienceConfig(timeout.value, config.interval))
 
     /**
      * Returns the result of this <code>FutureConcept</code>, once it is ready, or throws either the
@@ -387,7 +387,7 @@ trait Futures extends PatienceConfiguration {
      * </p>
      *
      * <p>
-     * This method invokes the overloaded <code>awaitResult</code> form with only one (implicit) argument
+     * This method invokes the overloaded <code>futureValue</code> form with only one (implicit) argument
      * list that contains only one argument, a <code>PatienceConfig</code>, passing a new
      * <code>PatienceConfig</code> with the <code>Interval</code> specified as <code>interval</code> and
      * the <code>Timeout</code> specified as <code>config.timeout</code>.
@@ -402,8 +402,8 @@ trait Futures extends PatienceConfiguration {
      * @throws TestFailedException if the future is cancelled, expires, or is still not ready after
      *     the specified timeout has been exceeded
      */
-    final def awaitResult(interval: Interval)(implicit config: PatienceConfig): T =
-      awaitResult(PatienceConfig(config.timeout, interval.value))
+    final def futureValue(interval: Interval)(implicit config: PatienceConfig): T =
+      futureValue(PatienceConfig(config.timeout, interval.value))
 
     /**
      * Returns the result of this <code>FutureConcept</code>, once it is ready, or throws either the
@@ -434,11 +434,11 @@ trait Futures extends PatienceConfiguration {
      * @throws TestFailedException if the future is cancelled, expires, or is still not ready after
      *     the specified timeout has been exceeded
      */
-    def awaitResult(implicit config: PatienceConfig): T = {
+    def futureValue(implicit config: PatienceConfig): T = {
 
       val st = Thread.currentThread.getStackTrace
       val callerStackFrame = 
-        if (!st(2).getMethodName.contains("awaitResult"))
+        if (!st(2).getMethodName.contains("futureValue"))
          st(2)
         else
          st(3)
@@ -449,7 +449,7 @@ trait Futures extends PatienceConfiguration {
         else if (callerStackFrame.getFileName == "Futures.scala" && callerStackFrame.getMethodName == "isReadyWithin")
           "isReadyWithin"
         else
-          "awaitResult"
+          "futureValue"
           
       val adjustment =
         methodName match {
@@ -534,7 +534,7 @@ trait Futures extends PatienceConfiguration {
    * @return the result of invoking the <code>fun</code> parameter
    */
   final def whenReady[T, U](future: FutureConcept[T], timeout: Timeout, interval: Interval)(fun: T => U)(implicit config: PatienceConfig): U = {
-    val result = future.awaitResult(PatienceConfig(timeout.value, interval.value))
+    val result = future.futureValue(PatienceConfig(timeout.value, interval.value))
     fun(result)
   }
     // whenReady(future)(fun)(PatienceConfig(timeout.value, interval.value))
@@ -561,7 +561,7 @@ trait Futures extends PatienceConfiguration {
    * @return the result of invoking the <code>fun</code> parameter
    */
   final def whenReady[T, U](future: FutureConcept[T], interval: Interval, timeout: Timeout)(fun: T => U)(implicit config: PatienceConfig): U = {
-    val result = future.awaitResult(PatienceConfig(timeout.value, interval.value))
+    val result = future.futureValue(PatienceConfig(timeout.value, interval.value))
     fun(result)
   }
     // whenReady(future)(fun)(PatienceConfig(timeout.value, interval.value))
@@ -587,7 +587,7 @@ trait Futures extends PatienceConfiguration {
    * @return the result of invoking the <code>fun</code> parameter
    */
   final def whenReady[T, U](future: FutureConcept[T], timeout: Timeout)(fun: T => U)(implicit config: PatienceConfig): U = {
-    val result = future.awaitResult(PatienceConfig(timeout.value, config.interval))
+    val result = future.futureValue(PatienceConfig(timeout.value, config.interval))
     fun(result)
   }
     // whenReady(future)(fun)(PatienceConfig(timeout.value, config.interval))
@@ -612,7 +612,7 @@ trait Futures extends PatienceConfiguration {
    * @return the result of invoking the <code>fun</code> parameter
    */
   final def whenReady[T, U](future: FutureConcept[T], interval: Interval)(fun: T => U)(implicit config: PatienceConfig): U = {
-    val result = future.awaitResult(PatienceConfig(config.timeout, interval.value))
+    val result = future.futureValue(PatienceConfig(config.timeout, interval.value))
     fun(result)
   }
     // whenReady(future)(fun)(PatienceConfig(config.timeout, interval.value))
@@ -638,7 +638,7 @@ trait Futures extends PatienceConfiguration {
    */
   final def whenReady[T, U](future: FutureConcept[T])(fun: T => U)(implicit config: PatienceConfig): U = {
 
-      val result = future.awaitResult(config)
+      val result = future.futureValue(config)
       fun(result)
 /*    val startNanos = System.nanoTime
 

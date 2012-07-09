@@ -50,10 +50,10 @@ trait JavaFutures extends Futures {
       def isCanceled: Boolean = javaFuture.isCancelled // Two ll's in Canceled. The verbosity of Java strikes again!
       // TODO: Catch TimeoutException and wrap that in a TFE with ScalaTest's TimeoutException I think.
       // def awaitAtMost(span: Span): T = javaFuture.get(span.totalNanos, TimeUnit.NANOSECONDS)
-      override def awaitResult(implicit config: PatienceConfig): T = {
+      override def futureValue(implicit config: PatienceConfig): T = {
         val st = Thread.currentThread.getStackTrace
         val callerStackFrame =
-          if (!st(2).getMethodName.contains("awaitResult"))
+          if (!st(2).getMethodName.contains("futureValue"))
             st(2)
           else
             st(3)
@@ -64,7 +64,7 @@ trait JavaFutures extends Futures {
           else if (callerStackFrame.getFileName == "Futures.scala" && callerStackFrame.getMethodName == "isReadyWithin")
             "isReadyWithin"
           else
-            "awaitResult"
+            "futureValue"
 
         val adjustment =
           if (methodName == "whenReady")

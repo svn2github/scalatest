@@ -133,7 +133,7 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
         try {
           val futureIsNow = execSvc.submit(new Sleeper(Span(0, Millis)))
 
-          futureIsNow.awaitResult should equal("hi")
+          futureIsNow.futureValue should equal("hi")
         }
         finally {
           execSvc.shutdown()
@@ -148,7 +148,7 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
           val canceledFuture = execSvc.submit(task)
           canceledFuture.cancel(true)
           val caught = evaluating {
-            canceledFuture.awaitResult
+            canceledFuture.futureValue
           } should produce[TestFailedException]
           caught.message.value should be(Resources("futureWasCanceled", "1", "10 milliseconds"))
           withClue(caught.getStackTraceString) {
@@ -168,7 +168,7 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
           val task = new CallableTask(new Sleeper(Span(2, Seconds)))
           val neverReadyFuture = execSvc.submit(task)
           val caught = evaluating {
-            neverReadyFuture.awaitResult
+            neverReadyFuture.futureValue
           } should produce[TestFailedException]
 
           caught.message.value should be(Resources("wasNeverReady"))
@@ -187,24 +187,24 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
           val task = new CallableTask(new Sleeper(Span(2, Seconds)))
           def neverReadyFuture = execSvc.submit(task)
           val caught1 = evaluating {
-            neverReadyFuture.awaitResult(timeout(Span(100, Millis)), interval(Span(1, Millisecond)))
+            neverReadyFuture.futureValue(timeout(Span(100, Millis)), interval(Span(1, Millisecond)))
           } should produce[TestFailedException]
           caught1.failedCodeLineNumber.value should equal(thisLineNumber - 2)
           caught1.failedCodeFileName.value should be("JavaFuturesSpec.scala")
           val caught2 = evaluating {
-            neverReadyFuture.awaitResult(interval(Span(1, Millisecond)), timeout(Span(100, Millis)))
+            neverReadyFuture.futureValue(interval(Span(1, Millisecond)), timeout(Span(100, Millis)))
           } should produce[TestFailedException]
           caught2.failedCodeLineNumber.value should equal(thisLineNumber - 2)
           caught2.failedCodeFileName.value should be("JavaFuturesSpec.scala")
 
           val caught3 = evaluating {
-            neverReadyFuture.awaitResult(timeout(Span(100, Millis)))
+            neverReadyFuture.futureValue(timeout(Span(100, Millis)))
           } should produce[TestFailedException]
           caught3.failedCodeLineNumber.value should equal(thisLineNumber - 2)
           caught3.failedCodeFileName.value should be("JavaFuturesSpec.scala")
 
           val caught4 = evaluating {
-            neverReadyFuture.awaitResult(interval(Span(1, Millisecond)))
+            neverReadyFuture.futureValue(interval(Span(1, Millisecond)))
           } should produce[TestFailedException]
           caught4.failedCodeLineNumber.value should equal(thisLineNumber - 2)
           caught4.failedCodeFileName.value should be("JavaFuturesSpec.scala")
@@ -221,7 +221,7 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
           val task = new CallableTask(new Sleeper(Span(2, Seconds)))
           val neverReadyFuture = execSvc.submit(task)
           evaluating {
-            neverReadyFuture.awaitResult
+            neverReadyFuture.futureValue
           } should produce[TestFailedException]
           (System.currentTimeMillis - startTime).toInt should be >= (150)
         }
@@ -235,7 +235,7 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
         val task = new ThrowingTask(new RuntimeException("oops"))
         val caught =
           intercept[TestFailedException] {
-            task.awaitResult
+            task.futureValue
           }
         caught.failedCodeLineNumber.value should equal(thisLineNumber - 2)
         caught.failedCodeFileName.value should be("JavaFuturesSpec.scala")
@@ -248,7 +248,7 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
         val task = new ThrowingTask(new VirtualMachineError {})
         val caught =
           intercept[VirtualMachineError] {
-            task.awaitResult
+            task.futureValue
           }
       }
 
@@ -256,7 +256,7 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
       it("should allow TestPendingException, which does not normally cause a test to fail, through immediately when thrown") {
         val task = new ThrowingTask(new TestPendingException)
           intercept[TestPendingException] {
-            task.awaitResult
+            task.futureValue
           }
       }
     }
