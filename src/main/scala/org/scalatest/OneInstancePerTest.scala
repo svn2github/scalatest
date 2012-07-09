@@ -21,7 +21,7 @@ package org.scalatest
  * suite.
  *
  * <table><tr><td class="usage">
- * <strong>Recommended Usage</strong>: Trait <code>OneInstancePerTest</code> is intended primarily to serve as a superclass for
+ * <strong>Recommended Usage</strong>: Trait <code>OneInstancePerTest</code> is intended primarily to serve as a supertrait for
  * <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a> and the <a href="path/package.html">path traits</a>, to
  * facilitate porting JUnit tests to ScalaTest, and to make it easy for users who prefer JUnit's approach to isolation to obtain similar
  * behavior in ScalaTest.

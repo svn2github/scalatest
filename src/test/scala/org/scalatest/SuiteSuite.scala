@@ -417,7 +417,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(s6.theTestTheOtherConfigMapWasEmpty)
   }
 
-  @Ignore def `test: execute should use dynamic tagging to enable Doenitz wildcards for encoded test names` {
+  def `test: execute should use dynamic tagging to enable Doenitz wildcards for encoded test names` {
 
     class TestWasCalledSuite extends Suite {
       var theTestThisCalled = false
@@ -429,16 +429,16 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
       override def withFixture(test: NoArgTest) {
         if (test.configMap.size > 0)
           test.name match {
-            case "test this" => theTestThisConfigMapWasEmpty = false
-            case "test that" => theTestThatConfigMapWasEmpty = false
-            case "test the other" => theTestTheOtherConfigMapWasEmpty = false
+            case "test$u0020this" => theTestThisConfigMapWasEmpty = false
+            case "test$u0020that" => theTestThatConfigMapWasEmpty = false
+            case "test$u0020the$u0020other" => theTestTheOtherConfigMapWasEmpty = false
             case _ => throw new Exception("Should never happen")
           }
         test()
       }
-      def testThis() { theTestThisCalled = true }
-      def testThat() { theTestThatCalled = true }
-      def testTheOther() { theTestTheOtherCalled = true }
+      def `test this` { theTestThisCalled = true }
+      def `test that` { theTestThatCalled = true }
+      def `test the other` { theTestTheOtherCalled = true }
     }
 
     val s1 = new TestWasCalledSuite

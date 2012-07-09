@@ -61,71 +61,19 @@ import exceptions._
  * A suite of tests. A <code>Suite</code> instance encapsulates a conceptual
  * suite (<em>i.e.</em>, a collection) of tests.
  *
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * Because it allows you to define tests as methods, saving one class file per test over style traits that represent tests as functions,
+ * <code>Suite</code> can be useful as a style trait in large projects where class file generation is a concern as well as when generating tests programatically
+ * via a static code generator.
+ * </td></tr></table>
+ * 
  * <p>
  * This trait provides an interface that allows suites of tests to be run.
  * Its implementation enables a default way of writing and executing tests.  Subtraits and subclasses can
  * override <code>Suite</code>'s methods to enable other ways of writing and executing tests.
- * This trait's default approach allows tests to be defined as methods whose name starts with "<code>test</code>."
- * This approach is easy to understand, and a good way for Scala beginners to start writing tests.
- * More advanced Scala programmers may prefer to mix together other <code>Suite</code> subtraits defined in ScalaTest, 
- * or create their own, to write tests in the way they feel makes them most productive. Here's a quick overview
- * of some of the options to help you get started:
- * </p>
- *
- * <p>
- * <em>For JUnit 3 users</em>
- * </p>
- *
- * <p>
- * If you are using JUnit 3 (version 3.8 or earlier releases) and you want to write JUnit 3 tests in Scala, look at
- * <a href="junit/AssertionsForJUnit.html"><code>AssertionsForJUnit</code></a>, 
- * <a href="junit/ShouldMatchersForJUnit.html"><code>ShouldMatchersForJUnit</code></a>, and
- * <a href="junit/JUnit3Suite.html"><code>JUnit3Suite</code></a>. 
- * </p>
- *
- * <p>
- * <em>For JUnit 4 users</em>
- * </p>
- *
- * <p>
- * If you are using JUnit 4 and you want to write JUnit 4 tests in Scala, look at
- * <a href="junit/JUnitSuite.html"><code>JUnitSuite</code></a>, and
- * <a href="junit/JUnitRunner.html"><code>JUnitRunner</code></a>. With <code>JUnitRunner</code>,
- * you can use any of the traits described here and still run your tests with JUnit 4.
- * </p>
- *
- * <p>
- * <em>For TestNG users</em>
- * </p>
- *
- * <p>
- * If you are using TestNG and you want to write TestNG tests in Scala, look at
- * <a href="testng/TestNGSuite.html"><code>TestNGSuite</code></a>.
- * </p>
- *
- * <p>
- * <em>For high-level testing</em>
- * </p>
- *
- * <p>
- * If you want to write tests at a higher level than unit tests, such as integration tests, acceptance tests,
- * or functional tests, check out <a href="FeatureSpec.html"><code>FeatureSpec</code></a>.
- * </p>
- *
- * <p>
- * <em>For unit testing</em>
- * </p>
- *
- * <p>
- * If you prefer a behavior-driven development (BDD) style, in which tests are combined with text that
- * specifies the behavior being tested, look at
- * <a href="FunSpec.html"><code>FunSpec</code></a>, 
- * <a href="FlatSpec.html"><code>FlatSpec</code></a>,
- * <a href="FreeSpec.html"><code>FreeSpec</code></a>, and
- * <a href="WordSpec.html"><code>WordSpec</code></a>. Otherwise, if you just want to write tests
- * and don't want to combine testing with specifying, look at 
- * <a href="FunSuite.html"><code>FunSuite</code></a> or read on to learn how to write
- * tests using this base trait, <code>Suite</code>. 
+ * This trait's default approach allows tests to be defined as methods whose name starts with "<code>test</code>," and gives
+ * special treatment to methods whose names are given in backticks starting with "<code>test: </code>."
  * </p>
  *
  * <p>
@@ -160,7 +108,7 @@ import exceptions._
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ExampleSuite).execute()
+ * scala&gt; new ExampleSuite execute
  * </pre>
  *
  * <p>
@@ -174,20 +122,14 @@ import exceptions._
  * </pre>
  *
  * <p>
- * Or, to run just the <code>testAddition</code> method, you could write:
+ * Or, to run just the &ldquo;<code>test: the + operator should add</code>&rdquo; method, you could pass that test's name, or any unique substring of the
+ * name, such as <code>"+"</code> or <code>"add"</code>. Here's an example:
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ExampleSuite).execute("testAddition")
- * </pre>
- *
- * <p>
- * And you would see:
- * </p>
- *
- * <pre class="stREPL">
+ * scala&gt; new ExampleSuite execute "+"
  * <span class="stGreen">ExampleSuite:
- * - testAddition</span>
+ * - the + operator should add</span>
  * </pre>
  *
  * <p>
@@ -198,9 +140,9 @@ import exceptions._
  * </p>
  *
  * <p>
- * The <code>execute</code> method invokes a <code>run</code> method takes seven
+ * The <code>execute</code> method invokes a <code>run</code> method takes two
  * parameters. This <code>run</code> method, which actually executes the suite, will usually be invoked by a test runner, such
- * as <code>org.scalatest.tools.Runner</code> or an IDE. See the <a href="tools/Runner$.html">documentation
+ * as <code>org.scalatest.tools.Runner</code> or a build tool or IDE. See the <a href="tools/Runner$.html">documentation
  * for <code>Runner</code></a> for more details.
  * </p>
  *
@@ -271,15 +213,15 @@ import exceptions._
  * as the operands become lengthy, the code becomes less readable. In addition, the <code>===</code> comparison
  * doesn't distinguish between actual and expected values. The operands are just called <code>left</code> and <code>right</code>,
  * because if one were named <code>expected</code> and the other <code>actual</code>, it would be difficult for people to
- * remember which was which. To help with these limitations of assertions, <code>Suite</code> includes a method called <code>expect</code> that
- * can be used as an alternative to <code>assert</code> with <code>===</code>. To use <code>expect</code>, you place
- * the expected value in parentheses after <code>expect</code>, followed by curly braces containing code 
+ * remember which was which. To help with these limitations of assertions, <code>Suite</code> includes a method called <code>expectResult</code> that
+ * can be used as an alternative to <code>assert</code> with <code>===</code>. To use <code>expectResult</code>, you place
+ * the expected value in parentheses after <code>expectResult</code>, followed by curly braces containing code 
  * that should result in the expected value. For example:
  *
  * <pre class="stHighlight">
  * val a = 5
  * val b = 2
- * expect(2) {
+ * expectResult(2) {
  *   a - b
  * }
  * </pre>
@@ -357,12 +299,12 @@ import exceptions._
  *
  * class ExampleSuite extends Suite with ShouldMatchers {
  *
- *   def testAddition {
+ *   def &#96;test: the + operator should add&#96; {
  *     val sum = 1 + 1
  *     sum should equal (2)
  *   }
  *
- *   def testSubtraction {
+ *   def &#96;test: the - operator should subtract&#96; {
  *     val diff = 4 - 1
  *     diff should equal (3)
  *   }
@@ -389,12 +331,12 @@ import exceptions._
  *
  * class ExampleSuite extends Suite {
  *
- *   def testAddition {
+ *   def &#96;test: the + operator should add&#96; {
  *     val sum = 1 + 1
  *     assertEquals(2, sum)
  *   }
  *
- *   def testSubtraction {
+ *   def &#96;test: the - operator should subtract&#96; {
  *     val diff = 4 - 1
  *     assertEquals(3, diff)
  *   }
@@ -447,7 +389,7 @@ import exceptions._
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new AlphabetSuite).execute()
+ * scala&gt; new AlphabetSuite execute
  * </pre>
  *
  * <p>
@@ -510,13 +452,13 @@ import exceptions._
  *
  * class ExampleSuite extends Suite {
  *
- *   def testAddition {
+ *   def &#96;test: the + operator should add&#96; {
  *     val sum = 1 + 1
  *     assert(sum === 2)
  *   }
  *
  *   @Ignore
- *   def testSubtraction {
+ *   def &#96;test: the - operator should subtract&#96; {
  *     val diff = 4 - 1
  *     assert(diff === 3)
  *   }
@@ -528,7 +470,7 @@ import exceptions._
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ExampleSuite).run()
+ * scala&gt; new ExampleSuite execute
  * </pre>
  *
  * <p>
@@ -536,9 +478,9 @@ import exceptions._
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSuite:
- * - testAddition</span>
- * <span class="stYellow">- testSubtraction !!! IGNORED !!!</span>
+ * <span class="stGreen">ExampleSuite:</span>
+ * <span class="stYellow">- the - operator should subtract !!! IGNORED !!!</span>
+ * <span class="stGreen">- the + operator should add</span>
  * </pre>
  * 
  * <p>
@@ -585,12 +527,12 @@ import exceptions._
  *
  * class ExampleSuite extends Suite {
  *
- *   def testAddition {
+ *   def &#96;test: the + operator should add&#96; {
  *     val sum = 1 + 1
  *     assert(sum === 2)
  *   }
  *
- *   def testSubtraction { pending }
+ *   def &#96;test: the - operator should subtract&#96; { pending }
  * }
  * </pre>
  *
@@ -599,7 +541,7 @@ import exceptions._
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ExampleSuite).run()
+ * scala&gt; new ExampleSuite execute
  * </pre>
  *
  * <p>
@@ -643,7 +585,7 @@ import exceptions._
  * included in the printed report:
  *
  * <pre class="stREPL">
- * scala> (new ExampleSuite).run()
+ * scala&gt; (new ExampleSuite).run()
  * <span class="stGreen">ExampleSuite:
  * - testAddition(Informer)
  *   + Addition seems to work </span>
@@ -1488,7 +1430,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala> (new ExampleSuite).execute()
+   * scala&gt; (new ExampleSuite).execute()
    * </pre>
    *
    * <p>
@@ -1496,7 +1438,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala> (new ExampleSuite).execute("my favorite test")
+   * scala&gt; (new ExampleSuite).execute("my favorite test")
    * </pre>
    *
    * <p>
@@ -1504,7 +1446,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala> (new ExampleSuite).execute(testName = "my favorite test")
+   * scala&gt; (new ExampleSuite).execute(testName = "my favorite test")
    * </pre>
    *
    * <p>
@@ -1519,7 +1461,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala> (new ExampleSuite).execute(configMap = Map("inputFileName" -> "in.txt")
+   * scala&gt; (new ExampleSuite).execute(configMap = Map("inputFileName" -> "in.txt")
    * </pre>
    *
    * <p>
@@ -1532,7 +1474,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala> (new ExampleSuite).execute(color = false)
+   * scala&gt; (new ExampleSuite).execute(color = false)
    * </pre>
    *
    * <p>
@@ -1546,7 +1488,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala> (new ExampleSuite).execute(durations = true)
+   * scala&gt; (new ExampleSuite).execute(durations = true)
    * </pre>
    *
    * <p>
@@ -1561,7 +1503,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala> (new ExampleSuite).execute(shortstacks = true)
+   * scala&gt; (new ExampleSuite).execute(shortstacks = true)
    * </pre>
    *
    * <p>
@@ -1569,7 +1511,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala> (new ExampleSuite).execute(fullstacks = true)
+   * scala&gt; (new ExampleSuite).execute(fullstacks = true)
    * </pre>
    *
    * <p>
@@ -1589,7 +1531,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala> (new ExampleSuite).execute(stats = true)
+   * scala&gt; (new ExampleSuite).execute(stats = true)
    * </pre>
    *
    *
@@ -1665,7 +1607,9 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     val desiredTests: Set[String] =
       if (testName == null) Set.empty
       else {
-        testNames.filter(_.indexOf(testName) >= 0)
+        testNames.filter { s =>
+          s.indexOf(testName) >= 0 || NameTransformer.decode(s).indexOf(testName) >= 0
+        }
       }
     if (testName != null && desiredTests.isEmpty)
       throw new IllegalArgumentException(Resources("testNotFound", testName))
@@ -1741,6 +1685,8 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       dispatch.dispatchDisposeAndWaitUntilDone()
     }
   }
+
+  final def execute { execute() }
 
   /**
    * A <code>Map</code> whose keys are <code>String</code> tag names with which tests in this <code>Suite</code> are marked, and
