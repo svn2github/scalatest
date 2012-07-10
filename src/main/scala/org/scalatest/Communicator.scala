@@ -24,12 +24,18 @@ trait Communicator {
   /**
    * An <code>Informer</code> that during test execution will forward strings (and other objects) passed to its
    * <code>apply</code> method to the current reporter.  This method can be called safely by any thread.
+   *
+   * <p>
+   * This field is implicit to enable it to be easily used with constructs like the <code>given</code>,
+   * <code>when</code>, and <code>then</code> methods of trait
+   * <a href="GivenWhenThen.html"><code>GivenWhenThen</code></a>.
+   * </p>
    */
-  val info: Informer
+  implicit val info: Informer
 
   /**
    * A <code>Documenter</code> that during test execution will forward strings passed to its
    * <code>apply</code> method to the current reporter. This method can be called safely by any thread.
    */
-  val markup: Documenter
+  implicit val markup: Documenter
 }

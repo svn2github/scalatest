@@ -30,7 +30,7 @@ import org.scalatest.exceptions.TestFailedException
 
 class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with SeveredStackTraces {
 
-  def testNamesAndGroupsMethodsDiscovered() {
+  def `test: Suite should discover method names and tags using deprecated Informer form` {
 
     val a = new Suite {
       def testNames(info: Informer): Unit = ()
@@ -42,15 +42,28 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(gResult.keySet.size === 0)
   }
 
-  def testThatTestMethodsWithNoGroupsDontShowUpInGroupsMap() {
+  // TODO: ensure suite aborts if same name is used with and without communicator
+  def `test: Suite should discover method names and tags` {
+
+    val a = new Suite {
+      def testNames(com: Communicator): Unit = ()
+    }
+    assert(a.expectedTestCount(Filter()) === 1)
+    val tnResult: Set[String] = a.testNames
+    val gResult: Map[String, Set[String]] = a.tags
+    assert(tnResult.size === 1)
+    assert(gResult.keySet.size === 0)
+  }
+
+  def `test: test methods with no tags should not show up in tags map` {
     
     val a = new Suite {
-      def testNotInAGroup() = ()
+      def `test: not tagged` = ()
     }
     assert(a.tags.keySet.size === 0)
   }
 
-  def testThatTestMethodsThatReturnNonUnitAreDiscovered() {
+  def `test: test methods that return non-Unit should be discovered using deprecated Informer form` {
     val a = new Suite {
       def testThis(): Int = 1
       def testThat(info: Informer): String = "hi"
@@ -60,7 +73,17 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(a.tags.keySet.size === 0)
   }
 
-  def testThatOverloadedTestMethodsAreDiscovered() {
+  def `test: test methods that return non-Unit should be discovered` {
+    val a = new Suite {
+      def `test: this`: Int = 1
+      def `test: that`(comm: Communicator): String = "hi"
+    }
+    assert(a.expectedTestCount(Filter()) === 2)
+    assert(a.testNames.size === 2)
+    assert(a.tags.keySet.size === 0)
+  }
+
+  def `test: overloaded test methods should be discovered using deprecated Informer form` {
     val a = new Suite {
       def testThis() = ()
       def testThis(info: Informer) = ()
@@ -68,6 +91,22 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(a.expectedTestCount(Filter()) === 2)
     assert(a.testNames.size === 2)
     assert(a.tags.keySet.size === 0)
+  }
+
+  def `test: overloaded test methods should cause an aborted suite` {
+    val a = new Suite {
+      def `test: this` = ()
+      def `test: this`(comm: Communicator) = ()
+    }
+    intercept[NotAllowedException] {
+      a.expectedTestCount(Filter())
+    }
+    intercept[NotAllowedException] {
+      a.testNames
+    }
+    intercept[NotAllowedException] {
+        a.tags
+    }
   }
 
   def testThatInterceptCatchesSubtypes() {

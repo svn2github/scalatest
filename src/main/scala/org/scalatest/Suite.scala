@@ -35,6 +35,7 @@ import Suite.formatterForSuiteAborted
 import Suite.anErrorThatShouldCauseAnAbort
 import Suite.getSimpleNameOfAnObjectsClass
 import Suite.takesInformer
+import Suite.takesCommunicator
 import Suite.isTestMethodGoodies
 import Suite.testMethodTakesAnInformer
 import scala.collection.immutable.TreeSet
@@ -157,8 +158,9 @@ import exceptions._
  * Prior to ScalaTest 2.0, trait <code>Suite</code> considered any method whose name begins with "test" as a test method. This form of test
  * method has been deprecated, to encourage more descriptive test names. Old-style test method names will continue to work during the deprecation period, but you'll
  * get a deprecation warning. Support for old-style method names will be removed in a future version of ScalaTest, so please change all old-style methods to
- * the new form. If a test name is given in backticks and starts with <code>"test: "</code>, the name will be shown by ScalaTest's reporters without
- * the <code>"test: "</code> prefix to increase readability. Old-style test method names will show up intact, as they did before. Here's an example:
+ * the new form as time permits. (It will be a long deprecation cycle.) If a test name is given in backticks and starts with <code>"test: "</code>, the name
+ * will be shown by ScalaTest's reporters without the <code>"test: "</code> prefix to increase readability. Old-style test method names will show up intact, as
+ * they did before. Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
@@ -530,8 +532,8 @@ import exceptions._
  *
  * <pre class="stREPL">
  * <span class="stGreen">ExampleSuite:</span>
- * <span class="stYellow">- the - operator should subtract !!! IGNORED !!!</span>
  * <span class="stGreen">- the + operator should add</span>
+ * <span class="stYellow">- the - operator should subtract !!! IGNORED !!!</span>
  * </pre>
  * 
  * <p>
@@ -600,12 +602,12 @@ import exceptions._
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSuite:
- * - testAddition</span>
- * <span class="stYellow">- testSubtraction (pending)</span>
+ * <span class="stGreen">ExampleSuite:</span>
+ * <span class="stGreen">- the + operator should add</span>
+ * <span class="stYellow">- the - operator should subtract (pending)</span>
  * </pre>
  * 
- * <h2>Informers</h2>
+ * <h2>Communicators</h2>
  *
  * <p>
  * One of the parameters to <code>run</code> is a <code>Reporter</code>, which
@@ -614,9 +616,10 @@ import exceptions._
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
  * Most often the reporting done by default by <code>Suite</code>'s methods will be sufficient, but
  * occasionally you may wish to provide custom information to the <code>Reporter</code> from a test method.
- * For this purpose, you can optionally include an <code>Informer</code> parameter in a test method, and then
- * pass the extra information to the <code>Informer</code> via its <code>apply</code> method. The <code>Informer</code>
- * will then pass the information to the <code>Reporter</code> by sending an <code>InfoProvided</code> event.
+ * For this purpose, you can optionally include <code>Communicator</code> parameter in a test method, and then
+ * communicate the extra information via an <a href="Informer.html"><code>Informer</code></a> 
+ * carried by the <code>Communicator</code>. The <code>Informer</code>
+ * will pass the information to the <code>Reporter</code> by sending an <code>InfoProvided</code> event.
  * Here's an example:
  * </p>
  *
@@ -625,9 +628,9 @@ import exceptions._
  * 
  * class ExampleSuite extends Suite {
  *
- *   def testAddition(info: Informer) {
+ *   def &#96;test: the + operator should add&#96;(com: Communicator) {
  *     assert(1 + 1 === 2)
- *     info("Addition seems to work")
+ *     com.info("Addition seems to work")
  *   }
  * }
  * </pre>
@@ -636,11 +639,22 @@ import exceptions._
  * included in the printed report:
  *
  * <pre class="stREPL">
- * scala&gt; (new ExampleSuite).run()
+ * <span class="stGreen">ExampleSuite:</span>
+ * <span class="stGreen">- the + operator should add</span>
+ * <span class="stYellow">- the - operator should subtract (pending)</span>
+ * </pre>
+ * 
+ * <pre class="stREPL">
+ * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
- * - testAddition(Informer)
+ * - the + operator should add (Communicator)
  *   + Addition seems to work </span>
  * </pre>
+ *
+ * <p>
+ * The <code>Communicator</code> also carries a <code>Documenter</code> named <code>markup</code>, which
+ * you can use to transmit markup text to the <code>Reporter</code>.
+ * </p>
  *
  * <h2>Executing suites in parallel</h2>
  *
@@ -1837,16 +1851,25 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       // Factored out to share code with fixture.Suite.testNames
       val (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags) = isTestMethodGoodies(m)
 
-      isInstanceMethod && (firstFour == "test") && ((hasNoParams && !isTestNames && !isTestTags) || takesInformer(m))
+      isInstanceMethod && (firstFour == "test") && ((hasNoParams && !isTestNames && !isTestTags) || takesInformer(m) || takesCommunicator(m))
     }
 
     val testNameArray =
       for (m <- getClass.getMethods; if isTestMethod(m)) 
         yield if (takesInformer(m)) m.getName + InformerInParens else m.getName
 
-    TreeSet.empty[String](EncodedOrdering) ++ testNameArray
+    val result = TreeSet.empty[String](EncodedOrdering) ++ testNameArray
+    if (result.size != testNameArray.length) {
+      throw new NotAllowedException("Howdy", 0)
+    }
+    result
   }
 
+  /*
+  Old style method names will have (Informer) at the end still, but new ones will
+  not. This method will find the one without a Communicator if the same name is used
+  with and without a Communicator. TODO: Still need to detect this overloading somewhere.
+   */
   private[scalatest] def getMethodForTestName(testName: String) =
     try {
       getClass.getMethod(
@@ -1856,7 +1879,14 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     }
     catch {
       case e: NoSuchMethodException =>
-        throw new IllegalArgumentException(Resources("testNotFound", testName))
+        // Try (Communicator) on the end
+        try {
+          getClass.getMethod(simpleNameForTest(testName), classOf[Communicator])
+        }
+        catch {
+          case e: NoSuchMethodException =>
+            throw new IllegalArgumentException(Resources("testNotFound", testName))
+        }
       case e =>
         throw e
     }
@@ -2647,6 +2677,11 @@ private[scalatest] object Suite {
   def takesInformer(m: Method) = {
     val paramTypes = m.getParameterTypes
     paramTypes.length == 1 && classOf[Informer].isAssignableFrom(paramTypes(0))
+  }
+
+  def takesCommunicator(m: Method) = {
+    val paramTypes = m.getParameterTypes
+    paramTypes.length == 1 && classOf[Communicator].isAssignableFrom(paramTypes(0))
   }
 
   def isTestMethodGoodies(m: Method) = {
