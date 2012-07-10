@@ -41,7 +41,7 @@ trait JavaFutures extends Futures {
    */
   implicit def convertJavaFuture[T](javaFuture: FutureOfJava[T]): FutureConcept[T] =
     new FutureConcept[T] {
-      def value: Option[Either[Throwable, T]] =
+      def eitherValue: Option[Either[Throwable, T]] =
         if (javaFuture.isDone())
           Some(Right(javaFuture.get))
         else

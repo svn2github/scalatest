@@ -39,7 +39,7 @@ import org.scalatest.exceptions.TimeoutField
  * </p>
  * 
  * <pre class="stHighlight">
- * assert(future.isReadyWithin(100 millis))
+ * assert(result.isReadyWithin(100 millis))
  * </pre>
  * 
  * <p>
@@ -48,8 +48,7 @@ import org.scalatest.exceptions.TimeoutField
  * </p>
  * 
  * <pre class="stHighlight">
- * val result = future.futureValue
- * assert(result === 7)
+ * assert(result.futureValue === 7)
  * </pre>
  * 
  * <p>
@@ -58,14 +57,16 @@ import org.scalatest.exceptions.TimeoutField
  * </p>
  * 
  * <pre class="stHighlight">
- * whenReady(future) { s =&gt;
+ * whenReady(result) { s =&gt;
  *   s should be ("hello")
  * }
  * </pre>
- * 
-the <code>whenReady</code> construct, which periodically queries the passed
- * future, until it is ready or the configured timeout has been surpassed, and when ready, passes the future's
- * value to the specified function.
+ *
+ * <p>
+ * The <code>whenReady</code> construct periodically inspects the passed
+ * future, until it is either ready or the configured timeout has been surpassed. If the future becomes
+ * ready before the timeout, <code>whenReady</code> passes the future's value to the specified function.
+ * </p>
  *
  * <p>
  * To make <code>whenReady</code> more broadly applicable, the type of future it accepts is a <code>FutureConcept[T]</code>,
@@ -86,6 +87,18 @@ the <code>whenReady</code> construct, which periodically queries the passed
  * import java.util.concurrent._
  * 
  * val exec = Executors.newSingleThreadExecutor
+ * val task = new Callable[String] { def call() = { Thread.sleep(50); "hi" } }
+ * whenReady(exec.submit(task)) { s =&gt;
+ *   s should be ("hi")
+ * }
+ * </pre>
+ *
+ * <p>
+ * However, because the default timeout is 150 milliseconds, the following invocation of
+ * <code>whenReady</code> would ultimately produce a <code>TestFailedException</code>:
+ * </p>
+ *
+ * <pre class="stHighlight">
  * val task = new Callable[String] { def call() = { Thread.sleep(500); "hi" } }
  * whenReady(exec.submit(task)) { s =&gt;
  *   s should be ("hi")
@@ -93,20 +106,8 @@ the <code>whenReady</code> construct, which periodically queries the passed
  * </pre>
  *
  * <p>
- * However, because the default timeout is one second, the following invocation of
- * <code>whenReady</code> would ultimately produce a <code>TestFailedException</code>:
- * </p>
- *
- * <pre class="stHighlight">
- * val task = new Callable[String] { def call() = { Thread.sleep(5000); "hi" } }
- * whenReady(exec.submit(task)) { s =&gt;
- *   s should be ("hi")
- * }
- * </pre>
- *
- * <p>
- * Assuming the default configuration parameters, a <code>timeout</code> of 1 second and an
- * <code>interval</code> of 10 milliseconds,
+ * Assuming the default configuration parameters, a <code>timeout</code> of 150 milliseconds and an
+ * <code>interval</code> of 15 milliseconds,
  * were passed implicitly to <code>whenReady</code>, the detail message of the thrown
  * <code>TestFailedException</code> would look like:
  * </p>
@@ -115,7 +116,7 @@ the <code>whenReady</code> construct, which periodically queries the passed
  * <code>The future passed to whenReady was never ready, so whenReady timed out. Queried 95 times, sleeping 10 milliseconds between each query.</code>
  * </p>
  *
- * <a name="retryConfig"></a><h2>Configuration of <code>whenReady</code></h2>
+ * <a name="defaultPatience"></a><h2>Configuration of <code>whenReady</code></h2>
  *
  * <p>
  * The <code>whenReady</code> methods of this trait can be flexibly configured.
@@ -140,7 +141,7 @@ the <code>whenReady</code> construct, which periodically queries the passed
  * timeout
  * </td>
  * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">
- * 1 second
+ * scaled(150 milliseconds)
  * </td>
  * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
  * the maximum amount of time to allow unsuccessful queries before giving up and throwing <code>TestFailedException</code>
@@ -151,7 +152,7 @@ the <code>whenReady</code> construct, which periodically queries the passed
  * interval
  * </td>
  * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">
- * 10 milliseconds
+ * scaled(15 milliseconds)
  * </td>
  * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
  * the amount of time to sleep between each query
@@ -159,20 +160,27 @@ the <code>whenReady</code> construct, which periodically queries the passed
  * </tr>
  * </table>
  *
-* <p>
+ * <p>
+ * The default values of both timeout and interval are passed to the <code>scaled</code> method, inherited
+ * from <a href="ScaledTimeSpans.html"><code>ScaledTimeSpans</code></a>, so that the defaults can be scaled up
+ * or down together with other scaled time spans. See the documentation for trait <a href="ScaledTimeSpans.html"><code>ScaledTimeSpans</code></a>
+ * for more information.
+ * </p>
+ *
+ * <p>
  * The <code>whenReady</code> methods of trait <code>Futures</code> each take an <code>PatienceConfig</code>
  * object as an implicit parameter. This object provides values for the two configuration parameters. Trait
- * <code>Futures</code> provides an implicit <code>val</code> named <code>retryConfig</code> with each
+ * <code>Futures</code> provides an implicit <code>val</code> named <code>defaultPatience</code> with each
  * configuration parameter set to its default value. 
  * If you want to set one or more configuration parameters to a different value for all invocations of
  * <code>whenReady</code> in a suite you can override this
  * val (or hide it, for example, if you are importing the members of the <code>Futures</code> companion object rather
  * than mixing in the trait). For example, if
  * you always want the default <code>timeout</code> to be 2 seconds and the default <code>interval</code> to be 5 milliseconds, you
- * can override <code>retryConfig</code>, like this:
+ * can override <code>defaultPatience</code>, like this:
  *
  * <pre class="stHighlight">
- * implicit override val retryConfig =
+ * implicit override val defaultPatience =
  *   PatienceConfig(timeout = Span(2, Seconds), interval = Span(5, Millis))
  * </pre>
  *
@@ -181,7 +189,7 @@ the <code>whenReady</code> construct, which periodically queries the passed
  * </p>
  *
  * <pre class="stHighlight">
- * implicit val retryConfig =
+ * implicit val defaultPatience =
  *   PatienceConfig(timeout =  Span(2, Seconds), interval = Span(5, Millis))
  * </pre>
  *
@@ -247,7 +255,7 @@ trait Futures extends PatienceConfiguration {
      * or a <code>T</code>.
      * </p>
      */
-    private[scalatest] def value: Option[Either[Throwable, T]]
+    private[scalatest] def eitherValue: Option[Either[Throwable, T]]
 
     /**
      * Indicates whether this future has expired (timed out).
@@ -476,7 +484,7 @@ trait Futures extends PatienceConfiguration {
             None,
             getStackDepthFun("Futures.scala", methodName, adjustment)
           )
-        thisFuture.value match {
+        thisFuture.eitherValue match {
           case Some(Right(v)) => v
           case Some(Left(tpe: TestPendingException)) => throw tpe // TODO: In 2.0 add TestCanceledException here
           case Some(Left(e)) if anErrorThatShouldCauseAnAbort(e) => throw e

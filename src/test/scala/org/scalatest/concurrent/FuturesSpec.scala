@@ -30,7 +30,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
 
   implicit def convertJavaFuture[T](javaFuture: FutureOfJava[T]): FutureConcept[T] =
     new FutureConcept[T] {
-      def value: Option[Either[Throwable, T]] =
+      def eitherValue: Option[Either[Throwable, T]] =
         if (javaFuture.isDone())
           Some(Right(javaFuture.get))
         else
@@ -74,7 +74,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
       it("should throw TFE with appropriate detail message if the future expires") {
         val expiredFuture =
           new FutureConcept[Int] {
-            def value = Some(Right(99))
+            def eitherValue = Some(Right(99))
             def isCanceled = false
             def isExpired = true
             def awaitAtMost(span: Span) = 99
@@ -102,7 +102,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
 
         val vmeFuture =
           new FutureConcept[String] {
-            def value: Option[Either[Throwable, String]] = Some(Left(new RuntimeException("oops")))
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new RuntimeException("oops")))
             def isExpired: Boolean = false
             def isCanceled: Boolean = false
             def awaitAtMost(span: Span): String = throw new RuntimeException("oops")
@@ -121,7 +121,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
 
         val vmeFuture =
           new FutureConcept[String] {
-            def value: Option[Either[Throwable, String]] = Some(Left(new VirtualMachineError {}))
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new VirtualMachineError {}))
             def isExpired: Boolean = false
             def isCanceled: Boolean = false
             def awaitAtMost(span: Span): String = throw new VirtualMachineError {}
@@ -135,7 +135,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
       it("should allow TestPendingException, which does not normally cause a test to fail, through immediately when thrown") {
         val tpeFuture =
           new FutureConcept[String] {
-            def value: Option[Either[Throwable, String]] = Some(Left(new TestPendingException))
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new TestPendingException))
             def isExpired: Boolean = false
             def isCanceled: Boolean = false
             def awaitAtMost(span: Span): String = throw new TestPendingException
@@ -171,7 +171,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
       it("should throw TFE with appropriate detail message if the future expires") {
         val expiredFuture =
           new FutureConcept[Int] {
-            def value = Some(Right(99))
+            def eitherValue = Some(Right(99))
             def isCanceled = false
             def isExpired = true
             def awaitAtMost(span: Span) = 99
@@ -284,7 +284,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
 
         val vmeFuture =
           new FutureConcept[String] {
-            def value: Option[Either[Throwable, String]] = Some(Left(new RuntimeException("oops")))
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new RuntimeException("oops")))
             def isExpired: Boolean = false
             def isCanceled: Boolean = false
             def awaitAtMost(span: Span): String = throw new RuntimeException("oops")
@@ -303,7 +303,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
 
         val vmeFuture =
           new FutureConcept[String] {
-            def value: Option[Either[Throwable, String]] = Some(Left(new VirtualMachineError {}))
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new VirtualMachineError {}))
             def isExpired: Boolean = false
             def isCanceled: Boolean = false
             def awaitAtMost(span: Span): String = throw new VirtualMachineError {}
@@ -317,7 +317,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
       it("should allow TestPendingException, which does not normally cause a test to fail, through immediately when thrown") {
         val tpeFuture =
           new FutureConcept[String] {
-            def value: Option[Either[Throwable, String]] = Some(Left(new TestPendingException))
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new TestPendingException))
             def isExpired: Boolean = false
             def isCanceled: Boolean = false
             def awaitAtMost(span: Span): String = throw new TestPendingException
@@ -430,7 +430,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
       it("should throw TFE with appropriate detail message if the future expires") {
         val expiredFuture =
           new FutureConcept[Int] {
-            def value = Some(Right(99))
+            def eitherValue = Some(Right(99))
             def isCanceled = false
             def isExpired = true
             def awaitAtMost(span: Span) = 99
@@ -557,7 +557,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
 
         val vmeFuture =
           new FutureConcept[String] {
-            def value: Option[Either[Throwable, String]] = Some(Left(new RuntimeException("oops")))
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new RuntimeException("oops")))
             def isExpired: Boolean = false
             def isCanceled: Boolean = false
             def awaitAtMost(span: Span): String = throw new RuntimeException("oops")
@@ -578,7 +578,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
 
         val vmeFuture =
           new FutureConcept[String] {
-            def value: Option[Either[Throwable, String]] = Some(Left(new VirtualMachineError {}))
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new VirtualMachineError {}))
             def isExpired: Boolean = false
             def isCanceled: Boolean = false
             def awaitAtMost(span: Span): String = throw new VirtualMachineError {}
@@ -594,7 +594,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
       it("should allow TestPendingException, which does not normally cause a test to fail, through immediately when thrown") {
         val tpeFuture =
           new FutureConcept[String] {
-            def value: Option[Either[Throwable, String]] = Some(Left(new TestPendingException))
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new TestPendingException))
             def isExpired: Boolean = false
             def isCanceled: Boolean = false
             def awaitAtMost(span: Span): String = throw new TestPendingException
