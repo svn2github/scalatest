@@ -23,8 +23,7 @@ import java.util.concurrent.{Future => FutureOfJava}
 import java.util.concurrent.TimeUnit
 import org.scalatest._
 import time._
-import org.scalatest.exceptions.TestFailedException
-import org.scalatest.exceptions.TestPendingException
+import exceptions.{TestCanceledException, TestFailedException, TestPendingException}
 
 class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Futures with SeveredStackTraces {
 
@@ -37,7 +36,7 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
           None
       def isExpired: Boolean = false // Java Futures don't support the notion of a timeout
       def isCanceled: Boolean = javaFuture.isCancelled // Two ll's in Canceled. The verbosity of Java strikes again!
-      // This one doesn't override awaitResult, so that I can test the polling code
+      // This one doesn't override futureResult, so that I can test the polling code
     }
 
   describe("A FutureConcept") {
@@ -131,7 +130,6 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
         }
       }
 
-      // Same thing here and in 2.0 need to add a test for TestCanceledException
       it("should allow TestPendingException, which does not normally cause a test to fail, through immediately when thrown") {
         val tpeFuture =
           new FutureConcept[String] {
@@ -144,9 +142,22 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
           tpeFuture.isReadyWithin(Span(1, Millisecond))
         }
       }
+
+      it("should allow TestCanceledException, which does not normally cause a test to fail, through immediately when thrown") {
+        val tpeFuture =
+          new FutureConcept[String] {
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new TestCanceledException(0)))
+            def isExpired: Boolean = false
+            def isCanceled: Boolean = false
+            def awaitAtMost(span: Span): String = throw new TestCanceledException(0)
+          }
+        intercept[TestCanceledException] {
+          tpeFuture.isReadyWithin(Span(1, Millisecond))
+        }
+      }
     }
 
-    describe("when using the awaitResult method") {
+    describe("when using the futureValue method") {
 
       it("should just return the result if the future completes normally") {
         val futureIsNow = new SuperFutureOfJava
@@ -313,7 +324,6 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
         }
       }
 
-      // Same thing here and in 2.0 need to add a test for TestCanceledException
       it("should allow TestPendingException, which does not normally cause a test to fail, through immediately when thrown") {
         val tpeFuture =
           new FutureConcept[String] {
@@ -323,6 +333,19 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
             def awaitAtMost(span: Span): String = throw new TestPendingException
           }
         intercept[TestPendingException] {
+          tpeFuture.futureValue
+        }
+      }
+
+      it("should allow TestCanceledException, which does not normally cause a test to fail, through immediately when thrown") {
+        val tpeFuture =
+          new FutureConcept[String] {
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new TestCanceledException(0)))
+            def isExpired: Boolean = false
+            def isCanceled: Boolean = false
+            def awaitAtMost(span: Span): String = throw new TestCanceledException(0)
+          }
+        intercept[TestCanceledException] {
           tpeFuture.futureValue
         }
       }
@@ -600,6 +623,20 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
             def awaitAtMost(span: Span): String = throw new TestPendingException
           }
         intercept[TestPendingException] {
+          whenReady(tpeFuture) { s =>
+            s should equal ("hi")
+          }
+        }
+      }
+      it("should allow TestCanceledException, which does not normally cause a test to fail, through immediately when thrown") {
+        val tpeFuture =
+          new FutureConcept[String] {
+            def eitherValue: Option[Either[Throwable, String]] = Some(Left(new TestCanceledException(0)))
+            def isExpired: Boolean = false
+            def isCanceled: Boolean = false
+            def awaitAtMost(span: Span): String = throw new TestCanceledException(0)
+          }
+        intercept[TestCanceledException] {
           whenReady(tpeFuture) { s =>
             s should equal ("hi")
           }

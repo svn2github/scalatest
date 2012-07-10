@@ -20,9 +20,7 @@ import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
 import scala.annotation.tailrec
 import org.scalatest.time.Span
-import org.scalatest.exceptions.TestFailedException
-import org.scalatest.exceptions.TestPendingException
-import org.scalatest.exceptions.TimeoutField
+import exceptions.{TestCanceledException, TestFailedException, TestPendingException, TimeoutField}
 
 /**
  * Trait that facilitates testing with futures.
@@ -255,7 +253,7 @@ trait Futures extends PatienceConfiguration {
      * or a <code>T</code>.
      * </p>
      */
-    private[scalatest] def eitherValue: Option[Either[Throwable, T]]
+    def eitherValue: Option[Either[Throwable, T]]
 
     /**
      * Indicates whether this future has expired (timed out).
@@ -277,6 +275,17 @@ trait Futures extends PatienceConfiguration {
      */
     def isCanceled: Boolean
 
+    /**
+     * Indicates whether this future is ready within the specified timeout.
+     *
+     * <p>
+     * If this future
+     * </p>
+     *
+     * @param timeout
+     * @param config
+     * @return
+     */
     final def isReadyWithin(timeout: Span)(implicit config: PatienceConfig): Boolean = {
       try {
         futureValue(PatienceConfig(timeout, config.interval))
@@ -486,7 +495,8 @@ trait Futures extends PatienceConfiguration {
           )
         thisFuture.eitherValue match {
           case Some(Right(v)) => v
-          case Some(Left(tpe: TestPendingException)) => throw tpe // TODO: In 2.0 add TestCanceledException here
+          case Some(Left(tpe: TestPendingException)) => throw tpe
+          case Some(Left(tce: TestCanceledException)) => throw tce
           case Some(Left(e)) if anErrorThatShouldCauseAnAbort(e) => throw e
           case Some(Left(e)) =>
             throw new TestFailedException(
