@@ -607,7 +607,7 @@ import exceptions._
  * <span class="stYellow">- the - operator should subtract (pending)</span>
  * </pre>
  * 
- * <h2>Communicators</h2>
+ * <h2>Passing in a <code>Rep</code></h2>
  *
  * <p>
  * One of the parameters to <code>run</code> is a <code>Reporter</code>, which
@@ -616,10 +616,12 @@ import exceptions._
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
  * Most often the reporting done by default by <code>Suite</code>'s methods will be sufficient, but
  * occasionally you may wish to provide custom information to the <code>Reporter</code> from a test method.
- * For this purpose, you can optionally include <code>Communicator</code> parameter in a test method, and then
+ * For this purpose, you can optionally include parameter of type <code>Rep</code> when you declare the test method, and then
  * communicate the extra information via an <a href="Informer.html"><code>Informer</code></a> 
- * carried by the <code>Communicator</code>. The <code>Informer</code>
+ * carried by the <code>Rep</code>. The <code>Informer</code>
  * will pass the information to the <code>Reporter</code> by sending an <code>InfoProvided</code> event.
+ * (Note: <code>Rep</code> is the English word rep, an informal term for representative (<em>e.g.</em>, sales rep).
+ * The <code>Rep</code> <em>represents</em> the <code>Reporter</code> to your test method.)
  * Here's an example:
  * </p>
  *
@@ -628,9 +630,9 @@ import exceptions._
  * 
  * class ExampleSuite extends Suite {
  *
- *   def &#96;test: the + operator should add&#96;(com: Communicator) {
+ *   def &#96;test: the + operator should add&#96;(r: Rep) {
  *     assert(1 + 1 === 2)
- *     com.info("Addition seems to work")
+ *     r.info("Addition seems to work")
  *   }
  * }
  * </pre>
@@ -647,12 +649,12 @@ import exceptions._
  * <pre class="stREPL">
  * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
- * - the + operator should add (Communicator)
+ * - the + operator should add (Rep)
  *   + Addition seems to work </span>
  * </pre>
  *
  * <p>
- * The <code>Communicator</code> also carries a <code>Documenter</code> named <code>markup</code>, which
+ * The <code>Rep</code> also carries a <code>Documenter</code> named <code>markup</code>, which
  * you can use to transmit markup text to the <code>Reporter</code>.
  * </p>
  *
@@ -1867,8 +1869,8 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
   /*
   Old style method names will have (Informer) at the end still, but new ones will
-  not. This method will find the one without a Communicator if the same name is used
-  with and without a Communicator. TODO: Still need to detect this overloading somewhere.
+  not. This method will find the one without a Rep if the same name is used
+  with and without a Rep. TODO: Still need to detect this overloading somewhere.
    */
   private[scalatest] def getMethodForTestName(testName: String) =
     try {
@@ -1879,9 +1881,9 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     }
     catch {
       case e: NoSuchMethodException =>
-        // Try (Communicator) on the end
+        // Try (Rep) on the end
         try {
-          getClass.getMethod(simpleNameForTest(testName), classOf[Communicator])
+          getClass.getMethod(simpleNameForTest(testName), classOf[Rep])
         }
         catch {
           case e: NoSuchMethodException =>
@@ -2681,7 +2683,7 @@ private[scalatest] object Suite {
 
   def takesCommunicator(m: Method) = {
     val paramTypes = m.getParameterTypes
-    paramTypes.length == 1 && classOf[Communicator].isAssignableFrom(paramTypes(0))
+    paramTypes.length == 1 && classOf[Rep].isAssignableFrom(paramTypes(0))
   }
 
   def isTestMethodGoodies(m: Method) = {

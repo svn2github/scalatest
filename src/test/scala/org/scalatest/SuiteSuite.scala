@@ -46,7 +46,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
   def `test: Suite should discover method names and tags` {
 
     val a = new Suite {
-      def testNames(com: Communicator): Unit = ()
+      def testNames(r: Rep): Unit = ()
     }
     assert(a.expectedTestCount(Filter()) === 1)
     val tnResult: Set[String] = a.testNames
@@ -76,7 +76,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
   def `test: test methods that return non-Unit should be discovered` {
     val a = new Suite {
       def `test: this`: Int = 1
-      def `test: that`(comm: Communicator): String = "hi"
+      def `test: that`(r: Rep): String = "hi"
     }
     assert(a.expectedTestCount(Filter()) === 2)
     assert(a.testNames.size === 2)
@@ -96,7 +96,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
   def `test: overloaded test methods should cause an aborted suite` {
     val a = new Suite {
       def `test: this` = ()
-      def `test: this`(comm: Communicator) = ()
+      def `test: this`(r: Rep) = ()
     }
     intercept[NotAllowedException] {
       a.expectedTestCount(Filter())
