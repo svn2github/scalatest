@@ -84,18 +84,20 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.example1
+ *
  * import org.scalatest.Suite
  *
- * class ExampleSuite extends Suite {
+ * class SetSuite extends Suite {
  *
- *   def &#96;test: the + operator should add&#96; {
- *     val sum = 1 + 1
- *     assert(sum === 2)
+ *   def &#96;test: an empty Set should have size 0&#96; {
+ *     assert(Set.empty.size === 0)
  *   }
  *
- *   def &#96;test: the - operator should subtract&#96; {
- *     val diff = 4 - 1
- *     assert(diff === 3)
+ *   def &#96;test: invoking head on an empty Set should produce NoSuchElementException&#96; {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
  *   }
  * }
  * </pre>
@@ -104,11 +106,11 @@ import exceptions._
  * You can run a <code>Suite</code> by invoking <code>execute</code> on it.
  * This method, which prints test results to the standard output, is intended to serve as a
  * convenient way to run tests from within the Scala interpreter. For example,
- * to run <code>ExampleSuite</code> from within the Scala interpreter, you could write:
+ * to run <code>SetSuite</code> from within the Scala interpreter, you could write:
  * </p>
  *
  * <pre class="stREPL">
- * scala&gt; new ExampleSuite execute
+ * scala&gt; new SetSuite execute
  * </pre>
  *
  * <p>
@@ -116,20 +118,20 @@ import exceptions._
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSuite:
- * - the + operator should add
- * - the - operator should subtract</span>
+ * <span class="stGreen">SetSuite:
+ * - an empty Set should have size 0
+ * - invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  *
  * <p>
- * Or, to run just the &ldquo;<code>test: the + operator should add</code>&rdquo; method, you could pass that test's name, or any unique substring of the
- * name, such as <code>"+"</code> or <code>"add"</code>. Here's an example:
+ * Or, to run just the &ldquo;<code>test: an empty Set should have size 0</code>&rdquo; method, you could pass that test's name, or any unique substring of the
+ * name, such as <code>"size 0"</code> or even just <code>"0"</code>. Here's an example:
  * </p>
  *
  * <pre class="stREPL">
- * scala&gt; new ExampleSuite execute "+"
- * <span class="stGreen">ExampleSuite:
- * - the + operator should add</span>
+ * scala&gt; new SetSuite execute "size 0"
+ * <span class="stGreen">SetSuite:
+ * - an empty Set should have size 0</span>
  * </pre>
  *
  * <p>
@@ -142,8 +144,7 @@ import exceptions._
  * <p>
  * The <code>execute</code> method invokes a <code>run</code> method takes two
  * parameters. This <code>run</code> method, which actually executes the suite, will usually be invoked by a test runner, such
- * as <code>org.scalatest.tools.Runner</code> or a build tool or IDE. See the <a href="tools/Runner$.html">documentation
- * for <code>Runner</code></a> for more details.
+ * as <a href="run$.html"><code>run</code></a>, <a href="tools/Runner$.html"><code>tools.Runner</code></a>, a build tool, or an IDE.
  * </p>
  *
  * <p>
@@ -417,20 +418,36 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.Suite
- * import org.scalatest.Suites
+ * package org.scalatest.examples.suite.asciiexample
+ *
+ * import org.scalatest._
  *
  * class ASuite extends Suite {
- *   def testA {}
+ *   def &#96;test: A should have ASCII value 41 hex&#96; {
+ *     assert('A' === 0x41)
+ *   }
+ *   def &#96;test: a should have ASCII value 61 hex&#96; {
+ *     assert('a' === 0x61)
+ *   }
  * }
  * class BSuite extends Suite {
- *   def testB {}
+ *   def &#96;test: B should have ASCII value 42 hex&#96; {
+ *     assert('B' === 0x42)
+ *   }
+ *   def &#96;test: b should have ASCII value 62 hex&#96; {
+ *     assert('b' === 0x62)
+ *   }
  * }
  * class CSuite extends Suite {
- *   def testC {}
+ *   def &#96;test: C should have ASCII value 43 hex&#96; {
+ *     assert('C' === 0x43)
+ *   }
+ *   def &#96;test: c should have ASCII value 63 hex&#96; {
+ *     assert('c' === 0x63)
+ *   }
  * }
  *
- * class AlphabetSuite extends Suites(
+ * class ASCIISuite extends Suites(
  *   new ASuite,
  *   new BSuite,
  *   new CSuite
@@ -438,11 +455,11 @@ import exceptions._
  * </pre>
  *
  * <p>
- * If you now run <code>AlphabetSuite</code>:
+ * If you now run <code>ASCIISuite</code>:
  * </p>
  *
  * <pre class="stREPL">
- * scala&gt; new AlphabetSuite execute
+ * scala&gt; new ASCIISuite execute
  * </pre>
  *
  * <p>
@@ -452,18 +469,21 @@ import exceptions._
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">AlphabetSuite:
+ * <span class="stGreen">ASCIISuite:
  * ASuite:
- * - testA
+ * - A should have ASCII value 41 hex
+ * - a should have ASCII value 61 hex
  * BSuite:
- * - testB
+ * - B should have ASCII value 42 hex
+ * - b should have ASCII value 62 hex
  * CSuite:
- * - testC</span>
+ * - C should have ASCII value 43 hex
+ * - c should have ASCII value 63 hex</span>
  * </pre>
  *
  * <p>
  * Note that <code>Runner</code> can discover <code>Suite</code>s automatically, so you need not
- * necessarily define nested <code>Suites</code> explicitly. See the <a href="tools/Runner$.html$membersOnlyWildcard">documentation
+ * necessarily define nested <code>Suites</code> explicitly. See the <a href="tools/Runner$.html#membersOnlyWildcard">documentation
  * for <code>Runner</code></a> for more information.
  * </p>
  *
@@ -505,15 +525,13 @@ import exceptions._
  *
  * class ExampleSuite extends Suite {
  *
- *   def &#96;test: the + operator should add&#96; {
- *     val sum = 1 + 1
- *     assert(sum === 2)
+ *   def &#96;test: an empty Set should be empty&#96; {
+ *     assert(Set.empty.isEmpty)
  *   }
  *
  *   @Ignore
- *   def &#96;test: the - operator should subtract&#96; {
- *     val diff = 4 - 1
- *     assert(diff === 3)
+ *   def &#96;test: an empty Set should have size 0&#96; {
+ *     assert(Set.empty.size === 0)
  *   }
  * }
  * </pre>
@@ -630,7 +648,7 @@ import exceptions._
  * 
  * class ExampleSuite extends Suite {
  *
- *   def &#96;test: the + operator should add&#96;(r: Rep) {
+ *   def &#96;test: the + operator should add&#96; (r: Rep) {
  *     assert(1 + 1 === 2)
  *     r.info("Addition seems to work")
  *   }
@@ -641,17 +659,14 @@ import exceptions._
  * included in the printed report:
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSuite:</span>
- * <span class="stGreen">- the + operator should add</span>
- * <span class="stYellow">- the - operator should subtract (pending)</span>
- * </pre>
- * 
- * <pre class="stREPL">
  * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
- * - the + operator should add (Rep)
+ * - the + operator should add
  *   + Addition seems to work </span>
  * </pre>
+ *
+ * <p>
+ * </p>
  *
  * <p>
  * The <code>Rep</code> also carries a <code>Documenter</code> named <code>markup</code>, which
@@ -665,7 +680,7 @@ import exceptions._
  * a <code>Distributor</code> is passed in, this trait's implementation of <code>run</code> puts its nested
  * <code>Suite</code>s into the distributor rather than executing them directly. The caller of <code>run</code>
  * is responsible for ensuring that some entity runs the <code>Suite</code>s placed into the 
- * distributor. The <code>-c</code> command line parameter to <code>Runner</code>, for example, will cause
+ * distributor. The <code>-P</code> command line parameter to <code>Runner</code>, for example, will cause
  * <code>Suite</code>s put into the <code>Distributor</code> to be run in parallel via a pool of threads.
  * </p>
  *
