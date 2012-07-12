@@ -749,27 +749,22 @@ import exceptions._
  * </p>
  *
  * <p>
- * In some cases, however, shared <em>mutable</em> fixture objects may be changed by test methods such that
- * they need to be recreated or reinitialized before each test. Shared resources such
- * as files or database connections may also need to 
- * be created and initialized before, and cleaned up after, each test. JUnit 3 offered methods <code>setUp</code> and
- * <code>tearDown</code> for this purpose. In ScalaTest, you can use the <code>BeforeAndAfterEach</code> trait,
- * which will be described later, to implement an approach similar to JUnit's <code>setUp</code>
- * and <code>tearDown</code>, however, this approach usually involves reassigning <code>var</code>s or mutating objects
- * between tests. Before going that route, you may wish to consider some more functional approaches that
- * avoid side effects.
+ * <strong>insert table</strong>
  * </p>
  *
- * <h4>Calling create-fixture methods</h4>
+ * <a name="getFixtureMethods"></a>
+ * <h4>Calling get-fixture methods</h4>
  *
  * <p>
- * One approach is to write one or more <em>create-fixture</em> methods
- * that return a new instance of a needed fixture object (or an holder object containing multiple needed fixture objects) each time it
- * is called. You can then call a create-fixture method at the beginning of each
- * test method that needs the fixture, storing the returned object or objects in local variables. Here's an example:
+ * If you just need to create fixture objects, and don't need to clean them up after using them, one approach is to write one or
+ * more <em>get-fixture</em> methods. A get-fixture method returns a new instance of a needed fixture object (or an holder object containing
+ * multiple fixture objects) each time it is called. You can call a get-fixture method at the beginning of each
+ * test that needs the fixture, storing the returned object or objects in local variables. Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.getfixture
+ *
  * import org.scalatest.Suite
  * import collection.mutable.ListBuffer
  *
@@ -781,7 +776,7 @@ import exceptions._
  *       val buffer = new ListBuffer[String]
  *     }
  * 
- *   def testEasy {
+ *   def `test: testing should be easy` {
  *     val f = fixture
  *     f.builder.append("easy!")
  *     assert(f.builder.toString === "ScalaTest is easy!")
@@ -789,7 +784,7 @@ import exceptions._
  *     f.buffer += "sweet"
  *   }
  * 
- *   def testFun {
+ *   def `test: testing should be fun` {
  *     val f = fixture
  *     f.builder.append("fun!")
  *     assert(f.builder.toString === "ScalaTest is fun!")
@@ -803,15 +798,23 @@ import exceptions._
  * are part of the fixture, but if you prefer, you can import the the members with &ldquo;<code>import f._</code>&rdquo; and use the names directly.
  * </p>
  *
- * <h4>Instantiating fixture traits</h4>
+ * <p>
+ * <strong>Recommended Usage</strong>: Use get-fixture methods when you need one or two fixture objects and you don't need to clean them up afterwords.
+ * </p>
+ *
+ * <a name="fixtureContextObjects"></a>
+ * <h4>Instantiating fixture-context objects </h4>
  *
  * <p>
- * A related technique is to place
- * the fixture objects in a <em>fixture trait</em> and run your test code in the context of a new anonymous class instance that mixes in
- * the fixture trait, like this:
+ * A alternate technique that has slightly less boilerplate, but creates an extra class file per test, is to define the fixture objects as instance variables
+ * of a <em>fixture-context object</em> whose instantiation forms the body of the test. Like get-fixture methods, fixture-context objects are anly
+ * appropriate if you don't need to clean up after using the fixtures. You can place the instance variables in traits and/or classes. Traits allow you to
+ * mix together just the fixture objects needed by each test. Classes allow you to pass data in via a constructor. Here's an example in which one trait is used:
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.fixturecontext
+ *
  * import org.scalatest.Suite
  * import collection.mutable.ListBuffer
  * 
@@ -822,7 +825,7 @@ import exceptions._
  *     val buffer = new ListBuffer[String]
  *   }
  * 
- *   def testEasy {
+ *   def `test: testing should be easy` {
  *     new Fixture {
  *       builder.append("easy!")
  *       assert(builder.toString === "ScalaTest is easy!")
@@ -831,7 +834,7 @@ import exceptions._
  *     }
  *   }
  * 
- *   def testFun {
+ *   def `test: testing should be fun` {
  *     new Fixture {
  *       builder.append("fun!")
  *       assert(builder.toString === "ScalaTest is fun!")
@@ -841,18 +844,27 @@ import exceptions._
  * }
  * </pre>
  *
+ * <p>
+ * <strong>Recommended Usage</strong>: Use fixture-context objects for fixtures that don't need clean up after use. This technique is can be a better choice than get-fixture
+ * methods if you need several fixture objects, because it requires less boilerplate. It is also useful if different tests need different combinations of fixtures. As
+ * shown in an <a href=#differentFixtures">example below</a>, you can place the fixtures in different traits, then for each test, instantiate a fixture-context object
+ * that mixes together just the traits that hold the fixture objects needed by that test.
+ * </p>
+ *
+ * <a name="oneInstancePerTest"></a>
  * <h4>Mixing in <code>OneInstancePerTest</code></h4>
  *
  * <p>
  * If every test method requires the same set of
- * mutable fixture objects, one other approach you can take is make them simply <code>val</code>s and mix in trait
+ * mutable fixture objects, and none require cleanup, one other approach you can take is make them simply <code>val</code>s and mix in trait
  * <a href="OneInstancePerTest.html"><code>OneInstancePerTest</code></a>.  If you mix in <code>OneInstancePerTest</code>, each test
  * will be run in its own instance of the <code>Suite</code>, similar to the way JUnit tests are executed. Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.Suite
- * import org.scalatest.OneInstancePerTest
+ * package org.scalatest.examples.suite.oneinstancepertest
+ *
+ * import org.scalatest._
  * import collection.mutable.ListBuffer
  * 
  * class ExampleSuite extends Suite with OneInstancePerTest {
@@ -860,14 +872,14 @@ import exceptions._
  *   val builder = new StringBuilder("ScalaTest is ")
  *   val buffer = new ListBuffer[String]
  * 
- *   def testEasy {
+ *   def `test: testing should be easy` {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def testFun {
+ *   def `test: testing should be fun` {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -881,6 +893,7 @@ import exceptions._
  * use side effects or the <em>loan pattern</em>.
  * </p>
  *
+ * <a name="beforeAndAfter"></a>
  * <h4>Mixing in <code>BeforeAndAfter</code></h4>
  *
  * <p>
@@ -908,14 +921,14 @@ import exceptions._
  *     buffer.clear()
  *   }
  * 
- *   def testEasy {
+ *   def `test: testing should be easy` {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def testFun {
+ *   def `test: testing should be fun` {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -923,6 +936,7 @@ import exceptions._
  * }
  * </pre>
  * 
+ * <a name="withFixtureNoArgTest"></a>
  * <h4>Overriding <code>withFixture(NoArgTest)</code></h4>
  *
  * <p>
@@ -967,14 +981,14 @@ import exceptions._
  *     }
  *   }
  *
- *   def testEasy {
+ *   def `test: testing should be easy` {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  *
- *   def testFun {
+ *   def `test: testing should be fun` {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -996,6 +1010,7 @@ import exceptions._
  * clause will ensure the fixture cleanup happens as that exception propagates back up the call stack to <code>runTest</code>.
  * </p>
  *
+ * <a name="withFixtureNoArgTest"></a>
  * <h4>Overriding <code>withFixture(OneArgTest)</code></h4>
  *
  * <p>
@@ -1029,13 +1044,13 @@ import exceptions._
  *     }
  *   }
  * 
- *   def testEasy(writer: FileWriter) {
+ *   def `test: testing should be easy`(writer: FileWriter) {
  *     writer.write("Hello, test!")
  *     writer.flush()
  *     assert(new File(tmpFile).length === 12)
  *   }
  * 
- *   def testFun(writer: FileWriter) {
+ *   def `test: testing should be fun`(writer: FileWriter) {
  *     writer.write("Hi, test!")
  *     writer.flush()
  *     assert(new File(tmpFile).length === 9)
@@ -1240,14 +1255,14 @@ import exceptions._
  * 
  * class ExampleSuite extends Suite with Builder with Buffer {
  * 
- *   def testEasy {
+ *   def `test: testing should be easy` {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def testFun {
+ *   def `test: testing should be fun` {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -1325,14 +1340,14 @@ import exceptions._
  * 
  * class ExampleSuite extends Suite with Builder with Buffer {
  * 
- *   def testEasy {
+ *   def `test: testing should be easy` {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def testFun {
+ *   def `test: testing should be fun` {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
