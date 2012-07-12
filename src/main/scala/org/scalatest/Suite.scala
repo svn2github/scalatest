@@ -742,15 +742,24 @@ import exceptions._
  * connections, <em>etc.</em>) tests use to do their work.
  * When multiple tests need to work with the same fixtures, it is important to try and avoid
  * duplicating the fixture code across those tests. The more code duplication you have in your
- * tests, the greater drag the tests will be on refactoring the actual production code.
+ * tests, the greater drag the tests will have on refactoring the actual production code.
  * ScalaTest recommends several techniques to eliminate such code duplication, and provides several
- * traits to help. The following sections describe these techniques, including explaining the recommended usage
- * for each. But first, here's a table summarizing the options:
+ * traits to help. Each technique is geared towards helping you reduce code duplication without introducing
+ * instance <code>var</code>s, shared mutable objects, or other dependencies between tests.
  * </p>
  *
  * <p>
- * <strong>insert table</strong>
+ * The following sections
+ * describe these techniques, including explaining the recommended usage
+ * for each. But first, here's a table summarizing the options:
  * </p>
+ *
+ * <table style="border-collapse: collapse; border: 1px solid black">
+ * <tr><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">Technique</th><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">Use cases</th></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#getFixtureMethods">get-fixture methods</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">When you need the same one or two fixture objects in multiple tests, and don't need to clean up after.</td></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#fixtureContextObjects">fixture-context objects</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">When you need more than two fixture objects in mutiple tests and/or need different fixture objects in different tests, and don't need to clean up after. </td></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#oneInstancePerTest"><code>OneInstancePerTest</code></a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">When porting JUnit tests to ScalaTest, or if you prefer JUnit's approach to test isolation: running each test in its own instance of the test class.</td></td></tr>
+ * </table>
  *
  * <a name="getFixtureMethods"></a>
  * <h4>Calling get-fixture methods</h4>
@@ -776,7 +785,7 @@ import exceptions._
  *       val buffer = new ListBuffer[String]
  *     }
  * 
- *   def `test: testing should be easy` {
+ *   def &#96;test: testing should be easy&#96; {
  *     val f = fixture
  *     f.builder.append("easy!")
  *     assert(f.builder.toString === "ScalaTest is easy!")
@@ -784,7 +793,7 @@ import exceptions._
  *     f.buffer += "sweet"
  *   }
  * 
- *   def `test: testing should be fun` {
+ *   def &#96;test: testing should be fun&#96; {
  *     val f = fixture
  *     f.builder.append("fun!")
  *     assert(f.builder.toString === "ScalaTest is fun!")
@@ -825,7 +834,7 @@ import exceptions._
  *     val buffer = new ListBuffer[String]
  *   }
  * 
- *   def `test: testing should be easy` {
+ *   def &#96;test: testing should be easy&#96; {
  *     new Fixture {
  *       builder.append("easy!")
  *       assert(builder.toString === "ScalaTest is easy!")
@@ -834,7 +843,7 @@ import exceptions._
  *     }
  *   }
  * 
- *   def `test: testing should be fun` {
+ *   def &#96;test: testing should be fun&#96; {
  *     new Fixture {
  *       builder.append("fun!")
  *       assert(builder.toString === "ScalaTest is fun!")
@@ -845,7 +854,7 @@ import exceptions._
  * </pre>
  *
  * <p>
- * <strong>Recommended Usage</strong>: Use fixture-context objects for fixtures that don't need clean up after use. This technique is can be a better choice than get-fixture
+ * <strong>Recommended Usage</strong>: Use fixture-context objects for fixtures that don't need clean up after use. This technique can be a better choice than get-fixture
  * methods if you need several fixture objects, because it requires less boilerplate. It is also useful if different tests need different combinations of fixtures. As
  * shown in an <a href=#differentFixtures">example below</a>, you can place the fixtures in different traits, then for each test, instantiate a fixture-context object
  * that mixes together just the traits that hold the fixture objects needed by that test.
@@ -872,20 +881,33 @@ import exceptions._
  *   val builder = new StringBuilder("ScalaTest is ")
  *   val buffer = new ListBuffer[String]
  * 
- *   def `test: testing should be easy` {
+ *   def &#96;test: testing should be easy&#96; {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def `test: testing should be fun` {
+ *   def &#96;test: testing should be fun&#96; {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
  *   }
  * }
  * </pre>
+ *
+ * <p>
+ * One way to think of <a href="OneInstancePerTest.html"><code>OneInstancePerTest</code></a> is that the entire <code>Suite</code> instance is like a fixture-context object,
+ * but with the difference that the test code doesn't run during construction as it does with the real fixture-context object technique. Because this trait emulates JUnit's manner
+ * of running tests, this trait can be helpful when porting JUnit tests to ScalaTest. The primary intended use of <code>OneInstancePerTest</code> is to serve as a supertrait for
+ * <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a> and the <a href="path/package.html">path traits</a>, but you can also mix it in
+ * directly to help you port JUnit tests to ScalaTest or if you prefer JUnit's approach to test isolation.
+ * </p>
+ *
+ * <p>
+ * <strong>Recommended Usage</strong>: You can use <code>OneInstancePerTest</code> to emulate JUnit's behavior when porting JUnit tests to ScalaTest, or
+ * if you prefer JUnit's appraoch to test isolation.
+ * </p>
  *
  * <p>
  * Although the create-fixture, fixture-trait, and <code>OneInstancePerTest</code> approaches take care of setting up a fixture before each
@@ -921,14 +943,14 @@ import exceptions._
  *     buffer.clear()
  *   }
  * 
- *   def `test: testing should be easy` {
+ *   def &#96;test: testing should be easy&#96; {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def `test: testing should be fun` {
+ *   def &#96;test: testing should be fun&#96; {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -981,14 +1003,14 @@ import exceptions._
  *     }
  *   }
  *
- *   def `test: testing should be easy` {
+ *   def &#96;test: testing should be easy&#96; {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  *
- *   def `test: testing should be fun` {
+ *   def &#96;test: testing should be fun&#96; {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -1044,13 +1066,13 @@ import exceptions._
  *     }
  *   }
  * 
- *   def `test: testing should be easy`(writer: FileWriter) {
+ *   def &#96;test: testing should be easy&#96;(writer: FileWriter) {
  *     writer.write("Hello, test!")
  *     writer.flush()
  *     assert(new File(tmpFile).length === 12)
  *   }
  * 
- *   def `test: testing should be fun`(writer: FileWriter) {
+ *   def &#96;test: testing should be fun&#96;(writer: FileWriter) {
  *     writer.write("Hi, test!")
  *     writer.flush()
  *     assert(new File(tmpFile).length === 9)
@@ -1255,14 +1277,14 @@ import exceptions._
  * 
  * class ExampleSuite extends Suite with Builder with Buffer {
  * 
- *   def `test: testing should be easy` {
+ *   def &#96;test: testing should be easy&#96; {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def `test: testing should be fun` {
+ *   def &#96;test: testing should be fun&#96; {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -1340,14 +1362,14 @@ import exceptions._
  * 
  * class ExampleSuite extends Suite with Builder with Buffer {
  * 
- *   def `test: testing should be easy` {
+ *   def &#96;test: testing should be easy&#96; {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def `test: testing should be fun` {
+ *   def &#96;test: testing should be fun&#96; {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
