@@ -226,12 +226,6 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
         caught1.failedCodeLineNumber.value should equal (thisLineNumber - 2)
         caught1.failedCodeFileName.value should be ("FuturesSpec.scala")
 
-        val caught2 = evaluating {
-          neverReadyFuture.futureValue(interval(Span(1, Millisecond)), timeout(Span(100, Millis)))
-        } should produce [TestFailedException]
-        caught2.failedCodeLineNumber.value should equal (thisLineNumber - 2)
-        caught2.failedCodeFileName.value should be ("FuturesSpec.scala")
-
         val caught3 = evaluating {
           neverReadyFuture.futureValue(timeout(Span(100, Millis)))
         } should produce [TestFailedException]
@@ -277,16 +271,6 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
         var startTime = System.currentTimeMillis
         evaluating {
           neverReadyFuture.futureValue(timeout(Span(1388, Millis)), interval(Span(1, Millisecond)))
-        } should produce [TestFailedException]
-        (System.currentTimeMillis - startTime).toInt should be >= (1388)
-      }
-
-      it("should, if an alternate explicit timeout is provided along with an explicit interval, query a never-ready future by at least the specified timeout, even if a different implicit is provided, with timeout specified second") {
-        implicit val patienceConfig = PatienceConfig(interval = Span(2, Millis), timeout = Span(500, Millis))
-
-        var startTime = System.currentTimeMillis
-        evaluating {
-          neverReadyFuture.futureValue(interval(Span(1, Millisecond)), timeout(Span(1388, Millis)))
         } should produce [TestFailedException]
         (System.currentTimeMillis - startTime).toInt should be >= (1388)
       }
@@ -501,12 +485,6 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
         caught1.failedCodeLineNumber.value should equal (thisLineNumber - 2)
         caught1.failedCodeFileName.value should be ("FuturesSpec.scala")
 
-        val caught2 = evaluating {
-          whenReady(neverReadyFuture, interval(Span(1, Millisecond)), timeout(Span(100, Millis))) { s => s should equal ("hi")  }
-        } should produce [TestFailedException]
-        caught2.failedCodeLineNumber.value should equal (thisLineNumber - 2)
-        caught2.failedCodeFileName.value should be ("FuturesSpec.scala")
-
         val caught3 = evaluating {
          whenReady(neverReadyFuture, timeout(Span(100, Millis))) {  s => s should equal ("hi") }
         } should produce [TestFailedException]
@@ -558,18 +536,6 @@ class FuturesSpec extends FunSpec with ShouldMatchers with OptionValues with Fut
         var startTime = System.currentTimeMillis
         evaluating {
           whenReady(neverReadyFuture, timeout(Span(1388, Millis)), interval(Span(1, Millisecond))) { s =>
-            s should equal ("hi")
-          }
-        } should produce [TestFailedException]
-        (System.currentTimeMillis - startTime).toInt should be >= (1388)
-      }
-
-      it("should, if an alternate explicit timeout is provided along with an explicit interval, query a never-ready future by at least the specified timeout, even if a different implicit is provided, with timeout specified second") {
-        implicit val patienceConfig = PatienceConfig(interval = Span(2, Millis), timeout = Span(500, Millis))
-
-        var startTime = System.currentTimeMillis
-        evaluating {
-          whenReady(neverReadyFuture, interval(Span(1, Millisecond)), timeout(Span(1388, Millis))) { s =>
             s should equal ("hi")
           }
         } should produce [TestFailedException]

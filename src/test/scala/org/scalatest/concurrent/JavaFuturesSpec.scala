@@ -192,11 +192,6 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
           } should produce[TestFailedException]
           caught1.failedCodeLineNumber.value should equal(thisLineNumber - 2)
           caught1.failedCodeFileName.value should be("JavaFuturesSpec.scala")
-          val caught2 = evaluating {
-            neverReadyFuture.futureValue(interval(Span(1, Millisecond)), timeout(Span(100, Millis)))
-          } should produce[TestFailedException]
-          caught2.failedCodeLineNumber.value should equal(thisLineNumber - 2)
-          caught2.failedCodeFileName.value should be("JavaFuturesSpec.scala")
 
           val caught3 = evaluating {
             neverReadyFuture.futureValue(timeout(Span(100, Millis)))
@@ -335,13 +330,6 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
           } should produce[TestFailedException]
           caught1.failedCodeLineNumber.value should equal(thisLineNumber - 4)
           caught1.failedCodeFileName.value should be("JavaFuturesSpec.scala")
-          val caught2 = evaluating {
-            whenReady(neverReadyFuture, interval(Span(1, Millisecond)), timeout(Span(100, Millis))) { s =>
-              s should be ("hi")
-            }
-          } should produce[TestFailedException]
-          caught2.failedCodeLineNumber.value should equal(thisLineNumber - 4)
-          caught2.failedCodeFileName.value should be("JavaFuturesSpec.scala")
 
           val caught3 = evaluating {
             whenReady(neverReadyFuture, timeout(Span(100, Millis))) { s =>

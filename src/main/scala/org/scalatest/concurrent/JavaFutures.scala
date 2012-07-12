@@ -25,7 +25,16 @@ import org.scalatest.exceptions.TestCanceledException
 
 /**
  * Provides an implicit conversion from <code>java.util.concurrent.Future[T]</code> to
- * <code>FutureConcept[T]</code>.
+ * <a href="Futures$FutureConcept.html"><code>FutureConcept[T]</code></a>.
+ *
+ * <p>
+ * This trait enables you to invoke the methods defined on <code>FutureConcept</code> on a Java <code>Future</code>, as well as to pass a Java future
+ * to the <code>whenReady</code> methods of supertrait <a href="Futures.html"><code>Futures</code></a>.
+ * See the documentation for supertrait <a href="Futures.html"><code>Futures</code></a> for the details on the syntax this trait provides
+ * for testing with Java futures.
+ * </p>
+ * 
+ * @author Bill Venners
  */
 trait JavaFutures extends Futures {
 
@@ -33,12 +42,27 @@ trait JavaFutures extends Futures {
    * Implicitly converts a <code>java.util.concurrent.Future[T]</code> to
    * <code>FutureConcept[T]</code>, allowing you to invoke the methods
    * defined on <code>FutureConcept</code> on a Java <code>Future</code>, as well as to pass a Java future
-   * to the <code>whenReady</code> methods of supertrait <code>Futures</code>.
+   * to the <code>whenReady</code> methods of supertrait <a href="Futures.html"><code>Futures</code></a>.
    *
-   * // TODO: Document that for ExecutionException, we pull the cause out and wrap that
-   * // in a TFE. So we drop the EE.
+   * <p>
+   * See the documentation for supertrait <a href="Futures.html"><code>Futures</code></a> for the details on the syntax this trait provides
+   * for testing with Java futures.
+   * </p>
+   *
+   * <p>If the <code>get</code> method of the underlying Java future throws <code>java.util.concurrent.ExecutionException</code>, and this
+   * exception contains a non-<code>null</code> cause, that cause will be included in the <code>TestFailedException</code> as its cause. The <code>ExecutionException</code>
+   * will be be included as the <code>TestFailedException</code>'s cause only if the <code>ExecutionException</code>'s cause is <code>null</code>.
+   * </p>
+   *
+   * <p>
+   * The <code>isExpired</code> method of the returned <code>FutureConcept</code> will always return <code>false</code>, because
+   * the underlying type, <code>java.util.concurrent.Future</code>, does not support the notion of a timeout. The <code>isCanceled</code>
+   * method of the returned <code>FutureConcept</code> will return the result of invoking <code>isCancelled</code> on the underlying
+   * <code>java.util.concurrent.Future</code>.
+   * </p>
    *
    * @param javaFuture a <code>java.util.concurrent.Future[T]</code> to convert
+   * @return a <code>FutureConcept[T]</code> wrapping the passed <code>java.util.concurrent.Future[T]</code>
    */
   implicit def convertJavaFuture[T](javaFuture: FutureOfJava[T]): FutureConcept[T] =
     new FutureConcept[T] {
