@@ -180,7 +180,6 @@
     </target>
 
     <target name="gencode" depends="init, compile-codegenerators">
-        <java classname="GenMustMatchers" classpathref="run.generators.class.path" fork="false" />
         <java classname="GenMustMatchersTests" classpathref="run.generators.class.path" fork="false" />
     	<java classname="GenTheyWord" classpathref="run.generators.class.path" fork="false" />
     </target>
@@ -191,6 +190,9 @@
     <target name="compile-main" depends="init, gentables, gengen">
         <!--<fail message="Wrong JVM [${ant.java.version}]. Include 'java6' target to use java 6."
               unless="jvm.ok"/>-->
+
+        <java classname="GenMustMatchers"
+              classpathref="run.generators.class.path" fork="false" />
 
         <!-- If ever want to see the typer output, add -Xprint:typer to the addparams like this: -->
         <!--<scalac srcdir="${scalasrc}:${build.generated.src}:${javasrc}" destdir="${classes}" target="jvm-1.5" classpathref="build.class.path" addparams="-no-specialization -Xprint:typer" fork="true" jvmargs="${jvmargs}" />-->
