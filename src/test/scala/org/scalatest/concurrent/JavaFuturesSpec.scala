@@ -22,6 +22,7 @@ import time._
 import java.util.concurrent.{ExecutionException, Callable, ExecutorService, Executors, Future => FutureOfJava, TimeUnit, FutureTask}
 import org.scalatest.exceptions.TestFailedException
 import org.scalatest.exceptions.TestPendingException
+import org.scalatest.exceptions.TestCanceledException
 
 class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with JavaFutures with SeveredStackTraces {
 
@@ -407,10 +408,18 @@ class JavaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
           }
       }
 
-      // Same thing here and in 2.0 need to add a test for TestCanceledException
       it("should allow TestPendingException, which does not normally cause a test to fail, through immediately when thrown") {
         val task = new ThrowingTask(new TestPendingException)
         intercept[TestPendingException] {
+          whenReady(task) { s =>
+            s should be ("hi")
+          }
+        }
+      }
+      
+      it("should allow TestCanceledException, which does not normally cause a test to fail, through immediately when thrown") {
+        val task = new ThrowingTask(new TestCanceledException(sde => None, None, sde => 0))
+        intercept[TestCanceledException] {
           whenReady(task) { s =>
             s should be ("hi")
           }

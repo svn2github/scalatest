@@ -21,6 +21,7 @@ import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
 import org.scalatest.Resources
 import org.scalatest.exceptions.{TestPendingException, TestFailedException, TimeoutField}
+import org.scalatest.exceptions.TestCanceledException
 
 /**
  * Provides an implicit conversion from <code>java.util.concurrent.Future[T]</code> to
@@ -92,8 +93,8 @@ trait JavaFutures extends Futures {
             }
           case e: java.util.concurrent.ExecutionException =>
             val cause = e.getCause
-            val exToReport = if (cause == null) e else cause // TODO: in 2.0 add TestCanceledException here
-            if (anErrorThatShouldCauseAnAbort(exToReport) || exToReport.isInstanceOf[TestPendingException]) {
+            val exToReport = if (cause == null) e else cause 
+            if (anErrorThatShouldCauseAnAbort(exToReport) || exToReport.isInstanceOf[TestPendingException] || exToReport.isInstanceOf[TestCanceledException]) {
               throw exToReport
             }
             throw new TestFailedException(
