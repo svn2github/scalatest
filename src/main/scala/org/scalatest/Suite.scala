@@ -622,7 +622,14 @@ import exceptions._
  * will pass the information to the <code>Reporter</code> by sending an <code>InfoProvided</code> event.
  * (Note: <code>Rep</code> is the English word rep, an informal term for representative (<em>e.g.</em>, sales rep).
  * The <code>Rep</code> <em>represents</em> the <code>Reporter</code> to your test method.)
- * Here's an example:
+ * </p>
+ *
+ * <p>
+ * The <code>Informer</code> is provided by the <code>Rep</code> via its <code>info</code> field. You can therefore emit information
+ * by invoking <code>info</code>, passing in a string and an optional payload.  The <code>info</code> field is implicit so it can
+ * be passed to other constructs that emit information, such as the methods of <a href="GivenWhenThen.html"><code>GivenWhenThen</code></a>.
+ * Here's an example that shows both direct and implicit uses (the implicit <code>info</code> field is imported via the
+ * statement, &ldquo;<code>import r._</code>&rdquo;):
  * </p>
  *
  * <pre class="stHighlight">
@@ -647,12 +654,14 @@ import exceptions._
  *
  *     and("the Set should contain the added element")
  *     assert(set.contains("clarity"))
+ *
+ *     info("That's all folks!")
  *   }
  * }
  * </pre>
  *
- * If you run this <code>Suite</code> from the interpreter, you will see the message
- * included in the printed report:
+ * If you run this <code>Suite</code> from the interpreter, you will see the messages
+ * included in the output:
  *
  * <pre class="stREPL">
  * scala&gt; new SetSuite execute
@@ -661,11 +670,12 @@ import exceptions._
  *   + Given an empty mutable Set
  *   + When an element is added
  *   + Then the Set should have size 1
- *   + And the Set should contain the added element</span>
+ *   + And the Set should contain the added element
+ *   + That's all folks!</span>
  * </pre>
  *
  * <p>
- * The <code>Rep</code> also carries a <code>Documenter</code> named <code>markup</code>, which
+ * The <code>Rep</code> also carries a <a href="Documenter.html"><code>Documenter</code></a> named <code>markup</code>, which
  * you can use to transmit markup text to the <code>Reporter</code>.
  * </p>
  *
@@ -678,6 +688,7 @@ import exceptions._
  * is responsible for ensuring that some entity runs the <code>Suite</code>s placed into the 
  * distributor. The <code>-P</code> command line parameter to <code>Runner</code>, for example, will cause
  * <code>Suite</code>s put into the <code>Distributor</code> to be run in parallel via a pool of threads.
+ * If you wish to execute the tests themselves in parallel, mix in <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a>.
  * </p>
  *
  * <a name="TaggingTests"></a><h2>Tagging tests</h2>
@@ -727,11 +738,14 @@ import exceptions._
  * <a name="sharedFixtures"></a><h2>Shared fixtures</h2>
  *
  * <p>
- * A test <em>fixture</em> is objects or other artifacts (such as files, sockets, database
- * connections, <em>etc.</em>) used by tests to do their work.
- * If a fixture is used by only one test, then the definitions of the fixture objects can
- * be local to the test. If multiple methods need to share an immutable fixture, one approach
- * is to assign them to instance variables.
+ * A test <em>fixture</em> is composed of the objects and other artifacts (files, sockets, database
+ * connections, <em>etc.</em>) tests use to do their work.
+ * When multiple tests need to work with the same fixtures, it is important to try and avoid
+ * duplicating the fixture code across those tests. The more code duplication you have in your
+ * tests, the greater drag the tests will be on refactoring the actual production code.
+ * ScalaTest recommends several techniques to eliminate such code duplication, and provides several
+ * traits to help. The following sections describe these techniques, including explaining the recommended usage
+ * for each. But first, here's a table summarizing the options:
  * </p>
  *
  * <p>
