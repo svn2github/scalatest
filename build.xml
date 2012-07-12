@@ -140,6 +140,13 @@
           </mapper>
         </uptodate>
 
+        <uptodate property="genmustmatchers.uptodate"
+                  srcfile="src/generators/scala/GenMustMatchers.scala">
+          <mapper type="merge" to=
+            "target/generated/src/main/scala/org/scalatest/junit/MustMatchersForJUnit.scala">
+          </mapper>
+        </uptodate>
+
         <uptodate property="gengen.uptodate"
                   srcfile="src/generators/scala/GenGen.scala">
           <mapper type="merge" to=
@@ -169,6 +176,12 @@
               fork="false" />
     </target>
 
+    <target name="genmustmatchers" depends="init, compile-codegenerators"
+            unless="genmustmatchers.uptodate">
+        <java classname="GenMustMatchers"
+              classpathref="run.generators.class.path" fork="false" />
+    </target>
+
     <target name="gengen" depends="init, compile-codegenerators"
             unless="gengen.uptodate">
         <java classname="GenGen" classpathref="run.generators.class.path" fork="false" />
@@ -187,12 +200,9 @@
     <target name="compile" depends="compile-main, compile-tests, compile-examples"/>
 
     <!--<target name="compile-main" depends="init">-->
-    <target name="compile-main" depends="init, gentables, gengen">
+    <target name="compile-main" depends="init, gentables, genmustmatchers, gengen">
         <!--<fail message="Wrong JVM [${ant.java.version}]. Include 'java6' target to use java 6."
               unless="jvm.ok"/>-->
-
-        <java classname="GenMustMatchers"
-              classpathref="run.generators.class.path" fork="false" />
 
         <!-- If ever want to see the typer output, add -Xprint:typer to the addparams like this: -->
         <!--<scalac srcdir="${scalasrc}:${build.generated.src}:${javasrc}" destdir="${classes}" target="jvm-1.5" classpathref="build.class.path" addparams="-no-specialization -Xprint:typer" fork="true" jvmargs="${jvmargs}" />-->
