@@ -84,7 +84,7 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.example1
+ * package org.scalatest.examples.suite
  *
  * import org.scalatest.Suite
  *
@@ -339,7 +339,7 @@ import exceptions._
  * assert(caught.getMessage === "String index out of range: -1")
  * </pre>
  *
- * <h2>Using other assertions</h2>
+ * <h2>Using matchers and other assertions</h2>
  *
  * <p>
  * ScalaTest also supports another style of assertions via its matchers DSL. By mixing in
@@ -348,19 +348,18 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.Suite
- * import org.scalatest.matchers.ShouldMatchers
+ * package org.scalatest.examples.suite.matchers
  *
- * class ExampleSuite extends Suite with ShouldMatchers {
+ * import org.scalatest._
  *
- *   def &#96;test: the + operator should add&#96; {
- *     val sum = 1 + 1
- *     sum should equal (2)
+ * class SetSuite extends Suite with ShouldMatchers {
+ *
+ *   def &#96;test: an empty Set should have size 0&#96; {
+ *     Set.empty.size should equal (0)
  *   }
  *
- *   def &#96;test: the - operator should subtract&#96; {
- *     val diff = 4 - 1
- *     diff should equal (3)
+ *   def &#96;test: invoking head on an empty Set should produce NoSuchElementException&#96; {
+ *     evaluating { Set.empty.head } should produce [NoSuchElementException]
  *   }
  * }
  * </pre>
@@ -375,27 +374,8 @@ import exceptions._
  * can be used as is with ScalaTest. For example, to use the <code>assertEquals</code>
  * methods provided by JUnit or TestNG, simply import them and use them. (You will of course need
  * to include the relevant JAR file for the framework whose assertions you want to use on either the
- * classpath or runpath when you run your tests.) Here's an example in which JUnit's assertions are
- * imported, then used within a ScalaTest suite:
+ * classpath or runpath when you run your tests.) 
  * </p>
- *
- * <pre class="stHighlight">
- * import org.scalatest.Suite
- * import org.junit.Assert._
- *
- * class ExampleSuite extends Suite {
- *
- *   def &#96;test: the + operator should add&#96; {
- *     val sum = 1 + 1
- *     assertEquals(2, sum)
- *   }
- *
- *   def &#96;test: the - operator should subtract&#96; {
- *     val diff = 4 - 1
- *     assertEquals(3, diff)
- *   }
- * }
- * </pre>
  *
  * <h2>Nested suites</h2>
  *
@@ -418,7 +398,7 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.asciiexample
+ * package org.scalatest.examples.suite.nested
  *
  * import org.scalatest._
  *
@@ -520,38 +500,40 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.Suite
- * import org.scalatest.Ignore
+ * package org.scalatest.examples.suite.ignore
  *
- * class ExampleSuite extends Suite {
+ * import org.scalatest._
  *
- *   def &#96;test: an empty Set should be empty&#96; {
- *     assert(Set.empty.isEmpty)
+ * class SetSuite extends Suite {
+ *
+ *   @Ignore def &#96;test: an empty Set should have size 0&#96; {
+ *     assert(Set.empty.size === 0)
  *   }
  *
- *   @Ignore
- *   def &#96;test: an empty Set should have size 0&#96; {
- *     assert(Set.empty.size === 0)
+ *   def &#96;test: invoking head on an empty Set should produce NoSuchElementException&#96; {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
  *   }
  * }
  * </pre>
  *
  * <p>
- * If you run this version of <code>ExampleSuite</code> with:
+ * If you run this version of <code>SetSuite</code> with:
  * </p>
  *
  * <pre class="stREPL">
- * scala&gt; new ExampleSuite execute
+ * scala&gt; new SetSuite execute
  * </pre>
  *
  * <p>
- * It will run only <code>testAddition</code> and report that <code>testSubtraction</code> was ignored. You'll see:
+ * It will run only the second test and report that the first test was ignored. You'll see:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSuite:</span>
- * <span class="stGreen">- the + operator should add</span>
- * <span class="stYellow">- the - operator should subtract !!! IGNORED !!!</span>
+ * <span class="stGreen">SetSuite:
+ * <span class="stYellow">- an empty Set should have size 0 !!! IGNORED !!!</span>
+ * <span class="stGreen">- invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  * 
  * <p>
@@ -586,33 +568,32 @@ import exceptions._
  * the code of a pending test is executed just like any other test.) However, because the test completes abruptly
  * with <code>TestPendingException</code>, the test will be reported as pending, to indicate
  * the actual test, and possibly the functionality it is intended to test, has not yet been implemented.
- * </p>
- *
- * <p>
- * Although pending tests may be used more often in specification-style suites, such as
- * <code>org.scalatest.FunSpec</code>, you can also use it in <code>Suite</code>, like this:
+ * Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.Suite
+ * package org.scalatest.examples.suite.pending
  *
- * class ExampleSuite extends Suite {
+ * import org.scalatest._
  *
- *   def &#96;test: the + operator should add&#96; {
- *     val sum = 1 + 1
- *     assert(sum === 2)
+ * class SetSuite extends Suite {
+ *
+ *   def &#96;test: an empty Set should have size 0&#96; { pending }
+ *
+ *   def &#96;test: invoking head on an empty Set should produce NoSuchElementException&#96; {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
  *   }
- *
- *   def &#96;test: the - operator should subtract&#96; { pending }
  * }
  * </pre>
  *
  * <p>
- * If you run this version of <code>ExampleSuite</code> with:
+ * If you run this version of <code>SetSuite</code> with:
  * </p>
  *
  * <pre class="stREPL">
- * scala&gt; new ExampleSuite execute
+ * scala&gt; new SetSuite execute
  * </pre>
  *
  * <p>
@@ -620,10 +601,11 @@ import exceptions._
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSuite:</span>
- * <span class="stGreen">- the + operator should add</span>
- * <span class="stYellow">- the - operator should subtract (pending)</span>
+ * <span class="stGreen">SetSuite:
+ * <span class="stYellow">- an empty Set should have size 0 (pending)</span>
+ * <span class="stGreen">- invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
+ * 
  * 
  * <h2>Passing in a <code>Rep</code></h2>
  *
@@ -644,13 +626,27 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.rep
+ *
+ * import collection.mutable
  * import org.scalatest._
  * 
- * class ExampleSuite extends Suite {
+ * class SetSuite extends Suite with GivenWhenThen {
  *
- *   def &#96;test: the + operator should add&#96; (r: Rep) {
- *     assert(1 + 1 === 2)
- *     r.info("Addition seems to work")
+ *   def &#96;test: an element can be added to an empty mutable Set&#96; (r: Rep) {
+ *     import r._
+ *
+ *     given("an empty mutable Set")
+ *     val set = mutable.Set.empty[String]
+ *
+ *     when("an element is added")
+ *     set += "clarity"
+ *
+ *     then("the Set should have size 1")
+ *     assert(set.size === 1)
+ *
+ *     and("the Set should contain the added element")
+ *     assert(set.contains("clarity"))
  *   }
  * }
  * </pre>
@@ -659,14 +655,14 @@ import exceptions._
  * included in the printed report:
  *
  * <pre class="stREPL">
- * scala&gt; new ExampleSuite execute
- * <span class="stGreen">ExampleSuite:
- * - the + operator should add
- *   + Addition seems to work </span>
+ * scala&gt; new SetSuite execute
+ * <span class="stGreen">SetSuite:
+ * - an element can be added to an empty mutable Set
+ *   + Given an empty mutable Set
+ *   + When an element is added
+ *   + Then the Set should have size 1
+ *   + And the Set should contain the added element</span>
  * </pre>
- *
- * <p>
- * </p>
  *
  * <p>
  * The <code>Rep</code> also carries a <code>Documenter</code> named <code>markup</code>, which
@@ -690,15 +686,13 @@ import exceptions._
  * A <code>Suite</code>'s tests may be classified into groups by <em>tagging</em> them with string names. When executing
  * a <code>Suite</code>, groups of tests can optionally be included and/or excluded. In this
  * trait's implementation, tags are indicated by annotations attached to the test method. To
- * create a new tag type to use in <code>Suite</code>s, simply define a new Java annotation that itself is annotated with the <code>org.scalatest.TagAnnotation</code> annotation.
+ * create a new tag type to use in <code>Suite</code>s, simply define a new Java annotation that itself is annotated with
+ * the <code>org.scalatest.TagAnnotation</code> annotation.
  * (Currently, for annotations to be
  * visible in Scala programs via Java reflection, the annotations themselves must be written in Java.) For example,
  * to create a tag named <code>SlowAsMolasses</code>, to use to mark slow tests, you would
  * write in Java:
  * </p>
- *
- * <p><b>Because of a Scaladoc bug in Scala 2.8, I had to put a space after the at sign in one the target annotation example below. If you
- * want to copy and paste from this example, you'll need to remove the space by hand.  - Bill Venners</b></p>
  *
  * <pre>
  * import java.lang.annotation.*; 
@@ -706,7 +700,7 @@ import exceptions._
  * 
  * @TagAnnotation
  * @Retention(RetentionPolicy.RUNTIME)
- * @ Target({ElementType.METHOD, ElementType.TYPE})
+ * @Target({ElementType.METHOD, ElementType.TYPE})
  * public @interface SlowAsMolasses {}
  * </pre>
  *
@@ -717,7 +711,7 @@ import exceptions._
  *
  * <pre class="stHighlight">
  * @SlowAsMolasses
- * def testSleeping { sleep(1000000) }
+ * def &#96;test: to sleep, perchance to dream&#96; { Thread.sleep(1000000) }
  * </pre>
  *
  * <p>
@@ -735,9 +729,8 @@ import exceptions._
  * <p>
  * A test <em>fixture</em> is objects or other artifacts (such as files, sockets, database
  * connections, <em>etc.</em>) used by tests to do their work.
- * If a fixture is used by only one test method, then the definitions of the fixture objects can
- * be local to the method, such as the objects assigned to <code>sum</code> and <code>diff</code> in the
- * previous <code>ExampleSuite</code> examples. If multiple methods need to share an immutable fixture, one approach
+ * If a fixture is used by only one test, then the definitions of the fixture objects can
+ * be local to the test. If multiple methods need to share an immutable fixture, one approach
  * is to assign them to instance variables.
  * </p>
  *
@@ -1885,7 +1878,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   /*
   Old style method names will have (Informer) at the end still, but new ones will
   not. This method will find the one without a Rep if the same name is used
-  with and without a Rep. TODO: Still need to detect this overloading somewhere.
+  with and without a Rep.
    */
   private[scalatest] def getMethodForTestName(testName: String) =
     try {
@@ -2011,9 +2004,19 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => createMarkupProvided(thisSuite, report, tracker, Some(testName), message, 2, location, isConstructingThread, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
       )
 
+    class RepImpl(val info: Informer, val markup: Documenter) extends Rep
+
+    def testMethodTakesARep(method: Method): Boolean = {
+      val paramTypes = method.getParameterTypes
+      (paramTypes.size == 1) && (paramTypes(0) eq classOf[Rep])
+    }
+
     val argsArray: Array[Object] =
       if (testMethodTakesAnInformer(testName)) {
         Array(informerForThisTest)  
+      }
+      else if (testMethodTakesARep(method)) {
+        Array(new RepImpl(informerForThisTest, documenterForThisTest))
       }
       else Array()
 
@@ -2720,7 +2723,7 @@ private[scalatest] object Suite {
     (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags)
   }
 
-  def testMethodTakesAnInformer(testName: String) = testName.endsWith(InformerInParens)
+  def testMethodTakesAnInformer(testName: String): Boolean = testName.endsWith(InformerInParens)
 
   /*
    For info and test names, the formatted text should have one level shaved off so that the text will

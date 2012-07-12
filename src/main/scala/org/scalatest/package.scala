@@ -68,6 +68,12 @@ package object scalatest {
   lazy val nostats: Shell = defaultShell.nostats
 
   /**
+   * Convenience type alias allowing <code>ShouldMatchers</code> to be used without qualification or another import
+   * after a wildcard import of <code>org.scalatest</code>.
+   */
+  type ShouldMatchers = matchers.ShouldMatchers
+
+  /**
    * <p>
    * <strong>This class has been moved to the <code>org.scalatest.exceptions</code> package. The deprecated type alias that has been left in its place will
    * be removed in a future version of ScalaTest. Please change any uses of <code>org.scalatest.DuplicateTestNameException</code> to <code>org.scalatest.exceptions.DuplicateTestNameException</code>.</strong>

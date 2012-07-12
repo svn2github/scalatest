@@ -38,10 +38,10 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     it("should send InfoProvided events with aboutAPendingTest set to true and aboutACanceledTest set to false for info " +
             "calls made from a test that is pending") {
       val a = new Suite {
-        def testSomething(info: Informer) {
-          info("two integers")
-          info("one is subracted from the other")
-          info("the result is the difference between the two numbers")
+        def testSomething(r: Rep) {
+          r.info("two integers")
+          r.info("one is subracted from the other")
+          r.info("the result is the difference between the two numbers")
           pending
         }
       }
