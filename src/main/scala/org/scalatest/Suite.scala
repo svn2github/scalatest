@@ -148,6 +148,16 @@ import exceptions._
  * </p>
  *
  * <p>
+ * The test methods shown in this example are parameterless. This is recommeneded even for methods with obvious side effects. In production code
+ * you would normally declare no-arg, side-effecting methods as <em>empty-paren</em> methods, and call them with
+ * empty parentheses, to make it more obvious to readers of the code that they have a side effect. Whether or not a test method has
+ * a side effect, however, is a less important distinction than it is for methods in production code. Moreover, test methods are not
+ * normally invoked directly by client code, but rather through reflection by running the <code>Suite</code> that contains them, so a
+ * lack of parentheses on an invocation of a side-effecting test method would not normally appear in any client code. Given the empty
+ * parentheses do not add much value in the test methods case, the recommended style is to simply always leave them off.
+ * </p>
+ *
+ * <p>
  * <em>Note: The approach of using backticks around test method names to make it easier to write descriptive test names was
  * inspired by the <a href="http://github.com/SimpleFinance/simplespec" target="_blank"><code>SimpleSpec</code></a> test framework, originally created by Coda Hale.</em>
  * </p>
@@ -607,41 +617,32 @@ import exceptions._
  * </pre>
  * 
  * 
- * <h2>Passing in a <code>Rep</code></h2>
+ * <h2>Using <code>info</code> and <code>markup</code></h2>
  *
  * <p>
- * One of the parameters to <code>run</code> is a <code>Reporter</code>, which
+ * One of the parameters to the <code>run</code> method is a <code>Reporter</code>, which
  * will collect and report information about the running suite of tests.
  * Information about suites and tests that were run, whether tests succeeded or failed, 
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
- * Most often the reporting done by default by <code>Suite</code>'s methods will be sufficient, but
- * occasionally you may wish to provide custom information to the <code>Reporter</code> from a test method.
- * For this purpose, you can optionally include parameter of type <code>Rep</code> when you declare the test method, and then
- * communicate the extra information via an <a href="Informer.html"><code>Informer</code></a> 
- * carried by the <code>Rep</code>. The <code>Informer</code>
- * will pass the information to the <code>Reporter</code> by sending an <code>InfoProvided</code> event.
- * (Note: <code>Rep</code> is the English word rep, an informal term for representative (<em>e.g.</em>, sales rep).
- * The <code>Rep</code> <em>represents</em> the <code>Reporter</code> to your test method.)
- * </p>
- *
- * <p>
- * The <code>Informer</code> is provided by the <code>Rep</code> via its <code>info</code> field. You can therefore emit information
- * by invoking <code>info</code>, passing in a string and an optional payload.  The <code>info</code> field is implicit so it can
- * be passed to other constructs that emit information, such as the methods of <a href="GivenWhenThen.html"><code>GivenWhenThen</code></a>.
- * Here's an example that shows both direct and implicit uses (the implicit <code>info</code> field is imported via the
- * statement, &ldquo;<code>import r._</code>&rdquo;):
+ * Most often the reporting done by default will be sufficient, but
+ * occasionally you may wish to provide custom information to the <code>Reporter</code> from a test.
+ * For this purpose, an <a href="Informer.html"><code>Informer</code></a> that will forward information
+ * to the current <code>Reporter</code> is provided via the <code>info</code> parameterless method.
+ * You can pass the extra information to the <code>Informer</code> via its <code>apply</code> method.
+ * The <code>Informer</code> will then pass the information to the <code>Reporter</code> via an <code>InfoProvided</code> event.
+ * Here's an example that shows both a direct use as well as an indirect use through the methods
+ * of <a href="GivenWhenThen.html"><code>GivenWhenThen</code></a>:
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.rep
+ * package org.scalatest.examples.suite.info
  *
  * import collection.mutable
  * import org.scalatest._
  * 
  * class SetSuite extends Suite with GivenWhenThen {
  *
- *   def &#96;test: an element can be added to an empty mutable Set&#96; (r: Rep) {
- *     import r._
+ *   def &#96;test: an element can be added to an empty mutable Set&#96; {
  *
  *     given("an empty mutable Set")
  *     val set = mutable.Set.empty[String]
@@ -675,7 +676,7 @@ import exceptions._
  * </pre>
  *
  * <p>
- * The <code>Rep</code> also carries a <a href="Documenter.html"><code>Documenter</code></a> named <code>markup</code>, which
+ * Trait <code>Suite</code> also carries a <a href="Documenter.html"><code>Documenter</code></a> named <code>markup</code>, which
  * you can use to transmit markup text to the <code>Reporter</code>.
  * </p>
  *
@@ -745,7 +746,9 @@ import exceptions._
  * tests, the greater drag the tests will have on refactoring the actual production code.
  * ScalaTest recommends several techniques to eliminate such code duplication, and provides several
  * traits to help. Each technique is geared towards helping you reduce code duplication without introducing
- * instance <code>var</code>s, shared mutable objects, or other dependencies between tests.
+ * instance <code>var</code>s, shared mutable objects, or other dependencies between tests. Eliminating shared
+ * mutable state across tests will make your test code easier to reason about and more amenable for parallel
+ * test execution.
  * </p>
  *
  * <p>
@@ -755,17 +758,22 @@ import exceptions._
  * </p>
  *
  * <table style="border-collapse: collapse; border: 1px solid black">
- * <tr><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">Technique</th><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">Use cases</th></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#getFixtureMethods">get-fixture methods</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">When you need the same one or two fixture objects in multiple tests, and don't need to clean up after.</td></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#fixtureContextObjects">fixture-context objects</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">When you need more than two fixture objects in mutiple tests and/or need different fixture objects in different tests, and don't need to clean up after. </td></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#oneInstancePerTest"><code>OneInstancePerTest</code></a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">When porting JUnit tests to ScalaTest, or if you prefer JUnit's approach to test isolation: running each test in its own instance of the test class.</td></td></tr>
+ * <tr><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">Technique</th><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black">Recommended uses</th></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#getFixtureMethods">get-fixture methods</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">Use when you need the same mutable fixture objects in multiple tests, and don't need to clean up after.</td></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#fixtureContextObjects">fixture-context objects</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">Use when you need different combinations of mutable fixture objects in different tests, and don't need to clean up after. </td></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#oneInstancePerTest"><code>OneInstancePerTest</code></a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">Use when porting JUnit tests to ScalaTest, or if you prefer JUnit's approach to test isolation: running each test in its own instance of the test class.</td></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#withFixtureNoArgTest"><code>withFixture(NoArgTest)</code></a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">Use when you need to perform side effects at the beginning and end of all or most tests, or want to stack traits that peform such side-effects.</td></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#loanFixtureMethods">loan-fixture methods</a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">Use when different tests need different fixtures that must be cleaned up afterwords.</td></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#withFixtureOneArgTest"><code>withFixture(OneArgTest)</code></a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">Use when all or most tests need the same fixtures that must be cleaned up afterwords.</td></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#beforeAndAfter"><code>BeforeAndAfter</code></a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">Use when you need to perform the same side-effects before and/or after tests, rather than at the beginning or end of tests.</td></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: right"><a href="#composingFixtures"><code>BeforeAndAfterEach</code></a></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">Use when you want to stack traits that perform the same side-effects before and/or after tests, rather than at the beginning or end of tests.</td></td></tr>
  * </table>
  *
  * <a name="getFixtureMethods"></a>
  * <h4>Calling get-fixture methods</h4>
  *
  * <p>
- * If you just need to create fixture objects, and don't need to clean them up after using them, one approach is to write one or
+ * If you need to create the same mutable fixture objects in multiple tests, and don't need to clean them up after using them, the simplest approach is to write one or
  * more <em>get-fixture</em> methods. A get-fixture method returns a new instance of a needed fixture object (or an holder object containing
  * multiple fixture objects) each time it is called. You can call a get-fixture method at the beginning of each
  * test that needs the fixture, storing the returned object or objects in local variables. Here's an example:
@@ -808,57 +816,66 @@ import exceptions._
  * </p>
  *
  * <p>
- * <strong>Recommended Usage</strong>: Use get-fixture methods when you need one or two fixture objects and you don't need to clean them up afterwords.
+ * If you need to configure fixture objects differently in different tests, you can pass configuration into the get-fixture method. For example, if you could pass
+ * in an initial value for a mutable fixture object as a parameter to the get-fixture method.
  * </p>
  *
  * <a name="fixtureContextObjects"></a>
  * <h4>Instantiating fixture-context objects </h4>
  *
  * <p>
- * A alternate technique that has slightly less boilerplate, but creates an extra class file per test, is to define the fixture objects as instance variables
- * of a <em>fixture-context object</em> whose instantiation forms the body of the test. Like get-fixture methods, fixture-context objects are anly
- * appropriate if you don't need to clean up after using the fixtures. You can place the instance variables in traits and/or classes. Traits allow you to
- * mix together just the fixture objects needed by each test. Classes allow you to pass data in via a constructor. Here's an example in which one trait is used:
+ * A alternate technique that is especially useful when different tests need different combinations of fixture objects is to define the fixture objects as instance variables
+ * of <em>fixture-context objects</em> whose instantiation forms the body of tests. Like get-fixture methods, fixture-context objects are anly
+ * appropriate if you don't need to clean up the fixtures after using them.
+ * </p>
+ *
+ * To use this technique, you define instance variables intialized with fixture objects in traits and/or classes, then in each test instantiate an object that
+ * contains just the fixture objects needed by the test. Keep in mind that traits allow you to mix together just the fixture objects needed by each test, whereas classes
+ * allow you to pass data in via a constructor to configure the fixture objects. Here's an example in which fixture objects are partitioned into two traits
+ * and each test just gets mixes together the traits it needs:
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.fixturecontext
- *
- * import org.scalatest.Suite
  * import collection.mutable.ListBuffer
+ * import org.scalatest.Suite
  * 
  * class ExampleSuite extends Suite {
  * 
- *   trait Fixture {
+ *   trait Builder {
  *     val builder = new StringBuilder("ScalaTest is ")
- *     val buffer = new ListBuffer[String]
  *   }
  * 
- *   def &#96;test: testing should be easy&#96; {
- *     new Fixture {
- *       builder.append("easy!")
- *       assert(builder.toString === "ScalaTest is easy!")
- *       assert(buffer.isEmpty)
- *       buffer += "sweet"
+ *   trait Buffer {
+ *     val buffer = ListBuffer("ScalaTest", "is")
+ *   }
+ * 
+ *   // This test needs the StringBuilder fixture
+ *   def &#96;test: testing should be productive&#96; {
+ *     new Builder {
+ *       builder.append("productive!")
+ *       assert(builder.toString === "ScalaTest is productive!")
  *     }
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; {
- *     new Fixture {
- *       builder.append("fun!")
- *       assert(builder.toString === "ScalaTest is fun!")
- *       assert(buffer.isEmpty)
+ *   // This test needs the ListBuffer[String] fixture
+ *   def &#96;test: test code should be readable&#96; {
+ *     new Buffer {
+ *       buffer += ("readable!")
+ *       assert(buffer === List("ScalaTest", "is", "readable!"))
+ *     }
+ *   }
+ * 
+ *   // This test needs both the StringBuilder and ListBuffer
+ *   def &#96;test: test code should be clear and concise&#96; {
+ *     new Builder with Buffer {
+ *       builder.append("clear!")
+ *       buffer += ("concise!")
+ *       assert(builder.toString === "ScalaTest is clear!")
+ *       assert(buffer === List("ScalaTest", "is", "concise!"))
  *     }
  *   }
  * }
  * </pre>
- *
- * <p>
- * <strong>Recommended Usage</strong>: Use fixture-context objects for fixtures that don't need clean up after use. This technique can be a better choice than get-fixture
- * methods if you need several fixture objects, because it requires less boilerplate. It is also useful if different tests need different combinations of fixtures. As
- * shown in an <a href=#differentFixtures">example below</a>, you can place the fixtures in different traits, then for each test, instantiate a fixture-context object
- * that mixes together just the traits that hold the fixture objects needed by that test.
- * </p>
  *
  * <a name="oneInstancePerTest"></a>
  * <h4>Mixing in <code>OneInstancePerTest</code></h4>
@@ -904,263 +921,205 @@ import exceptions._
  * directly to help you port JUnit tests to ScalaTest or if you prefer JUnit's approach to test isolation.
  * </p>
  *
- * <p>
- * <strong>Recommended Usage</strong>: You can use <code>OneInstancePerTest</code> to emulate JUnit's behavior when porting JUnit tests to ScalaTest, or
- * if you prefer JUnit's appraoch to test isolation.
- * </p>
- *
- * <p>
- * Although the create-fixture, fixture-trait, and <code>OneInstancePerTest</code> approaches take care of setting up a fixture before each
- * test, they don't address the problem of cleaning up a fixture after the test completes. In this situation, you'll need to either
- * use side effects or the <em>loan pattern</em>.
- * </p>
- *
- * <a name="beforeAndAfter"></a>
- * <h4>Mixing in <code>BeforeAndAfter</code></h4>
- *
- * <p>
- * One way to use side effects is to mix in the <a href="BeforeAndAfter.html"><code>BeforeAndAfter</code></a> trait.
- * With this trait you can denote a bit of code to run before each test with <code>before</code> and/or after each test
- * each test with <code>after</code>, like this:
- * </p>
- * 
- * <pre class="stHighlight">
- * import org.scalatest.Suite
- * import org.scalatest.BeforeAndAfter
- * import collection.mutable.ListBuffer
- * 
- * class ExampleSuite extends Suite with BeforeAndAfter {
- * 
- *   val builder = new StringBuilder
- *   val buffer = new ListBuffer[String]
- * 
- *   before {
- *     builder.append("ScalaTest is ")
- *   }
- * 
- *   after {
- *     builder.clear()
- *     buffer.clear()
- *   }
- * 
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
- * 
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
- *   }
- * }
- * </pre>
- * 
  * <a name="withFixtureNoArgTest"></a>
  * <h4>Overriding <code>withFixture(NoArgTest)</code></h4>
  *
  * <p>
- * An alternate way to take care of setup and cleanup via side effects
- * is to override <code>withFixture</code>. Trait <code>Suite</code>'s implementation of
- * <code>runTest</code> passes a no-arg test function to <code>withFixture</code>. It is <code>withFixture</code>'s
- * responsibility to invoke that test function.  <code>Suite</code>'s implementation of <code>withFixture</code> simply
+ * Although the get-fixture method, fixture-context object, and <code>OneInstancePerTest</code> approaches take care of setting up a fixture at the beginning of each
+ * test, they don't address the problem of cleaning up a fixture at the end of the test. If you just need to perform a side-effect at the beginning or end of
+ * a test, and don't need to actually pass any fixture objects into the test, you can override <code>withFixture(NoArgTest)</code>, one of ScalaTest's
+ * lifecycle methods defined in trait <a href="AbstractSuite.html"><code>AbstractSuite</code></a>.
+ * </p>
+ *
+ * <p>
+ * Trait <code>Suite</code>'s implementation of <code>runTest</code> passes a no-arg test function to <code>withFixture(NoArgTest)</code>. It is <code>withFixture</code>'s
+ * responsibility to invoke that test function. <code>Suite</code>'s implementation of <code>withFixture</code> simply
  * invokes the function, like this:
  * </p>
  *
  * <pre class="stHighlight">
- * // Default implementation
+ * // Default implementation in trait Suite
  * protected def withFixture(test: NoArgTest) {
  *   test()
  * }
  * </pre>
  *
  * <p>
- * You can, therefore, override <code>withFixture</code> to perform setup before, and cleanup after, invoking the test function. If
- * you have cleanup to perform, you should invoke the test function
- * inside a <code>try</code> block and perform the cleanup in a <code>finally</code> clause.
- * Here's an example:
+ * You can, therefore, override <code>withFixture</code> to perform setup before and/or cleanup after invoking the test function. If
+ * you have cleanup to perform, you should invoke the test function inside a <code>try</code> block and perform the cleanup in
+ * a <code>finally</code> clause, because the exception that causes a test to fail will propagate through <code>withFixture</code> back
+ * to <code>runTest</code>. (In other words, if the test fails, the test function invoked by <code>withFixture</code> will throw an exception.)
+ * </p>
+ *
+ * <p>
+ * The <code>withFixture</code> method is designed to be stacked, and to enable this, you should always call the <code>super</code> implementation
+ * of <code>withFixture</code>, and let it actually invoke the test function. In other words, instead of just invoking the test function
+ * with &ldquo;<code>test()</code>&rdquo;, you should write &ldquo;<code>super.withFixture(test)</code>&rdquo;, like this:
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.Suite
- * import collection.mutable.ListBuffer
- *
- * class ExampleSuite extends Suite {
- *
- *   val builder = new StringBuilder
- *   val buffer = new ListBuffer[String]
- *
- *   override def withFixture(test: NoArgTest) {
- *     builder.append("ScalaTest is ") // perform setup
- *     try {
- *       test() // invoke the test function
- *     }
- *     finally {
- *       builder.clear() // perform cleanup
- *       buffer.clear()
- *     }
+ * // Your implementation
+ * override def withFixture(test: NoArgTest) {
+ *   // Perform setup
+ *   try {
+ *     super.withFixture(test) // Invoke the test function
  *   }
- *
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
- *
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
- *     buffer += "clear"
+ *   finally {
+ *     // Perform cleanup
  *   }
  * }
+ * </pre>
+ *
+ * <p>
+ * Here's an example in which <code>withFixture(NoArgTest)</code> is used to take a snapshot of the working directory if a test fails, and 
+ * and send that information to the reporter:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.noargtest
+ *
+ * import java.io.File
+ * import org.scalatest.FunSuite
+ *
+ * class ExampleSuite extends FunSuite {
+ *
+ *   final val tmpDir = "tmpDir"
+ *
+ *   override def withFixture(test: NoArgTest) {
+ *     
+ *     try {
+ *       super.withFixture(test)
+ *     }
+ *     catch {
+ *       case e: Exception =&gt;
+ *         val currDir = new File(".")
+ *         val fileNames = currDir.list()
+ *         info("Dir snapshot: " + fileNames.mkString(", "))
+ *         throw e
+ *     }
+ *   }
+ *
+ *   test("this test should succeed") {
+ *     assert(1 + 1 === 2)
+ *   }
+ *
+ *   test("this test should fail") {
+ *     assert(1 + 1 === 3)
+ *   }
+ * }
+ * </pre>
+ *
+ * <p>
+ * Running this version of <code>ExampleSuite</code> in the interpreter in a directory with two files, <code>hello.txt</code> and <code>world.txt</code>
+ * would give the following output:
+ * </p>
+ *
+ * <pre class="stREPL">
+ * scala&gt; new ExampleSuite execute
+ * <span class="stGreen">ExampleSuite:
+ * - this test should succeed
+ * <span class="stRed">- this test should fail *** FAILED ***
+ *   2 did not equal 3 (<console>:33)
+ *   + Dir snapshot: hello.txt, world.txt </span>
  * </pre>
  *
  * <p>
  * Note that the <a href="Suite$NoArgTest.html"><code>NoArgTest</code></a> passed to <code>withFixture</code>, in addition to
  * an <code>apply</code> method that executes the test, also includes the test name as well as the <a href="#configMapSection">config
- * map</a> passed to <code>runTest</code>. Thus you can also use the test name and configuration objects in <code>withFixture</code>.
+ * map</a> passed to <code>runTest</code>. Thus you can also use the test name and configuration objects in your <code>withFixture</code>
+ * implementation.
+ * </p>
+ *
+ * <a name="loanFixtureMethods"></a>
+ * <h4>Calling loan-fixture methods</h4>
+ *
+ * <p>
+ * If you need to both pass a fixture object into a test <em>and</em> and perform cleanup at the end of the test, you'll need to use the <em>loan pattern</em>.
+ * If different tests need different fixtures that require cleanup, you can implement the loan pattern directly by writing <em>loan-fixture</em> methods.
+ * A loan-fixture method takes a function whose body forms part or all of a test's code. It creates a fixture, passes it to the test code by invoking the
+ * function, then cleans up the fixture after the function returns.
  * </p>
  *
  * <p>
- * The reason you should perform cleanup in a <code>finally</code> clause is that <code>withFixture</code> is called by
- * <code>runTest</code>, which expects an exception to be thrown to indicate a failed test. Thus when you invoke
- * the <code>test</code> function inside <code>withFixture</code>, it may complete abruptly with an exception. The <code>finally</code>
- * clause will ensure the fixture cleanup happens as that exception propagates back up the call stack to <code>runTest</code>.
- * </p>
- *
- * <a name="withFixtureNoArgTest"></a>
- * <h4>Overriding <code>withFixture(OneArgTest)</code></h4>
- *
- * <p>
- * To use the loan pattern, you can extend <code>fixture.Suite</code> (from the <code>org.scalatest.fixture</code> package) instead of
- * <code>Suite</code>. Each test in a <code>fixture.Suite</code> takes a fixture as a parameter, allowing you to pass the fixture into
- * the test. You must indicate the type of the fixture parameter by specifying <code>FixtureParam</code>, and implement a
- * <code>withFixture</code> method that takes a <code>OneArgTest</code>. This <code>withFixture</code> method is responsible for
- * invoking the one-arg test function, so you can perform fixture set up before, and clean up after, invoking and passing
- * the fixture into the test function. Here's an example:
+ * The following example shows three tests that use two fixtures, a database and a file. Both require cleanup after, so each is provided via a
+ * loan-fixture method. (For this example, the database is simulated with a <code>StringBuffer</code>.)
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.fixture
- * import java.io.FileWriter
- * import java.io.File
+ * package org.scalatest.examples.suite.loanfixture
+ *
+ * import java.util.concurrent.ConcurrentHashMap
  * 
- * class ExampleSuite extends fixture.Suite {
- * 
- *   final val tmpFile = "temp.txt"
- * 
- *   type FixtureParam = FileWriter
- * 
- *   def withFixture(test: OneArgTest) {
- * 
- *     val writer = new FileWriter(tmpFile) // set up the fixture
- *     try {
- *       test(writer) // "loan" the fixture to the test
- *     }
- *     finally {
- *       writer.close() // clean up the fixture
- *     }
+ * object DbServer { // Simulating a database server
+ *   type Db = StringBuffer
+ *   private val databases = new ConcurrentHashMap[String, Db]
+ *   def createDb(name: String): Db = {
+ *     val db = new StringBuffer
+ *     databases.put(name, db)
+ *     db
  *   }
- * 
- *   def &#96;test: testing should be easy&#96;(writer: FileWriter) {
- *     writer.write("Hello, test!")
- *     writer.flush()
- *     assert(new File(tmpFile).length === 12)
- *   }
- * 
- *   def &#96;test: testing should be fun&#96;(writer: FileWriter) {
- *     writer.write("Hi, test!")
- *     writer.flush()
- *     assert(new File(tmpFile).length === 9)
+ *   def removeDb(name: String) {
+ *     databases.remove(name)
  *   }
  * }
- * </pre>
- *
- * <p>
- * For more information, see the <a href="fixture/Suite.html">documentation for <code>fixture.Suite</code></a>.
- * </p>
- *
- * <a name="differentFixtures"></a><h2>Providing different fixtures to different tests</h2>
  * 
- * <p>
- * If different tests in the same <code>Suite</code> require different fixtures, you can combine the previous techniques and
- * provide each test with just the fixture or fixtures it needs. Here's an example in which a <code>StringBuilder</code> and a
- * <code>ListBuffer</code> are provided via fixture traits, and file writer (that requires cleanup) is provided via the loan pattern:
- * </p>
- *
- * <pre class="stHighlight">
- * import java.io.FileWriter
- * import java.io.File
- * import collection.mutable.ListBuffer
  * import org.scalatest.Suite
+ * import DbServer._
+ * import java.util.UUID.randomUUID
+ * import java.io._
  * 
  * class ExampleSuite extends Suite {
  * 
- *   final val tmpFile = "temp.txt"
- * 
- *   trait Builder {
- *     val builder = new StringBuilder("ScalaTest is ")
- *   }
- * 
- *   trait Buffer {
- *     val buffer = ListBuffer("ScalaTest", "is")
- *   }
- * 
- *   def withWriter(testCode: FileWriter => Any) {
- *     val writer = new FileWriter(tmpFile) // set up the fixture
+ *   def withDatabase(testCode: Db =&gt; Any) {
+ *     val dbName = randomUUID.toString
+ *     val db = createDb(dbName) // create the fixture
  *     try {
- *       testCode(writer) // "loan" the fixture to the test
+ *       db.append("ScalaTest is ") // perform setup
+ *       testCode(db) // "loan" the fixture to the test
+ *     }
+ *     finally {
+ *       removeDb(dbName) // clean up the fixture
+ *     }
+ *   }
+ * 
+ *   def withFile(testCode: (File, FileWriter) =&gt; Any) {
+ *     val file = File.createTempFile("hello", "world") // create the fixture
+ *     val writer = new FileWriter(file)
+ *     try {
+ *       writer.write("ScalaTest is ") // set up the fixture
+ *       testCode(file, writer) // "loan" the fixture to the test
  *     }
  *     finally {
  *       writer.close() // clean up the fixture
  *     }
  *   }
  * 
- *   def testProductive { // This test needs the StringBuilder fixture
- *     new Builder {
- *       builder.append("productive!")
- *       assert(builder.toString === "ScalaTest is productive!")
- *     }
- *   }
- * 
- *   def testReadable { // This test needs the ListBuffer[String] fixture
- *     new Buffer {
- *       buffer += ("readable!")
- *       assert(buffer === List("ScalaTest", "is", "readable!"))
- *     }
- *   }
- * 
- *   def testFriendly { // This test needs the FileWriter fixture
- *     withWriter { writer =>
- *       writer.write("Hello, user!")
+ *   // This test needs the file fixture
+ *   def &#96;test: testing should be productive&#96; {
+ *     withFile { (file, writer) =&gt;
+ *       writer.write("productive!")
  *       writer.flush()
- *       assert(new File(tmpFile).length === 12)
+ *       assert(file.length === 24)
  *     }
  *   }
  * 
- *   def testClearAndConcise { // This test needs the StringBuilder and ListBuffer
- *     new Builder with Buffer {
- *       builder.append("clear!")
- *       buffer += ("concise!")
- *       assert(builder.toString === "ScalaTest is clear!")
- *       assert(buffer === List("ScalaTest", "is", "concise!"))
+ *   // This test needs the database fixture
+ *   def &#96;test: test code should be readable&#96; {
+ *     withDatabase { db =&gt;
+ *       db.append("readable!")
+ *       assert(db.toString === "ScalaTest is readable!")
  *     }
  *   }
  * 
- *   def testComposable { // This test needs all three fixtures
- *     new Builder with Buffer {
- *       builder.append("clear!")
- *       buffer += ("concise!")
- *       assert(builder.toString === "ScalaTest is clear!")
- *       assert(buffer === List("ScalaTest", "is", "concise!"))
- *       withWriter { writer =>
- *         writer.write(builder.toString)
+ *   // This test needs both the file and the database
+ *   def &#96;test: test code should be clear and concise&#96; {
+ *     withDatabase { db =&gt;
+ *       withFile { (file, writer) =&gt; // loan-fixture methods compose
+ *         db.append("clear!")
+ *         writer.write("concise!")
  *         writer.flush()
- *         assert(new File(tmpFile).length === 19)
+ *         assert(db.toString === "ScalaTest is clear!")
+ *         assert(file.length === 21)
  *       }
  *     }
  *   }
@@ -1168,69 +1127,144 @@ import exceptions._
  * </pre>
  *
  * <p>
- * In the previous example, <code>testProductive</code> uses only the <code>StringBuilder</code> fixture, so it just instantiates
- * a <code>new Builder</code>, whereas <code>testReadable</code> uses only the <code>ListBuffer</code> fixture, so it just intantiates
- * a <code>new Buffer</code>. <code>testFriendly</code> needs just the <code>FileWriter</code> fixture, so it invokes
- * <code>withWriter</code>, which prepares and passes a <code>FileWriter</code> to the test (and takes care of closing it afterwords).
+ * As demonstrated by the last test, loan-fixture methods compose. Not only do loan-fixture methods allow you to
+ * give each test the fixture it needs, they allow you to give a test multiple fixtures and clean everything up afterwords.
  * </p>
  *
  * <p>
- * Two tests need multiple fixtures: <code>testClearAndConcise</code> needs both the <code>StringBuilder</code> and the
- * <code>ListBuffer</code>, so it instantiates a class that mixes in both fixture traits with <code>new Builder with Buffer</code>.
- * <code>testComposable</code> needs all three fixtures, so in addition to <code>new Builder with Buffer</code> it also invokes
- * <code>withWriter</code>, wrapping just the of the test code that needs the fixture.
+ * Also demonstrated in this example is the technique of giving each test its own "fixture sandbox" to play in. When your fixtures
+ * involve side-effects, like creating files or databases, it is a good idea to give each file or database a unique name as is
+ * done in this example. This keeps tests completely isolated, allowing you to run them in parallel if that helps performance.
+ * </p>
+ *
+ * </pre>
+ * <a name="withFixtureOneArgTest"></a>
+ * <h4>Overriding <code>withFixture(OneArgTest)</code></h4>
+ *
+ * <p>
+ * If all or most tests need the same fixture, you can reduce the boilerplate of the loan-fixture method by using a <code>fixture.Suite</code>
+ * and overriding <code>withFixture(OneArgTest)</code>.
+ * Each test in a <code>fixture.Suite</code> takes a fixture as a parameter, allowing you to pass the fixture into
+ * the test. You must indicate the type of the fixture parameter by specifying <code>FixtureParam</code>, and implement a
+ * <code>withFixture</code> method that takes a <code>OneArgTest</code>. This <code>withFixture</code> method is responsible for
+ * invoking the one-arg test function, so you can perform fixture set up before, and clean up after, invoking and passing
+ * the fixture into the test function.
  * </p>
  *
  * <p>
- * Note that in this case, the loan pattern is being implemented via the <code>withWriter</code> method that takes a function, not
- * by overriding <code>fixture.Suite</code>'s <code>withFixture(OneArgTest)</code> method. <code>fixture.Suite</code> makes the most sense
- * if all (or at least most) tests need the same fixture, whereas in this <code>Suite</code> only two tests need the
- * <code>FileWriter</code>.
- * </p>
- *
- * <p>
- * Note also that two test methods, <code>testFriendly</code> and <code>testComposable</code>, are declared as parameterless methods even
- * though they have a side effect. In production code you would normally declare these as <em>empty-paren</em> methods, and call them with
- * empty parentheses, to make it more obvious to readers of the code that they have a side effect. Whether or not a test method has
- * a side effect, however, is a less important distinction than it is for methods in production code. Moreover, test methods are not
- * normally invoked directly by client code, but rather through reflection by running the <code>Suite</code> that contains them, so a
- * lack of parentheses on an invocation of a side-effecting test method would not normally appear in any client code. Given the empty
- * parentheses do not add much value in the test methods case, the recommended style is to simply always leave them off.
- * </p>
- *
- * <p>
- * In the previous example, the <code>withWriter</code> method passed an object into
- * the tests. Passing fixture objects into tests is generally a good idea when possible, but sometimes a side affect is unavoidable.
- * For example, if you need to initialize a database running on a server across a network, your with-fixture 
- * method will likely have nothing to pass. In such cases, simply create a with-fixture method that takes a by-name parameter and
- * performs setup and cleanup via side effects, like this:
+ * As with <code>withFixture(NoArgTest)</code>, to enable trait stacking it is a good idea to always delegate to the <code>super</code> implementation
+ * of <code>withFixture(NoArgTest)</code> instead of invoking the test function directly. In this case, however, you'll need to convert the
+ * <code>OneArgTest</code> to a <code>NoArgTest</code>. You can do that by supplying the fixture object to <code>toNoArgTest</code> method of
+ * <code>OneArgTest</code>. In other words, instead of writing &ldquo;<code>test("fixture")</code>&rdquo;, you'd write
+ * &ldquo;<code>super.withFixture(test.toNoArgTest("fixture"))</code>&rdquo;.  Here's a complete example:
  * </p>
  *
  * <pre class="stHighlight">
- * def withDataInDatabase(test: => Any) {
- *   // initialize the database across the network
- *   try {
- *     test // "loan" the initialized database to the test
+ * package org.scalatest.examples.suite.oneargtest
+ *
+ * import org.scalatest.fixture
+ * import java.io._
+ * 
+ * class ExampleSuite extends fixture.Suite {
+ * 
+ *   case class F(file: File, writer: FileWriter)
+ *   type FixtureParam = F
+ * 
+ *   def withFixture(test: OneArgTest) {
+ *     val file = File.createTempFile("hello", "world") // create the fixture
+ *     val writer = new FileWriter(file)
+ *     try {
+ *       writer.write("ScalaTest is ") // set up the fixture
+ *       super.withFixture(test.toNoArgTest(F(file, writer)) // "loan" the fixture to the test
+ *     }
+ *     finally {
+ *       writer.close() // clean up the fixture
+ *     }
  *   }
- *   finally {
- *     // clean up the database
+ * 
+ *   def &#96;test: testing should be easy&#96; (f: F) {
+ *     f.writer.write("easy!")
+ *     f.writer.flush()
+ *     assert(f.file.length === 12)
+ *   }
+ * 
+ *   def &#96;test: testing should be fun&#96; (f: F) {
+ *     f.writer.write("fun!")
+ *     f.writer.flush()
+ *     assert(f.file.length === 9)
  *   }
  * }
  * </pre>
- * 
+ *
  * <p>
- * You can then use it like:
+ * In this example, the tests actually required two fixture objects, a <code>File</code> and a <code>FileWriter</code>. In such situations you can
+ * simply define the <code>FixtureParam</code> type to be a tuple containing the objects, or as is done in this example, a case class containing
+ * the objects.  For more information on this technique, see the <a href="fixture/Suite.html">documentation for <code>fixture.Suite</code></a>.
+ * </p>
+ *
+ * <a name="beforeAndAfter"></a>
+ * <h4>Mixing in <code>BeforeAndAfter</code></h4>
+ *
+ * <p>
+ * In all the shared fixture examples shown so far, the activities of creating, setting up, and cleaning up the fixture objects have all been
+ * performed <em>during</em> the test.  This means that if an exception occurs during any of these activities, it will be reported as a test failure.
+ * Sometimes, however, you may want setup to happen <em>before</em> the test starts, and cleanup <em>after</em> the test has completed, so that if an
+ * exception occurs during setup or cleanup, the entire suite aborts and no more tests are attempted. The simplest way to accomplish this in ScalaTest is
+ * to mix in trait <a href="BeforeAndAfter.html"><code>BeforeAndAfter</code></a>.  With this trait you can denote a bit of code to run before each test
+ * with <code>before</code> and/or after each test each test with <code>after</code>, like this:
  * </p>
  * 
  * <pre class="stHighlight">
- * def testUserLogsIn {
- *   withDataInDatabase {
- *     // test user logging in scenario
+ * import org.scalatest.Suite
+ * import org.scalatest.BeforeAndAfter
+ * import collection.mutable.ListBuffer
+ *
+ * class ExampleSuite extends Suite with BeforeAndAfter {
+ *
+ *   val builder = new StringBuilder
+ *   val buffer = new ListBuffer[String]
+ *
+ *   before {
+ *     builder.append("ScalaTest is ")
+ *   }
+ *
+ *   after {
+ *     builder.clear()
+ *     buffer.clear()
+ *   }
+ *
+ *   def &#96;test: testing should be easy&#96; {
+ *     builder.append("easy!")
+ *     assert(builder.toString === "ScalaTest is easy!")
+ *     assert(buffer.isEmpty)
+ *     buffer += "sweet"
+ *   }
+ *
+ *   def &#96;test: testing should be fun&#96; {
+ *     builder.append("fun!")
+ *     assert(builder.toString === "ScalaTest is fun!")
+ *     assert(buffer.isEmpty)
  *   }
  * }
  * </pre>
- * 
- * <a name="composingFixtures"></a><h2>Composing stackable fixture traits</h2>
+ *
+ * <p>
+ * Note that the only way <code>before</code> and <code>after</code> code can communicate with test code is via some side-effecting mechanism, commonly by
+ * reassigning instance <code>var</code>s or by changing the state of mutable objects held from instance <code>val</code>s (as in this example). If using
+ * instance <code>var</code>s or mutable objects held from instance <code>val</code>s you won't be able to run tests in parallel unless you synchronize access
+ * to this shared, mutable state. This is usually not worth the trouble, and most often isn't needed, as ScalaTest's default approach of running just
+ * suites and not tests in parallel gives a sufficient peformance boost. But if you do want to run tests in parallel, the easiest way to accomplish that
+ * is by using one of the techniques shown previously that do setup and cleanup at the beginning and end of the test, rather than before and after the test.
+ * </p>
+ *
+ * <p>
+ * Although <code>BeforeAndAfter</code> provides a minimal boilerplate way to execute code before and after tests, it isn't designed to enable stackable
+ * traits, because the order of execution would be non-obvious.  If you want to factor out before and after code that is common to multiple test suites, you 
+ * should use trait <code>BeforeAndAfterEach</code> instead, as shown later in the section
+ * entitled <a href="#composingFixtures.html">composing fixtures by stacking traits</a>.
+ * </p>
+ *
+ * <a name="composingFixtures"></a><h2>Composing fixtures by stacking traits</h2>
  *
  * <p>
  * In larger projects, teams often end up with several different fixtures that test classes need in different combinations,
@@ -1387,12 +1421,11 @@ import exceptions._
  * </p>
  *
  * <p>
- * One difference to bear in mind between the before-and-after traits and the <code>withFixture</code> methods, is that if
- * a <code>withFixture</code> method completes abruptly with an exception, it is considered a failed test. By contrast, if any of the
- * methods on the before-and-after traits (<em>i.e.</em>, <code>before</code>  and <code>after</code> of <code>BeforeAndAfter</code>,
- * <code>beforeEach</code> and <code>afterEach</code> of <code>BeforeAndAfterEach</code>,
- * and <code>beforeAll</code> and <code>afterAll</code> of <code>BeforeAndAfterAll</code>) complete abruptly, it is considered a
- * failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
+ * The difference between stacking traits that extend <code>BeforeAndAfterEach</code> versus implement <code>withFixture</code> is
+ * that setup and cleanup code happens before and after the test in <code>BeforeAndAfterEach</code>, but at the beginning and
+ * end of the test in <code>withFixture</code>. Thus if a <code>withFixture</code> method completes abruptly with an exception, it is
+ * considered a failed test. By contrast, if any of the <code>beforeEach</code> or <code>afterEach</code> methods of <code>BeforeAndAfterEach</code> 
+ * complete abruptly, it is considered a failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
  * <a name="errorHandling"></a>
