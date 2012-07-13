@@ -148,7 +148,7 @@ import exceptions._
  * </p>
  *
  * <p>
- * The test methods shown in this example are parameterless. This is recommeneded even for methods with obvious side effects. In production code
+ * The test methods shown in this example are parameterless. This is recommended even for test methods with obvious side effects. In production code
  * you would normally declare no-arg, side-effecting methods as <em>empty-paren</em> methods, and call them with
  * empty parentheses, to make it more obvious to readers of the code that they have a side effect. Whether or not a test method has
  * a side effect, however, is a less important distinction than it is for methods in production code. Moreover, test methods are not
@@ -953,8 +953,8 @@ import exceptions._
  *
  * <p>
  * The <code>withFixture</code> method is designed to be stacked, and to enable this, you should always call the <code>super</code> implementation
- * of <code>withFixture</code>, and let it actually invoke the test function. In other words, instead of just invoking the test function
- * with &ldquo;<code>test()</code>&rdquo;, you should write &ldquo;<code>super.withFixture(test)</code>&rdquo;, like this:
+ * of <code>withFixture</code>, and let it invoke the test function rather than invoking the test function directly. In other words, instead of writing
+ * &ldquo;<code>test()</code>&rdquo;, you should write &ldquo;<code>super.withFixture(test)</code>&rdquo;, like this:
  * </p>
  *
  * <pre class="stHighlight">
@@ -1025,7 +1025,7 @@ import exceptions._
  *
  * <p>
  * Note that the <a href="Suite$NoArgTest.html"><code>NoArgTest</code></a> passed to <code>withFixture</code>, in addition to
- * an <code>apply</code> method that executes the test, also includes the test name as well as the <a href="#configMapSection">config
+ * an <code>apply</code> method that executes the test, also includes the test name and the <a href="#configMapSection">config
  * map</a> passed to <code>runTest</code>. Thus you can also use the test name and configuration objects in your <code>withFixture</code>
  * implementation.
  * </p>
@@ -1042,7 +1042,7 @@ import exceptions._
  *
  * <p>
  * The following example shows three tests that use two fixtures, a database and a file. Both require cleanup after, so each is provided via a
- * loan-fixture method. (For this example, the database is simulated with a <code>StringBuffer</code>.)
+ * loan-fixture method. (In this example, the database is simulated with a <code>StringBuffer</code>.)
  * </p>
  *
  * <pre class="stHighlight">
@@ -1133,8 +1133,8 @@ import exceptions._
  *
  * <p>
  * Also demonstrated in this example is the technique of giving each test its own "fixture sandbox" to play in. When your fixtures
- * involve side-effects, like creating files or databases, it is a good idea to give each file or database a unique name as is
- * done in this example. This keeps tests completely isolated, allowing you to run them in parallel if that helps performance.
+ * involve external side-effects, like creating files or databases, it is a good idea to give each file or database a unique name as is
+ * done in this example. This keeps tests completely isolated, allowing you to run them in parallel if desired.
  * </p>
  *
  * </pre>
@@ -1142,7 +1142,7 @@ import exceptions._
  * <h4>Overriding <code>withFixture(OneArgTest)</code></h4>
  *
  * <p>
- * If all or most tests need the same fixture, you can reduce the boilerplate of the loan-fixture method by using a <code>fixture.Suite</code>
+ * If all or most tests need the same fixture, you can avoid some of the boilerplate of the loan-fixture method approach by using a <code>fixture.Suite</code>
  * and overriding <code>withFixture(OneArgTest)</code>.
  * Each test in a <code>fixture.Suite</code> takes a fixture as a parameter, allowing you to pass the fixture into
  * the test. You must indicate the type of the fixture parameter by specifying <code>FixtureParam</code>, and implement a
@@ -1199,14 +1199,14 @@ import exceptions._
  * <p>
  * In this example, the tests actually required two fixture objects, a <code>File</code> and a <code>FileWriter</code>. In such situations you can
  * simply define the <code>FixtureParam</code> type to be a tuple containing the objects, or as is done in this example, a case class containing
- * the objects.  For more information on this technique, see the <a href="fixture/Suite.html">documentation for <code>fixture.Suite</code></a>.
+ * the objects.  For more information on the <code>withFixture(OneArgTest)</code> technique, see the <a href="fixture/Suite.html">documentation for <code>fixture.Suite</code></a>.
  * </p>
  *
  * <a name="beforeAndAfter"></a>
  * <h4>Mixing in <code>BeforeAndAfter</code></h4>
  *
  * <p>
- * In all the shared fixture examples shown so far, the activities of creating, setting up, and cleaning up the fixture objects have all been
+ * In all the shared fixture examples shown so far, the activities of creating, setting up, and cleaning up the fixture objects have been
  * performed <em>during</em> the test.  This means that if an exception occurs during any of these activities, it will be reported as a test failure.
  * Sometimes, however, you may want setup to happen <em>before</em> the test starts, and cleanup <em>after</em> the test has completed, so that if an
  * exception occurs during setup or cleanup, the entire suite aborts and no more tests are attempted. The simplest way to accomplish this in ScalaTest is
@@ -1251,17 +1251,18 @@ import exceptions._
  * <p>
  * Note that the only way <code>before</code> and <code>after</code> code can communicate with test code is via some side-effecting mechanism, commonly by
  * reassigning instance <code>var</code>s or by changing the state of mutable objects held from instance <code>val</code>s (as in this example). If using
- * instance <code>var</code>s or mutable objects held from instance <code>val</code>s you won't be able to run tests in parallel unless you synchronize access
- * to this shared, mutable state. This is usually not worth the trouble, and most often isn't needed, as ScalaTest's default approach of running just
- * suites and not tests in parallel gives a sufficient peformance boost. But if you do want to run tests in parallel, the easiest way to accomplish that
- * is by using one of the techniques shown previously that do setup and cleanup at the beginning and end of the test, rather than before and after the test.
+ * instance <code>var</code>s or mutable objects held from instance <code>val</code>s you wouldn't be able to run tests in parallel in the same instance
+ * of the test class unless you synchronized access to the shared, mutable state. This is why ScalaTest's <code>ParallelTestExecution</code> trait extends
+ * <code>OneInstancePerTest</code>. By running each test in its own instance of the class, each test has its own copy of the instance variables, so you
+ * don't need to synchronize. If you mixed <code>ParallelTestExecution</code> into the <code>ExampleSuite</code> above, the tests would run in parallel just fine
+ * without any synchronization needed on the mutable <code>StringBuilder</code> and <code>ListBuffer[String]</code> objects.
  * </p>
  *
  * <p>
- * Although <code>BeforeAndAfter</code> provides a minimal boilerplate way to execute code before and after tests, it isn't designed to enable stackable
+ * Although <code>BeforeAndAfter</code> provides a minimal-boilerplate way to execute code before and after tests, it isn't designed to enable stackable
  * traits, because the order of execution would be non-obvious.  If you want to factor out before and after code that is common to multiple test suites, you 
- * should use trait <code>BeforeAndAfterEach</code> instead, as shown later in the section
- * entitled <a href="#composingFixtures.html">composing fixtures by stacking traits</a>.
+ * should use trait <code>BeforeAndAfterEach</code> instead, as shown later in the next section,
+ * <a href="#composingFixtures.html">composing fixtures by stacking traits</a>.
  * </p>
  *
  * <a name="composingFixtures"></a><h2>Composing fixtures by stacking traits</h2>
@@ -1417,11 +1418,11 @@ import exceptions._
  * <code>beforeEach</code> method, and the <code>super.afterEach</code> call at the beginning of each <code>afterEach</code>
  * method, as shown in the previous example. It is a good idea to invoke <code>super.afterEach</code> in a <code>try</code>
  * block and perform cleanup in a <code>finally</code> clause, as shown in the previous example, because this ensures the
- * cleanup code is performed even if <code>super.afterAll</code> throws an exception.
+ * cleanup code is performed even if <code>super.afterEach</code> throws an exception.
  * </p>
  *
  * <p>
- * The difference between stacking traits that extend <code>BeforeAndAfterEach</code> versus implement <code>withFixture</code> is
+ * The difference between stacking traits that extend <code>BeforeAndAfterEach</code> versus traits that implement <code>withFixture</code> is
  * that setup and cleanup code happens before and after the test in <code>BeforeAndAfterEach</code>, but at the beginning and
  * end of the test in <code>withFixture</code>. Thus if a <code>withFixture</code> method completes abruptly with an exception, it is
  * considered a failed test. By contrast, if any of the <code>beforeEach</code> or <code>afterEach</code> methods of <code>BeforeAndAfterEach</code> 
