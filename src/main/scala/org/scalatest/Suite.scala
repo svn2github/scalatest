@@ -607,7 +607,7 @@ import exceptions._
  * </pre>
  *
  * <p>
- * It will run both tests but report that <code>testSubtraction</code> is pending. You'll see:
+ * It will run both tests but report that the first one is pending. You'll see:
  * </p>
  *
  * <pre class="stREPL">

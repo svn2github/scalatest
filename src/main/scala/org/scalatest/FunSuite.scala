@@ -22,30 +22,31 @@ import scala.collection.immutable.ListSet
  * for &#8220;function.&#8221; Here's an example <code>FunSuite</code>:
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.funsuite
+ *
  * import org.scalatest.FunSuite
  *
- * class ExampleSuite extends FunSuite {
+ * class SetSuite extends FunSuite {
  *
- *   test("addition") {
- *     val sum = 1 + 1
- *     assert(sum === 2)
+ *   test("an empty Set should have size 0") {
+ *     assert(Set.empty.size === 0)
  *   }
  *
- *   test("subtraction") {
- *     val diff = 4 - 1
- *     assert(diff === 3)
+ *   test("invoking head on an empty Set should produce NoSuchElementException") {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
  *   }
  * }
  * </pre>
  *
  * <p>
  * &#8220;<code>test</code>&#8221; is a method, defined in <code>FunSuite</code>, which will be invoked
- * by the primary constructor of <code>ExampleSuite</code>. You specify the name of the test as
+ * by the primary constructor of <code>SetSuite</code>. You specify the name of the test as
  * a string between the parentheses, and the test code itself between curly braces.
  * The test code is a function passed as a by-name parameter to <code>test</code>, which registers
  * it for later execution. One benefit of <code>FunSuite</code> compared to <code>Suite</code> is you need not name all your
- * tests starting with &#8220;<code>test</code>.&#8221; In addition, you can more easily give long names to
- * your tests, because you need not encode them in camel case.
+ * tests starting with &#8220;<code>test: </code>.&#8221;
  * </p>
  *
  * <p>
@@ -78,38 +79,40 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.funsuite.ignore
+ *
  * import org.scalatest.FunSuite
  *
- * class ExampleSuite extends FunSuite {
+ * class SetSuite extends FunSuite {
  *
- *   ignore("addition") {
- *     val sum = 1 + 1
- *     assert(sum === 2)
+ *   ignore("an empty Set should have size 0") {
+ *     assert(Set.empty.size === 0)
  *   }
  *
- *   test("subtraction") {
- *     val diff = 4 - 1
- *     assert(diff === 3)
+ *   test("invoking head on an empty Set should produce NoSuchElementException") {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
  *   }
  * }
  * </pre>
  *
  * <p>
- * If you run this version of <code>ExampleSuite</code> with:
+ * If you run this version of <code>SetSuite</code> with:
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ExampleSuite).execute()
+ * scala> new SetSuite execute
  * </pre>
  *
  * <p>
- * It will run only <code>subtraction</code> and report that <code>addition</code> was ignored:
+ * It will run only the second test and report that the first test was ignored:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSuite:</span>
- * <span class="stYellow">- addition !!! IGNORED !!!</span>
- * <span class="stGreen">- subtraction</span>
+ * <span class="stGreen">SetSuite:</span>
+ * <span class="stYellow">- an empty Set should have size 0 !!! IGNORED !!!</span>
+ * <span class="stGreen">- invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  *
  * <h2>Informers</h2>
@@ -121,34 +124,53 @@ import scala.collection.immutable.ListSet
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
  * Most often the reporting done by default by <code>FunSuite</code>'s methods will be sufficient, but
  * occasionally you may wish to provide custom information to the <code>Reporter</code> from a test.
- * For this purpose, an <code>Informer</code> that will forward information to the current <code>Reporter</code>
- * is provided via the <code>info</code> parameterless method.
- * You can pass the extra information to the <code>Informer</code> via one of its <code>apply</code> methods.
+ * For this purpose, an <a href="Informer.html"><code>Informer</code></a> that will forward information
+ * to the current <code>Reporter</code> is provided via the <code>info</code> parameterless method.
+ * You can pass the extra information to the <code>Informer</code> via its <code>apply</code> method.
  * The <code>Informer</code> will then pass the information to the <code>Reporter</code> via an <code>InfoProvided</code> event.
- * Here's an example:
+ * Here's an example that shows both a direct use as well as an indirect use through the methods
+ * of <a href="GivenWhenThen.html"><code>GivenWhenThen</code></a>:
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.FunSuite
+ * package org.scalatest.examples.funsuite.info
  *
- * class ExampleSuite extends FunSuite {
+ * import collection.mutable
+ * import org.scalatest._
+ * 
+ * class SetSuite extends Suite with GivenWhenThen {
  *
- *   test("addition") {
- *     val sum = 1 + 1
- *     assert(sum === 2)
- *     assert(sum + 2 === 4)
- *     info("Addition seems to work")
+ *   def test("an element can be added to an empty mutable Set") {
+ *
+ *     given("an empty mutable Set")
+ *     val set = mutable.Set.empty[String]
+ *
+ *     when("an element is added")
+ *     set += "clarity"
+ *
+ *     then("the Set should have size 1")
+ *     assert(set.size === 1)
+ *
+ *     and("the Set should contain the added element")
+ *     assert(set.contains("clarity"))
+ *
+ *     info("That's all folks!")
  *   }
  * }
  * </pre>
+ *
  *
  * If you run this <code>FunSuite</code> from the interpreter, you will see the following message
  * included in the printed report:
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSuite:
- * - addition
- *   + Addition seems to work</span> 
+ * <span class="stGreen">SetSuite:
+ * - an element can be added to an empty mutable Set
+ *   + Given an empty mutable Set 
+ *   + When an element is added 
+ *   + Then the Set should have size 1 
+ *   + And the Set should contain the added element 
+ *   + That's all folks!</span>
  * </pre>
  *
  * <h2>Pending tests</h2>
@@ -182,38 +204,40 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.FunSuite
+ * package org.scalatest.examples.funsuite.pending
  *
- * class ExampleSuite extends FunSuite {
+ * import org.scalatest._
  *
- *   test("addition") {
- *     val sum = 1 + 1
- *     assert(sum === 2)
- *     assert(sum + 2 === 4)
+ * class SetSuite extends FunSuite {
+ *
+ *   test("an empty Set should have size 0") (pending)
+ *
+ *   test("invoking head on an empty Set should produce NoSuchElementException") {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
  *   }
- *
- *   test("subtraction") (pending)
  * }
  * </pre>
  *
  * <p>
  * (Note: "<code>(pending)</code>" is the body of the test. Thus the test contains just one statement, an invocation
  * of the <code>pending</code> method, which throws <code>TestPendingException</code>.)
- * If you run this version of <code>ExampleSuite</code> with:
+ * If you run this version of <code>SetSuite</code> with:
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ExampleSuite).execute()
+ * scala> new SetSuite execute
  * </pre>
  *
  * <p>
- * It will run both tests, but report that <code>subtraction</code> is pending. You'll see:
+ * It will run both tests, but report that first test is pending. You'll see:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSuite:
- * - addition</span>
- * <span class="stYellow">- subtraction (pending)</span>
+ * <span class="stGreen">SetSuite:</span>
+ * <span class="stYellow">- an empty Set should have size 0 (pending)</span>
+ * <span class="stGreen">- invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  * 
  * <h2>Tagging tests</h2>
@@ -233,6 +257,8 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.funsuite.annotations
+ *
  * import org.scalatest.Tag
  *
  * object SlowTest extends Tag("com.mycompany.tags.SlowTest")
