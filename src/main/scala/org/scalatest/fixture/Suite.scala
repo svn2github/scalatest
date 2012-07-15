@@ -27,15 +27,17 @@ import exceptions.{TestCanceledException, TestPendingException}
  * <code>Suite</code> that can pass a fixture object into its tests.
  *
  * <p>
- * The purpose of <code>fixture.Suite</code> and its subtraits is to facilitate writing tests in
- * a functional style. Some users may prefer writing tests in a functional style in general, but one
- * particular use case is parallel test execution (See <a href="../ParallelTestExecution.html">ParallelTestExecution</a>). To run
- * tests in parallel, your test class must
- * be thread safe, and a good way to make it thread safe is to make it functional. A good way to
- * write tests that need common fixtures in a functional style is to pass the fixture objects into the tests,
- * the style enabled by the <code>fixture.Suite</code> family of traits.
+ * Note: <code>fixture.Suite</code> is intended for use in special situations, with trait <code>Suite</code> used for general needs. For
+ * more insight into where <code>fixture.Suite</code> fits in the big picture, see the <a href="../Suite.html#withFixtureOneArgTest"><code>withFixture(OneArgTest)</code></a> subsection of the <a href="../Suite.html#sharedFixtures">Shared fixtures</a> section in the documentation for trait <code>Suite</code>.
  * </p>
- *
+ * 
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * Use trait <code>fixture.Suite</code> in situations for which <a href="../Suite.html"><code>Suite</code></a>
+ * would be a good choice, such as large projects or static code generation, when all or most tests need the same fixture objects
+ * that must be cleaned up afterwords.
+ * </td></tr></table>
+ * 
  * <p>
  * Trait <code>fixture.Suite</code> behaves similarly to trait <code>org.scalatest.Suite</code>, except that tests may have a
  * fixture parameter. The type of the
@@ -170,196 +172,6 @@ import exceptions.{TestCanceledException, TestPendingException}
  *     assert(f.buffer.isEmpty)
  *   }
  * }
- * </pre>
- *
- * <h2>Configuring fixtures and tests</h2>
- * 
- * <p>
- * Sometimes you may want to write tests that are configurable. For example, you may want to write
- * a suite of tests that each take an open temp file as a fixture, but whose file name is specified
- * externally so that the file name can be can be changed from run to run. To accomplish this
- * the <code>OneArgTest</code> trait has a <code>configMap</code>
- * method, which will return a <code>Map[String, Any]</code> from which configuration information may be obtained.
- * The <code>runTest</code> method of this trait will pass a <code>OneArgTest</code> to <code>withFixture</code>
- * whose <code>configMap</code> method returns the <code>configMap</code> passed to <code>runTest</code>.
- * Here's an example in which the name of a temp file is taken from the passed <code>configMap</code>:
- * </p>
- *
- * <pre class="stHighlight">
- * import org.scalatest.fixture
- * import java.io.FileReader
- * import java.io.FileWriter
- * import java.io.File
- * 
- * class ExampleSuite extends fixture.Suite {
- *
- *   type FixtureParam = FileReader
- *   def withFixture(test: OneArgTest) {
- *
- *     require(
- *       test.configMap.contains("TempFileName"),
- *       "This suite requires a TempFileName to be passed in the configMap"
- *     )
- *
- *     // Grab the file name from the configMap
- *     val FileName = test.configMap("TempFileName").asInstanceOf[String]
- *
- *     // Set up the temp file needed by the test
- *     val writer = new FileWriter(FileName)
- *     try {
- *       writer.write("Hello, test!")
- *     }
- *     finally {
- *       writer.close()
- *     }
- *
- *     // Create the reader needed by the test
- *     val reader = new FileReader(FileName)
- *  
- *     try {
- *       // Run the test using the temp file
- *       test(reader)
- *     }
- *     finally {
- *       // Close and delete the temp file
- *       reader.close()
- *       val file = new File(FileName)
- *       file.delete()
- *     }
- *   }
- * 
- *   def testReadingFromTheTempFile(reader: FileReader) {
- *     var builder = new StringBuilder
- *     var c = reader.read()
- *     while (c != -1) {
- *       builder.append(c.toChar)
- *       c = reader.read()
- *     }
- *     assert(builder.toString === "Hello, test!")
- *   }
- * 
- *   def testFirstCharOfTheTempFile(reader: FileReader) {
- *     assert(reader.read() === 'H')
- *   }
- * }
- * </pre>
- *
- * <p>
- * If you want to pass into each test the entire <code>configMap</code> that was passed to <code>runTest</code>, you 
- * can mix in trait <code>ConfigMapFixture</code>. See the <a href="ConfigMapFixture.html">documentation
- * for <code>ConfigMapFixture</code></a> for the details, but here's a quick
- * example of how it looks:
- * </p>
- *
- * <pre class="stHighlight">
- *  import org.scalatest.fixture
- *  import org.scalatest.fixture.ConfigMapFixture
- *
- *  class ExampleSuite extends fixture.Suite with ConfigMapFixture {
- *
- *    def testHello(configMap: Map[String, Any]) {
- *      // Use the configMap passed to runTest in the test
- *      assert(configMap.contains("hello"))
- *    }
- *
- *    def testWorld(configMap: Map[String, Any]) {
- *      assert(configMap.contains("world"))
- *    }
- *  }
- * </pre>
- *
- * <h2>Providing multiple fixtures</h2>
- *
- * <p>
- * If different tests in the same <code>fixture.Suite</code> need different shared fixtures, you can use the <em>loan pattern</em> to supply to
- * each test just the fixture or fixtures it needs. First select the most commonly used fixture objects and pass them in via the
- * <code>FixtureParam</code>. Then for each remaining fixture needed by multiple tests, create a <em>with&lt;fixture name&gt;</em>
- * method that takes a function you will use to pass the fixture to the test. Lasty, use the appropriate
- * <em>with&lt;fixture name&gt;</em> method or methods in each test.
- * </p>
- *
- * <p>
- * In the following example, the <code>FixtureParam</code> is set to <code>Map[String, Any]</code> by mixing in <code>ConfigMapFixture</code>.
- * The <code>withFixture</code> method in trait <code>ConfigMapFixture</code> will pass the config map to any test that needs it.
- * In addition, some tests in the following example need a <code>Stack[Int]</code> and others a <code>Stack[String]</code>.
- * The <code>withIntStack</code> method takes
- * care of supplying the <code>Stack[Int]</code> to those tests that need it, and the <code>withStringStack</code> method takes care
- * of supplying the <code>Stack[String]</code> fixture. Here's how it looks:
- * </p>
- *
- * <pre class="stHighlight">
- * import org.scalatest.fixture
- * import org.scalatest.fixture.ConfigMapFixture
- * import collection.mutable.Stack
- * 
- * class StackSuite extends fixture.Suite with ConfigMapFixture {
- * 
- *   def withIntStack(test: Stack[Int] => Any) {
- *     val stack = new Stack[Int]
- *     stack.push(1)
- *     stack.push(2)
- *     test(stack) // "loan" the Stack[Int] fixture to the test
- *   }
- * 
- *   def withStringStack(test: Stack[String] => Any) {
- *     val stack = new Stack[String]
- *     stack.push("one")
- *     stack.push("two")
- *     test(stack) // "loan" the Stack[String] fixture to the test
- *   }
- * 
- *   def testPopAnIntValue() { // This test doesn't need the configMap fixture, ...
- *     withIntStack { stack =>
- *       val top = stack.pop() // But it needs the Stack[Int] fixture.
- *       assert(top === 2)
- *       assert(stack.size === 1)
- *     }
- *   }
- * 
- *   def testPushAnIntValue(configMap: Map[String, Any]) {
- *     withIntStack { stack =>
- *       val iToPush = // This test uses the configMap fixture...
- *         configMap("IntToPush").toString.toInt
- *       stack.push(iToPush) // And also uses the Stack[Int] fixture.
- *       assert(stack.size === 3)
- *       assert(stack.head === iToPush)
- *     }
- *   }
- * 
- *   def testPopAStringValue() { // This test doesn't need the configMap fixture, ...
- *     withStringStack { stack =>
- *       val top = stack.pop() // But it needs the Stack[String] fixture.
- *       assert(top === "two")
- *       assert(stack.size === 1)
- *     }
- *   }
- * 
- *   def testPushAStringValue(configMap: Map[String, Any]) {
- *     withStringStack { stack =>
- *       val sToPush = // This test uses the configMap fixture...
- *         configMap("StringToPush").toString
- *       stack.push(sToPush) // And also uses the Stack[Int] fixture.
- *       assert(stack.size === 3)
- *       assert(stack.head === sToPush)
- *     }
- *   }
- * }
- * </pre>
- *
- * <p>
- * If you run the previous class in the Scala interpreter, you'll see:
- * </p>
- *
- * <pre class="stREPL">
- * scala> import org.scalatest._
- * import org.scalatest._
- *
- * scala> run(new StackSuite, configMap = Map("IntToPush" -> 9, "StringToPush" -> "nine"))
- * <span class="stGreen">StackSuite:
- * - testPopAStringValue
- * - testPopAnIntValue
- * - testPushAStringValue(FixtureParam)
- * - testPushAnIntValue(FixtureParam)</span>
  * </pre>
  *
  * @author Bill Venners
