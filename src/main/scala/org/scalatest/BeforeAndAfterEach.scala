@@ -100,8 +100,27 @@ trait BeforeAndAfterEach extends AbstractSuite {
    * overloaded form of <code>beforeEach</code> that takes no <code>configMap</code>.
    * </p>
    */
+  @deprecated("Please use beforeEach(testData: TestData) instead.")
   protected def beforeEach(configMap: Map[String, Any]) {
     beforeEach()
+  }
+  
+  /**
+   * Defines a method (that takes a <code>TestData</code>) to be run before
+   * each of this suite's tests.
+   *
+   * <p>
+   * This trait's implementation
+   * of <code>runTest</code> invokes this method before running
+   * each test (passing in the <code>configMap</code> passed to it), thus this
+   * method can be used to set up a test fixture
+   * needed by each test. This trait's implementation of this method invokes the
+   * overloaded form of <code>beforeEach</code> that takes <code>configMap</code>.
+   * After the deprecation cycle, this method will invoke the no-arg form of <code>beforeEach</code>.
+   * </p>
+   */
+  protected def beforeEach(testData: TestData) {
+    beforeEach(testData.configMap)
   }
 
   /**
@@ -132,8 +151,27 @@ trait BeforeAndAfterEach extends AbstractSuite {
    * overloaded form of <code>afterEach</code> that takes no <code>configMap</code>.
    * </p>
    */
+  @deprecated("Please use afterEach(testData: TestData) instead.")
   protected def afterEach(configMap: Map[String, Any]) {
     afterEach()
+  }
+  
+  /**
+   * Defines a method (that takes a <code>TestData</code>) to be run after
+   * each of this suite's tests.
+   *
+   * <p>
+   * This trait's implementation
+   * of <code>runTest</code> invokes this method after running
+   * each test (passing in a <code>TestData</code> containing the <code>configMap</code> passed
+   * to it), thus this method can be used to tear down a test fixture
+   * needed by each test. This trait's implementation of this method invokes the
+   * overloaded form of <code>afterEach</code> that takes <code>configMap</code>.
+   * After the deprecation cycle, this method will invoke the no-arg form of <code>afterEach</code>.
+   * </p>
+   */
+  protected def afterEach(testData: TestData) {
+    afterEach(testData.configMap)
   }
 
   /**
@@ -162,7 +200,10 @@ trait BeforeAndAfterEach extends AbstractSuite {
 
     var thrownException: Option[Throwable] = None
 
-    beforeEach(args.configMap)
+    beforeEach(new TestData { 
+                      val name = testName
+                      val configMap = args.configMap 
+                   })
     try {
       super.runTest(testName, args)
     }
@@ -171,7 +212,10 @@ trait BeforeAndAfterEach extends AbstractSuite {
     }
     finally {
       try {
-        afterEach(args.configMap) // Make sure that afterEach is called even if runTest completes abruptly.
+        afterEach(new TestData { 
+                        val name = testName
+                        val configMap = args.configMap 
+                      }) // Make sure that afterEach is called even if runTest completes abruptly.
         thrownException match {
           case Some(e) => throw e
           case None =>

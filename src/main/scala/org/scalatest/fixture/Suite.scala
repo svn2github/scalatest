@@ -205,23 +205,12 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
    * <a href="Suite.html">documentation for trait <code>fixture.Suite</code></a>.
    * </p>
    */
-  protected trait OneArgTest extends (FixtureParam => Unit) { thisOneArgTest =>
-
-    /**
-     * The name of this test.
-     */
-    def name: String
+  protected trait OneArgTest extends (FixtureParam => Unit) with TestData { thisOneArgTest =>
 
     /**
      * Run the test, using the passed <code>FixtureParam</code>.
      */
     def apply(fixture: FixtureParam)
-
-    /**
-     * Return a <code>Map[String, Any]</code> containing objects that can be used
-     * to configure the fixture and test.
-     */
-    def configMap: Map[String, Any]
 
     /**
      * Convert this <code>OneArgTest</code> to a <code>NoArgTest</code> whose

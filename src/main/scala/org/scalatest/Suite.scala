@@ -1544,23 +1544,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * <code>NoArgTest</code> instance passed to <code>withFixture</code>.
    * </p>
    */
-  protected trait NoArgTest extends (() => Unit) {
-
-    /**
-     * The name of this test.
-     */
-    def name: String
-
+  protected trait NoArgTest extends (() => Unit) with TestData {
+    
     /**
      * Runs the code of the test.
      */
     def apply()
 
-    /**
-     * A <code>Map[String, Any]</code> containing objects that can be used
-     * to configure the fixture and test.
-     */
-    def configMap: Map[String, Any]
   }
 
   /**
