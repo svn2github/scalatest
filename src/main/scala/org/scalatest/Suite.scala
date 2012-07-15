@@ -836,6 +836,8 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.fixturecontext
+ *
  * import collection.mutable.ListBuffer
  * import org.scalatest.Suite
  * 
@@ -1175,7 +1177,7 @@ import exceptions._
  *     val writer = new FileWriter(file)
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
- *       super.withFixture(test.toNoArgTest(F(file, writer)) // "loan" the fixture to the test
+ *       super.withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
  *     }
  *     finally {
  *       writer.close() // clean up the fixture
@@ -1215,6 +1217,8 @@ import exceptions._
  * </p>
  * 
  * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.beforeandafter
+ *
  * import org.scalatest.Suite
  * import org.scalatest.BeforeAndAfter
  * import collection.mutable.ListBuffer
@@ -1277,6 +1281,8 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.composingwithfixture
+ *
  * import org.scalatest.Suite
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
@@ -1358,6 +1364,8 @@ import exceptions._
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.composingbeforeandaftereach
+ *
  * import org.scalatest.Suite
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
