@@ -147,9 +147,9 @@ import scala.collection.immutable.ListSet
  * import collection.mutable
  * import org.scalatest._
  * 
- * class SetSuite extends Suite with GivenWhenThen {
+ * class SetSuite extends FunSuite with GivenWhenThen {
  *
- *   def test("an element can be added to an empty mutable Set") {
+ *   test("an element can be added to an empty mutable Set") {
  *
  *     given("an empty mutable Set")
  *     val set = mutable.Set.empty[String]
