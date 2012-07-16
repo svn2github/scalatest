@@ -27,6 +27,17 @@ import Suite.anErrorThatShouldCauseAnAbort
  * A suite of tests in which each test represents one <em>scenario</em> of a <em>feature</em>. 
  * <code>FeatureSpec</code> is intended for writing tests that are "higher level" than unit tests, for example, integration
  * tests, functional tests, and acceptance tests. You can use <code>FeatureSpec</code> for unit testing if you prefer, however.
+ * 
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * Although also usable for unit testing, <code>FeatureSpec</code>'s main intended use is for acceptance testing. It is similar to <code>FunSpec</code> in 
+ * its structure, but different in that it only allows one level of nesting (one feature clause that can contain a series of scenario clauses), 
+ * and that the words "feature" and "scenario" show up in the report text whereas <code>FunSpec</code>'s "describe" and "it" do not. Because tests are functions, 
+ * you can share tests or programmatically register them, but at the cost of one generated class file per test. <code>FeatureSpec</code> brings into scope no 
+ * implicit conversions except the one it inherits from <code>Assertions</code>, the implicit conversion that puts <code>===</code> on everything, so the likelyhood for 
+ * implicit conversion conflicts is minimized. Compiling a <code>FeatureSpec</code> will generate one extra class file per feature and one per scenario.  
+ * </td></tr></table>
+ * 
  * Here's an example:
  *
  * <pre class="stHighlight">
@@ -536,32 +547,34 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.getfixture
- *
- * import org.scalatest.Suite
- * import collection.mutable.ListBuffer
- *
- * class ExampleSuite extends Suite {
+ * package org.scalatest.examples.featurespec.getfixture
  * 
- *   def fixture =
+ * import org.scalatest.FeatureSpec
+ * import collection.mutable.ListBuffer
+ * 
+ * class ExampleSpec extends FeatureSpec {
+ * 
+ *   def fixture = 
  *     new {
  *       val builder = new StringBuilder("ScalaTest is ")
  *       val buffer = new ListBuffer[String]
  *     }
- * 
- *   def &#96;test: testing should be easy&#96; {
- *     val f = fixture
- *     f.builder.append("easy!")
- *     assert(f.builder.toString === "ScalaTest is easy!")
- *     assert(f.buffer.isEmpty)
- *     f.buffer += "sweet"
- *   }
- * 
- *   def &#96;test: testing should be fun&#96; {
- *     val f = fixture
- *     f.builder.append("fun!")
- *     assert(f.builder.toString === "ScalaTest is fun!")
- *     assert(f.buffer.isEmpty)
+ *   
+ *   feature("Fixtures can be shared") {
+ *     scenario("user learns how to share fixtures") {
+ *       val f = fixture
+ *       f.builder.append("easy!")
+ *       assert(f.builder.toString === "ScalaTest is easy!")
+ *       assert(f.buffer.isEmpty)
+ *       f.buffer += "sweet"
+ *     }
+ *   
+ *     scenario("user enjoys writing tests with shared fixtures") {
+ *       val f = fixture
+ *       f.builder.append("fun!")
+ *       assert(f.builder.toString === "ScalaTest is fun!")
+ *       assert(f.buffer.isEmpty)
+ *     }
  *   }
  * }
  * </pre>
@@ -592,12 +605,12 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.fixturecontext
- *
- * import collection.mutable.ListBuffer
- * import org.scalatest.Suite
+ * package org.scalatest.examples.featurespec.fixturecontext
  * 
- * class ExampleSuite extends Suite {
+ * import collection.mutable.ListBuffer
+ * import org.scalatest.FeatureSpec
+ * 
+ * class ExampleSpec extends FeatureSpec {
  * 
  *   trait Builder {
  *     val builder = new StringBuilder("ScalaTest is ")
@@ -607,29 +620,31 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     val buffer = ListBuffer("ScalaTest", "is")
  *   }
  * 
- *   // This test needs the StringBuilder fixture
- *   def &#96;test: testing should be productive&#96; {
- *     new Builder {
- *       builder.append("productive!")
- *       assert(builder.toString === "ScalaTest is productive!")
+ *   feature("Fixtures can be shared") {
+ *     // This test needs the StringBuilder fixture
+ *     scenario("user should be productive when writes tests") {
+ *       new Builder {
+ *         builder.append("productive!")
+ *         assert(builder.toString === "ScalaTest is productive!")
+ *       }
  *     }
- *   }
- * 
- *   // This test needs the ListBuffer[String] fixture
- *   def &#96;test: test code should be readable&#96; {
- *     new Buffer {
- *       buffer += ("readable!")
- *       assert(buffer === List("ScalaTest", "is", "readable!"))
+ *     
+ *     // This test needs the ListBuffer[String] fixture
+ *     scenario("user can write readable test code") {
+ *       new Buffer {
+ *         buffer += ("readable!")
+ *         assert(buffer === List("ScalaTest", "is", "readable!"))
+ *       }
  *     }
- *   }
  * 
- *   // This test needs both the StringBuilder and ListBuffer
- *   def &#96;test: test code should be clear and concise&#96; {
- *     new Builder with Buffer {
- *       builder.append("clear!")
- *       buffer += ("concise!")
- *       assert(builder.toString === "ScalaTest is clear!")
- *       assert(buffer === List("ScalaTest", "is", "concise!"))
+ *     // This test needs both the StringBuilder and ListBuffer
+ *     scenario("user's test code should be clear and concise") {
+ *       new Builder with Buffer {
+ *         builder.append("clear!")
+ *         buffer += ("concise!")
+ *         assert(builder.toString === "ScalaTest is clear!")
+ *         assert(buffer === List("ScalaTest", "is", "concise!"))
+ *       }
  *     }
  *   }
  * }
@@ -646,27 +661,29 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneinstancepertest
- *
+ * package org.scalatest.examples.featurespec.oneinstancepertest
+ * 
  * import org.scalatest._
  * import collection.mutable.ListBuffer
  * 
- * class ExampleSuite extends Suite with OneInstancePerTest {
+ * class ExampleSuite extends FeatureSpec with OneInstancePerTest {
  * 
  *   val builder = new StringBuilder("ScalaTest is ")
  *   val buffer = new ListBuffer[String]
  * 
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
+ *   feature("Fixtures can be shared") {
+ *     scenario("user learns how to share fixtures") {
+ *       builder.append("easy!")
+ *       assert(builder.toString === "ScalaTest is easy!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "sweet"
+ *     }
  * 
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
+ *     scenario("user enjoys reading tests with shared fixture") {
+ *       builder.append("fun!")
+ *       assert(builder.toString === "ScalaTest is fun!")
+ *       assert(buffer.isEmpty)
+ *     } 
  *   }
  * }
  * </pre>
@@ -734,35 +751,37 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.noargtest
- *
+ * package org.scalatest.examples.featurespec.noargtest
+ * 
  * import java.io.File
- * import org.scalatest.FunSuite
- *
- * class ExampleSuite extends FunSuite {
- *
+ * import org.scalatest.FeatureSpec
+ * 
+ * class ExampleSpec extends FeatureSpec {
+ * 
  *   final val tmpDir = "tmpDir"
- *
+ * 
  *   override def withFixture(test: NoArgTest) {
- *     
+ * 
  *     try {
  *       super.withFixture(test)
  *     }
  *     catch {
- *       case e: Exception =&gt;
+ *       case e: Exception =>
  *         val currDir = new File(".")
  *         val fileNames = currDir.list()
  *         info("Dir snapshot: " + fileNames.mkString(", "))
  *         throw e
  *     }
  *   }
- *
- *   test("this test should succeed") {
- *     assert(1 + 1 === 2)
- *   }
- *
- *   test("this test should fail") {
- *     assert(1 + 1 === 3)
+ * 
+ *   feature("Calculator Add") {
+ *     scenario("1 + 1 should be 2") {
+ *       assert(1 + 1 === 2)
+ *     }
+ * 
+ *     scenario("2 + 2 should be 4") {
+ *       assert(2 + 2 === 3)
+ *     }
  *   }
  * }
  * </pre>
@@ -804,8 +823,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.loanfixture
- *
+ * package org.scalatest.examples.featurespec.loanfixture
+ * 
  * import java.util.concurrent.ConcurrentHashMap
  * 
  * object DbServer { // Simulating a database server
@@ -821,14 +840,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * import org.scalatest.Suite
+ * import org.scalatest.FeatureSpec
  * import DbServer._
  * import java.util.UUID.randomUUID
  * import java.io._
  * 
- * class ExampleSuite extends Suite {
+ * class ExampleSpec extends FeatureSpec {
  * 
- *   def withDatabase(testCode: Db =&gt; Any) {
+ *   def withDatabase(testCode: Db => Any) {
  *     val dbName = randomUUID.toString
  *     val db = createDb(dbName) // create the fixture
  *     try {
@@ -840,7 +859,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   def withFile(testCode: (File, FileWriter) =&gt; Any) {
+ *   def withFile(testCode: (File, FileWriter) => Any) {
  *     val file = File.createTempFile("hello", "world") // create the fixture
  *     val writer = new FileWriter(file)
  *     try {
@@ -852,32 +871,32 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   // This test needs the file fixture
- *   def &#96;test: testing should be productive&#96; {
- *     withFile { (file, writer) =&gt;
- *       writer.write("productive!")
- *       writer.flush()
- *       assert(file.length === 24)
- *     }
- *   }
- * 
- *   // This test needs the database fixture
- *   def &#96;test: test code should be readable&#96; {
- *     withDatabase { db =&gt;
- *       db.append("readable!")
- *       assert(db.toString === "ScalaTest is readable!")
- *     }
- *   }
- * 
- *   // This test needs both the file and the database
- *   def &#96;test: test code should be clear and concise&#96; {
- *     withDatabase { db =&gt;
- *       withFile { (file, writer) =&gt; // loan-fixture methods compose
- *         db.append("clear!")
- *         writer.write("concise!")
+ *   feature("Fixtures can be shared") {
+ *     // This test needs the file fixture
+ *     scenario("user should be productive when writes tests") {
+ *       withFile { (file, writer) =>
+ *         writer.write("productive!")
  *         writer.flush()
- *         assert(db.toString === "ScalaTest is clear!")
- *         assert(file.length === 21)
+ *         assert(file.length === 24)
+ *       }
+ *     }
+ *     // This test needs the database fixture
+ *     scenario("user can write readable test code") {
+ *       withDatabase { db =>
+ *         db.append("readable!")
+ *         assert(db.toString === "ScalaTest is readable!")
+ *       }
+ *     }
+ *     // This test needs both the file and the database
+ *     scenario("user's test code should be clear and concise") {
+ *       withDatabase { db =>
+ *         withFile { (file, writer) => // loan-fixture methods compose
+ *           db.append("clear!")
+ *           writer.write("concise!")
+ *           writer.flush()
+ *           assert(db.toString === "ScalaTest is clear!")
+ *           assert(file.length === 21)
+ *         }
  *       }
  *     }
  *   }
@@ -918,12 +937,12 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneargtest
- *
+ * package org.scalatest.examples.featurespec.oneargtest
+ * 
  * import org.scalatest.fixture
  * import java.io._
  * 
- * class ExampleSuite extends fixture.Suite {
+ * class ExampleSpec extends fixture.FeatureSpec {
  * 
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
@@ -940,17 +959,19 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   def &#96;test: testing should be easy&#96; (f: F) {
- *     f.writer.write("easy!")
- *     f.writer.flush()
- *     assert(f.file.length === 12)
- *   }
+ *   feature("Testing") {
+ *     scenario("user can write test code easily") { f =>
+ *       f.writer.write("easy!")
+ *       f.writer.flush()
+ *       assert(f.file.length === 12)
+ *     }
  * 
- *   def &#96;test: testing should be fun&#96; (f: F) {
- *     f.writer.write("fun!")
- *     f.writer.flush()
- *     assert(f.file.length === 9)
- *   }
+ *     scenario("user's test code should be fun to read") { f =>
+ *       f.writer.write("fun!")
+ *       f.writer.flush()
+ *       assert(f.file.length === 9)
+ *     }
+ *   } 
  * }
  * </pre>
  *
@@ -973,37 +994,39 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.beforeandafter
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.featurespec.beforeandafter
+ * 
+ * import org.scalatest.FeatureSpec
  * import org.scalatest.BeforeAndAfter
  * import collection.mutable.ListBuffer
- *
- * class ExampleSuite extends Suite with BeforeAndAfter {
- *
+ * 
+ * class ExampleSpec extends FeatureSpec with BeforeAndAfter {
+ * 
  *   val builder = new StringBuilder
  *   val buffer = new ListBuffer[String]
- *
+ * 
  *   before {
  *     builder.append("ScalaTest is ")
  *   }
- *
+ * 
  *   after {
  *     builder.clear()
  *     buffer.clear()
  *   }
- *
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
- *
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
+ * 
+ *   feature("Testing") {
+ *     scenario("user can write test code easily") {
+ *       builder.append("easy!")
+ *       assert(builder.toString === "ScalaTest is easy!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "sweet"
+ *     }
+ * 
+ *     scenario("user's test code should be fun to read") {
+ *       builder.append("fun!")
+ *       assert(builder.toString === "ScalaTest is fun!")
+ *       assert(buffer.isEmpty)
+ *     }
  *   }
  * }
  * </pre>
@@ -1037,9 +1060,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.composingwithfixture
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.featurespec.composingwithfixture
+ * 
+ * import org.scalatest._
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
@@ -1072,20 +1095,22 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * class ExampleSuite extends Suite with Builder with Buffer {
+ * class ExampleSpec extends FeatureSpec with Builder with Buffer {
  * 
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
+ *   feature("Testing") {
+ *     scenario("user can write test code easily") {
+ *       builder.append("easy!")
+ *       assert(builder.toString === "ScalaTest is easy!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "sweet"
+ *     }
  * 
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
- *     buffer += "clear"
+ *     scenario("user's test code should be fun to read") {
+ *       builder.append("fun!")
+ *       assert(builder.toString === "ScalaTest is fun!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "clear"
+ *     }
  *   }
  * }
  * </pre>
@@ -1120,9 +1145,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.composingbeforeandaftereach
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.featurespec.composingbeforeandaftereach
+ * 
+ * import org.scalatest._
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
@@ -1159,20 +1184,22 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * class ExampleSuite extends Suite with Builder with Buffer {
+ * class ExampleSpec extends FeatureSpec with Builder with Buffer {
  * 
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
+ *   feature("Testing") {
+ *     scenario("user can write test code easily") {
+ *       builder.append("easy!")
+ *       assert(builder.toString === "ScalaTest is easy!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "sweet"
+ *     }
  * 
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
- *     buffer += "clear"
+ *     scenario("user's test code should be fun to read") {
+ *       builder.append("fun!")
+ *       assert(builder.toString === "ScalaTest is fun!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "clear"
+ *     }
  *   }
  * }
  * </pre>

@@ -19,7 +19,16 @@ import scala.collection.immutable.ListSet
 
 /**
  * A suite of tests in which each test is represented as a function value. The &#8220;<code>Fun</code>&#8221; in <code>FunSuite</code> stands
- * for &#8220;function.&#8221; Here's an example <code>FunSuite</code>:
+ * for &#8220;function.&#8221; 
+ * 
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * For teams coming from xUnit, <code>FunSuite</code> feels comfortable and familiar while still giving some of the benefits of BDD: <code>FunSuite</code> makes it easy to 
+ * write descriptive test names, natural to write focused tests, and generates specification-like output that can facilitate communication among 
+ * stakeholders.
+ * </td></tr></table>
+ * 
+ * Here's an example <code>FunSuite</code>:
  *
  * <pre class="stHighlight">
  * package org.scalatest.examples.funsuite
@@ -345,20 +354,20 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.getfixture
+ * package org.scalatest.examples.funsuite.getfixture
  *
- * import org.scalatest.Suite
+ * import org.scalatest.FunSuite
  * import collection.mutable.ListBuffer
  *
- * class ExampleSuite extends Suite {
- * 
- *   def fixture =
+ * class ExampleSuite extends FunSuite {
+ *
+ *   def fixture = 
  *     new {
  *       val builder = new StringBuilder("ScalaTest is ")
  *       val buffer = new ListBuffer[String]
  *     }
  * 
- *   def &#96;test: testing should be easy&#96; {
+ *   test("testing should be easy") {
  *     val f = fixture
  *     f.builder.append("easy!")
  *     assert(f.builder.toString === "ScalaTest is easy!")
@@ -366,7 +375,7 @@ import scala.collection.immutable.ListSet
  *     f.buffer += "sweet"
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; {
+ *   test("testing should be fun") {
  *     val f = fixture
  *     f.builder.append("fun!")
  *     assert(f.builder.toString === "ScalaTest is fun!")
@@ -401,12 +410,12 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.fixturecontext
- *
- * import collection.mutable.ListBuffer
- * import org.scalatest.Suite
+ * package org.scalatest.examples.funsuite.fixturecontext
  * 
- * class ExampleSuite extends Suite {
+ * import collection.mutable.ListBuffer
+ * import org.scalatest.FunSuite
+ * 
+ * class ExampleSuite extends FunSuite {
  * 
  *   trait Builder {
  *     val builder = new StringBuilder("ScalaTest is ")
@@ -417,7 +426,7 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs the StringBuilder fixture
- *   def &#96;test: testing should be productive&#96; {
+ *   test("testing should be productive") {
  *     new Builder {
  *       builder.append("productive!")
  *       assert(builder.toString === "ScalaTest is productive!")
@@ -425,7 +434,7 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs the ListBuffer[String] fixture
- *   def &#96;test: test code should be readable&#96; {
+ *   test("test code should be readable") {
  *     new Buffer {
  *       buffer += ("readable!")
  *       assert(buffer === List("ScalaTest", "is", "readable!"))
@@ -433,7 +442,7 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs both the StringBuilder and ListBuffer
- *   def &#96;test: test code should be clear and concise&#96; {
+ *   test("test code should be clear and concise") {
  *     new Builder with Buffer {
  *       builder.append("clear!")
  *       buffer += ("concise!")
@@ -455,24 +464,24 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneinstancepertest
+ * package org.scalatest.examples.funsuite.oneinstancepertest
  *
  * import org.scalatest._
  * import collection.mutable.ListBuffer
- * 
- * class ExampleSuite extends Suite with OneInstancePerTest {
- * 
+ *
+ * class ExampleSuite extends FunSuite with OneInstancePerTest {
+ *
  *   val builder = new StringBuilder("ScalaTest is ")
  *   val buffer = new ListBuffer[String]
- * 
- *   def &#96;test: testing should be easy&#96; {
+ *
+ *   test("testing should be easy") {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
- * 
- *   def &#96;test: testing should be fun&#96; {
+ *
+ *   test("testing should be fun") {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -543,7 +552,7 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.noargtest
+ * package org.scalatest.examples.funsuite.noargtest
  *
  * import java.io.File
  * import org.scalatest.FunSuite
@@ -553,23 +562,23 @@ import scala.collection.immutable.ListSet
  *   final val tmpDir = "tmpDir"
  *
  *   override def withFixture(test: NoArgTest) {
- *     
+ *
  *     try {
  *       super.withFixture(test)
  *     }
  *     catch {
- *       case e: Exception =&gt;
+ *       case e: Exception =>
  *         val currDir = new File(".")
  *         val fileNames = currDir.list()
  *         info("Dir snapshot: " + fileNames.mkString(", "))
  *         throw e
  *     }
  *   }
- *
+ * 
  *   test("this test should succeed") {
  *     assert(1 + 1 === 2)
  *   }
- *
+ * 
  *   test("this test should fail") {
  *     assert(1 + 1 === 3)
  *   }
@@ -613,8 +622,8 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.loanfixture
- *
+ * package org.scalatest.examples.funsuite.loanfixture
+ * 
  * import java.util.concurrent.ConcurrentHashMap
  * 
  * object DbServer { // Simulating a database server
@@ -630,14 +639,14 @@ import scala.collection.immutable.ListSet
  *   }
  * }
  * 
- * import org.scalatest.Suite
+ * import org.scalatest.FunSuite
  * import DbServer._
  * import java.util.UUID.randomUUID
  * import java.io._
  * 
- * class ExampleSuite extends Suite {
+ * class ExampleSuite extends FunSuite {
  * 
- *   def withDatabase(testCode: Db =&gt; Any) {
+ *   def withDatabase(testCode: Db => Any) {
  *     val dbName = randomUUID.toString
  *     val db = createDb(dbName) // create the fixture
  *     try {
@@ -649,7 +658,7 @@ import scala.collection.immutable.ListSet
  *     }
  *   }
  * 
- *   def withFile(testCode: (File, FileWriter) =&gt; Any) {
+ *   def withFile(testCode: (File, FileWriter) => Any) {
  *     val file = File.createTempFile("hello", "world") // create the fixture
  *     val writer = new FileWriter(file)
  *     try {
@@ -662,8 +671,8 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs the file fixture
- *   def &#96;test: testing should be productive&#96; {
- *     withFile { (file, writer) =&gt;
+ *   test("testing should be productive") {
+ *     withFile { (file, writer) =>
  *       writer.write("productive!")
  *       writer.flush()
  *       assert(file.length === 24)
@@ -671,17 +680,17 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs the database fixture
- *   def &#96;test: test code should be readable&#96; {
- *     withDatabase { db =&gt;
+ *   test("test code should be readable") {
+ *     withDatabase { db =>
  *       db.append("readable!")
  *       assert(db.toString === "ScalaTest is readable!")
  *     }
  *   }
  * 
  *   // This test needs both the file and the database
- *   def &#96;test: test code should be clear and concise&#96; {
- *     withDatabase { db =&gt;
- *       withFile { (file, writer) =&gt; // loan-fixture methods compose
+ *   test("test code should be clear and concise") {
+ *     withDatabase { db =>
+ *       withFile { (file, writer) => // loan-fixture methods compose
  *         db.append("clear!")
  *         writer.write("concise!")
  *         writer.flush()
@@ -727,12 +736,12 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneargtest
- *
+ * package org.scalatest.examples.funsuite.oneargtest
+ * 
  * import org.scalatest.fixture
  * import java.io._
  * 
- * class ExampleSuite extends fixture.Suite {
+ * class ExampleSuite extends fixture.FunSuite {
  * 
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
@@ -749,13 +758,13 @@ import scala.collection.immutable.ListSet
  *     }
  *   }
  * 
- *   def &#96;test: testing should be easy&#96; (f: F) {
+ *   test("testing should be easy") { f =>
  *     f.writer.write("easy!")
  *     f.writer.flush()
  *     assert(f.file.length === 12)
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; (f: F) {
+ *   test("testing should be fun") { f =>
  *     f.writer.write("fun!")
  *     f.writer.flush()
  *     assert(f.file.length === 9)
@@ -782,34 +791,34 @@ import scala.collection.immutable.ListSet
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.beforeandafter
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.funsuite.beforeandafter
+ * 
+ * import org.scalatest.FunSuite
  * import org.scalatest.BeforeAndAfter
  * import collection.mutable.ListBuffer
- *
- * class ExampleSuite extends Suite with BeforeAndAfter {
- *
+ * 
+ * class ExampleSuite extends FunSuite with BeforeAndAfter {
+ * 
  *   val builder = new StringBuilder
  *   val buffer = new ListBuffer[String]
- *
+ * 
  *   before {
  *     builder.append("ScalaTest is ")
  *   }
- *
+ * 
  *   after {
  *     builder.clear()
  *     buffer.clear()
  *   }
- *
- *   def &#96;test: testing should be easy&#96; {
+ * 
+ *   test("testing should be easy") {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
- *
- *   def &#96;test: testing should be fun&#96; {
+ * 
+ *   test("testing should be fun") {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -846,9 +855,9 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.composingwithfixture
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.funsuite.composingwithfixture
+ * 
+ * import org.scalatest._
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
@@ -881,16 +890,16 @@ import scala.collection.immutable.ListSet
  *   }
  * }
  * 
- * class ExampleSuite extends Suite with Builder with Buffer {
+ * class ExampleSuite extends FunSuite with Builder with Buffer {
  * 
- *   def &#96;test: testing should be easy&#96; {
+ *   test("testing should be easy") {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; {
+ *   test("testing should be fun") {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -929,9 +938,9 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.composingbeforeandaftereach
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.funsuite.composingbeforeandaftereach
+ * 
+ * import org.scalatest._
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
@@ -968,16 +977,16 @@ import scala.collection.immutable.ListSet
  *   }
  * }
  * 
- * class ExampleSuite extends Suite with Builder with Buffer {
+ * class ExampleSuite extends FunSuite with Builder with Buffer {
  * 
- *   def &#96;test: testing should be easy&#96; {
+ *   test("testing should be easy") {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; {
+ *   test("testing should be fun") {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)

@@ -24,6 +24,13 @@ import verb.BehaveWord
  * (Note: In BDD, the word <em>example</em> is usually used instead of <em>test</em>. The word test will not appear
  * in your code if you use <code>WordSpec</code>, so if you prefer the word <em>example</em> you can use it. However, in this documentation
  * the word <em>test</em> will be used, for clarity and to be consistent with the rest of ScalaTest.)
+ * 
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * For teams coming from Ruby's RSpec tool, <code>FunSpec</code> will feel very familiar; More generally, for any team that prefers BDD, <code>FunSpec</code>'s nesting 
+ * and gentle guide to structuring text (with describe and it) provides an excellent general-purpose choice for writing specification-style tests. 
+ * </td></tr></table>
+ * 
  * Here's an example <code>FunSpec</code>:
  *
  * <pre class="stHighlight">
@@ -387,32 +394,34 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.getfixture
- *
- * import org.scalatest.Suite
- * import collection.mutable.ListBuffer
- *
- * class ExampleSuite extends Suite {
+ * package org.scalatest.examples.funspec.getfixture
  * 
- *   def fixture =
+ * import org.scalatest.FunSpec
+ * import collection.mutable.ListBuffer
+ * 
+ * class ExampleSpec extends FunSpec {
+ * 
+ *   def fixture = 
  *     new {
  *       val builder = new StringBuilder("ScalaTest is ")
  *       val buffer = new ListBuffer[String]
  *     }
- * 
- *   def &#96;test: testing should be easy&#96; {
- *     val f = fixture
- *     f.builder.append("easy!")
- *     assert(f.builder.toString === "ScalaTest is easy!")
- *     assert(f.buffer.isEmpty)
- *     f.buffer += "sweet"
- *   }
- * 
- *   def &#96;test: testing should be fun&#96; {
- *     val f = fixture
- *     f.builder.append("fun!")
- *     assert(f.builder.toString === "ScalaTest is fun!")
- *     assert(f.buffer.isEmpty)
+ *   
+ *   describe("Testing") {
+ *     it("should be easy") {
+ *       val f = fixture
+ *       f.builder.append("easy!")
+ *       assert(f.builder.toString === "ScalaTest is easy!")
+ *       assert(f.buffer.isEmpty)
+ *       f.buffer += "sweet"
+ *     }
+ *   
+ *     it("should be fun") {
+ *       val f = fixture
+ *       f.builder.append("fun!")
+ *       assert(f.builder.toString === "ScalaTest is fun!")
+ *       assert(f.buffer.isEmpty)
+ *     }
  *   }
  * }
  * </pre>
@@ -443,12 +452,12 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.fixturecontext
- *
- * import collection.mutable.ListBuffer
- * import org.scalatest.Suite
+ * package org.scalatest.examples.funspec.fixturecontext
  * 
- * class ExampleSuite extends Suite {
+ * import collection.mutable.ListBuffer
+ * import org.scalatest.FunSpec
+ * 
+ * class ExampleSpec extends FunSpec {
  * 
  *   trait Builder {
  *     val builder = new StringBuilder("ScalaTest is ")
@@ -458,29 +467,33 @@ import verb.BehaveWord
  *     val buffer = ListBuffer("ScalaTest", "is")
  *   }
  * 
- *   // This test needs the StringBuilder fixture
- *   def &#96;test: testing should be productive&#96; {
- *     new Builder {
- *       builder.append("productive!")
- *       assert(builder.toString === "ScalaTest is productive!")
+ *   describe("Testing") {
+ *     // This test needs the StringBuilder fixture
+ *     it("should be productive") {
+ *       new Builder {
+ *         builder.append("productive!")
+ *         assert(builder.toString === "ScalaTest is productive!")
+ *       }
  *     }
  *   }
  * 
- *   // This test needs the ListBuffer[String] fixture
- *   def &#96;test: test code should be readable&#96; {
- *     new Buffer {
- *       buffer += ("readable!")
- *       assert(buffer === List("ScalaTest", "is", "readable!"))
+ *   describe("Test code") {
+ *     // This test needs the ListBuffer[String] fixture
+ *     it("should be readable") {
+ *       new Buffer {
+ *         buffer += ("readable!")
+ *         assert(buffer === List("ScalaTest", "is", "readable!"))
+ *       }
  *     }
- *   }
  * 
- *   // This test needs both the StringBuilder and ListBuffer
- *   def &#96;test: test code should be clear and concise&#96; {
- *     new Builder with Buffer {
- *       builder.append("clear!")
- *       buffer += ("concise!")
- *       assert(builder.toString === "ScalaTest is clear!")
- *       assert(buffer === List("ScalaTest", "is", "concise!"))
+ *     // This test needs both the StringBuilder and ListBuffer
+ *     it("should be clear and concise") {
+ *       new Builder with Buffer {
+ *         builder.append("clear!")
+ *         buffer += ("concise!")
+ *         assert(builder.toString === "ScalaTest is clear!")
+ *         assert(buffer === List("ScalaTest", "is", "concise!"))
+ *       }
  *     }
  *   }
  * }
@@ -497,27 +510,29 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneinstancepertest
- *
+ * package org.scalatest.examples.funspec.oneinstancepertest
+ * 
  * import org.scalatest._
  * import collection.mutable.ListBuffer
  * 
- * class ExampleSuite extends Suite with OneInstancePerTest {
+ * class ExampleSuite extends FunSpec with OneInstancePerTest {
  * 
  *   val builder = new StringBuilder("ScalaTest is ")
  *   val buffer = new ListBuffer[String]
  * 
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
+ *   describe("Testing") {
+ *     it("should be easy") {
+ *       builder.append("easy!")
+ *       assert(builder.toString === "ScalaTest is easy!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "sweet"
+ *     }
  * 
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
+ *     it("should be fun") {
+ *       builder.append("fun!")
+ *       assert(builder.toString === "ScalaTest is fun!")
+ *       assert(buffer.isEmpty)
+ *     } 
  *   }
  * }
  * </pre>
@@ -585,35 +600,37 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.noargtest
- *
+ * package org.scalatest.examples.funspec.noargtest
+ * 
  * import java.io.File
- * import org.scalatest.FunSuite
- *
- * class ExampleSuite extends FunSuite {
- *
+ * import org.scalatest.FunSpec
+ * 
+ * class ExampleSpec extends FunSpec {
+ * 
  *   final val tmpDir = "tmpDir"
- *
+ * 
  *   override def withFixture(test: NoArgTest) {
- *     
+ * 
  *     try {
  *       super.withFixture(test)
  *     }
  *     catch {
- *       case e: Exception =&gt;
+ *       case e: Exception =>
  *         val currDir = new File(".")
  *         val fileNames = currDir.list()
  *         info("Dir snapshot: " + fileNames.mkString(", "))
  *         throw e
  *     }
  *   }
- *
- *   test("this test should succeed") {
- *     assert(1 + 1 === 2)
- *   }
- *
- *   test("this test should fail") {
- *     assert(1 + 1 === 3)
+ * 
+ *   describe("this test") {
+ *     it("should succeed") {
+ *       assert(1 + 1 === 2)
+ *     }
+ * 
+ *     it("should fail") {
+ *       assert(1 + 1 === 3)
+ *     }
  *   }
  * }
  * </pre>
@@ -655,8 +672,8 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.loanfixture
- *
+ * package org.scalatest.examples.funspec.loanfixture
+ * 
  * import java.util.concurrent.ConcurrentHashMap
  * 
  * object DbServer { // Simulating a database server
@@ -672,14 +689,14 @@ import verb.BehaveWord
  *   }
  * }
  * 
- * import org.scalatest.Suite
+ * import org.scalatest.FunSpec
  * import DbServer._
  * import java.util.UUID.randomUUID
  * import java.io._
  * 
- * class ExampleSuite extends Suite {
+ * class ExampleSpec extends FunSpec {
  * 
- *   def withDatabase(testCode: Db =&gt; Any) {
+ *   def withDatabase(testCode: Db => Any) {
  *     val dbName = randomUUID.toString
  *     val db = createDb(dbName) // create the fixture
  *     try {
@@ -691,7 +708,7 @@ import verb.BehaveWord
  *     }
  *   }
  * 
- *   def withFile(testCode: (File, FileWriter) =&gt; Any) {
+ *   def withFile(testCode: (File, FileWriter) => Any) {
  *     val file = File.createTempFile("hello", "world") // create the fixture
  *     val writer = new FileWriter(file)
  *     try {
@@ -703,32 +720,36 @@ import verb.BehaveWord
  *     }
  *   }
  * 
- *   // This test needs the file fixture
- *   def &#96;test: testing should be productive&#96; {
- *     withFile { (file, writer) =&gt;
- *       writer.write("productive!")
- *       writer.flush()
- *       assert(file.length === 24)
- *     }
- *   }
- * 
- *   // This test needs the database fixture
- *   def &#96;test: test code should be readable&#96; {
- *     withDatabase { db =&gt;
- *       db.append("readable!")
- *       assert(db.toString === "ScalaTest is readable!")
- *     }
- *   }
- * 
- *   // This test needs both the file and the database
- *   def &#96;test: test code should be clear and concise&#96; {
- *     withDatabase { db =&gt;
- *       withFile { (file, writer) =&gt; // loan-fixture methods compose
- *         db.append("clear!")
- *         writer.write("concise!")
+ *   describe("Testing") {
+ *     // This test needs the file fixture
+ *     it("should be productive") {
+ *       withFile { (file, writer) =>
+ *         writer.write("productive!")
  *         writer.flush()
- *         assert(db.toString === "ScalaTest is clear!")
- *         assert(file.length === 21)
+ *         assert(file.length === 24)
+ *       }
+ *     }
+ *   }
+ *   
+ *   describe("Test code") {
+ *     // This test needs the database fixture
+ *     it("should be readable") {
+ *       withDatabase { db =>
+ *         db.append("readable!")
+ *         assert(db.toString === "ScalaTest is readable!")
+ *       }
+ *     }
+ * 
+ *     // This test needs both the file and the database
+ *     it("should be clear and concise") {
+ *       withDatabase { db =>
+ *        withFile { (file, writer) => // loan-fixture methods compose
+ *           db.append("clear!")
+ *           writer.write("concise!")
+ *           writer.flush()
+ *           assert(db.toString === "ScalaTest is clear!")
+ *           assert(file.length === 21)
+ *         }
  *       }
  *     }
  *   }
@@ -769,12 +790,12 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneargtest
- *
+ * package org.scalatest.examples.funspec.oneargtest
+ * 
  * import org.scalatest.fixture
  * import java.io._
  * 
- * class ExampleSuite extends fixture.Suite {
+ * class ExampleSpec extends fixture.FunSpec {
  * 
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
@@ -791,17 +812,19 @@ import verb.BehaveWord
  *     }
  *   }
  * 
- *   def &#96;test: testing should be easy&#96; (f: F) {
- *     f.writer.write("easy!")
- *     f.writer.flush()
- *     assert(f.file.length === 12)
- *   }
+ *   describe("Testing") {
+ *     it("should be easy") { f =>
+ *       f.writer.write("easy!")
+ *       f.writer.flush()
+ *       assert(f.file.length === 12)
+ *     }
  * 
- *   def &#96;test: testing should be fun&#96; (f: F) {
- *     f.writer.write("fun!")
- *     f.writer.flush()
- *     assert(f.file.length === 9)
- *   }
+ *     it("should be fun") { f =>
+ *       f.writer.write("fun!")
+ *       f.writer.flush()
+ *       assert(f.file.length === 9)
+ *     }
+ *   } 
  * }
  * </pre>
  *
@@ -824,37 +847,39 @@ import verb.BehaveWord
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.beforeandafter
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.funspec.beforeandafter
+ * 
+ * import org.scalatest.FunSpec
  * import org.scalatest.BeforeAndAfter
  * import collection.mutable.ListBuffer
- *
- * class ExampleSuite extends Suite with BeforeAndAfter {
- *
+ * 
+ * class ExampleSpec extends FunSpec with BeforeAndAfter {
+ * 
  *   val builder = new StringBuilder
  *   val buffer = new ListBuffer[String]
- *
+ * 
  *   before {
  *     builder.append("ScalaTest is ")
  *   }
- *
+ * 
  *   after {
  *     builder.clear()
  *     buffer.clear()
  *   }
- *
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
- *
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
+ * 
+ *   describe("Testing") {
+ *     it("should be easy") {
+ *       builder.append("easy!")
+ *       assert(builder.toString === "ScalaTest is easy!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "sweet"
+ *     }
+ * 
+ *     it("should be fun") {
+ *       builder.append("fun!")
+ *       assert(builder.toString === "ScalaTest is fun!")
+ *       assert(buffer.isEmpty)
+ *     }
  *   }
  * }
  * </pre>
@@ -888,9 +913,9 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.composingwithfixture
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.funspec.composingwithfixture
+ * 
+ * import org.scalatest._
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
@@ -923,20 +948,22 @@ import verb.BehaveWord
  *   }
  * }
  * 
- * class ExampleSuite extends Suite with Builder with Buffer {
+ * class ExampleSpec extends FunSpec with Builder with Buffer {
  * 
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
+ *   describe("Testing") {
+ *     it("should be easy") {
+ *       builder.append("easy!")
+ *       assert(builder.toString === "ScalaTest is easy!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "sweet"
+ *     }
  * 
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
- *     buffer += "clear"
+ *     it("should be fun") {
+ *       builder.append("fun!")
+ *       assert(builder.toString === "ScalaTest is fun!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "clear"
+ *     }
  *   }
  * }
  * </pre>
@@ -971,9 +998,9 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.composingbeforeandaftereach
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.funspec.composingbeforeandaftereach
+ * 
+ * import org.scalatest._
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
@@ -1010,20 +1037,22 @@ import verb.BehaveWord
  *   }
  * }
  * 
- * class ExampleSuite extends Suite with Builder with Buffer {
+ * class ExampleSpec extends FunSpec with Builder with Buffer {
  * 
- *   def &#96;test: testing should be easy&#96; {
- *     builder.append("easy!")
- *     assert(builder.toString === "ScalaTest is easy!")
- *     assert(buffer.isEmpty)
- *     buffer += "sweet"
- *   }
+ *   describe("Testing") {
+ *     it("should be easy") {
+ *       builder.append("easy!")
+ *       assert(builder.toString === "ScalaTest is easy!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "sweet"
+ *     }
  * 
- *   def &#96;test: testing should be fun&#96; {
- *     builder.append("fun!")
- *     assert(builder.toString === "ScalaTest is fun!")
- *     assert(buffer.isEmpty)
- *     buffer += "clear"
+ *     it("should be fun") {
+ *       builder.append("fun!")
+ *       assert(builder.toString === "ScalaTest is fun!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "clear"
+ *     }
  *   }
  * }
  * </pre>

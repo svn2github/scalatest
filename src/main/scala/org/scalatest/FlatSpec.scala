@@ -41,8 +41,16 @@ import Suite.anErrorThatShouldCauseAnAbort
  * each fragment of text encountered. Thus the tradeoff with the nesting approach of <code>FunSpec</code> and <code>WordSpec</code> is that
  * they have less duplicated text at the cost of being a bit challenging to read. Trait <code>FlatSpec</code> offers the opposite
  * tradeoff. In a <code>FlatSpec</code> text is duplicated more, but figuring out the full specification text for a particular test is
- * easier. Here's an example <code>FlatSpec</code>:
+ * easier.
  * </p>
+ * 
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * A good first step for teams wishing to move from xUnit to BDD, <code>FlatSpec</code>'s structure is flat like xUnit, so it is simple and familiar, 
+ * but the test names must be written in a specification style: "X should Y," "A must B," etc.  
+ * </td></tr></table>
+ * 
+ * Here's an example <code>FlatSpec</code>:
  *
  * <pre class="stHighlight">
  * import org.scalatest.FlatSpec
@@ -580,28 +588,30 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.getfixture
- *
- * import org.scalatest.Suite
- * import collection.mutable.ListBuffer
- *
- * class ExampleSuite extends Suite {
+ * package org.scalatest.examples.flatspec.getfixture
  * 
- *   def fixture =
+ * import org.scalatest.FlatSpec
+ * import collection.mutable.ListBuffer
+ * 
+ * class ExampleSpec extends FlatSpec {
+ * 
+ *   def fixture = 
  *     new {
  *       val builder = new StringBuilder("ScalaTest is ")
  *       val buffer = new ListBuffer[String]
  *     }
- * 
- *   def &#96;test: testing should be easy&#96; {
+ *   
+ *   behavior of "Testing" 
+ *   
+ *   it should "be easy" in {
  *     val f = fixture
  *     f.builder.append("easy!")
  *     assert(f.builder.toString === "ScalaTest is easy!")
  *     assert(f.buffer.isEmpty)
  *     f.buffer += "sweet"
  *   }
- * 
- *   def &#96;test: testing should be fun&#96; {
+ *   
+ *   it should "be fun" in {
  *     val f = fixture
  *     f.builder.append("fun!")
  *     assert(f.builder.toString === "ScalaTest is fun!")
@@ -636,12 +646,12 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.fixturecontext
- *
- * import collection.mutable.ListBuffer
- * import org.scalatest.Suite
+ * package org.scalatest.examples.flatspec.fixturecontext
  * 
- * class ExampleSuite extends Suite {
+ * import collection.mutable.ListBuffer
+ * import org.scalatest.FlatSpec
+ * 
+ * class ExampleSpec extends FlatSpec {
  * 
  *   trait Builder {
  *     val builder = new StringBuilder("ScalaTest is ")
@@ -651,16 +661,20 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     val buffer = ListBuffer("ScalaTest", "is")
  *   }
  * 
+ *   behavior of "Testing"
+ *   
  *   // This test needs the StringBuilder fixture
- *   def &#96;test: testing should be productive&#96; {
+ *   it should "be productive" in { 
  *     new Builder {
  *       builder.append("productive!")
  *       assert(builder.toString === "ScalaTest is productive!")
  *     }
  *   }
- * 
+ *   
+ *   behavior of "Test code"
+ *   
  *   // This test needs the ListBuffer[String] fixture
- *   def &#96;test: test code should be readable&#96; {
+ *   it should "be readable" in {
  *     new Buffer {
  *       buffer += ("readable!")
  *       assert(buffer === List("ScalaTest", "is", "readable!"))
@@ -668,7 +682,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * 
  *   // This test needs both the StringBuilder and ListBuffer
- *   def &#96;test: test code should be clear and concise&#96; {
+ *   it should "be clear and concise" in {
  *     new Builder with Buffer {
  *       builder.append("clear!")
  *       buffer += ("concise!")
@@ -690,28 +704,30 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneinstancepertest
- *
+ * package org.scalatest.examples.flatspec.oneinstancepertest
+ * 
  * import org.scalatest._
  * import collection.mutable.ListBuffer
  * 
- * class ExampleSuite extends Suite with OneInstancePerTest {
+ * class ExampleSuite extends FlatSpec with OneInstancePerTest {
  * 
  *   val builder = new StringBuilder("ScalaTest is ")
  *   val buffer = new ListBuffer[String]
  * 
- *   def &#96;test: testing should be easy&#96; {
+ *   behavior of "Testing"
+ *   
+ *   it should "be easy" in {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; {
+ *   it should "be fun" in {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
- *   }
+ *   } 
  * }
  * </pre>
  *
@@ -778,34 +794,36 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.noargtest
- *
+ * package org.scalatest.examples.flatspec.noargtest
+ * 
  * import java.io.File
- * import org.scalatest.FunSuite
- *
- * class ExampleSuite extends FunSuite {
- *
+ * import org.scalatest.FlatSpec
+ * 
+ * class ExampleSpec extends FlatSpec {
+ * 
  *   final val tmpDir = "tmpDir"
- *
+ * 
  *   override def withFixture(test: NoArgTest) {
- *     
+ * 
  *     try {
  *       super.withFixture(test)
  *     }
  *     catch {
- *       case e: Exception =&gt;
+ *       case e: Exception =>
  *         val currDir = new File(".")
  *         val fileNames = currDir.list()
  *         info("Dir snapshot: " + fileNames.mkString(", "))
  *         throw e
  *     }
  *   }
- *
- *   test("this test should succeed") {
+ * 
+ *   behavior of "this test"
+ *     
+ *   it should "succeed" in {
  *     assert(1 + 1 === 2)
  *   }
- *
- *   test("this test should fail") {
+ * 
+ *   it should "fail" in {
  *     assert(1 + 1 === 3)
  *   }
  * }
@@ -848,8 +866,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.loanfixture
- *
+ * package org.scalatest.examples.flatspec.loanfixture
  * import java.util.concurrent.ConcurrentHashMap
  * 
  * object DbServer { // Simulating a database server
@@ -865,14 +882,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * import org.scalatest.Suite
+ * import org.scalatest.FlatSpec
  * import DbServer._
  * import java.util.UUID.randomUUID
  * import java.io._
  * 
- * class ExampleSuite extends Suite {
+ * class ExampleSpec extends FlatSpec {
  * 
- *   def withDatabase(testCode: Db =&gt; Any) {
+ *   def withDatabase(testCode: Db => Any) {
  *     val dbName = randomUUID.toString
  *     val db = createDb(dbName) // create the fixture
  *     try {
@@ -884,7 +901,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   def withFile(testCode: (File, FileWriter) =&gt; Any) {
+ *   def withFile(testCode: (File, FileWriter) => Any) {
  *     val file = File.createTempFile("hello", "world") // create the fixture
  *     val writer = new FileWriter(file)
  *     try {
@@ -896,27 +913,31 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
+ *   behavior of "Testing"
+ *   
  *   // This test needs the file fixture
- *   def &#96;test: testing should be productive&#96; {
- *     withFile { (file, writer) =&gt;
+ *   it should "be productive" in {
+ *     withFile { (file, writer) =>
  *       writer.write("productive!")
  *       writer.flush()
  *       assert(file.length === 24)
  *     }
  *   }
- * 
+ *   
+ *   behavior of "Test code"
+ *   
  *   // This test needs the database fixture
- *   def &#96;test: test code should be readable&#96; {
- *     withDatabase { db =&gt;
+ *   it should "be readable" in {
+ *     withDatabase { db =>
  *       db.append("readable!")
  *       assert(db.toString === "ScalaTest is readable!")
  *     }
  *   }
  * 
  *   // This test needs both the file and the database
- *   def &#96;test: test code should be clear and concise&#96; {
- *     withDatabase { db =&gt;
- *       withFile { (file, writer) =&gt; // loan-fixture methods compose
+ *   it should "be clear and concise" in {
+ *     withDatabase { db =>
+ *       withFile { (file, writer) => // loan-fixture methods compose
  *         db.append("clear!")
  *         writer.write("concise!")
  *         writer.flush()
@@ -962,12 +983,12 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneargtest
- *
+ * package org.scalatest.examples.flatspec.oneargtest
+ * 
  * import org.scalatest.fixture
  * import java.io._
  * 
- * class ExampleSuite extends fixture.Suite {
+ * class ExampleSpec extends fixture.FlatSpec {
  * 
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
@@ -984,13 +1005,15 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   def &#96;test: testing should be easy&#96; (f: F) {
+ *   behavior of "Testing" 
+ *   
+ *   it should "be easy" in { f =>
  *     f.writer.write("easy!")
  *     f.writer.flush()
  *     assert(f.file.length === 12)
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; (f: F) {
+ *   it should "be fun" in { f =>
  *     f.writer.write("fun!")
  *     f.writer.flush()
  *     assert(f.file.length === 9)
@@ -1017,34 +1040,36 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.beforeandafter
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.flatspec.beforeandafter
+ * 
+ * import org.scalatest.FlatSpec
  * import org.scalatest.BeforeAndAfter
  * import collection.mutable.ListBuffer
- *
- * class ExampleSuite extends Suite with BeforeAndAfter {
- *
+ * 
+ * class ExampleSpec extends FlatSpec with BeforeAndAfter {
+ * 
  *   val builder = new StringBuilder
  *   val buffer = new ListBuffer[String]
- *
+ * 
  *   before {
  *     builder.append("ScalaTest is ")
  *   }
- *
+ * 
  *   after {
  *     builder.clear()
  *     buffer.clear()
  *   }
- *
- *   def &#96;test: testing should be easy&#96; {
+ * 
+ *   behavior of "Testing"
+ *     
+ *   it should "be easy" in {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
- *
- *   def &#96;test: testing should be fun&#96; {
+ * 
+ *   it should "be fun" in {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -1081,9 +1106,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.composingwithfixture
- *
- * import org.scalatest.Suite
+ * package org.scalatest.examples.flatspec.composingwithfixture
+ * 
+ * import org.scalatest._
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
@@ -1116,16 +1141,18 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * class ExampleSuite extends Suite with Builder with Buffer {
+ * class ExampleSpec extends FlatSpec with Builder with Buffer {
  * 
- *   def &#96;test: testing should be easy&#96; {
+ *   behavior of "Testing"
+ *     
+ *   it should "be easy" in {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; {
+ *   it should "be fun" in {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -1164,9 +1191,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.composingbeforeandaftereach
- *
- * import org.scalatest.Suite
+ * import org.scalatest._
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
@@ -1203,16 +1228,18 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * class ExampleSuite extends Suite with Builder with Buffer {
+ * class ExampleSpec extends FlatSpec with Builder with Buffer {
  * 
- *   def &#96;test: testing should be easy&#96; {
+ *   behavior of "Testing"
+ *   
+ *   it should "be easy" in {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; {
+ *   it should "be fun" in {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
