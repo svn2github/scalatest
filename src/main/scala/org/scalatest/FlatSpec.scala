@@ -449,7 +449,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.flatspec.annotations
+ * package org.scalatest.examples.flatspec.tagging
  * 
  * import org.scalatest.Tag
  * 
@@ -464,16 +464,18 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <pre class="stHighlight">
  * import org.scalatest.FlatSpec
  * 
- * class ExampleSpec extends FlatSpec {
+ * class SetSpec extends FlatSpec {
  * 
- *   "A calculator" should "add correctly" taggedAs(SlowTest) in {
- *     val sum = 1 + 1
- *     assert(sum === 2)
+ *   behavior of "An empty Set"
+ *   
+ *   it should "have size 0" taggedAs(SlowTest) in {
+ *     assert(Set.empty.size === 0)
  *   }
  *     
- *   it should "subtract correctly" taggedAs(SlowTest, DbTest) in {
- *     val diff = 4 - 1
- *     assert(diff === 3)
+ *   it should "produce NoSuchElementException when head is invoked" taggedAs(SlowTest, DbTest) in {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
  *   }
  * }
  * </pre>

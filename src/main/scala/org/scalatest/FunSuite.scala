@@ -266,7 +266,7 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.funsuite.annotations
+ * package org.scalatest.examples.funsuite.tagging
  *
  * import org.scalatest.Tag
  *
@@ -281,16 +281,18 @@ import scala.collection.immutable.ListSet
  * <pre class="stHighlight">
  * import org.scalatest.FunSuite
  *
- * class ExampleSuite extends FunSuite {
+ * class SetSuite extends FunSuite {
  *
- *   test("Addition", SlowTest) {
- *     val sum = 1 + 1
- *     assert(sum === 2)
+ *   test("An empty Set should have size 0", SlowTest) {
+ *     assert(Set.empty.size === 0)
  *   }
  *
- *   test("Subtraction", SlowTest, DbTest) {
- *     val diff = 4 - 1
- *     assert(diff === 3)
+ *   test("Invoking head on an empty Set should produce NoSuchElementException",
+ *        SlowTest, DbTest)
+ *   {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
  *   }
  * }
  * </pre>

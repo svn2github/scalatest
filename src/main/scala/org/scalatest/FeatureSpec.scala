@@ -369,7 +369,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.featurespec.annotations
+ * package org.scalatest.examples.featurespec.tagging
  * 
  * import org.scalatest.Tag
  * 
@@ -384,18 +384,17 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <pre class="stHighlight">
  * import org.scalatest.FeatureSpec
  * 
- * class ExampleSpec extends FeatureSpec {
+ * class SetSpec extends FeatureSpec {
  * 
- *   feature("A calculator can do addition and subtraction") {
- *     
- *     scenario("When 1 + 1 is entered, the result should be 2", SlowTest) {
- *       val sum = 1 + 1
- *       assert(sum === 2)
+ *   feature("A Set") {
+ *     scenario("When is empty should have size 0", SlowTest) {
+ *       assert(Set.empty.size === 0)
  *     }
  *     
- *     scenario("When 4 - 1 is entered, the result should be 3", SlowTest, DbTest) {
- *       val diff = 4 - 1
- *       assert(diff === 3)
+ *     scenario("When is empty and head is invoked, should produce NoSuchElementException", SlowTest, DbTest) {
+ *       intercept[NoSuchElementException] {
+ *         Set.empty.head
+ *       }
  *     }
  *   }
  * }

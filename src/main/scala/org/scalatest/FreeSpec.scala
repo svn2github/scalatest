@@ -477,7 +477,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.freespec.annotations
+ * package org.scalatest.examples.freespec.tagging
  * 
  * import org.scalatest.Tag
  * 
@@ -486,18 +486,17 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * import org.scalatest.FreeSpec
  * 
- * class ExampleSpec extends FreeSpec {
+ * class SetSpec extends FreeSpec {
  * 
- *   "A calculator" - {
- *     
- *     "should add correctly" taggedAs(SlowTest) in {
- *       val sum = 1 + 1
- *       assert(sum === 2)
+ *   "An empty Set" - {
+ *     "should have size 0" taggedAs(SlowTest) in {
+ *       assert(Set.empty.size === 0)
  *     }
  *     
- *     "should subtract correctly" taggedAs(SlowTest, DbTest) in {
- *       val diff = 4 - 1
- *       assert(diff === 3)
+ *     "should produce NoSuchElementException when head is invoked" taggedAs(SlowTest, DbTest) in {
+ *       intercept[NoSuchElementException] {
+ *         Set.empty.head
+ *       }
  *     }
  *   }
  * }

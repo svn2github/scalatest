@@ -305,7 +305,7 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.funspec.annotations
+ * package org.scalatest.examples.funspec.tagging
  * 
  * import org.scalatest.Tag
  * 
@@ -320,18 +320,17 @@ import verb.BehaveWord
  * <pre class="stHighlight">
  * import org.scalatest.FunSpec
  * 
- * class ExampleSpec extends FunSpec {
+ * class SetSpec extends FunSpec {
  * 
- *   describe("A calculator") {
- *     
- *     it("should add correctly", SlowTest) {
- *       val sum = 1 + 1
- *       assert(sum === 2)
+ *   describe("An empty Set") {
+ *     it("should have size 0", SlowTest) {
+ *       assert(Set.empty.size === 0)
  *     }
  *     
- *     it("should subtract correctly", SlowTest, DbTest) {
- *       val diff = 4 - 1
- *       assert(diff === 3)
+ *     it("should produce NoSuchElementException when head is invoked", SlowTest, DbTest) {
+ *       intercept[NoSuchElementException] {
+ *         Set.empty.head
+ *       }
  *     }
  *   }
  * }
