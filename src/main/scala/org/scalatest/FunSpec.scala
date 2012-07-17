@@ -339,7 +339,7 @@ import verb.BehaveWord
  *
  * <p>
  * This code marks both tests with the <code>com.mycompany.tags.SlowTest</code> tag, 
- * and test <code>"should subtract correctly"</code> with the <code>com.mycompany.tags.DbTest</code> tag.
+ * and test <code>"A calculator should subtract correctly"</code> with the <code>com.mycompany.tags.DbTest</code> tag.
  * </p>
  *
  * <p>
