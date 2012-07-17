@@ -53,32 +53,28 @@ import Suite.anErrorThatShouldCauseAnAbort
  * Here's an example <code>FlatSpec</code>:
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec
+ * 
  * import org.scalatest.FlatSpec
- * import scala.collection.mutable.Stack
- *
- * class StackSpec extends FlatSpec {
- *
- *   behavior of "A Stack"
- *
- *   it should "pop values in last-in-first-out order" in {
- *     val stack = new Stack[Int]
- *     stack.push(1)
- *     stack.push(2)
- *     assert(stack.pop() === 2)
- *     assert(stack.pop() === 1)
+ * 
+ * class SetSpec extends FlatSpec {
+ * 
+ *   behavior of "An empty Set"
+ *   
+ *   it should "have size 0" in {
+ *     assert(Set.empty.size === 0)
  *   }
- *
- *   it should "throw NoSuchElementException if an empty stack is popped" in {
- *     val emptyStack = new Stack[String]
+ *     
+ *   it should "produce NoSuchElementException when head is invoked" in {
  *     intercept[NoSuchElementException] {
- *       emptyStack.pop()
+ *       Set.empty.head
  *     }
  *   }
  * }
  * </pre>
  *
  * <p>
- * Note: you can you <code>must</code> or <code>can</code> as well as <code>should</code> in a <code>FlatSpec</code>. For example, instead of
+ * Note: you can use <code>must</code> or <code>can</code> as well as <code>should</code> in a <code>FlatSpec</code>. For example, instead of
  * <code>it should "pop</code>..., you could write <code>it must "pop</code>... or <code>it can "pop</code>....
  * </p>
  *
@@ -88,36 +84,32 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec
+ * 
  * import org.scalatest.FlatSpec
- * import scala.collection.mutable.Stack
- *
- * class StackSpec extends FlatSpec {
- *
- *   "A Stack" should "pop values in last-in-first-out order" in {
- *     val stack = new Stack[Int]
- *     stack.push(1)
- *     stack.push(2)
- *     assert(stack.pop() === 2)
- *     assert(stack.pop() === 1)
+ * 
+ * class SetSpec extends FlatSpec {
+ *   
+ *   "An empty Set" should "have size 0" in {
+ *     assert(Set.empty.size === 0)
  *   }
- *
- *   it should "throw NoSuchElementException if an empty stack is popped" in {
- *     val emptyStack = new Stack[String]
+ *     
+ *   it should "produce NoSuchElementException when head is invoked" in {
  *     intercept[NoSuchElementException] {
- *       emptyStack.pop()
+ *       Set.empty.head
  *     }
  *   }
  * }
  * </pre>
  *
  * <p>
- * Running either of the two previous three versions of <code>StackSpec</code> in the Scala interpreter would yield:
+ * Running either of the two previous three versions of <code>SetSpec</code> in the Scala interpreter would yield:
  * </p>
  * 
  * <pre class="stREPL">
- * <span class="stGreen">A Stack
- * - should pop values in last-in-first-out order
- * - should throw NoSuchElementException if an empty stack is popped</span>
+ * <span class="stGreen">An empty Set
+ * - should have size 0
+ * - should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
  * <p>
@@ -187,39 +179,35 @@ import Suite.anErrorThatShouldCauseAnAbort
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
  * good intention of resurrecting the test at a later time, <code>FlatSpec</code> provides a method
  * <code>ignore</code> that can be used instead of <code>it</code> to register a test. For example, to temporarily
- * disable the test with the name <code>"A Stack should throw NoSuchElementException if an empty stack is popped"</code>, just
+ * disable the test with the name <code>"An empty Set should produce NoSuchElementException when head is invoked"</code>, just
  * change &#8220;<code>it</code>&#8221; into &#8220;<code>ignore</code>,&#8221; like this:
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec.ignore
+ * 
  * import org.scalatest.FlatSpec
- * import scala.collection.mutable.Stack
- *
- * class StackSpec extends FlatSpec {
- *
- *   "A Stack" should "pop values in last-in-first-out order" in {
- *       val stack = new Stack[Int]
- *       stack.push(1)
- *       stack.push(2)
- *       assert(stack.pop() === 2)
- *       assert(stack.pop() === 1)
- *     }
- *
- *   ignore should "throw NoSuchElementException if an empty stack is popped" in {
- *     val emptyStack = new Stack[String]
+ * 
+ * class SetSpec extends FlatSpec {
+ *   
+ *   "An empty Set" should "have size 0" in {
+ *     assert(Set.empty.size === 0)
+ *   }
+ *     
+ *   ignore should "produce NoSuchElementException when head is invoked" in {
  *     intercept[NoSuchElementException] {
- *       emptyStack.pop()
+ *       Set.empty.head
  *     }
  *   }
  * }
  * </pre>
  *
  * <p>
- * If you run this version of <code>StackSpec</code> with:
+ * If you run this version of <code>SetSpec</code> with:
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new StackSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
@@ -227,36 +215,32 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">A Stack
- * - should pop values in last-in-first-out order</span>
- * <span class="stYellow">- should throw NoSuchElementException if an empty stack is popped !!! IGNORED !!!</span>
+ * <span class="stGreen">An empty Set</span>
+ * <span class="stGreen">- should have size 0</span>
+ * <span class="stYellow">- should produce NoSuchElementException when head is invoked !!! IGNORED !!!</span>
  * </pre>
  *
  * <p>
  * When using shorthand notation, you won't have an <code>it</code> to change into <code>ignore</code> for
  * the first test of each new subject. To ignore such tests, you must instead change <code>in</code> to <code>ignore</code>.
- * For example, to temporarily disable the test with the name <code>"A Stack should pop values in last-in-first-out order"</code>,
+ * For example, to temporarily disable the test with the name <code>"An empty Set should have size 0"</code>,
  * change &#8220;<code>in</code>&#8221; into &#8220;<code>ignore</code>&#8221; like this:
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec.ignore
+ * 
  * import org.scalatest.FlatSpec
- * import scala.collection.mutable.Stack
- *
- * class StackSpec extends FlatSpec {
- *
- *   "A Stack" should "pop values in last-in-first-out order" ignore {
- *       val stack = new Stack[Int]
- *       stack.push(1)
- *       stack.push(2)
- *       assert(stack.pop() === 2)
- *       assert(stack.pop() === 1)
- *     }
- *
- *   it should "throw NoSuchElementException if an empty stack is popped" in {
- *     val emptyStack = new Stack[String]
+ * 
+ * class SetSpec extends FlatSpec {
+ *   
+ *   "An empty Set" should "have size 0" ignore {
+ *     assert(Set.empty.size === 0)
+ *   }
+ *     
+ *   it should "produce NoSuchElementException when head is invoked" in {
  *     intercept[NoSuchElementException] {
- *       emptyStack.pop()
+ *       Set.empty.head
  *     }
  *   }
  * }
@@ -267,7 +251,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new StackSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
@@ -275,9 +259,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">A Stack</span>
- * <span class="stYellow">- should pop values in last-in-first-out order !!! IGNORED !!!</span>
- * <span class="stGreen">- should throw NoSuchElementException if an empty stack is popped</span>
+ * <span class="stGreen">An empty Set</span>
+ * <span class="stYellow">- should have size 0 !!! IGNORED !!!</span>
+ * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
  * <h2>Informers</h2>
@@ -293,23 +277,36 @@ import Suite.anErrorThatShouldCauseAnAbort
  * is provided via the <code>info</code> parameterless method.
  * You can pass the extra information to the <code>Informer</code> via its <code>apply</code> method.
  * The <code>Informer</code> will then pass the information to the <code>Reporter</code> via an <code>InfoProvided</code> event.
- * Here's an example:
+ * </p>
+ * 
+ * <p>
+ * One use case for the <code>Informer</code> is to pass more information about a specification to the reporter. For example,
+ * the <code>GivenWhenThen</code> trait provides methods that use the implicit <code>info</code> provided by <code>FlatSpec</code>
+ * to pass such information to the reporter.  Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.FlatSpec
- *
- * class ArithmeticSpec extends FlatSpec {
- *
- *  "The Scala language" must "add correctly" in {
- *     val sum = 2 + 3
- *     assert(sum === 5)
- *     info("addition seems to work")
- *   }
- *
- *   it must "subtract correctly" in {
- *     val diff = 7 - 2
- *     assert(diff === 5)
+ * package org.scalatest.examples.flatspec.info
+ * 
+ * import collection.mutable
+ * import org.scalatest._
+ * 
+ * class SetSpec extends FlatSpec with GivenWhenThen {
+ *   
+ *   "An element" can "be added to an empty mutable Set" in {
+ *     given("an empty mutable Set")
+ *     val set = mutable.Set.empty[String]
+ * 
+ *     when("an element is added")
+ *     set += "clarity"
+ * 
+ *     then("the Set should have size 1")
+ *     assert(set.size === 1)
+ * 
+ *     and("the Set should contain the added element")
+ *     assert(set.contains("clarity"))
+ * 
+ *     info("That's all folks!")
  *   }
  * }
  * </pre>
@@ -320,64 +317,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ArithmeticSpec).execute()
- * <span class="stGreen">The Scala language 
- * - must add correctly
- *   + addition seems to work 
- * - must subtract correctly</span>
- * </pre>
- *
- * <p>
- * One use case for the <code>Informer</code> is to pass more information about a specification to the reporter. For example,
- * the <code>GivenWhenThen</code> trait provides methods that use the implicit <code>info</code> provided by <code>FlatSpec</code>
- * to pass such information to the reporter. Here's an example:
- * </p>
- *
- * <pre class="stHighlight">
- * import org.scalatest.FlatSpec
- * import org.scalatest.GivenWhenThen
- * 
- * class ArithmeticSpec extends FlatSpec with GivenWhenThen {
- * 
- *  "The Scala language" must "add correctly" in { 
- * 
- *     given("two integers")
- *     val x = 2
- *     val y = 3
- * 
- *     when("they are added")
- *     val sum = x + y
- * 
- *     then("the result is the sum of the two numbers")
- *     assert(sum === 5)
- *   }
- * 
- *   it must "subtract correctly" in {
- * 
- *     given("two integers")
- *     val x = 7
- *     val y = 2
- * 
- *     when("one is subtracted from the other")
- *     val diff = x - y
- * 
- *     then("the result is the difference of the two numbers")
- *     assert(diff === 5)
- *   }
- * }
- * </pre>
- *
- * <pre class="stREPL">
- * scala> (new ArithmeticSpec).execute()
- * <span class="stGreen">The Scala language 
- * - must add correctly
- *   + Given two integers 
- *   + When they are added 
- *   + Then the result is the sum of the two numbers 
- * - must subtract correctly
- *   + Given two integers 
- *   + When one is subtracted from the other 
- *   + Then the result is the difference of the two numbers</span> 
+ * scala> new ArithmeticSpec execute
+ * <span class="stGreen">An element
+ * - can be added to an empty mutable Set
+ *   + Given an empty mutable Set 
+ *   + When an element is added 
+ *   + Then the Set should have size 1 
+ *   + And the Set should contain the added element 
+ *   + That's all folks! </span>
  * </pre>
  *
  * <a name="PendingTests"><h2>Pending tests</h2></a>
@@ -407,38 +354,38 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.FlatSpec
- *
- * class ArithmeticSpec extends FlatSpec {
- *
- *   // Sharing fixture objects via instance variables
- *   val shared = 5
- *
- *  "The Scala language" must "add correctly" in {
- *     val sum = 2 + 3
- *     assert(sum === shared)
+ * package org.scalatest.examples.flatspec.pending
+ * 
+ * import org.scalatest._
+ * 
+ * class SetSpec extends FlatSpec {
+ * 
+ *   "An empty Set" should "have size 0" in (pending)
+ *     
+ *   it should "produce NoSuchElementException when head is invoked" in {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
  *   }
- *
- *   it must "subtract correctly" is (pending)
  * }
  * </pre>
  *
  * <p>
- * If you run this version of <code>ArithmeticSpec</code> with:
+ * If you run this version of <code>FlatSpec</code> with:
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ArithmeticSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
- * It will run both tests but report that <code>The Scala language must subtract correctly</code> is pending. You'll see:
+ * It will run both tests but report that <code>An empty Set should have size 0</code> is pending. You'll see:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">The Scala language
- * - must add correctly</span>
- * <span class="stYellow">- must subtract correctly (pending)</span>
+ * <span class="stGreen">An empty Set</span>
+ * <span class="stYellow">- should have size 0 (pending)</span>
+ * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
  * </pre>
  * 
  * <p>
@@ -502,8 +449,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec.annotations
+ * 
  * import org.scalatest.Tag
- *
+ * 
  * object SlowTest extends Tag("com.mycompany.tags.SlowTest")
  * object DbTest extends Tag("com.mycompany.tags.DbTest")
  * </pre>
@@ -514,15 +463,15 @@ import Suite.anErrorThatShouldCauseAnAbort
  *
  * <pre class="stHighlight">
  * import org.scalatest.FlatSpec
- *
+ * 
  * class ExampleSpec extends FlatSpec {
- *
- *   "The Scala language" must "add correctly" taggedAs(SlowTest) in {
- *       val sum = 1 + 1
- *       assert(sum === 2)
- *     }
- *
- *   it must "subtract correctly" taggedAs(SlowTest, DbTest) in {
+ * 
+ *   "A calculator" should "add correctly" taggedAs(SlowTest) in {
+ *     val sum = 1 + 1
+ *     assert(sum === 2)
+ *   }
+ *     
+ *   it should "subtract correctly" taggedAs(SlowTest, DbTest) in {
  *     val diff = 4 - 1
  *     assert(diff === 3)
  *   }
