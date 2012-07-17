@@ -822,31 +822,25 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  *   "Testing" should {
  *     // This test needs the StringBuilder fixture
- *     "be productive" in {
- *       new Builder {
- *         builder.append("productive!")
- *         assert(builder.toString === "ScalaTest is productive!")
- *       }
+ *     "be productive" in new Builder {
+ *       builder.append("productive!")
+ *       assert(builder.toString === "ScalaTest is productive!")
  *     }
  *   }
  * 
  *   "Test code" should {
  *     // This test needs the ListBuffer[String] fixture
- *     "be readable" in {
- *       new Buffer {
- *         buffer += ("readable!")
- *         assert(buffer === List("ScalaTest", "is", "readable!"))
- *       }
+ *     "be readable" in new Buffer {
+ *       buffer += ("readable!")
+ *       assert(buffer === List("ScalaTest", "is", "readable!"))
  *     }
  * 
  *     // This test needs both the StringBuilder and ListBuffer
- *     "be clear and concise" in {
- *       new Builder with Buffer {
- *         builder.append("clear!")
- *         buffer += ("concise!")
- *         assert(builder.toString === "ScalaTest is clear!")
- *         assert(buffer === List("ScalaTest", "is", "concise!"))
- *       }
+ *     "be clear and concise" in new Builder with Buffer {
+ *       builder.append("clear!")
+ *       buffer += ("concise!")
+ *       assert(builder.toString === "ScalaTest is clear!")
+ *       assert(buffer === List("ScalaTest", "is", "concise!"))
  *     }
  *   }
  * }
