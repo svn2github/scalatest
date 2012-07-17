@@ -14,7 +14,7 @@ class ExampleSuite extends FunSuite {
   }
 
   // This test needs the StringBuilder fixture
-  test("testing should be productive") {
+  test("Testing should be productive") {
     new Builder {
       builder.append("productive!")
       assert(builder.toString === "ScalaTest is productive!")
@@ -22,7 +22,7 @@ class ExampleSuite extends FunSuite {
   }
 
   // This test needs the ListBuffer[String] fixture
-  test("test code should be readable") {
+  test("Test code should be readable") {
     new Buffer {
       buffer += ("readable!")
       assert(buffer === List("ScalaTest", "is", "readable!"))
@@ -30,7 +30,7 @@ class ExampleSuite extends FunSuite {
   }
 
   // This test needs both the StringBuilder and ListBuffer
-  test("test code should be clear and concise") {
+  test("Test code should be clear and concise") {
     new Builder with Buffer {
       builder.append("clear!")
       buffer += ("concise!")

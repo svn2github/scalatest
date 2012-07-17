@@ -39,14 +39,14 @@ trait Buffer extends BeforeAndAfterEach { this: Suite =>
 
 class ExampleSuite extends FunSuite with Builder with Buffer {
 
-  test("testing should be easy") {
+  test("Testing should be easy") {
     builder.append("easy!")
     assert(builder.toString === "ScalaTest is easy!")
     assert(buffer.isEmpty)
     buffer += "sweet"
   }
 
-  test("testing should be fun") {
+  test("Testing should be fun") {
     builder.append("fun!")
     assert(builder.toString === "ScalaTest is fun!")
     assert(buffer.isEmpty)

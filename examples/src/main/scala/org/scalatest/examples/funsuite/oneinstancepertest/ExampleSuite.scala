@@ -8,14 +8,14 @@ class ExampleSuite extends FunSuite with OneInstancePerTest {
   val builder = new StringBuilder("ScalaTest is ")
   val buffer = new ListBuffer[String]
 
-  test("testing should be easy") {
+  test("Testing should be easy") {
     builder.append("easy!")
     assert(builder.toString === "ScalaTest is easy!")
     assert(buffer.isEmpty)
     buffer += "sweet"
   }
 
-  test("testing should be fun") {
+  test("Testing should be fun") {
     builder.append("fun!")
     assert(builder.toString === "ScalaTest is fun!")
     assert(buffer.isEmpty)

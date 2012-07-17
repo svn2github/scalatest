@@ -9,12 +9,12 @@ import org.scalatest.FunSuite
 
 class ExampleSuite extends FunSuite {
 
-  test("addition", SlowTest) {
+  test("Addition", SlowTest) {
     val sum = 1 + 1
     assert(sum === 2)
   }
 
-  test("subtraction", SlowTest, DbTest) {
+  test("Subtraction", SlowTest, DbTest) {
     val diff = 4 - 1
     assert(diff === 3)
   }

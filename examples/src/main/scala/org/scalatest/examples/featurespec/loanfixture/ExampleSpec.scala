@@ -48,7 +48,7 @@ class ExampleSpec extends FeatureSpec {
 
   feature("Fixtures can be shared") {
     // This test needs the file fixture
-    scenario("user should be productive when writes tests") {
+    scenario("User should be productive when writes tests") {
       withFile { (file, writer) =>
         writer.write("productive!")
         writer.flush()
@@ -56,14 +56,14 @@ class ExampleSpec extends FeatureSpec {
       }
     }
     // This test needs the database fixture
-    scenario("user can write readable test code") {
+    scenario("User can write readable test code") {
       withDatabase { db =>
         db.append("readable!")
         assert(db.toString === "ScalaTest is readable!")
       }
     }
     // This test needs both the file and the database
-    scenario("user's test code should be clear and concise") {
+    scenario("User's test code should be clear and concise") {
       withDatabase { db =>
         withFile { (file, writer) => // loan-fixture methods compose
           db.append("clear!")

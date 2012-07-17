@@ -5,7 +5,7 @@ import org.scalatest._
 
 class SetSuite extends FunSuite with GivenWhenThen {
 
-  test("an element can be added to an empty mutable Set") {
+  test("An element can be added to an empty mutable Set") {
 
     given("an empty mutable Set")
     val set = mutable.Set.empty[String]

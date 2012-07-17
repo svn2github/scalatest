@@ -37,11 +37,11 @@ import scala.collection.immutable.ListSet
  *
  * class SetSuite extends FunSuite {
  *
- *   test("an empty Set should have size 0") {
+ *   test("An empty Set should have size 0") {
  *     assert(Set.empty.size === 0)
  *   }
  *
- *   test("invoking head on an empty Set should produce NoSuchElementException") {
+ *   test("Invoking head on an empty Set should produce NoSuchElementException") {
  *     intercept[NoSuchElementException] {
  *       Set.empty.head
  *     }
@@ -84,7 +84,7 @@ import scala.collection.immutable.ListSet
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
  * good intention of resurrecting the test at a later time, <code>FunSuite</code> provides registration
  * methods that start with <code>ignore</code> instead of <code>test</code>. For example, to temporarily
- * disable the test named <code>addition</code>, just change &#8220;<code>test</code>&#8221; into &#8220;<code>ignore</code>,&#8221; like this:
+ * disable the test named <code>Addition</code>, just change &#8220;<code>test</code>&#8221; into &#8220;<code>ignore</code>,&#8221; like this:
  * </p>
  *
  * <pre class="stHighlight">
@@ -94,11 +94,11 @@ import scala.collection.immutable.ListSet
  *
  * class SetSuite extends FunSuite {
  *
- *   ignore("an empty Set should have size 0") {
+ *   ignore("An empty Set should have size 0") {
  *     assert(Set.empty.size === 0)
  *   }
  *
- *   test("invoking head on an empty Set should produce NoSuchElementException") {
+ *   test("Invoking head on an empty Set should produce NoSuchElementException") {
  *     intercept[NoSuchElementException] {
  *       Set.empty.head
  *     }
@@ -120,8 +120,8 @@ import scala.collection.immutable.ListSet
  *
  * <pre class="stREPL">
  * <span class="stGreen">SetSuite:</span>
- * <span class="stYellow">- an empty Set should have size 0 !!! IGNORED !!!</span>
- * <span class="stGreen">- invoking head on an empty Set should produce NoSuchElementException</span>
+ * <span class="stYellow">- An empty Set should have size 0 !!! IGNORED !!!</span>
+ * <span class="stGreen">- Invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  *
  * <h2>Informers</h2>
@@ -149,7 +149,7 @@ import scala.collection.immutable.ListSet
  * 
  * class SetSuite extends FunSuite with GivenWhenThen {
  *
- *   test("an element can be added to an empty mutable Set") {
+ *   test("An element can be added to an empty mutable Set") {
  *
  *     given("an empty mutable Set")
  *     val set = mutable.Set.empty[String]
@@ -219,9 +219,9 @@ import scala.collection.immutable.ListSet
  *
  * class SetSuite extends FunSuite {
  *
- *   test("an empty Set should have size 0") (pending)
+ *   test("An empty Set should have size 0") (pending)
  *
- *   test("invoking head on an empty Set should produce NoSuchElementException") {
+ *   test("Invoking head on an empty Set should produce NoSuchElementException") {
  *     intercept[NoSuchElementException] {
  *       Set.empty.head
  *     }
@@ -245,8 +245,8 @@ import scala.collection.immutable.ListSet
  *
  * <pre class="stREPL">
  * <span class="stGreen">SetSuite:</span>
- * <span class="stYellow">- an empty Set should have size 0 (pending)</span>
- * <span class="stGreen">- invoking head on an empty Set should produce NoSuchElementException</span>
+ * <span class="stYellow">- An empty Set should have size 0 (pending)</span>
+ * <span class="stGreen">- Invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  * 
  * <h2>Tagging tests</h2>
@@ -283,12 +283,12 @@ import scala.collection.immutable.ListSet
  *
  * class ExampleSuite extends FunSuite {
  *
- *   test("addition", SlowTest) {
+ *   test("Addition", SlowTest) {
  *     val sum = 1 + 1
  *     assert(sum === 2)
  *   }
  *
- *   test("subtraction", SlowTest, DbTest) {
+ *   test("Subtraction", SlowTest, DbTest) {
  *     val diff = 4 - 1
  *     assert(diff === 3)
  *   }
@@ -296,8 +296,8 @@ import scala.collection.immutable.ListSet
  * </pre>
  *
  * <p>
- * This code marks both tests, "addition" and "subtraction," with the <code>com.mycompany.tags.SlowTest</code> tag, 
- * and test "subtraction" with the <code>com.mycompany.tags.DbTest</code> tag.
+ * This code marks both tests, "Addition" and "Subtraction," with the <code>com.mycompany.tags.SlowTest</code> tag, 
+ * and test "Subtraction" with the <code>com.mycompany.tags.DbTest</code> tag.
  * </p>
  *
  * <p>
@@ -367,7 +367,7 @@ import scala.collection.immutable.ListSet
  *       val buffer = new ListBuffer[String]
  *     }
  * 
- *   test("testing should be easy") {
+ *   test("Testing should be easy") {
  *     val f = fixture
  *     f.builder.append("easy!")
  *     assert(f.builder.toString === "ScalaTest is easy!")
@@ -375,7 +375,7 @@ import scala.collection.immutable.ListSet
  *     f.buffer += "sweet"
  *   }
  * 
- *   test("testing should be fun") {
+ *   test("Testing should be fun") {
  *     val f = fixture
  *     f.builder.append("fun!")
  *     assert(f.builder.toString === "ScalaTest is fun!")
@@ -426,7 +426,7 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs the StringBuilder fixture
- *   test("testing should be productive") {
+ *   test("Testing should be productive") {
  *     new Builder {
  *       builder.append("productive!")
  *       assert(builder.toString === "ScalaTest is productive!")
@@ -434,7 +434,7 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs the ListBuffer[String] fixture
- *   test("test code should be readable") {
+ *   test("Test code should be readable") {
  *     new Buffer {
  *       buffer += ("readable!")
  *       assert(buffer === List("ScalaTest", "is", "readable!"))
@@ -442,7 +442,7 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs both the StringBuilder and ListBuffer
- *   test("test code should be clear and concise") {
+ *   test("Test code should be clear and concise") {
  *     new Builder with Buffer {
  *       builder.append("clear!")
  *       buffer += ("concise!")
@@ -474,14 +474,14 @@ import scala.collection.immutable.ListSet
  *   val builder = new StringBuilder("ScalaTest is ")
  *   val buffer = new ListBuffer[String]
  *
- *   test("testing should be easy") {
+ *   test("Testing should be easy") {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  *
- *   test("testing should be fun") {
+ *   test("Testing should be fun") {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -575,11 +575,11 @@ import scala.collection.immutable.ListSet
  *     }
  *   }
  * 
- *   test("this test should succeed") {
+ *   test("This test should succeed") {
  *     assert(1 + 1 === 2)
  *   }
  * 
- *   test("this test should fail") {
+ *   test("This test should fail") {
  *     assert(1 + 1 === 3)
  *   }
  * }
@@ -671,7 +671,7 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs the file fixture
- *   test("testing should be productive") {
+ *   test("Testing should be productive") {
  *     withFile { (file, writer) =>
  *       writer.write("productive!")
  *       writer.flush()
@@ -680,7 +680,7 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs the database fixture
- *   test("test code should be readable") {
+ *   test("Test code should be readable") {
  *     withDatabase { db =>
  *       db.append("readable!")
  *       assert(db.toString === "ScalaTest is readable!")
@@ -688,7 +688,7 @@ import scala.collection.immutable.ListSet
  *   }
  * 
  *   // This test needs both the file and the database
- *   test("test code should be clear and concise") {
+ *   test("Test code should be clear and concise") {
  *     withDatabase { db =>
  *       withFile { (file, writer) => // loan-fixture methods compose
  *         db.append("clear!")
@@ -758,13 +758,13 @@ import scala.collection.immutable.ListSet
  *     }
  *   }
  * 
- *   test("testing should be easy") { f =>
+ *   test("Testing should be easy") { f =>
  *     f.writer.write("easy!")
  *     f.writer.flush()
  *     assert(f.file.length === 18)
  *   }
  * 
- *   test("testing should be fun") { f =>
+ *   test("Testing should be fun") { f =>
  *     f.writer.write("fun!")
  *     f.writer.flush()
  *     assert(f.file.length === 17)
@@ -892,14 +892,14 @@ import scala.collection.immutable.ListSet
  * 
  * class ExampleSuite extends FunSuite with Builder with Buffer {
  * 
- *   test("testing should be easy") {
+ *   test("Testing should be easy") {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   test("testing should be fun") {
+ *   test("Testing should be fun") {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)
@@ -979,14 +979,14 @@ import scala.collection.immutable.ListSet
  * 
  * class ExampleSuite extends FunSuite with Builder with Buffer {
  * 
- *   test("testing should be easy") {
+ *   test("Testing should be easy") {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
  *     buffer += "sweet"
  *   }
  * 
- *   test("testing should be fun") {
+ *   test("Testing should be fun") {
  *     builder.append("fun!")
  *     assert(builder.toString === "ScalaTest is fun!")
  *     assert(buffer.isEmpty)

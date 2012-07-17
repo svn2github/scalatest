@@ -1001,11 +1001,11 @@ import exceptions._
  *     }
  *   }
  *
- *   test("this test should succeed") {
+ *   test("This test should succeed") {
  *     assert(1 + 1 === 2)
  *   }
  *
- *   test("this test should fail") {
+ *   test("This test should fail") {
  *     assert(1 + 1 === 3)
  *   }
  * }
@@ -1019,8 +1019,8 @@ import exceptions._
  * <pre class="stREPL">
  * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
- * - this test should succeed
- * <span class="stRed">- this test should fail *** FAILED ***
+ * - This test should succeed
+ * <span class="stRed">- This test should fail *** FAILED ***
  *   2 did not equal 3 (<console>:33)
  *   + Dir snapshot: hello.txt, world.txt </span>
  * </pre>

@@ -12,7 +12,7 @@ class ExampleSpec extends FeatureSpec {
     }
   
   feature("Fixtures can be shared") {
-    scenario("user learns how to share fixtures") {
+    scenario("User learns how to share fixtures") {
       val f = fixture
       f.builder.append("easy!")
       assert(f.builder.toString === "ScalaTest is easy!")
@@ -20,7 +20,7 @@ class ExampleSpec extends FeatureSpec {
       f.buffer += "sweet"
     }
   
-    scenario("user enjoys writing tests with shared fixtures") {
+    scenario("User enjoys writing tests with shared fixtures") {
       val f = fixture
       f.builder.append("fun!")
       assert(f.builder.toString === "ScalaTest is fun!")

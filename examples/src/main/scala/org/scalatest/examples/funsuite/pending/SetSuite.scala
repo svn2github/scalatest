@@ -4,9 +4,9 @@ import org.scalatest._
 
 class SetSuite extends FunSuite {
 
-  test("an empty Set should have size 0") (pending)
+  test("An empty Set should have size 0") (pending)
 
-  test("invoking head on an empty Set should produce NoSuchElementException") {
+  test("Invoking head on an empty Set should produce NoSuchElementException") {
     intercept[NoSuchElementException] {
       Set.empty.head
     }

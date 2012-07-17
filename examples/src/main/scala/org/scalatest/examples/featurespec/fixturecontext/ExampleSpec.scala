@@ -15,7 +15,7 @@ class ExampleSpec extends FeatureSpec {
 
   feature("Fixtures can be shared") {
     // This test needs the StringBuilder fixture
-    scenario("user should be productive when writes tests") {
+    scenario("User should be productive when writes tests") {
       new Builder {
         builder.append("productive!")
         assert(builder.toString === "ScalaTest is productive!")
@@ -23,7 +23,7 @@ class ExampleSpec extends FeatureSpec {
     }
     
     // This test needs the ListBuffer[String] fixture
-    scenario("user can write readable test code") {
+    scenario("User can write readable test code") {
       new Buffer {
         buffer += ("readable!")
         assert(buffer === List("ScalaTest", "is", "readable!"))
@@ -31,7 +31,7 @@ class ExampleSpec extends FeatureSpec {
     }
 
     // This test needs both the StringBuilder and ListBuffer
-    scenario("user's test code should be clear and concise") {
+    scenario("User's test code should be clear and concise") {
       new Builder with Buffer {
         builder.append("clear!")
         buffer += ("concise!")

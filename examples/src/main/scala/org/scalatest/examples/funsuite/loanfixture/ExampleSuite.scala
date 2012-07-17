@@ -47,7 +47,7 @@ class ExampleSuite extends FunSuite {
   }
 
   // This test needs the file fixture
-  test("testing should be productive") {
+  test("Testing should be productive") {
     withFile { (file, writer) =>
       writer.write("productive!")
       writer.flush()
@@ -56,7 +56,7 @@ class ExampleSuite extends FunSuite {
   }
 
   // This test needs the database fixture
-  test("test code should be readable") {
+  test("Test code should be readable") {
     withDatabase { db =>
       db.append("readable!")
       assert(db.toString === "ScalaTest is readable!")
@@ -64,7 +64,7 @@ class ExampleSuite extends FunSuite {
   }
 
   // This test needs both the file and the database
-  test("test code should be clear and concise") {
+  test("Test code should be clear and concise") {
     withDatabase { db =>
       withFile { (file, writer) => // loan-fixture methods compose
         db.append("clear!")

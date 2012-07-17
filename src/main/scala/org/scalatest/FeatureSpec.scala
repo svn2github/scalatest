@@ -561,7 +561,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   
  *   feature("Fixtures can be shared") {
- *     scenario("user learns how to share fixtures") {
+ *     scenario("User learns how to share fixtures") {
  *       val f = fixture
  *       f.builder.append("easy!")
  *       assert(f.builder.toString === "ScalaTest is easy!")
@@ -569,7 +569,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *       f.buffer += "sweet"
  *     }
  *   
- *     scenario("user enjoys writing tests with shared fixtures") {
+ *     scenario("User enjoys writing tests with shared fixtures") {
  *       val f = fixture
  *       f.builder.append("fun!")
  *       assert(f.builder.toString === "ScalaTest is fun!")
@@ -622,7 +622,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  *   feature("Fixtures can be shared") {
  *     // This test needs the StringBuilder fixture
- *     scenario("user should be productive when writes tests") {
+ *     scenario("User should be productive when writes tests") {
  *       new Builder {
  *         builder.append("productive!")
  *         assert(builder.toString === "ScalaTest is productive!")
@@ -630,7 +630,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *     
  *     // This test needs the ListBuffer[String] fixture
- *     scenario("user can write readable test code") {
+ *     scenario("User can write readable test code") {
  *       new Buffer {
  *         buffer += ("readable!")
  *         assert(buffer === List("ScalaTest", "is", "readable!"))
@@ -638,7 +638,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  * 
  *     // This test needs both the StringBuilder and ListBuffer
- *     scenario("user's test code should be clear and concise") {
+ *     scenario("User's test code should be clear and concise") {
  *       new Builder with Buffer {
  *         builder.append("clear!")
  *         buffer += ("concise!")
@@ -672,14 +672,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   val buffer = new ListBuffer[String]
  * 
  *   feature("Fixtures can be shared") {
- *     scenario("user learns how to share fixtures") {
+ *     scenario("User learns how to share fixtures") {
  *       builder.append("easy!")
  *       assert(builder.toString === "ScalaTest is easy!")
  *       assert(buffer.isEmpty)
  *       buffer += "sweet"
  *     }
  * 
- *     scenario("user enjoys reading tests with shared fixture") {
+ *     scenario("User enjoys reading tests with shared fixture") {
  *       builder.append("fun!")
  *       assert(builder.toString === "ScalaTest is fun!")
  *       assert(buffer.isEmpty)
@@ -874,7 +874,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  *   feature("Fixtures can be shared") {
  *     // This test needs the file fixture
- *     scenario("user should be productive when writes tests") {
+ *     scenario("User should be productive when writes tests") {
  *       withFile { (file, writer) =>
  *         writer.write("productive!")
  *         writer.flush()
@@ -882,14 +882,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  *       }
  *     }
  *     // This test needs the database fixture
- *     scenario("user can write readable test code") {
+ *     scenario("User can write readable test code") {
  *       withDatabase { db =>
  *         db.append("readable!")
  *         assert(db.toString === "ScalaTest is readable!")
  *       }
  *     }
  *     // This test needs both the file and the database
- *     scenario("user's test code should be clear and concise") {
+ *     scenario("User's test code should be clear and concise") {
  *       withDatabase { db =>
  *         withFile { (file, writer) => // loan-fixture methods compose
  *           db.append("clear!")
@@ -961,13 +961,13 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * 
  *   feature("Testing") {
- *     scenario("user can write test code easily") { f =>
+ *     scenario("User can write test code easily") { f =>
  *       f.writer.write("easy!")
  *       f.writer.flush()
  *       assert(f.file.length === 18)
  *     }
  * 
- *     scenario("user's test code should be fun to read") { f =>
+ *     scenario("User's test code should be fun to read") { f =>
  *       f.writer.write("fun!")
  *       f.writer.flush()
  *       assert(f.file.length === 17)
@@ -1099,14 +1099,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  * class ExampleSpec extends FeatureSpec with Builder with Buffer {
  * 
  *   feature("Testing") {
- *     scenario("user can write test code easily") {
+ *     scenario("User can write test code easily") {
  *       builder.append("easy!")
  *       assert(builder.toString === "ScalaTest is easy!")
  *       assert(buffer.isEmpty)
  *       buffer += "sweet"
  *     }
  * 
- *     scenario("user's test code should be fun to read") {
+ *     scenario("User's test code should be fun to read") {
  *       builder.append("fun!")
  *       assert(builder.toString === "ScalaTest is fun!")
  *       assert(buffer.isEmpty)
@@ -1188,14 +1188,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  * class ExampleSpec extends FeatureSpec with Builder with Buffer {
  * 
  *   feature("Testing") {
- *     scenario("user can write test code easily") {
+ *     scenario("User can write test code easily") {
  *       builder.append("easy!")
  *       assert(builder.toString === "ScalaTest is easy!")
  *       assert(buffer.isEmpty)
  *       buffer += "sweet"
  *     }
  * 
- *     scenario("user's test code should be fun to read") {
+ *     scenario("User's test code should be fun to read") {
  *       builder.append("fun!")
  *       assert(builder.toString === "ScalaTest is fun!")
  *       assert(buffer.isEmpty)

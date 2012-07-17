@@ -21,11 +21,11 @@ class ExampleSuite extends FunSuite {
     }
   }
 
-  test("this test should succeed") {
+  test("This test should succeed") {
     assert(1 + 1 === 2)
   }
 
-  test("this test should fail") {
+  test("This test should fail") {
     assert(1 + 1 === 3)
   }
 }

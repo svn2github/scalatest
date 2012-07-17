@@ -11,7 +11,7 @@ class ExampleSuite extends FunSuite {
       val buffer = new ListBuffer[String]
     }
   
-  test("testing should be easy") {
+  test("Testing should be easy") {
     val f = fixture
     f.builder.append("easy!")
     assert(f.builder.toString === "ScalaTest is easy!")
@@ -19,7 +19,7 @@ class ExampleSuite extends FunSuite {
     f.buffer += "sweet"
   }
   
-  test("testing should be fun") {
+  test("Testing should be fun") {
     val f = fixture
     f.builder.append("fun!")
     assert(f.builder.toString === "ScalaTest is fun!")

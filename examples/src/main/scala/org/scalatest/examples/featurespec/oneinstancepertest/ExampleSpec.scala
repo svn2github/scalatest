@@ -9,14 +9,14 @@ class ExampleSuite extends FeatureSpec with OneInstancePerTest {
   val buffer = new ListBuffer[String]
 
   feature("Fixtures can be shared") {
-    scenario("user learns how to share fixtures") {
+    scenario("User learns how to share fixtures") {
       builder.append("easy!")
       assert(builder.toString === "ScalaTest is easy!")
       assert(buffer.isEmpty)
       buffer += "sweet"
     }
 
-    scenario("user enjoys reading tests with shared fixture") {
+    scenario("User enjoys reading tests with shared fixture") {
       builder.append("fun!")
       assert(builder.toString === "ScalaTest is fun!")
       assert(buffer.isEmpty)
