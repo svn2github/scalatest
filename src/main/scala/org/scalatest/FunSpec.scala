@@ -59,9 +59,9 @@ import verb.BehaveWord
  * with <code>describe</code>, and a test with <code>it</code>. Both
  * <code>describe</code> and <code>it</code> are methods, defined in
  * <code>FunSpec</code>, which will be invoked
- * by the primary constructor of <code>StackSpec</code>. 
+ * by the primary constructor of <code>SetSpec</code>. 
  * A describe clause names, or gives more information about, the <em>subject</em> (class or other entity) you are specifying
- * and testing. In the previous example, "A Stack"
+ * and testing. In the previous example, "A Set"
  * is the subject under specification and test. With each test you provide a string (the <em>spec text</em>) that specifies
  * one bit of behavior of the subject, and a block of code that tests that behavior.
  * You place the spec text between the parentheses, followed by the test code between curly
@@ -89,7 +89,7 @@ import verb.BehaveWord
  * When you execute a <code>FunSpec</code>, it will send <code>Formatter</code>s in the events it sends to the
  * <code>Reporter</code>. ScalaTest's built-in reporters will report these events in such a way
  * that the output is easy to read as an informal specification of the <em>subject</em> being tested.
- * For example, if you ran <code>StackSpec</code> from within the Scala interpreter:
+ * For example, if you ran <code>SetSpec</code> from within the Scala interpreter:
  * </p>
  *
  * <pre class="stREPL">
@@ -145,7 +145,7 @@ import verb.BehaveWord
  * </pre>
  *
  * <p>
- * If you run this version of <code>StackSpec</code> with:
+ * If you run this version of <code>SetSpec</code> with:
  * </p>
  *
  * <pre class="stREPL">
@@ -275,7 +275,7 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stREPL">
- * scala> new StackSpec execute
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
