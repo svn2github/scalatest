@@ -21,7 +21,7 @@ class ExampleSpec extends FunSpec {
     }
   }
 
-  describe("this test") {
+  describe("This test") {
     it("should succeed") {
       assert(1 + 1 === 2)
     }

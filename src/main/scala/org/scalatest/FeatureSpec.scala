@@ -794,9 +794,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <pre class="stREPL">
  * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
- * - this test should succeed
- * <span class="stRed">- this test should fail *** FAILED ***
- *   2 did not equal 3 (<console>:33)
+ * Calculator Add
+ * Scenario: 1 + 1 should be 2
+ * <span class="stRed">Scenario: 2 + 2 should be 4 *** FAILED ***
+ * 4 did not equal 3 (<console>:82)
  *   + Dir snapshot: hello.txt, world.txt </span>
  * </pre>
  *

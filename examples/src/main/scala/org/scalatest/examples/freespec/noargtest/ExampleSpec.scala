@@ -21,7 +21,7 @@ class ExampleSpec extends FreeSpec {
     }
   }
 
-  "this test" - {
+  "This test" - {
     "should succeed" in {
       assert(1 + 1 === 2)
     }

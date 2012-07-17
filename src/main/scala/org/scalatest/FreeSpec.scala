@@ -836,7 +836,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   "this test" - {
+ *   "This test" - {
  *     "should succeed" in {
  *       assert(1 + 1 === 2)
  *     }
@@ -856,8 +856,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <pre class="stREPL">
  * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
- * - this test should succeed
- * <span class="stRed">- this test should fail *** FAILED ***
+ * This test
+ * - should succeed
+ * <span class="stRed">- should fail *** FAILED ***
  *   2 did not equal 3 (<console>:33)
  *   + Dir snapshot: hello.txt, world.txt </span>
  * </pre>
