@@ -34,25 +34,20 @@ import verb.BehaveWord
  * Here's an example <code>FunSpec</code>:
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.funspec
+ * 
  * import org.scalatest.FunSpec
- * import scala.collection.mutable.Stack
- *
- * class StackSpec extends FunSpec {
- *
- *   describe("A Stack") {
- *
- *     it("should pop values in last-in-first-out order") {
- *       val stack = new Stack[Int]
- *       stack.push(1)
- *       stack.push(2)
- *       assert(stack.pop() === 2)
- *       assert(stack.pop() === 1)
+ * 
+ * class SetSpec extends FunSpec {
+ * 
+ *   describe("An empty Set") {
+ *     it("should have size 0") {
+ *       assert(Set.empty.size === 0)
  *     }
- *
- *     it("should throw NoSuchElementException if an empty stack is popped") {
- *       val emptyStack = new Stack[String]
+ *     
+ *     it("should produce NoSuchElementException when head is invoked") {
  *       intercept[NoSuchElementException] {
- *         emptyStack.pop()
+ *         Set.empty.head
  *       }
  *     }
  *   }
@@ -98,7 +93,7 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new StackSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
@@ -106,9 +101,9 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">A Stack
- * - should pop values in last-in-first-out order
- * - should throw NoSuchElementException if an empty stack is popped</span>
+ * <span class="stGreen">An empty Set
+ * - should have size 0
+ * - should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
  * <p>
@@ -129,25 +124,20 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.funspec.ignore
+ * 
  * import org.scalatest.FunSpec
- * import scala.collection.mutable.Stack
- *
- * class StackSpec extends FunSpec {
- *
- *   describe("A Stack") {
- *
- *     ignore("should pop values in last-in-first-out order") {
- *       val stack = new Stack[Int]
- *       stack.push(1)
- *       stack.push(2)
- *       assert(stack.pop() === 2)
- *       assert(stack.pop() === 1)
+ * 
+ * class SetSpec extends FunSpec {
+ *   
+ *   describe("An empty Set") {
+ *     ignore("should have size 0") {
+ *       assert(Set.empty.size === 0)
  *     }
- *
- *     it("should throw NoSuchElementException if an empty stack is popped") {
- *       val emptyStack = new Stack[String]
+ *     
+ *     it("should produce NoSuchElementException when head is invoked") {
  *       intercept[NoSuchElementException] {
- *         emptyStack.pop()
+ *         Set.empty.head
  *       }
  *     }
  *   }
@@ -159,7 +149,7 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new StackSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
@@ -167,9 +157,9 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">A Stack</span>
- * <span class="stYellow">- should pop values in last-in-first-out order !!! IGNORED !!!</span>
- * <span class="stGreen">- should throw NoSuchElementException if an empty stack is popped</span>
+ * <span class="stGreen">An empty Set</span>
+ * <span class="stYellow">- should have size 0 !!! IGNORED !!!</span>
+ * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
  * <h2>Informers</h2>
@@ -189,21 +179,28 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.FunSpec
- *
- * class ExampleSpec extends FunSpec {
- *
- *   describe("The Scala language") {
- *
- *     it("should add correctly") {
- *       val sum = 1 + 1
- *       assert(sum === 2)
- *       info("Addition seems to work")
- *     }
- *
- *     it("should subtract correctly") {
- *       val diff = 7 - 2
- *       assert(diff === 5)
+ * package org.scalatest.examples.funspec.info
+ * 
+ * import collection.mutable
+ * import org.scalatest._
+ * 
+ * class SetSpec extends FunSpec with GivenWhenThen {
+ *   
+ *   describe("An element") {
+ *     it("can be added to an empty mutable Set") {
+ *       given("an empty mutable Set")
+ *       val set = mutable.Set.empty[String]
+ * 
+ *       when("an element is added")
+ *       set += "clarity"
+ * 
+ *       then("the Set should have size 1")
+ *       assert(set.size === 1)
+ * 
+ *       and("the Set should contain the added element")
+ *       assert(set.contains("clarity"))
+ * 
+ *       info("That's all folks!")
  *     }
  *   }
  * }
@@ -213,11 +210,13 @@ import verb.BehaveWord
  * included in the printed report:
  *
  * <pre class="stREPL">
- * <span class="stGreen">ExampleSpec:
- * The Scala language
- * - should add correctly
- *   + Addition seems to work
- * - should subtract correctly</span> 
+ * <span class="stGreen">An element
+ * - can be added to an empty mutable Set
+ *   + Given an empty mutable Set 
+ *   + When an element is added 
+ *   + Then the Set should have size 1 
+ *   + And the Set should contain the added element 
+ *   + That's all folks! </span> 
  * </pre>
  *
  * <h2>Pending tests</h2>
@@ -251,22 +250,20 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.FunSpec
- * import scala.collection.mutable.Stack
- *
- * class StackSpec extends FunSpec {
- *
- *   describe("A Stack") {
- *
- *     it("should pop values in last-in-first-out order") {
- *       val stack = new Stack[Int]
- *       stack.push(1)
- *       stack.push(2)
- *       assert(stack.pop() === 2)
- *       assert(stack.pop() === 1)
+ * package org.scalatest.examples.funspec.pending
+ * 
+ * import org.scalatest._
+ * 
+ * class SetSpec extends FunSpec {
+ * 
+ *   describe("An empty Set") {
+ *     it("should have size 0") (pending)
+ *     
+ *     it("should produce NoSuchElementException when head is invoked") {
+ *       intercept[NoSuchElementException] {
+ *         Set.empty.head
+ *       }
  *     }
- *
- *     it("should throw NoSuchElementException if an empty stack is popped") (pending)
  *   }
  * }
  * </pre>
@@ -274,21 +271,21 @@ import verb.BehaveWord
  * <p>
  * (Note: "<code>(pending)</code>" is the body of the test. Thus the test contains just one statement, an invocation
  * of the <code>pending</code> method, which throws <code>TestPendingException</code>.)
- * If you run this version of <code>StackSpec</code> with:
+ * If you run this version of <code>SetSpec</code> with:
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new StackSpec).execute()
+ * scala> new StackSpec execute
  * </pre>
  *
  * <p>
- * It will run both tests, but report that the test named "<code>A stack should pop values in last-in-first-out order</code>" is pending. You'll see:
+ * It will run both tests, but report that the test named "<code>An empty Set should have size 0</code>" is pending. You'll see:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">A Stack 
- * - should pop values in last-in-first-out order</span>
- * <span class="stYellow">- should throw NoSuchElementException if an empty stack is popped (pending)</span>
+ * <span class="stGreen">An empty Set</span>
+ * <span class="stYellow">- should have size 0 (pending)</span>
+ * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
  * </pre>
  * 
  * <h2>Tagging tests</h2>
@@ -308,8 +305,10 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.funspec.annotations
+ * 
  * import org.scalatest.Tag
- *
+ * 
  * object SlowTest extends Tag("com.mycompany.tags.SlowTest")
  * object DbTest extends Tag("com.mycompany.tags.DbTest")
  * </pre>
@@ -320,17 +319,20 @@ import verb.BehaveWord
  *
  * <pre class="stHighlight">
  * import org.scalatest.FunSpec
- *
+ * 
  * class ExampleSpec extends FunSpec {
- *
- *   it("should add correctly", SlowTest) {
- *     val sum = 1 + 1
- *     assert(sum === 2)
- *   }
- *
- *   it("should subtract correctly", SlowTest, DbTest) {
- *     val diff = 4 - 1
- *     assert(diff === 3)
+ * 
+ *   describe("A calculator") {
+ *     
+ *     it("should add correctly", SlowTest) {
+ *       val sum = 1 + 1
+ *       assert(sum === 2)
+ *     }
+ *     
+ *     it("should subtract correctly", SlowTest, DbTest) {
+ *       val diff = 4 - 1
+ *       assert(diff === 3)
+ *     }
  *   }
  * }
  * </pre>
