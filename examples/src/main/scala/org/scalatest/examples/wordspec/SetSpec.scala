@@ -9,8 +9,8 @@ class SetSpec extends WordSpec {
       "have size 0" in {
         assert(Set.empty.size === 0)
       }
-
-      "throw NoSuchElementException when head is invoked" in {
+      
+      "produce NoSuchElementException when head is invoked" in {
         intercept[NoSuchElementException] {
           Set.empty.head
         }

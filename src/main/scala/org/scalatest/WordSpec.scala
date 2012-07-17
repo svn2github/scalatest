@@ -50,14 +50,16 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class SetSpec extends WordSpec {
  * 
- *   "An empty Set" should {
- *     "have size 0" in {
- *       assert(Set.empty.size === 0)
- *     }
- *     
- *     "produce NoSuchElementException when head is invoked" in {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
+ *   "A Set" when {
+ *     "empty" should {
+ *       "have size 0" in {
+ *         assert(Set.empty.size === 0)
+ *       }
+ *       
+ *       "produce NoSuchElementException when head is invoked" in {
+ *         intercept[NoSuchElementException] {
+ *           Set.empty.head
+ *         }
  *       }
  *     }
  *   }
@@ -378,14 +380,16 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class SetSpec extends WordSpec {
  *   
- *   "An empty Set" should {
- *     "have size 0" ignore {
- *       assert(Set.empty.size === 0)
- *     }
- *     
- *     "produce NoSuchElementException when head is invoked" in {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
+ *   "A Set" when {
+ *     "empty" should {
+ *       "have size 0" ignore {
+ *         assert(Set.empty.size === 0)
+ *       }
+ *       
+ *       "produce NoSuchElementException when head is invoked" in {
+ *         intercept[NoSuchElementException] {
+ *           Set.empty.head
+ *         }
  *       }
  *     }
  *   }
@@ -405,9 +409,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">An empty Set</span>
- * <span class="stYellow">- should have size 0 !!! IGNORED !!!</span>
- * <span class="stGreen">- should should produce NoSuchElementException when head is invoked</span>
+ * <span class="stGreen">A Set</span>
+ * <span class="stGreen">  when empty</span>
+ * <span class="stYellow">  - should have size 0 !!! IGNORED !!!</span>
+ * <span class="stGreen">  - should should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
  * <h2>Informers</h2>
@@ -508,12 +513,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class SetSpec extends WordSpec {
  * 
- *   "An empty Set" should {
- *     "have size 0" in (pending)
- *     
- *     "produce NoSuchElementException when head is invoked" in {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
+ *   "A Set" when {
+ *     "empty" should {
+ *       "have size 0" in (pending)
+ *       
+ *       "produce NoSuchElementException when head is invoked" in {
+ *         intercept[NoSuchElementException] {
+ *           Set.empty.head
+ *         }
  *       }
  *     }
  *   }
@@ -529,13 +536,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </pre>
  *
  * <p>
- * It will run both tests but report that <code>An empty Set should have size 0</code> is pending. You'll see:
+ * It will run both tests but report that <code>should have size 0</code> is pending. You'll see:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">An empty Set</span>
- * <span class="stYellow">- should have size 0 (pending)</span>
- * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
+ * <span class="stGreen">A Set</span>
+ * <span class="stGreen">  when empty</span>
+ * <span class="stYellow">  - should have size 0 (pending)</span>
+ * <span class="stGreen">  - should produce NoSuchElementException when head is invoked</span>
  * </pre>
  * 
  * <p>
@@ -617,14 +625,16 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class SetSpec extends WordSpec {
  * 
- *   "An empty Set" should {
- *     "have size 0" taggedAs(SlowTest) in {
- *       assert(Set.empty.size === 0)
- *     }
- *     
- *     "produce NoSuchElementException when head is invoked" taggedAs(SlowTest, DbTest) in {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
+ *   "A Set" when {
+ *     "empty" should {
+ *       "have size 0" taggedAs(SlowTest) in {
+ *         assert(Set.empty.size === 0)
+ *       }
+ *       
+ *       "produce NoSuchElementException when head is invoked" taggedAs(SlowTest, DbTest) in {
+ *         intercept[NoSuchElementException] {
+ *           Set.empty.head
+ *         }
  *       }
  *     }
  *   }

@@ -40,14 +40,16 @@ import verb.BehaveWord
  * 
  * class SetSpec extends FunSpec {
  * 
- *   describe("An empty Set") {
- *     it("should have size 0") {
- *       assert(Set.empty.size === 0)
- *     }
+ *   describe("A Set") {
+ *     describe("when empty") {
+ *       it("should have size 0") {
+ *         assert(Set.empty.size === 0)
+ *       }
  *     
- *     it("should produce NoSuchElementException when head is invoked") {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
+ *       it("should produce NoSuchElementException when head is invoked") {
+ *         intercept[NoSuchElementException] {
+ *           Set.empty.head
+ *         }
  *       }
  *     }
  *   }
@@ -101,9 +103,10 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">An empty Set
- * - should have size 0
- * - should produce NoSuchElementException when head is invoked</span>
+ * <span class="stGreen">A Set</span>
+ * <span class="stGreen">  when empty</span>
+ * <span class="stGreen"> - should have size 0</span>
+ * <span class="stGreen"> - should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
  * <p>
@@ -130,14 +133,16 @@ import verb.BehaveWord
  * 
  * class SetSpec extends FunSpec {
  *   
- *   describe("An empty Set") {
- *     ignore("should have size 0") {
- *       assert(Set.empty.size === 0)
- *     }
- *     
- *     it("should produce NoSuchElementException when head is invoked") {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
+ *   describe("A Set") {
+ *     describe("when empty") {
+ *       ignore("should have size 0") {
+ *         assert(Set.empty.size === 0)
+ *       }
+ *       
+ *       it("should produce NoSuchElementException when head is invoked") {
+ *         intercept[NoSuchElementException] {
+ *           Set.empty.head
+ *         }
  *       }
  *     }
  *   }
@@ -157,7 +162,8 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">An empty Set</span>
+ * <span class="stGreen">A Set</span>
+ * <span class="stGreen">  when empty</span>
  * <span class="stYellow">- should have size 0 !!! IGNORED !!!</span>
  * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
  * </pre>
@@ -256,12 +262,14 @@ import verb.BehaveWord
  * 
  * class SetSpec extends FunSpec {
  * 
- *   describe("An empty Set") {
- *     it("should have size 0") (pending)
- *     
- *     it("should produce NoSuchElementException when head is invoked") {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
+ *   describe("A Set") {
+ *     describe("when empty") {
+ *       it("should have size 0") (pending)
+ *       
+ *       it("should produce NoSuchElementException when head is invoked") {
+ *         intercept[NoSuchElementException] {
+ *           Set.empty.head
+ *         }
  *       }
  *     }
  *   }
@@ -279,13 +287,14 @@ import verb.BehaveWord
  * </pre>
  *
  * <p>
- * It will run both tests, but report that the test named "<code>An empty Set should have size 0</code>" is pending. You'll see:
+ * It will run both tests, but report that the test named "<code>should have size 0</code>" is pending. You'll see:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">An empty Set</span>
- * <span class="stYellow">- should have size 0 (pending)</span>
- * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
+ * <span class="stGreen">A Set</span>
+ * <span class="stGreen">  when empty</span>
+ * <span class="stYellow">  - should have size 0 (pending)</span>
+ * <span class="stGreen">  - should produce NoSuchElementException when head is invoked</span>
  * </pre>
  * 
  * <h2>Tagging tests</h2>
@@ -322,14 +331,16 @@ import verb.BehaveWord
  * 
  * class SetSpec extends FunSpec {
  * 
- *   describe("An empty Set") {
- *     it("should have size 0", SlowTest) {
- *       assert(Set.empty.size === 0)
- *     }
- *     
- *     it("should produce NoSuchElementException when head is invoked", SlowTest, DbTest) {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
+ *   describe("A Set") {
+ *     describe("when empty") {
+ *       it("should have size 0", SlowTest) {
+ *         assert(Set.empty.size === 0)
+ *       }
+ *       
+ *       it("should produce NoSuchElementException when head is invoked", SlowTest, DbTest) {
+ *         intercept[NoSuchElementException] {
+ *           Set.empty.head
+ *         }
  *       }
  *     }
  *   }

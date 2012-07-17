@@ -9,14 +9,16 @@ import org.scalatest.FunSpec
 
 class SetSpec extends FunSpec {
 
-  describe("An empty Set") {
-    it("should have size 0", SlowTest) {
-      assert(Set.empty.size === 0)
-    }
-    
-    it("should produce NoSuchElementException when head is invoked", SlowTest, DbTest) {
-      intercept[NoSuchElementException] {
-        Set.empty.head
+  describe("A Set") {
+    describe("when empty") {
+      it("should have size 0", SlowTest) {
+        assert(Set.empty.size === 0)
+      }
+      
+      it("should produce NoSuchElementException when head is invoked", SlowTest, DbTest) {
+        intercept[NoSuchElementException] {
+          Set.empty.head
+        }
       }
     }
   }
