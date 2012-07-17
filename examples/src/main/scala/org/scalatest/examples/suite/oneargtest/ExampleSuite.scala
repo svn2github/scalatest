@@ -23,12 +23,12 @@ class ExampleSuite extends fixture.Suite {
   def `test: testing should be easy` (f: F) {
     f.writer.write("easy!")
     f.writer.flush()
-    assert(f.file.length === 12)
+    assert(f.file.length === 18)
   }
 
   def `test: testing should be fun` (f: F) {
     f.writer.write("fun!")
     f.writer.flush()
-    assert(f.file.length === 9)
+    assert(f.file.length === 17)
   }
 }

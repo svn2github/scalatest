@@ -761,13 +761,13 @@ import scala.collection.immutable.ListSet
  *   test("testing should be easy") { f =>
  *     f.writer.write("easy!")
  *     f.writer.flush()
- *     assert(f.file.length === 12)
+ *     assert(f.file.length === 18)
  *   }
  * 
  *   test("testing should be fun") { f =>
  *     f.writer.write("fun!")
  *     f.writer.flush()
- *     assert(f.file.length === 9)
+ *     assert(f.file.length === 17)
  *   }
  * }
  * </pre>

@@ -24,13 +24,13 @@ class ExampleSpec extends fixture.FeatureSpec {
     scenario("user can write test code easily") { f =>
       f.writer.write("easy!")
       f.writer.flush()
-      assert(f.file.length === 12)
+      assert(f.file.length === 18)
     }
 
     scenario("user's test code should be fun to read") { f =>
       f.writer.write("fun!")
       f.writer.flush()
-      assert(f.file.length === 9)
+      assert(f.file.length === 17)
     }
   } 
 }

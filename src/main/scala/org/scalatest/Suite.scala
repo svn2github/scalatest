@@ -1187,13 +1187,13 @@ import exceptions._
  *   def &#96;test: testing should be easy&#96; (f: F) {
  *     f.writer.write("easy!")
  *     f.writer.flush()
- *     assert(f.file.length === 12)
+ *     assert(f.file.length === 18)
  *   }
  * 
  *   def &#96;test: testing should be fun&#96; (f: F) {
  *     f.writer.write("fun!")
  *     f.writer.flush()
- *     assert(f.file.length === 9)
+ *     assert(f.file.length === 17)
  *   }
  * }
  * </pre>

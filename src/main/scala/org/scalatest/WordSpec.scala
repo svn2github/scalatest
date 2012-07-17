@@ -1161,13 +1161,13 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     "be easy" in { f =>
  *       f.writer.write("easy!")
  *       f.writer.flush()
- *       assert(f.file.length === 12)
+ *       assert(f.file.length === 18)
  *     }
  * 
  *     "be fun" in { f =>
  *       f.writer.write("fun!")
  *       f.writer.flush()
- *       assert(f.file.length === 9)
+ *       assert(f.file.length === 17)
  *     }
  *   } 
  * }
