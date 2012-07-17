@@ -11,9 +11,7 @@ class ExampleSpec extends FlatSpec {
       val buffer = new ListBuffer[String]
     }
   
-  behavior of "Testing" 
-  
-  it should "be easy" in {
+  "Testing" should "be easy" in {
     val f = fixture
     f.builder.append("easy!")
     assert(f.builder.toString === "ScalaTest is easy!")

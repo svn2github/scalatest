@@ -8,9 +8,7 @@ class ExampleSuite extends FlatSpec with OneInstancePerTest {
   val builder = new StringBuilder("ScalaTest is ")
   val buffer = new ListBuffer[String]
 
-  behavior of "Testing"
-  
-  it should "be easy" in {
+  "Testing" should "be easy" in {
     builder.append("easy!")
     assert(builder.toString === "ScalaTest is easy!")
     assert(buffer.isEmpty)

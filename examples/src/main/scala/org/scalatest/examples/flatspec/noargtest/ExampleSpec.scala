@@ -21,9 +21,7 @@ class ExampleSpec extends FlatSpec {
     }
   }
 
-  behavior of "this test"
-    
-  it should "succeed" in {
+  "This test" should "succeed" in {
     assert(1 + 1 === 2)
   }
 

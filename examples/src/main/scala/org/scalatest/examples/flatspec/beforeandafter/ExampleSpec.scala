@@ -1,7 +1,6 @@
 package org.scalatest.examples.flatspec.beforeandafter
 
-import org.scalatest.FlatSpec
-import org.scalatest.BeforeAndAfter
+import org.scalatest._
 import collection.mutable.ListBuffer
 
 class ExampleSpec extends FlatSpec with BeforeAndAfter {
@@ -18,9 +17,7 @@ class ExampleSpec extends FlatSpec with BeforeAndAfter {
     buffer.clear()
   }
 
-  behavior of "Testing"
-    
-  it should "be easy" in {
+  "Testing" should "be easy" in {
     builder.append("easy!")
     assert(builder.toString === "ScalaTest is easy!")
     assert(buffer.isEmpty)

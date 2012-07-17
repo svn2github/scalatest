@@ -13,33 +13,23 @@ class ExampleSpec extends FlatSpec {
     val buffer = ListBuffer("ScalaTest", "is")
   }
 
-  behavior of "Testing"
-  
   // This test needs the StringBuilder fixture
-  it should "be productive" in { 
-    new Builder {
-      builder.append("productive!")
-      assert(builder.toString === "ScalaTest is productive!")
-    }
+  "Testing" should "be productive" in new Builder {
+    builder.append("productive!")
+    assert(builder.toString === "ScalaTest is productive!")
   }
-  
-  behavior of "Test code"
-  
+
   // This test needs the ListBuffer[String] fixture
-  it should "be readable" in {
-    new Buffer {
-      buffer += ("readable!")
-      assert(buffer === List("ScalaTest", "is", "readable!"))
-    }
+  "Test code" should "be readable" in new Buffer {
+    buffer += ("readable!")
+    assert(buffer === List("ScalaTest", "is", "readable!"))
   }
 
   // This test needs both the StringBuilder and ListBuffer
-  it should "be clear and concise" in {
-    new Builder with Buffer {
-      builder.append("clear!")
-      buffer += ("concise!")
-      assert(builder.toString === "ScalaTest is clear!")
-      assert(buffer === List("ScalaTest", "is", "concise!"))
-    }
+  it should "be clear and concise" in new Builder with Buffer {
+    builder.append("clear!")
+    buffer += ("concise!")
+    assert(builder.toString === "ScalaTest is clear!")
+    assert(buffer === List("ScalaTest", "is", "concise!"))
   }
 }

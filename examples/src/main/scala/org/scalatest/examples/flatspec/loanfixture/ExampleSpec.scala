@@ -46,10 +46,8 @@ class ExampleSpec extends FlatSpec {
     }
   }
 
-  behavior of "Testing"
-  
   // This test needs the file fixture
-  it should "be productive" in {
+  "Testing" should "be productive" in {
     withFile { (file, writer) =>
       writer.write("productive!")
       writer.flush()
@@ -57,10 +55,8 @@ class ExampleSpec extends FlatSpec {
     }
   }
   
-  behavior of "Test code"
-  
   // This test needs the database fixture
-  it should "be readable" in {
+  "Test code" should "be readable" in {
     withDatabase { db =>
       db.append("readable!")
       assert(db.toString === "ScalaTest is readable!")

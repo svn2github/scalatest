@@ -1,7 +1,6 @@
 package org.scalatest.examples.flatspec.composingwithfixture
 
 import org.scalatest._
-import org.scalatest.AbstractSuite
 import collection.mutable.ListBuffer
 
 trait Builder extends AbstractSuite { this: Suite =>
@@ -35,9 +34,7 @@ trait Buffer extends AbstractSuite { this: Suite =>
 
 class ExampleSpec extends FlatSpec with Builder with Buffer {
 
-  behavior of "Testing"
-    
-  it should "be easy" in {
+  "Testing" should "be easy" in {
     builder.append("easy!")
     assert(builder.toString === "ScalaTest is easy!")
     assert(buffer.isEmpty)

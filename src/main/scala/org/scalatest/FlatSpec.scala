@@ -601,9 +601,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *       val buffer = new ListBuffer[String]
  *     }
  *   
- *   behavior of "Testing" 
- *   
- *   it should "be easy" in {
+ *   "Testing" should "be easy" in {
  *     val f = fixture
  *     f.builder.append("easy!")
  *     assert(f.builder.toString === "ScalaTest is easy!")
@@ -661,34 +659,24 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     val buffer = ListBuffer("ScalaTest", "is")
  *   }
  * 
- *   behavior of "Testing"
- *   
  *   // This test needs the StringBuilder fixture
- *   it should "be productive" in { 
- *     new Builder {
- *       builder.append("productive!")
- *       assert(builder.toString === "ScalaTest is productive!")
- *     }
+ *   "Testing" should "be productive" in new Builder {
+ *     builder.append("productive!")
+ *     assert(builder.toString === "ScalaTest is productive!")
  *   }
- *   
- *   behavior of "Test code"
- *   
+ * 
  *   // This test needs the ListBuffer[String] fixture
- *   it should "be readable" in {
- *     new Buffer {
- *       buffer += ("readable!")
- *       assert(buffer === List("ScalaTest", "is", "readable!"))
- *     }
+ *   "Test code" should "be readable" in new Buffer {
+ *     buffer += ("readable!")
+ *     assert(buffer === List("ScalaTest", "is", "readable!"))
  *   }
  * 
  *   // This test needs both the StringBuilder and ListBuffer
- *   it should "be clear and concise" in {
- *     new Builder with Buffer {
- *       builder.append("clear!")
- *       buffer += ("concise!")
- *       assert(builder.toString === "ScalaTest is clear!")
- *       assert(buffer === List("ScalaTest", "is", "concise!"))
- *     }
+ *   it should "be clear and concise" in new Builder with Buffer {
+ *     builder.append("clear!")
+ *     buffer += ("concise!")
+ *     assert(builder.toString === "ScalaTest is clear!")
+ *     assert(buffer === List("ScalaTest", "is", "concise!"))
  *   }
  * }
  * </pre>
@@ -714,9 +702,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   val builder = new StringBuilder("ScalaTest is ")
  *   val buffer = new ListBuffer[String]
  * 
- *   behavior of "Testing"
- *   
- *   it should "be easy" in {
+ *   "Testing" should "be easy" in {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
@@ -817,9 +803,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   behavior of "this test"
- *     
- *   it should "succeed" in {
+ *   "This test" should "succeed" in {
  *     assert(1 + 1 === 2)
  *   }
  * 
@@ -837,8 +821,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <pre class="stREPL">
  * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
- * - this test should succeed
- * <span class="stRed">- this test should fail *** FAILED ***
+ * This test
+ * - should succeed
+ * <span class="stRed">- should fail *** FAILED ***
  *   2 did not equal 3 (<console>:33)
  *   + Dir snapshot: hello.txt, world.txt </span>
  * </pre>
@@ -867,6 +852,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *
  * <pre class="stHighlight">
  * package org.scalatest.examples.flatspec.loanfixture
+ * 
  * import java.util.concurrent.ConcurrentHashMap
  * 
  * object DbServer { // Simulating a database server
@@ -913,10 +899,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   behavior of "Testing"
- *   
  *   // This test needs the file fixture
- *   it should "be productive" in {
+ *   "Testing" should "be productive" in {
  *     withFile { (file, writer) =>
  *       writer.write("productive!")
  *       writer.flush()
@@ -924,10 +908,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  *   
- *   behavior of "Test code"
- *   
  *   // This test needs the database fixture
- *   it should "be readable" in {
+ *   "Test code" should "be readable" in {
  *     withDatabase { db =>
  *       db.append("readable!")
  *       assert(db.toString === "ScalaTest is readable!")
@@ -1005,18 +987,16 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   behavior of "Testing" 
- *   
- *   it should "be easy" in { f =>
+ *   "Testing" should "be easy" in { f =&gt;
  *     f.writer.write("easy!")
  *     f.writer.flush()
- *     assert(f.file.length === 12)
+ *     assert(f.file.length === 18)
  *   }
  * 
- *   it should "be fun" in { f =>
+ *   it should "be fun" in { f =&gt;
  *     f.writer.write("fun!")
  *     f.writer.flush()
- *     assert(f.file.length === 9)
+ *     assert(f.file.length === 17)
  *   }
  * }
  * </pre>
@@ -1042,8 +1022,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <pre class="stHighlight">
  * package org.scalatest.examples.flatspec.beforeandafter
  * 
- * import org.scalatest.FlatSpec
- * import org.scalatest.BeforeAndAfter
+ * import org.scalatest._
  * import collection.mutable.ListBuffer
  * 
  * class ExampleSpec extends FlatSpec with BeforeAndAfter {
@@ -1060,9 +1039,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     buffer.clear()
  *   }
  * 
- *   behavior of "Testing"
- *     
- *   it should "be easy" in {
+ *   "Testing" should "be easy" in {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
@@ -1109,7 +1086,6 @@ import Suite.anErrorThatShouldCauseAnAbort
  * package org.scalatest.examples.flatspec.composingwithfixture
  * 
  * import org.scalatest._
- * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
  * trait Builder extends AbstractSuite { this: Suite =>
@@ -1143,9 +1119,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSpec extends FlatSpec with Builder with Buffer {
  * 
- *   behavior of "Testing"
- *     
- *   it should "be easy" in {
+ *   "Testing" should "be easy" in {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)
@@ -1803,8 +1777,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.FlatSpec
- * import org.scalatest.BeforeAndAfterEach
+ * package org.scalatest.examples.flatspec.composingbeforeandaftereach
+ * 
+ * import org.scalatest._
  * import collection.mutable.ListBuffer
  * 
  * trait Builder extends BeforeAndAfterEach { this: Suite =>
@@ -1842,7 +1817,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSpec extends FlatSpec with Builder with Buffer {
  * 
- *   "Testing" should "be easy" in {
+ *   behavior of "Testing"
+ *   
+ *   it should "be easy" in {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)

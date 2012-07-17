@@ -1,7 +1,6 @@
 package org.scalatest.examples.flatspec.composingbeforeandaftereach
 
 import org.scalatest._
-import org.scalatest.BeforeAndAfterEach
 import collection.mutable.ListBuffer
 
 trait Builder extends BeforeAndAfterEach { this: Suite =>
