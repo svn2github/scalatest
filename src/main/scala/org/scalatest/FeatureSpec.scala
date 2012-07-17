@@ -41,49 +41,21 @@ import Suite.anErrorThatShouldCauseAnAbort
  * Here's an example:
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.featurespec
+ * 
  * import org.scalatest.FeatureSpec
- * import org.scalatest.GivenWhenThen
- * import scala.collection.mutable.Stack
  * 
- * class StackFeatureSpec extends FeatureSpec with GivenWhenThen {
+ * class SetSpec extends FeatureSpec {
  * 
- *   feature("The user can pop an element off the top of the stack") {
- * 
- *     info("As a programmer")
- *     info("I want to be able to pop items off the stack")
- *     info("So that I can get them in last-in-first-out order")
- * 
- *     scenario("pop is invoked on a non-empty stack") {
- * 
- *       given("a non-empty stack")
- *       val stack = new Stack[Int]
- *       stack.push(1)
- *       stack.push(2)
- *       val oldSize = stack.size
- * 
- *       when("when pop is invoked on the stack")
- *       val result = stack.pop()
- * 
- *       then("the most recently pushed element should be returned")
- *       assert(result === 2)
- * 
- *       and("the stack should have one less item than before")
- *       assert(stack.size === oldSize - 1)
+ *   feature("A Set") {
+ *     scenario("When is empty should have size 0") {
+ *       assert(Set.empty.size === 0)
  *     }
- * 
- *     scenario("pop is invoked on an empty stack") {
- * 
- *       given("an empty stack")
- *       val emptyStack = new Stack[String]
- * 
- *       when("when pop is invoked on the stack")
- *       then("NoSuchElementException should be thrown")
+ *     
+ *     scenario("When is empty and head is invoked, should produce NoSuchElementException") {
  *       intercept[NoSuchElementException] {
- *         emptyStack.pop()
+ *         Set.empty.head
  *       }
- * 
- *       and("the stack should still be empty")
- *       assert(emptyStack.isEmpty)
  *     }
  *   }
  * }
@@ -97,8 +69,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * by the primary constructor of <code>StackFeatureSpec</code>. 
  * A feature clause describes a feature of the <em>subject</em> (class or other entity) you are specifying
  * and testing. In the previous example, 
- * the subject under specification and test is a stack. The feature being specified and tested is 
- * the ability for a user (a programmer in this case) to pop an element off the top of the stack. With each scenario you provide a
+ * the subject under specification and test is a Set. The feature being specified and tested is 
+ * the behavior of a Set when it is empty and head is invoked. With each scenario you provide a
  * string (the <em>spec text</em>) that specifies the behavior of the subject for
  * one scenario in which the feature may be used, and a block of code that tests that behavior.
  * You place the spec text between the parentheses, followed by the test code between curly
@@ -136,7 +108,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new StackFeatureSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
@@ -144,20 +116,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">Feature: The user can pop an element off the top of the stack 
- *   As a programmer 
- *   I want to be able to pop items off the stack 
- *   So that I can get them in last-in-first-out order 
- *   Scenario: pop is invoked on a non-empty stack
- *     Given a non-empty stack 
- *     When when pop is invoked on the stack 
- *     Then the most recently pushed element should be returned 
- *     And the stack should have one less item than before 
- *   Scenario: pop is invoked on an empty stack
- *     Given an empty stack 
- *     When when pop is invoked on the stack 
- *     Then NoSuchElementException should be thrown 
- *     And the stack should still be empty</span> 
+ * <span class="stGreen">A Set
+ *   Scenario: When is empty should have size 0
+ *   Scenario: When is empty and head is invoked, should produce NoSuchElementException
+ * </span> 
  * </pre>
  *
  * <p>
@@ -178,44 +140,42 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.featurespec.ignore
+ * 
  * import org.scalatest.FeatureSpec
- *
- * class ArithmeticSpec extends FeatureSpec {
- *
- *   // Sharing fixture objects via instance variables
- *   val shared = 5
- *
- *   feature("Integer arithmetic") {
- *
- *     ignore("addition") {
- *       val sum = 2 + 3
- *       assert(sum === shared)
+ * 
+ * class SetSpec extends FeatureSpec {
+ *   
+ *   feature("A Set") {
+ *     ignore("When is empty should have size 0") {
+ *       assert(Set.empty.size === 0)
  *     }
- *
- *     scenario("subtraction") {
- *       val diff = 7 - 2
- *       assert(diff === shared)
+ *     
+ *     scenario("When is empty and head is invoked, should produce NoSuchElementException") {
+ *       intercept[NoSuchElementException] {
+ *         Set.empty.head
+ *       }
  *     }
  *   }
  * }
  * </pre>
  *
  * <p>
- * If you run this version of <code>ArithmeticSpec</code> with:
+ * If you run this version of <code>SetSpec</code> with:
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ArithmeticSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
- * It will run only <code>subtraction</code> and report that <code>addition</code> was ignored:
+ * It will run only <code>When is empty and head is invoked, should produce NoSuchElementException</code> and report that <code>When is empty should have size 0</code> was ignored:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">Feature: Integer arithmetic </span>
- *   <span class="stYellow">Scenario: addition !!! IGNORED !!!</span>
- *   <span class="stGreen">Scenario: subtraction</span>
+ * <span class="stGreen">A Set</span>
+ *   <span class="stYellow">- Scenario: When is empty should have size 0 !!! IGNORED !!!</span>
+ *   <span class="stGreen">Scenario: When is empty and head is invoked, should produce NoSuchElementException</span>
  * </pre>
  *
  * <h2>Informers</h2>
@@ -231,39 +191,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * is provided via the <code>info</code> parameterless method.
  * You can pass the extra information to the <code>Informer</code> via its <code>apply</code> method.
  * The <code>Informer</code> will then pass the information to the <code>Reporter</code> via an <code>InfoProvided</code> event.
- * Here's an example:
  * </p>
- *
- * <pre class="stHighlight">
- * import org.scalatest.FeatureSpec
- *
- * class ArithmeticSpec extends FeatureSpec {
- *
- *   feature("Integer arithmetic") {
- *
- *     scenario("addition") {
- *       val sum = 2 + 3
- *       assert(sum === 5)
- *       info("Addition seems to work")
- *     }
- *
- *     scenario("subtraction") {
- *       val diff = 7 - 2
- *       assert(diff === 5)
- *     }
- *   }
- * }
- * </pre>
- *
- * If you run this <code>ArithmeticSpec</code> from the interpreter, you will see the following message
- * included in the printed report:
- *
- * <pre class="stREPL">
- * <span class="stGreen">Feature: Integer arithmetic 
- *   Scenario: addition
- *     Addition seems to work</span> 
- * </pre>
- *
+ * 
  * <p>
  * One use case for the <code>Informer</code> is to pass more information about a scenario to the reporter. For example,
  * the <code>GivenWhenThen</code> trait provides methods that use the implicit <code>info</code> provided by <code>FeatureSpec</code>
@@ -271,58 +200,44 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.FeatureSpec
- * import org.scalatest.GivenWhenThen
+ * package org.scalatest.examples.featurespec.info
  * 
- * class ArithmeticSpec extends FeatureSpec with GivenWhenThen {
+ * import collection.mutable
+ * import org.scalatest._
  * 
- *   feature("Integer arithmetic") {
- *
- *     scenario("addition") {
+ * class SetSpec extends FeatureSpec with GivenWhenThen {
+ *   
+ *   feature("An element can be added to an empty mutable Set") {
+ *     scenario("When an element is added to an empty mutable Set") {
+ *       given("an empty mutable Set")
+ *       val set = mutable.Set.empty[String]
  * 
- *       given("two integers")
- *       val x = 2
- *       val y = 3
+ *       when("an element is added")
+ *       set += "clarity"
  * 
- *       when("they are added")
- *       val sum = x + y
+ *       then("the Set should have size 1")
+ *       assert(set.size === 1)
  * 
- *       then("the result is the sum of the two numbers")
- *       assert(sum === 5)
- *     }
- *
- *     scenario("subtraction") {
+ *       and("the Set should contain the added element")
+ *       assert(set.contains("clarity"))
  * 
- *       given("two integers")
- *       val x = 7
- *       val y = 2
- * 
- *       when("one is subtracted from the other")
- *       val diff = x - y
- * 
- *       then("the result is the difference of the two numbers")
- *       assert(diff === 5)
+ *       info("That's all folks!")
  *     }
  *   }
  * }
  * </pre>
  *
- * <p>
- * If you run this <code>FeatureSpec</code> from the interpreter, you will see the following messages
+ * If you run this <code>SetSpec</code> from the interpreter, you will see the following message
  * included in the printed report:
- * </p>
  *
  * <pre class="stREPL">
- * scala> (new ArithmeticSpec).execute()
- * <span class="stGreen">Feature: Integer arithmetic 
- *   Scenario: addition
- *     Given two integers 
- *     When they are added 
- *     Then the result is the sum of the two numbers 
- *   Scenario: subtraction
- *     Given two integers 
- *     When one is subtracted from the other 
- *     Then the result is the difference of the two numbers</span> 
+ * <span class="stGreen">An element can be added to an empty mutable Set
+ *   Scenario: When an element is added to an empty mutable Set
+ *     Given an empty mutable Set
+ *     When an element is added 
+ *     Then the Set should have size 1 
+ *     And the Set should contain the added element 
+ *     That's all folks!</span> 
  * </pre>
  *
  * <h2>Pending tests</h2>
@@ -352,21 +267,20 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.FeatureSpec
- *
- * class ArithmeticSpec extends FeatureSpec {
- *
- *   // Sharing fixture objects via instance variables
- *   val shared = 5
- *
- *   feature("Integer arithmetic") {
- *
- *     scenario("addition") {
- *       val sum = 2 + 3
- *       assert(sum === shared)
+ * package org.scalatest.examples.featurespec.pending
+ * 
+ * import org.scalatest._
+ * 
+ * class SetSpec extends FeatureSpec {
+ * 
+ *   feature("A Set") {
+ *     scenario("When empty should have size 0") (pending)
+ *     
+ *     scenario("When empty and head is invoked should produce NoSuchElementException") {
+ *       intercept[NoSuchElementException] {
+ *         Set.empty.head
+ *       }
  *     }
- *
- *     scenario("subtraction") (pending)
  *   }
  * }
  * </pre>
@@ -378,17 +292,17 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ArithmeticSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
- * It will run both tests, but report that <code>subtraction</code> is pending. You'll see:
+ * It will run both tests, but report that <code>When empty should have size 0</code> is pending. You'll see:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">Feature: Integer arithmetic 
- *   Scenario: addition</span>
- *   <span class="stYellow">Scenario: subtraction (pending)</span>
+ * <span class="stGreen">A Set</span>
+ *   <span class="stYellow">Scenario: When empty should have size 0 (pending)</span>
+ *   <span class="stGreen">Scenario: When empty and head is invoked should produce NoSuchElementException</span>
  * </pre>
  * 
  * <p>
@@ -431,7 +345,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">Feature: Integer arithmetic</span> 
+ * <span class="stGreen">Integer arithmetic</span> 
  *   <span class="stYellow">Scenario: addition (pending)
  *     Given two integers 
  *     When they are added 
@@ -455,8 +369,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.featurespec.annotations
+ * 
  * import org.scalatest.Tag
- *
+ * 
  * object SlowTest extends Tag("com.mycompany.tags.SlowTest")
  * object DbTest extends Tag("com.mycompany.tags.DbTest")
  * </pre>
@@ -467,30 +383,27 @@ import Suite.anErrorThatShouldCauseAnAbort
  *
  * <pre class="stHighlight">
  * import org.scalatest.FeatureSpec
- *
- * class ArithmeticSpec extends FeatureSpec {
- *
- *   // Sharing fixture objects via instance variables
- *   val shared = 5
- *
- *   feature("Integer arithmetic") {
- *
- *     scenario("addition", SlowTest) {
- *       val sum = 2 + 3
- *       assert(sum === shared)
+ * 
+ * class ExampleSpec extends FeatureSpec {
+ * 
+ *   feature("A calculator can do addition and subtraction") {
+ *     
+ *     scenario("When 1 + 1 is entered, the result should be 2", SlowTest) {
+ *       val sum = 1 + 1
+ *       assert(sum === 2)
  *     }
- *
- *     scenario("subtraction", SlowTest, DbTest) {
- *       val diff = 7 - 2
- *       assert(diff === shared)
+ *     
+ *     scenario("When 4 - 1 is entered, the result should be 3", SlowTest, DbTest) {
+ *       val diff = 4 - 1
+ *       assert(diff === 3)
  *     }
  *   }
  * }
  * </pre>
  *
  * <p>
- * This code marks both tests, "addition" and "subtraction," with the <code>com.mycompany.tags.SlowTest</code> tag, 
- * and test "subtraction" with the <code>com.mycompany.tags.DbTest</code> tag.
+ * This code marks both tests  with the <code>com.mycompany.tags.SlowTest</code> tag, 
+ * and test "When 4 - 1 is entered, the result should be 3" with the <code>com.mycompany.tags.DbTest</code> tag.
  * </p>
  *
  * <p>
