@@ -44,25 +44,20 @@ import Suite.anErrorThatShouldCauseAnAbort
  * Here's an example <code>WordSpec</code>:
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.wordspec
+ * 
  * import org.scalatest.WordSpec
- * import scala.collection.mutable.Stack
- *
- * class StackSpec extends WordSpec {
- *
- *   "A Stack" should {
- *
- *     "pop values in last-in-first-out order" in {
- *       val stack = new Stack[Int]
- *       stack.push(1)
- *       stack.push(2)
- *       assert(stack.pop() === 2)
- *       assert(stack.pop() === 1)
+ * 
+ * class SetSpec extends WordSpec {
+ * 
+ *   "An empty Set" should {
+ *     "have size 0" in {
+ *       assert(Set.empty.size === 0)
  *     }
- *
- *     "throw NoSuchElementException if an empty stack is popped" in {
- *       val emptyStack = new Stack[String]
+ *     
+ *     "produce NoSuchElementException when head is invoked" in {
  *       intercept[NoSuchElementException] {
- *         emptyStack.pop()
+ *         Set.empty.head
  *       }
  *     }
  *   }
@@ -377,25 +372,20 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.wordspec.ignore
+ * 
  * import org.scalatest.WordSpec
- * import scala.collection.mutable.Stack
- *
- * class StackSpec extends WordSpec {
- *
- *   "A Stack" should {
- *
- *     "pop values in last-in-first-out order" ignore {
- *       val stack = new Stack[Int]
- *       stack.push(1)
- *       stack.push(2)
- *       assert(stack.pop() === 2)
- *       assert(stack.pop() === 1)
+ * 
+ * class SetSpec extends WordSpec {
+ *   
+ *   "An empty Set" should {
+ *     "have size 0" ignore {
+ *       assert(Set.empty.size === 0)
  *     }
- *
- *     "throw NoSuchElementException if an empty stack is popped" in {
- *       val emptyStack = new Stack[String]
+ *     
+ *     "produce NoSuchElementException when head is invoked" in {
  *       intercept[NoSuchElementException] {
- *         emptyStack.pop()
+ *         Set.empty.head
  *       }
  *     }
  *   }
@@ -403,11 +393,11 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </pre>
  *
  * <p>
- * If you run this version of <code>StackSpec</code> with:
+ * If you run this version of <code>SetSpec</code> with:
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new StackSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
@@ -415,10 +405,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">StackSpec:
- * A Stack</span>
- * <span class="stYellow">- should pop values in last-in-first-out order !!! IGNORED !!!</span>
- * <span class="stGreen">- should throw NoSuchElementException if an empty stack is popped</span>
+ * <span class="stGreen">An empty Set</span>
+ * <span class="stYellow">- should have size 0 !!! IGNORED !!!</span>
+ * <span class="stGreen">- should should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
  * <h2>Informers</h2>
@@ -434,24 +423,37 @@ import Suite.anErrorThatShouldCauseAnAbort
  * is provided via the <code>info</code> parameterless method.
  * You can pass the extra information to the <code>Informer</code> via its <code>apply</code> method.
  * The <code>Informer</code> will then pass the information to the <code>Reporter</code> via an <code>InfoProvided</code> event.
- * Here's an example:
+ * </p>
+ * 
+ * <p>
+ * One use case for the <code>Informer</code> is to pass more information about a specification to the reporter. For example,
+ * the <code>GivenWhenThen</code> trait provides methods that use the implicit <code>info</code> provided by <code>WordSpec</code>
+ * to pass such information to the reporter. Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.WordSpec
- *
- * class ArithmeticSpec extends WordSpec {
- *
- *  "The Scala language" should {
- *     "add correctly" in {
- *       val sum = 2 + 3
- *       assert(sum === 5)
- *       info("addition seems to work")
- *     }
- *
- *     "subtract correctly" in {
- *       val diff = 7 - 2
- *       assert(diff === 5)
+ * package org.scalatest.examples.wordspec.info
+ * 
+ * import collection.mutable
+ * import org.scalatest._
+ * 
+ * class SetSpec extends WordSpec with GivenWhenThen {
+ *   
+ *   "An element" can {
+ *     "be added to an empty mutable Set" in {
+ *       given("an empty mutable Set")
+ *       val set = mutable.Set.empty[String]
+ * 
+ *       when("an element is added")
+ *       set += "clarity"
+ * 
+ *       then("the Set should have size 1")
+ *       assert(set.size === 1)
+ * 
+ *       and("the Set should contain the added element")
+ *       assert(set.contains("clarity"))
+ * 
+ *       info("That's all folks!")
  *     }
  *   }
  * }
@@ -463,74 +465,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ArithmeticSpec).execute()
- * <span class="stGreen">ArithmeticSpec:
- * The Scala language 
- * - should add correctly
- *   + addition seems to work 
- * - should subtract correctly</span>
- * </pre>
- *
- * <p>
- * One use case for the <code>Informer</code> is to pass more information about a specification to the reporter. For example,
- * the <code>GivenWhenThen</code> trait provides methods that use the implicit <code>info</code> provided by <code>WordSpec</code>
- * to pass such information to the reporter. Here's an example:
- * </p>
- *
- * <pre class="stHighlight">
- * import org.scalatest.WordSpec
- * import org.scalatest.GivenWhenThen
- * 
- * class ArithmeticSpec extends WordSpec with GivenWhenThen {
- * 
- *  "The Scala language" should {
- * 
- *     "add correctly" in { 
- * 
- *       given("two integers")
- *       val x = 2
- *       val y = 3
- * 
- *       when("they are added")
- *       val sum = x + y
- * 
- *       then("the result is the sum of the two numbers")
- *       assert(sum === 5)
- *     }
- * 
- *     "subtract correctly" in {
- * 
- *       given("two integers")
- *       val x = 7
- *       val y = 2
- * 
- *       when("one is subtracted from the other")
- *       val diff = x - y
- * 
- *       then("the result is the difference of the two numbers")
- *       assert(diff === 5)
- *     }
- *   }
- * }
- * </pre>
- *
- * <p>
- * If you run this <code>WordSpec</code> from the interpreter, you will see the following messages
- * included in the printed report:
- * </p>
- *
- * <pre class="stREPL">
- * scala> (new ArithmeticSpec).execute()
- * <span class="stGreen">ArithmeticSpec:
- * The Scala language 
- * - should add correctly
- *   + Given two integers 
- *   + When they are added 
- *   + Then the result is the sum of the two numbers 
- * - should subtract correctly
- *   + Given two integers 
- *   + When one is subtracted from the other 
- *   + Then the result is the difference of the two numbers</span> 
+ * scala> new SetSpec execute
+ * <span class="stGreen">An element
+ * - should can be added to an empty mutable Set
+ *   + Given an empty mutable Set 
+ *   + When an element is added 
+ *   + Then the Set should have size 1 
+ *   + And the Set should contain the added element 
+ *   + That's all folks!</span>
  * </pre>
  *
  * <h2>Pending tests</h2>
@@ -560,20 +502,20 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * import org.scalatest.WordSpec
- *
- * class ArithmeticSpec extends WordSpec {
- *
- *   // Sharing fixture objects via instance variables
- *   val shared = 5
- *
- *  "The Scala language" should {
- *     "add correctly" in {
- *       val sum = 2 + 3
- *       assert(sum === shared)
+ * package org.scalatest.examples.wordspec.pending
+ * 
+ * import org.scalatest._
+ * 
+ * class SetSpec extends WordSpec {
+ * 
+ *   "An empty Set" should {
+ *     "have size 0" in (pending)
+ *     
+ *     "produce NoSuchElementException when head is invoked" in {
+ *       intercept[NoSuchElementException] {
+ *         Set.empty.head
+ *       }
  *     }
- *
- *     "subtract correctly" is (pending)
  *   }
  * }
  * </pre>
@@ -583,17 +525,17 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new ArithmeticSpec).execute()
+ * scala> new SetSpec execute
  * </pre>
  *
  * <p>
- * It will run both tests but report that <code>The Scala language should subtract correctly</code> is pending. You'll see:
+ * It will run both tests but report that <code>An empty Set should have size 0</code> is pending. You'll see:
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">The Scala language
- * - should add correctly</span>
- * <span class="stYellow">- should subtract correctly (pending)</span>
+ * <span class="stGreen">An empty Set</span>
+ * <span class="stYellow">- should have size 0 (pending)</span>
+ * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
  * </pre>
  * 
  * <p>
@@ -658,8 +600,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.wordspec.annotations
+ * 
  * import org.scalatest.Tag
- *
+ * 
  * object SlowTest extends Tag("com.mycompany.tags.SlowTest")
  * object DbTest extends Tag("com.mycompany.tags.DbTest")
  * </pre>
@@ -670,16 +614,16 @@ import Suite.anErrorThatShouldCauseAnAbort
  *
  * <pre class="stHighlight">
  * import org.scalatest.WordSpec
- *
+ * 
  * class ExampleSpec extends WordSpec {
- *
- *   "The Scala language" should {
- *
+ * 
+ *   "A calculator" should {
+ *     
  *     "add correctly" taggedAs(SlowTest) in {
  *       val sum = 1 + 1
  *       assert(sum === 2)
  *     }
- *
+ *     
  *     "subtract correctly" taggedAs(SlowTest, DbTest) in {
  *       val diff = 4 - 1
  *       assert(diff === 3)
@@ -690,7 +634,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *
  * <p>
  * This code marks both tests with the <code>com.mycompany.tags.SlowTest</code> tag, 
- * and test <code>"The Scala language should subtract correctly"</code> with the <code>com.mycompany.tags.DbTest</code> tag.
+ * and test <code>"A calculator should subtract correctly"</code> with the <code>com.mycompany.tags.DbTest</code> tag.
  * </p>
  *
  * <p>
