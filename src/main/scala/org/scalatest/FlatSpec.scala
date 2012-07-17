@@ -1165,8 +1165,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec.composingbeforeandaftereach
+ * 
  * import org.scalatest._
- * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
  * trait Builder extends BeforeAndAfterEach { this: Suite =>
@@ -1204,9 +1205,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSpec extends FlatSpec with Builder with Buffer {
  * 
- *   behavior of "Testing"
- *   
- *   it should "be easy" in {
+ *   "Testing" should "be easy" in {
  *     builder.append("easy!")
  *     assert(builder.toString === "ScalaTest is easy!")
  *     assert(buffer.isEmpty)

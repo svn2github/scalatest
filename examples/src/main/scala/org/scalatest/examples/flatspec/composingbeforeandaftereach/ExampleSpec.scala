@@ -38,9 +38,7 @@ trait Buffer extends BeforeAndAfterEach { this: Suite =>
 
 class ExampleSpec extends FlatSpec with Builder with Buffer {
 
-  behavior of "Testing"
-  
-  it should "be easy" in {
+  "Testing" should "be easy" in {
     builder.append("easy!")
     assert(builder.toString === "ScalaTest is easy!")
     assert(buffer.isEmpty)
