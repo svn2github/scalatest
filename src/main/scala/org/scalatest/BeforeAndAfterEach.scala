@@ -155,19 +155,17 @@ trait BeforeAndAfterEach extends AbstractSuite {
   protected def beforeEach() = ()
 
   /**
-   * Defines a method (that takes a <code>configMap</code>) to be run before
-   * each of this suite's tests.
+   * <strong>This overloaded form of <code>beforeEach</code> has been deprecated and will
+   * be removed in a future version of ScalaTest. Please use <code>beforeEach(TestData)</code> instead.</strong>
    *
    * <p>
-   * This trait's implementation
-   * of <code>runTest</code> invokes this method before running
-   * each test (passing in the <code>configMap</code> passed to it), thus this
-   * method can be used to set up a test fixture
-   * needed by each test. This trait's implementation of this method invokes the
+   * During the deprecation cycle, this trait's implementation
+   * of <code>beforeEach(TestData)</code> invokes will this method.
+   * This trait's implementation of this method invokes the
    * overloaded form of <code>beforeEach</code> that takes no <code>configMap</code>.
    * </p>
    */
-  @deprecated("Please use beforeEach(testData: TestData) instead.")
+  @deprecated("Please use beforeEach(TestData) instead.")
   protected def beforeEach(configMap: Map[String, Any]) {
     beforeEach()
   }
@@ -206,19 +204,17 @@ trait BeforeAndAfterEach extends AbstractSuite {
   protected def afterEach() = ()
 
   /**
-   * Defines a method (that takes a <code>configMap</code>) to be run after
-   * each of this suite's tests.
+   * <strong>This overloaded form of <code>afterEach</code> has been deprecated and will
+   * be removed in a future version of ScalaTest. Please use <code>afterEach(TestData)</code> instead.</strong>
    *
    * <p>
-   * This trait's implementation
-   * of <code>runTest</code> invokes this method after running
-   * each test (passing in the <code>configMap</code> passed to it), thus this
-   * method can be used to tear down a test fixture
-   * needed by each test. This trait's implementation of this method invokes the
+   * During the deprecation cycle, this trait's implementation
+   * of <code>afterEach(TestData)</code> invokes will this method.
+   * This trait's implementation of this method invokes the
    * overloaded form of <code>afterEach</code> that takes no <code>configMap</code>.
    * </p>
    */
-  @deprecated("Please use afterEach(testData: TestData) instead.")
+  @deprecated("Please use afterEach(TestData) instead.")
   protected def afterEach(configMap: Map[String, Any]) {
     afterEach()
   }
