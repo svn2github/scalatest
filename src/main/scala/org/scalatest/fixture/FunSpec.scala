@@ -91,23 +91,23 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneargtest
+ * package org.scalatest.examples.funspec.oneargtest
  * 
  * import org.scalatest.fixture
  * import java.io._
  * 
- * class ExampleSuite extends fixture.Suite {
+ * class ExampleSpec extends fixture.FunSpec {
  * 
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
  * 
  *   def withFixture(test: OneArgTest) {
- *
+ * 
  *     // create the fixture
  *     val file = File.createTempFile("hello", "world")
  *     val writer = new FileWriter(file)
  *     val theFixture = F(file, writer)
- *
+ * 
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
  *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
@@ -116,18 +116,20 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *       writer.close() // clean up the fixture
  *     }
  *   }
- *
- *   def &#96;test: testing should be easy&#96; (f: F) {
- *     f.writer.write("easy!")
- *     f.writer.flush()
- *     assert(f.file.length === 18)
- *   }
  * 
- *   def &#96;test: testing should be fun&#96; (f: F) {
- *     f.writer.write("fun!")
- *     f.writer.flush()
- *     assert(f.file.length === 17)
- *   }
+ *   describe("Testing") {
+ *     it("should be easy") { f =>
+ *       f.writer.write("easy!")
+ *       f.writer.flush()
+ *       assert(f.file.length === 18)
+ *     }
+ * 
+ *     it("should be fun") { f =>
+ *       f.writer.write("fun!")
+ *       f.writer.flush()
+ *       assert(f.file.length === 17)
+ *     }
+ *   } 
  * }
  * </pre>
  *
@@ -147,7 +149,7 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.fixture.suite.sharing
+ * package org.scalatest.examples.fixture.funspec.sharing
  * 
  * import java.util.concurrent.ConcurrentHashMap
  * import org.scalatest.fixture
@@ -167,7 +169,7 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *   }
  * }
  * 
- * trait DbFixture { this: fixture.Suite =&gt;
+ * trait DbFixture { this: fixture.Suite =>
  * 
  *   type FixtureParam = Db
  * 
@@ -188,28 +190,31 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *   }
  * }
  * 
- * class ExampleSuite extends fixture.Suite with DbFixture {
+ * class ExampleSpec extends fixture.FunSpec with DbFixture {
  * 
  *   override def populateDb(db: Db) { // setup the fixture
  *     db.append("ScalaTest is ")
  *   }
  * 
- *   def &#96;test: testing should be easy&#96; (db: Db) {
+ *   describe("Testing") {
+ *     it("should be easy") { db =>
  *       db.append("easy!")
  *       assert(db.toString === "ScalaTest is easy!")
- *   }
- * 
- *   def &#96;test: testing should be fun&#96; (db: Db) {
+ *     }
+ *     
+ *     it("should be fun") { db =>
  *       db.append("fun!")
  *       assert(db.toString === "ScalaTest is fun!")
+ *     }
  *   }
- * 
- *   // This test doesn't need a Db
- *   def &#96;test: test code should be clear&#96; {
+ *   
+ *   describe("Test code") {
+ *     it("should be clear") { _ =>
  *       val buf = new StringBuffer
  *       buf.append("ScalaTest code is ")
  *       buf.append("clear!")
  *       assert(buf.toString === "ScalaTest code is clear!")
+ *     }
  *   }
  * }
  * </pre>
