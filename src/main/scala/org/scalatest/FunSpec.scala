@@ -27,11 +27,13 @@ import verb.BehaveWord
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * For teams coming from Ruby's RSpec tool, <code>FunSpec</code> will feel very familiar; More generally, for any team that prefers BDD, <code>FunSpec</code>'s nesting 
- * and gentle guide to structuring text (with describe and it) provides an excellent general-purpose choice for writing specification-style tests. 
+ * For teams coming from Ruby's RSpec tool, <code>FunSpec</code> will feel familiar; More generally, for any team that prefers BDD, <code>FunSpec</code>'s nesting 
+ * and gentle guide to structuring text (with <code>describe</code> and <code>it</code>) provide an excellent general-purpose choice for writing specification-style tests. 
  * </td></tr></table>
  * 
+ * <p>
  * Here's an example <code>FunSpec</code>:
+ * </p>
  *
  * <pre class="stHighlight">
  * package org.scalatest.examples.funspec

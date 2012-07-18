@@ -47,7 +47,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
  * A good first step for teams wishing to move from xUnit to BDD, <code>FlatSpec</code>'s structure is flat like xUnit, so it is simple and familiar, 
- * but the test names must be written in a specification style: "X should Y," "A must B," etc.  
+ * but the test names must be written in a specification style: "X should Y," "A must B," <em>etc.  </em>
  * </td></tr></table>
  * 
  * Here's an example <code>FlatSpec</code>:

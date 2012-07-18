@@ -30,12 +30,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * Although also usable for unit testing, <code>FeatureSpec</code>'s main intended use is for acceptance testing. It is similar to <code>FunSpec</code> in 
- * its structure, but different in that it only allows one level of nesting (one feature clause that can contain a series of scenario clauses), 
- * and that the words "feature" and "scenario" show up in the report text whereas <code>FunSpec</code>'s "describe" and "it" do not. Because tests are functions, 
- * you can share tests or programmatically register them, but at the cost of one generated class file per test. <code>FeatureSpec</code> brings into scope no 
- * implicit conversions except the one it inherits from <code>Assertions</code>, the implicit conversion that puts <code>===</code> on everything, so the likelyhood for 
- * implicit conversion conflicts is minimized. Compiling a <code>FeatureSpec</code> will generate one extra class file per feature and one per scenario.  
+ * Trait <code>FeatureSpec</code>'s is primarily intended for acceptance testing, including the process of programmers working alongside non-programmers to
+ * define the acceptance requirements.
  * </td></tr></table>
  * 
  * Here's an example:

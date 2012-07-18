@@ -23,7 +23,7 @@ import scala.collection.immutable.ListSet
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * For teams coming from xUnit, <code>FunSuite</code> feels comfortable and familiar while still giving some of the benefits of BDD: <code>FunSuite</code> makes it easy to 
+ * For teams coming from xUnit, <code>FunSuite</code> feels comfortable and familiar while still giving some benefits of BDD: <code>FunSuite</code> makes it easy to 
  * write descriptive test names, natural to write focused tests, and generates specification-like output that can facilitate communication among 
  * stakeholders.
  * </td></tr></table>
