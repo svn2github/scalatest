@@ -57,8 +57,9 @@ class ExampleSpec extends fixture.FunSpec with DbFixture {
     }
   }
   
+  // This test doesn't need a Db
   describe("Test code") {
-    it("should be clear") { _ =>
+    it("should be clear") { () =>
       val buf = new StringBuffer
       buf.append("ScalaTest code is ")
       buf.append("clear!")

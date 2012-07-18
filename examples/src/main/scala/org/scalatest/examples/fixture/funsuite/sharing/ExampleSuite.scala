@@ -45,18 +45,18 @@ class ExampleSuite extends fixture.FunSuite with DbFixture {
     db.append("ScalaTest is ")
   }
 
-  test("Testing should be easy") { db =>
+  test("testing should be easy") { db =>
       db.append("easy!")
       assert(db.toString === "ScalaTest is easy!")
   }
 
-  test("Testing should be fun") { db =>
+  test("testing should be fun") { db =>
       db.append("fun!")
       assert(db.toString === "ScalaTest is fun!")
   }
 
   // This test doesn't need a Db
-  test("test code should be clear") { _ =>
+  test("test code should be clear") { () =>
       val buf = new StringBuffer
       buf.append("ScalaTest code is ")
       buf.append("clear!")

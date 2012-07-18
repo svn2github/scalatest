@@ -57,8 +57,9 @@ class ExampleSpec extends fixture.WordSpec with DbFixture {
     }
   }
   
+  // This test doesn't need a Db
   "Test code" should {
-    "should be clear" in { _ =>
+    "should be clear" in { () =>
       val buf = new StringBuffer
       buf.append("ScalaTest code is ")
       buf.append("clear!")

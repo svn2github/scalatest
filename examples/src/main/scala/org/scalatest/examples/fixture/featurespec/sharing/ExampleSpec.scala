@@ -58,7 +58,7 @@ class ExampleSpec extends fixture.FeatureSpec with DbFixture {
   }
   
   feature("Test code") {
-    scenario("When user read test code it should be clear") { _ =>
+    scenario("When user read test code it should be clear") { () =>
       val buf = new StringBuffer
       buf.append("ScalaTest code is ")
       buf.append("clear!")
