@@ -206,8 +206,8 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
-    val expectedTestSucceededList = List(LineInFilePair("feature Scenario: info", "LocationSuiteProp.scala", thisLineNumber + 6))
-    val expectedTestFailedList = List(SeeStackDepthExceptionPair("feature Scenario: fail"))
+    val expectedTestSucceededList = List(LineInFilePair("Feature: feature Scenario: info", "LocationSuiteProp.scala", thisLineNumber + 6))
+    val expectedTestFailedList = List(SeeStackDepthExceptionPair("Feature: feature Scenario: fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 5))
     
     class NestedSuite extends FeatureSpec {
@@ -242,8 +242,8 @@ class LocationSuiteProp extends SuiteProp
     val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName + "$NestedSuite"),
                                           TopOfClassPair(suiteTypeName + "$FailNestedSuite"))
     val expectedSuiteAbortedList = List(SeeStackDepthExceptionPair(suiteTypeName + "$AbortNestedSuite"))
-    val expectedTestSucceededList = List(LineInFilePair("feature Scenario: info", "LocationSuiteProp.scala", thisLineNumber + 6))
-    val expectedTestFailedList = List(SeeStackDepthExceptionPair("feature Scenario: fail"))
+    val expectedTestSucceededList = List(LineInFilePair("Feature: feature Scenario: info", "LocationSuiteProp.scala", thisLineNumber + 6))
+    val expectedTestFailedList = List(SeeStackDepthExceptionPair("Feature: feature Scenario: fail"))
     val expectedInfoProvidedList = List(LineInFilePair("test info", "LocationSuiteProp.scala", thisLineNumber + 5))
     
     class NestedSuite extends StringFixtureFeatureSpec {

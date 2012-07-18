@@ -407,7 +407,7 @@ class TwoSlowAndOneWeakTestExamples extends SuiteExamples {
       scenario("first test", mytags.SlowAsMolasses, mytags.WeakAsAKitten) {}
       scenario("second test", mytags.SlowAsMolasses) {}
     }
-    override val theTestNames = Vector("A feature Scenario: first test", "A feature Scenario: second test")
+    override val theTestNames = Vector("Feature: A feature Scenario: first test", "Feature: A feature Scenario: second test")
   }
 
   class FixtureFeatureSpecExample extends StringFixtureFeatureSpec with Services {
@@ -421,7 +421,7 @@ class TwoSlowAndOneWeakTestExamples extends SuiteExamples {
       scenario("first test", mytags.SlowAsMolasses, mytags.WeakAsAKitten) { s => }
       scenario("second test", mytags.SlowAsMolasses) { s => }
     }
-    override val theTestNames = Vector("A feature Scenario: first test", "A feature Scenario: second test")
+    override val theTestNames = Vector("Feature: A feature Scenario: first test", "Feature: A feature Scenario: second test")
   }
 
   class PropSpecExample extends PropSpec with Services {

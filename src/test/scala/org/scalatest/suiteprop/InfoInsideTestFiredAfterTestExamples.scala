@@ -471,7 +471,7 @@ class InfoInsideTestFiredAfterTestExamples extends SuiteExamples {
         info(msg)
       }
     }
-    override val theTestName = "A feature Scenario: test name"
+    override val theTestName = "Feature: A feature Scenario: test name"
   }
 
   class FixtureFeatureSpecExample extends StringFixtureFeatureSpec with Services {
@@ -487,7 +487,7 @@ class InfoInsideTestFiredAfterTestExamples extends SuiteExamples {
         info(msg)
       }
     }
-    override val theTestName = "A feature Scenario: test name"
+    override val theTestName = "Feature: A feature Scenario: test name"
   }
 
   class PropSpecExample extends PropSpec with Services {

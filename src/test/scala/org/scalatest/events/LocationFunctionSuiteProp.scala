@@ -164,15 +164,15 @@ class LocationFunctionSuiteProp extends FunctionSuiteProp {
       }
     }
     val suiteTypeName: String = "FixtureFeatureSpec"
-    val expectedStartingList = List(TestStartingPair("Test Scenario: succeed", expectedSourceFileName, thisLineNumber - 14), 
-                                   TestStartingPair("Test Scenario: pending", expectedSourceFileName, thisLineNumber - 12),
-                                   TestStartingPair("Test Scenario: cancel", expectedSourceFileName, thisLineNumber - 10))
+    val expectedStartingList = List(TestStartingPair("Feature: Test Scenario: succeed", expectedSourceFileName, thisLineNumber - 14), 
+                                   TestStartingPair("Feature: Test Scenario: pending", expectedSourceFileName, thisLineNumber - 12),
+                                   TestStartingPair("Feature: Test Scenario: cancel", expectedSourceFileName, thisLineNumber - 10))
     val expectedResultList = List(TestResultPair(classOf[TestSucceeded], expectedSourceFileName, thisLineNumber - 17), 
                                  TestResultPair(classOf[TestPending], expectedSourceFileName, thisLineNumber - 15),
                                  TestResultPair(classOf[TestCanceled], expectedSourceFileName, thisLineNumber - 13),
                                  TestResultPair(classOf[TestIgnored], expectedSourceFileName, thisLineNumber - 11))
-    val expectedScopeOpenedList = List(ScopeOpenedPair("Test", expectedSourceFileName, thisLineNumber - 22))
-    val expectedScopeClosedList = List(ScopeClosedPair("Test", expectedSourceFileName, thisLineNumber - 23))
+    val expectedScopeOpenedList = List(ScopeOpenedPair("Feature: Test", expectedSourceFileName, thisLineNumber - 22))
+    val expectedScopeClosedList = List(ScopeClosedPair("Feature: Test", expectedSourceFileName, thisLineNumber - 23))
   }
   
   def flatSpec = new FlatSpec with FixtureServices {

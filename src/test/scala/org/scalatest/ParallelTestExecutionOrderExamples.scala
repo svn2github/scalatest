@@ -180,18 +180,18 @@ class ExampleParallelTestExecutionOrderFeatureSpec extends FeatureSpec with Orde
   }
   def assertOrderTest(events: List[Event]) {
     assert(events.size === 12)
-    checkScopeOpened(events(0), "Scope 1")
-    checkTestStarting(events(1), "Scope 1 Scenario: Test 1")
-    checkTestSucceeded(events(2), "Scope 1 Scenario: Test 1")
-    checkTestStarting(events(3), "Scope 1 Scenario: Test 2")
-    checkTestSucceeded(events(4), "Scope 1 Scenario: Test 2")
-    checkScopeClosed(events(5), "Scope 1")
-    checkScopeOpened(events(6), "Scope 2")
-    checkTestStarting(events(7), "Scope 2 Scenario: Test 3")
-    checkTestSucceeded(events(8), "Scope 2 Scenario: Test 3")
-    checkTestStarting(events(9), "Scope 2 Scenario: Test 4")
-    checkTestSucceeded(events(10), "Scope 2 Scenario: Test 4")
-    checkScopeClosed(events(11), "Scope 2")
+    checkScopeOpened(events(0), "Feature: Scope 1")
+    checkTestStarting(events(1), "Feature: Scope 1 Scenario: Test 1")
+    checkTestSucceeded(events(2), "Feature: Scope 1 Scenario: Test 1")
+    checkTestStarting(events(3), "Feature: Scope 1 Scenario: Test 2")
+    checkTestSucceeded(events(4), "Feature: Scope 1 Scenario: Test 2")
+    checkScopeClosed(events(5), "Feature: Scope 1")
+    checkScopeOpened(events(6), "Feature: Scope 2")
+    checkTestStarting(events(7), "Feature: Scope 2 Scenario: Test 3")
+    checkTestSucceeded(events(8), "Feature: Scope 2 Scenario: Test 3")
+    checkTestStarting(events(9), "Feature: Scope 2 Scenario: Test 4")
+    checkTestSucceeded(events(10), "Feature: Scope 2 Scenario: Test 4")
+    checkScopeClosed(events(11), "Feature: Scope 2")
   }
 }
 
@@ -207,18 +207,18 @@ class ExampleParallelTestExecutionOrderFixtureFeatureSpec extends fixture.Featur
   }
   def assertOrderTest(events: List[Event]) {
     assert(events.size === 12)
-    checkScopeOpened(events(0), "Fixture Scope 1")
-    checkTestStarting(events(1), "Fixture Scope 1 Scenario: Fixture Test 1")
-    checkTestSucceeded(events(2), "Fixture Scope 1 Scenario: Fixture Test 1")
-    checkTestStarting(events(3), "Fixture Scope 1 Scenario: Fixture Test 2")
-    checkTestSucceeded(events(4), "Fixture Scope 1 Scenario: Fixture Test 2")
-    checkScopeClosed(events(5), "Fixture Scope 1")
-    checkScopeOpened(events(6), "Fixture Scope 2")
-    checkTestStarting(events(7), "Fixture Scope 2 Scenario: Fixture Test 3")
-    checkTestSucceeded(events(8), "Fixture Scope 2 Scenario: Fixture Test 3")
-    checkTestStarting(events(9), "Fixture Scope 2 Scenario: Fixture Test 4")
-    checkTestSucceeded(events(10), "Fixture Scope 2 Scenario: Fixture Test 4")
-    checkScopeClosed(events(11), "Fixture Scope 2")
+    checkScopeOpened(events(0), "Feature: Fixture Scope 1")
+    checkTestStarting(events(1), "Feature: Fixture Scope 1 Scenario: Fixture Test 1")
+    checkTestSucceeded(events(2), "Feature: Fixture Scope 1 Scenario: Fixture Test 1")
+    checkTestStarting(events(3), "Feature: Fixture Scope 1 Scenario: Fixture Test 2")
+    checkTestSucceeded(events(4), "Feature: Fixture Scope 1 Scenario: Fixture Test 2")
+    checkScopeClosed(events(5), "Feature: Fixture Scope 1")
+    checkScopeOpened(events(6), "Feature: Fixture Scope 2")
+    checkTestStarting(events(7), "Feature: Fixture Scope 2 Scenario: Fixture Test 3")
+    checkTestSucceeded(events(8), "Feature: Fixture Scope 2 Scenario: Fixture Test 3")
+    checkTestStarting(events(9), "Feature: Fixture Scope 2 Scenario: Fixture Test 4")
+    checkTestSucceeded(events(10), "Feature: Fixture Scope 2 Scenario: Fixture Test 4")
+    checkScopeClosed(events(11), "Feature: Fixture Scope 2")
   }
 }
 

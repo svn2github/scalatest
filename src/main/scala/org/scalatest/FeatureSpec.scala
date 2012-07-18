@@ -112,7 +112,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">A Set
+ * <span class="stGreen">Feature: A Set
  *   Scenario: When is empty should have size 0
  *   Scenario: When is empty and head is invoked, should produce NoSuchElementException
  * </span> 
@@ -169,7 +169,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">A Set</span>
+ * <span class="stGreen">Feature: A Set</span>
  *   <span class="stYellow">- Scenario: When is empty should have size 0 !!! IGNORED !!!</span>
  *   <span class="stGreen">Scenario: When is empty and head is invoked, should produce NoSuchElementException</span>
  * </pre>
@@ -227,7 +227,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * included in the printed report:
  *
  * <pre class="stREPL">
- * <span class="stGreen">An element can be added to an empty mutable Set
+ * <span class="stGreen">Feature: An element can be added to an empty mutable Set
  *   Scenario: When an element is added to an empty mutable Set
  *     Given an empty mutable Set
  *     When an element is added 
@@ -296,7 +296,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">A Set</span>
+ * <span class="stGreen">Feature: A Set</span>
  *   <span class="stYellow">Scenario: When empty should have size 0 (pending)</span>
  *   <span class="stGreen">Scenario: When empty and head is invoked should produce NoSuchElementException</span>
  * </pre>
@@ -341,7 +341,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">Integer arithmetic</span> 
+ * <span class="stGreen">Feature: Integer arithmetic</span> 
  *   <span class="stYellow">Scenario: addition (pending)
  *     Given two integers 
  *     When they are added 
@@ -702,7 +702,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <pre class="stREPL">
  * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
- * Calculator Add
+ * Feature: Calculator Add
  * Scenario: 1 + 1 should be 2
  * <span class="stRed">Scenario: 2 + 2 should be 4 *** FAILED ***
  * 4 did not equal 3 (<console>:82)
@@ -2271,7 +2271,7 @@ trait FeatureSpec extends Suite { thisSuite =>
     if (!currentBranchIsTrunk)
       throw new NotAllowedException(Resources("cantNestFeatureClauses"), getStackDepthFun("FeatureSpec.scala", "feature"))
 
-    registerNestedBranch(description, None, fun, "featureCannotAppearInsideAScenario", "FeatureSpec.scala", "feature", 7, -2)
+    registerNestedBranch(Resources("feature", description), None, fun, "featureCannotAppearInsideAScenario", "FeatureSpec.scala", "feature", 7, -2)
   }
 
   /**

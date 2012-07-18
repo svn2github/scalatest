@@ -407,7 +407,7 @@ class TwoTestsIgnoredExamples extends SuiteExamples {
       ignore("first test") {}
       ignore("second test") {}
     }
-    override val theTestNames = Vector("A feature Scenario: first test", "A feature Scenario: second test")
+    override val theTestNames = Vector("Feature: A feature Scenario: first test", "Feature: A feature Scenario: second test")
   }
 
   class FixtureFeatureSpecExample extends StringFixtureFeatureSpec with Services {
@@ -421,7 +421,7 @@ class TwoTestsIgnoredExamples extends SuiteExamples {
       ignore("first test") { s => }
       ignore("second test") { s => }
     }
-    override val theTestNames = Vector("A feature Scenario: first test", "A feature Scenario: second test")
+    override val theTestNames = Vector("Feature: A feature Scenario: first test", "Feature: A feature Scenario: second test")
   }
 
   class PropSpecExample extends PropSpec with Services {

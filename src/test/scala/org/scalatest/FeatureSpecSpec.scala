@@ -798,6 +798,36 @@ class FeatureSpecSpec extends FunSpec with SharedHelpers {
       }
     }
     
+    class ExamplePrefixSpec extends FeatureSpec {
+      feature("A Feature") {
+        scenario("A Scenario") {
+          
+        }
+      }
+    }
+    
+    it("should prefix feature text with 'Feature: '") {
+      val rep = new EventRecordingReporter
+      (new ExamplePrefixSpec).run(None, Args(rep))
+      val scopeOpened = rep.scopeOpenedEventsReceived
+      assert(scopeOpened.size === 1)
+      assert(scopeOpened(0).message === "Feature: A Feature")
+      val scopeClosed = rep.scopeClosedEventsReceived
+      assert(scopeClosed.size === 1)
+      assert(scopeClosed(0).message === "Feature: A Feature")
+    }
+    
+    it("should prefix scenario text with 'Scenario: '") {
+      val rep = new EventRecordingReporter
+      (new ExamplePrefixSpec).run(None, Args(rep))
+      val testStarting = rep.testStartingEventsReceived
+      assert(testStarting.size === 1)
+      assert(testStarting(0).testText === "Scenario: A Scenario")
+      val testSucceeded = rep.testSucceededEventsReceived
+      assert(testSucceeded.size === 1)
+      assert(testSucceeded(0).testText === "Scenario: A Scenario")
+    }
+    
     describe("when failure happens") {
       
       it("should fire TestFailed event with correct stack depth info when test failed") {
