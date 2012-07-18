@@ -82,23 +82,23 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneargtest
+ * package org.scalatest.examples.funsuite.oneargtest
  * 
  * import org.scalatest.fixture
  * import java.io._
  * 
- * class ExampleSuite extends fixture.Suite {
+ * class ExampleSuite extends fixture.FunSuite {
  * 
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
  * 
  *   def withFixture(test: OneArgTest) {
- *
+ * 
  *     // create the fixture
  *     val file = File.createTempFile("hello", "world")
  *     val writer = new FileWriter(file)
  *     val theFixture = F(file, writer)
- *
+ * 
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
  *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
@@ -107,14 +107,14 @@ import scala.collection.immutable.ListSet
  *       writer.close() // clean up the fixture
  *     }
  *   }
- *
- *   def &#96;test: testing should be easy&#96; (f: F) {
+ * 
+ *   test("Testing should be easy") { f =>
  *     f.writer.write("easy!")
  *     f.writer.flush()
  *     assert(f.file.length === 18)
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; (f: F) {
+ *   test("Testing should be fun") { f =>
  *     f.writer.write("fun!")
  *     f.writer.flush()
  *     assert(f.file.length === 17)
@@ -138,7 +138,7 @@ import scala.collection.immutable.ListSet
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.fixture.suite.sharing
+ * package org.scalatest.examples.fixture.funsuite.sharing
  * 
  * import java.util.concurrent.ConcurrentHashMap
  * import org.scalatest.fixture
@@ -158,7 +158,7 @@ import scala.collection.immutable.ListSet
  *   }
  * }
  * 
- * trait DbFixture { this: fixture.Suite =&gt;
+ * trait DbFixture { this: fixture.Suite =>
  * 
  *   type FixtureParam = Db
  * 
@@ -179,24 +179,24 @@ import scala.collection.immutable.ListSet
  *   }
  * }
  * 
- * class ExampleSuite extends fixture.Suite with DbFixture {
+ * class ExampleSuite extends fixture.FunSuite with DbFixture {
  * 
  *   override def populateDb(db: Db) { // setup the fixture
  *     db.append("ScalaTest is ")
  *   }
  * 
- *   def &#96;test: testing should be easy&#96; (db: Db) {
+ *   test("Testing should be easy") { db =>
  *       db.append("easy!")
  *       assert(db.toString === "ScalaTest is easy!")
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; (db: Db) {
+ *   test("Testing should be fun") { db =>
  *       db.append("fun!")
  *       assert(db.toString === "ScalaTest is fun!")
  *   }
  * 
  *   // This test doesn't need a Db
- *   def &#96;test: test code should be clear&#96; {
+ *   test("test code should be clear") { _ =>
  *       val buf = new StringBuffer
  *       buf.append("ScalaTest code is ")
  *       buf.append("clear!")
