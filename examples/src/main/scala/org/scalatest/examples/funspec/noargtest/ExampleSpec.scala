@@ -5,8 +5,6 @@ import org.scalatest.FunSpec
 
 class ExampleSpec extends FunSpec {
 
-  final val tmpDir = "tmpDir"
-
   override def withFixture(test: NoArgTest) {
 
     try {

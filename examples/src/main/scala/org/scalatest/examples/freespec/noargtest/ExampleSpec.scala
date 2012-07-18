@@ -5,8 +5,6 @@ import org.scalatest.FreeSpec
 
 class ExampleSpec extends FreeSpec {
 
-  final val tmpDir = "tmpDir"
-
   override def withFixture(test: NoArgTest) {
 
     try {

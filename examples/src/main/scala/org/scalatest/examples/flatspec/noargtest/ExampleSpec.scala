@@ -5,8 +5,6 @@ import org.scalatest.FlatSpec
 
 class ExampleSpec extends FlatSpec {
 
-  final val tmpDir = "tmpDir"
-
   override def withFixture(test: NoArgTest) {
 
     try {

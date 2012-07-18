@@ -5,8 +5,6 @@ import org.scalatest.FeatureSpec
 
 class ExampleSpec extends FeatureSpec {
 
-  final val tmpDir = "tmpDir"
-
   override def withFixture(test: NoArgTest) {
 
     try {

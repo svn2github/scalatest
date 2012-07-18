@@ -5,8 +5,6 @@ import org.scalatest.WordSpec
 
 class ExampleSpec extends WordSpec {
 
-  final val tmpDir = "tmpDir"
-
   override def withFixture(test: NoArgTest) {
 
     try {
