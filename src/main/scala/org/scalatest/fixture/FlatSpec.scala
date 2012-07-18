@@ -89,23 +89,23 @@ import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.oneargtest
+ * package org.scalatest.examples.flatspec.oneargtest
  * 
  * import org.scalatest.fixture
  * import java.io._
  * 
- * class ExampleSuite extends fixture.Suite {
+ * class ExampleSpec extends fixture.FlatSpec {
  * 
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
  * 
  *   def withFixture(test: OneArgTest) {
- *
+ * 
  *     // create the fixture
  *     val file = File.createTempFile("hello", "world")
  *     val writer = new FileWriter(file)
  *     val theFixture = F(file, writer)
- *
+ * 
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
  *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
@@ -114,14 +114,14 @@ import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
  *       writer.close() // clean up the fixture
  *     }
  *   }
- *
- *   def &#96;test: testing should be easy&#96; (f: F) {
+ * 
+ *   "Testing" should "be easy" in { f =>
  *     f.writer.write("easy!")
  *     f.writer.flush()
  *     assert(f.file.length === 18)
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; (f: F) {
+ *   it should "be fun" in { f =>
  *     f.writer.write("fun!")
  *     f.writer.flush()
  *     assert(f.file.length === 17)
@@ -145,7 +145,7 @@ import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.fixture.suite.sharing
+ * package org.scalatest.examples.fixture.flatspec.sharing
  * 
  * import java.util.concurrent.ConcurrentHashMap
  * import org.scalatest.fixture
@@ -165,7 +165,7 @@ import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * trait DbFixture { this: fixture.Suite =&gt;
+ * trait DbFixture { this: fixture.Suite =>
  * 
  *   type FixtureParam = Db
  * 
@@ -186,24 +186,24 @@ import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * class ExampleSuite extends fixture.Suite with DbFixture {
+ * class ExampleSpec extends fixture.FlatSpec with DbFixture {
  * 
  *   override def populateDb(db: Db) { // setup the fixture
  *     db.append("ScalaTest is ")
  *   }
  * 
- *   def &#96;test: testing should be easy&#96; (db: Db) {
+ *   "Testing" should "be easy" in { db =>
  *       db.append("easy!")
  *       assert(db.toString === "ScalaTest is easy!")
  *   }
  * 
- *   def &#96;test: testing should be fun&#96; (db: Db) {
+ *   it should "be fun" in { db =>
  *       db.append("fun!")
  *       assert(db.toString === "ScalaTest is fun!")
  *   }
  * 
  *   // This test doesn't need a Db
- *   def &#96;test: test code should be clear&#96; {
+ *   "Test code" should "be clear" in { _ =>
  *       val buf = new StringBuffer
  *       buf.append("ScalaTest code is ")
  *       buf.append("clear!")
