@@ -26,16 +26,12 @@ import exceptions.{TestCanceledException, TestPendingException}
 /**
  * <code>Suite</code> that can pass a fixture object into its tests.
  *
- * <p>
- * Note: <code>fixture.Suite</code> is intended for use in special situations, with trait <code>Suite</code> used for general needs. For
- * more insight into where <code>fixture.Suite</code> fits in the big picture, see the <a href="../Suite.html#withFixtureOneArgTest"><code>withFixture(OneArgTest)</code></a> subsection of the <a href="../Suite.html#sharedFixtures">Shared fixtures</a> section in the documentation for trait <code>Suite</code>.
- * </p>
- * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
  * Use trait <code>fixture.Suite</code> in situations for which <a href="../Suite.html"><code>Suite</code></a>
  * would be a good choice, such as large projects or static code generation, when all or most tests need the same fixture objects
- * that must be cleaned up afterwords.
+ * that must be cleaned up afterwords. <em>Note: <code>fixture.Suite</code> is intended for use in special situations, with trait <code>Suite</code> used for general needs. For
+ * more insight into where <code>fixture.Suite</code> fits in the big picture, see the <a href="../Suite.html#withFixtureOneArgTest"><code>withFixture(OneArgTest)</code></a> subsection of the <a href="../Suite.html#sharedFixtures">Shared fixtures</a> section in the documentation for trait <code>Suite</code>.</em>
  * </td></tr></table>
  * 
  * <p>
@@ -46,8 +42,8 @@ import exceptions.{TestCanceledException, TestPendingException}
  * takes a <code>OneArgTest</code>, which is a nested trait defined as a member of this trait.
  * <code>OneArgTest</code> has an <code>apply</code> method that takes a <code>FixtureParam</code>.
  * This <code>apply</code> method is responsible for running a test.
- * This trait's <code>runTest</code> method delegates the actual running of each test to <code>withFixture</code>, passing
- * in the test code to run via the <code>OneArgTest</code> argument. The <code>withFixture</code> method (abstract in this trait) is responsible
+ * This trait's <code>runTest</code> method delegates the actual running of each test to <code>withFixture(OneArgTest)</code>, passing
+ * in the test code to run via the <code>OneArgTest</code> argument. The <code>withFixture(OneArgTest)</code> method (abstract in this trait) is responsible
  * for creating the fixture argument and passing it to the test function.
  * </p>
  * 
@@ -63,66 +59,145 @@ import exceptions.{TestCanceledException, TestPendingException}
  * </ol>
  *
  * <p>
- * Here's an example:
+ * If the fixture you want to pass into your tests consists of multiple objects, you will need to combine
+ * them into one object to use this trait. One good approach to passing multiple fixture objects is
+ * to encapsulate them in a case class. Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
+ * case class F(file: File, writer: FileWriter)
+ * type FixtureParam = F
+ * </pre>
+ *
+ * <p>
+ * To enable trait stacking it is a good idea to always delegate to <code>withFixture(NoArgTest)</code> instead of invoking the test
+ * function directly. To do so, you'll need to convert the <code>OneArgTest</code> to a <code>NoArgTest</code>. You can do that by supplying
+ * the fixture object to the <code>toNoArgTest</code> method of <code>OneArgTest</code>. In other words, instead of
+ * writing &ldquo;<code>test(theFixture)</code>&rdquo;, you'd delegate responsibility for
+ * invoking the test function to the <code>withFixture(NoArgTest)</code> method of the same instance by writing:
+ * </p>
+ *
+ * <pre>
+ * withFixture(test.toNoArgTest(theFixture))
+ * </pre>
+ *
+ * <p>
+ * Here's a complete example:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.oneargtest
+ * 
  * import org.scalatest.fixture
- * import collection.mutable.Stack
- * import java.util.NoSuchElementException
- *
- * class StackSuite extends fixture.Suite {
- *
- *   // 1. define type FixtureParam
- *   type FixtureParam = Stack[Int]
- *
- *   // 2. define the withFixture method
+ * import java.io._
+ * 
+ * class ExampleSuite extends fixture.Suite {
+ * 
+ *   case class F(file: File, writer: FileWriter)
+ *   type FixtureParam = F
+ * 
  *   def withFixture(test: OneArgTest) {
- *     val stack = new Stack[Int]
- *     stack.push(1)
- *     stack.push(2)
- *     test(stack) // "loan" the fixture to the test
- *   }
- *
- *   // 3. write tests that take a fixture parameter
- *   def testPopAValue(stack: Stack[Int]) {
- *     val top = stack.pop()
- *     assert(top === 2)
- *     assert(stack.size === 1)
- *   }
- *
- *   def testPushAValue(stack: Stack[Int]) {
- *     stack.push(9)
- *     assert(stack.size === 3)
- *     assert(stack.head === 9)
- *   }
- *
- *   // 4. You can also write tests that don't take a fixture parameter.
- *   def testPopAnEmptyStack() {
- *     intercept[NoSuchElementException] {
- *       (new Stack[Int]).pop()
+ *     val file = File.createTempFile("hello", "world") // create the fixture
+ *     val writer = new FileWriter(file)
+ *     try {
+ *       writer.write("ScalaTest is ") // set up the fixture
+ *       withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
  *     }
+ *     finally {
+ *       writer.close() // clean up the fixture
+ *     }
+ *   }
+ * 
+ *   def `test: testing should be easy` (f: F) {
+ *     f.writer.write("easy!")
+ *     f.writer.flush()
+ *     assert(f.file.length === 18)
+ *   }
+ * 
+ *   def `test: testing should be fun` (f: F) {
+ *     f.writer.write("fun!")
+ *     f.writer.flush()
+ *     assert(f.file.length === 17)
  *   }
  * }
  * </pre>
  *
  * <p>
- * In the previous example, <code>withFixture</code> creates and initializes a stack, then invokes the test function, passing in
- * the stack.  In addition to setting up a fixture before a test, the <code>withFixture</code> method also allows you to
- * clean it up afterwards, if necessary. If you need to do some clean up that must happen even if a test
+ * In the previous example, <code>withFixture</code> creates and initializes a file, then invokes the test function, passing in
+ * an object holding <code>File</code> and <code>FileWriter</code> objects for that file.  In addition to setting up a fixture before a
+ * test, the <code>withFixture</code> method allows you to clean it up afterwards. If you need to do some clean up that must happen even if a test
  * fails, you should invoke the test function from inside a <code>try</code> block and do the cleanup in a
- * <code>finally</code> clause, like this:
+ * <code>finally</code> clause, as shown in the previous example.
+ * </p>
+ *
+ * <p>
+ * Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
- * def withFixture(test: OneArgTest) {
- *   val resource = someResource.open() // set up the fixture
- *   try {
- *     test(resource) // if the test fails, test(...) will throw an exception
+ * package org.scalatest.examples.suite.loanfixture
+ * 
+ * import java.util.concurrent.ConcurrentHashMap
+ * import org.scalatest.fixture
+ * import DbServer._
+ * import java.util.UUID.randomUUID
+ * 
+ * object DbServer { // Simulating a database server
+ *   type Db = StringBuffer
+ *   private val databases = new ConcurrentHashMap[String, Db]
+ *   def createDb(name: String): Db = {
+ *     val db = new StringBuffer
+ *     databases.put(name, db)
+ *     db
  *   }
- *   finally {
- *     // clean up the fixture no matter whether the test succeeds or fails
- *     resource.close()
+ *   def removeDb(name: String) {
+ *     databases.remove(name)
+ *   }
+ * }
+ * 
+ * trait DbFixture { this: fixture.Suite =&gt;
+ * 
+ *   type FixtureParam = Db
+ * 
+ *   // Allow clients to populate the database after
+ *   // it is created
+ *   def populateDb(db: Db) {}
+ * 
+ *   def withFixture(test: OneArgTest) {
+ *     val dbName = randomUUID.toString
+ *     val db = createDb(dbName) // create the fixture
+ *     try {
+ *       populateDb(db) // setup the fixture
+ *       withFixture(test.toNoArgTest(db)) // "loan" the fixture to the test
+ *     }
+ *     finally {
+ *       removeDb(dbName) // clean up the fixture
+ *     }
+ *   }
+ * }
+ * 
+ * class ExampleSuite extends fixture.Suite with DbFixture {
+ * 
+ *   override def populateDb(db: Db) {
+ *     db.append("ScalaTest is ")
+ *   }
+ * 
+ *   def `test: testing should be easy` (db: Db) {
+ *       db.append("easy!")
+ *       assert(db.toString === "ScalaTest is easy!")
+ *   }
+ * 
+ *   def `test: testing should be fun` (db: Db) {
+ *       db.append("fun!")
+ *       assert(db.toString === "ScalaTest is fun!")
+ *   }
+ * 
+ *   // This test doesn't need a Db
+ *   def `test: test code should be clear` {
+ *       val buf = new StringBuffer
+ *       buf.append("ScalaTest code is ")
+ *       buf.append("clear!")
+ *       assert(buf.toString === "ScalaTest code is clear!")
  *   }
  * }
  * </pre>
@@ -135,44 +210,11 @@ import exceptions.{TestCanceledException, TestPendingException}
  * </p>
  *
  * <p>
- * If the fixture you want to pass into your tests consists of multiple objects, you will need to combine
- * them into one object to use this trait. One good approach to passing multiple fixture objects is
- * to encapsulate them in a case class. Here's an example:
+ * Both examples shown above demonstrate the technique of giving each test its own "fixture sandbox" to play in. When your fixtures
+ * involve external side-effects, like creating files or databases, it is a good idea to give each file or database a unique name as is
+ * done in these examples. This keeps tests completely isolated, allowing you to run them in parallel if desired. You could mix
+ * <code>ParallelTestExecution</code> into either of these <code>ExampleSuite</code> classes, and the tests would run in parallel just fine.
  * </p>
- *
- * <pre class="stHighlight">
- * import org.scalatest.fixture
- * import scala.collection.mutable.ListBuffer
- *
- * class ExampleSuite extends fixture.Suite {
- *
- *   case class F(builder: StringBuilder, buffer: ListBuffer[String])
- *   type FixtureParam = F
- *
- *   def withFixture(test: OneArgTest) {
- *
- *     // Create needed mutable objects
- *     val stringBuilder = new StringBuilder("ScalaTest is ")
- *     val listBuffer = new ListBuffer[String]
- *
- *     // Invoke the test function, passing in the mutable objects
- *     test(F(stringBuilder, listBuffer))
- *   }
- *
- *   def testEasy(f: F) {
- *     f.builder.append("easy!")
- *     assert(f.builder.toString === "ScalaTest is easy!")
- *     assert(f.buffer.isEmpty)
- *     f.buffer += "sweet"
- *   }
- *
- *   def testFun(f: F) {
- *     f.builder.append("fun!")
- *     assert(f.builder.toString === "ScalaTest is fun!")
- *     assert(f.buffer.isEmpty)
- *   }
- * }
- * </pre>
  *
  * @author Bill Venners
  */
