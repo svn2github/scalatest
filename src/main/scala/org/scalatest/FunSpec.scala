@@ -621,8 +621,6 @@ import verb.BehaveWord
  * 
  * class ExampleSpec extends FunSpec {
  * 
- *   final val tmpDir = "tmpDir"
- * 
  *   override def withFixture(test: NoArgTest) {
  * 
  *     try {

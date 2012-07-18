@@ -738,8 +738,6 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSpec extends FlatSpec {
  * 
- *   final val tmpDir = "tmpDir"
- * 
  *   override def withFixture(test: NoArgTest) {
  * 
  *     try {

@@ -985,8 +985,6 @@ import exceptions._
  *
  * class ExampleSuite extends FunSuite {
  *
- *   final val tmpDir = "tmpDir"
- *
  *   override def withFixture(test: NoArgTest) {
  *     
  *     try {

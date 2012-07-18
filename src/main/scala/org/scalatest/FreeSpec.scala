@@ -778,8 +778,6 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSpec extends FreeSpec {
  * 
- *   final val tmpDir = "tmpDir"
- * 
  *   override def withFixture(test: NoArgTest) {
  * 
  *     try {

@@ -561,8 +561,6 @@ import scala.collection.immutable.ListSet
  *
  * class ExampleSuite extends FunSuite {
  *
- *   final val tmpDir = "tmpDir"
- *
  *   override def withFixture(test: NoArgTest) {
  *
  *     try {

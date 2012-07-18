@@ -666,8 +666,6 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSpec extends FeatureSpec {
  * 
- *   final val tmpDir = "tmpDir"
- * 
  *   override def withFixture(test: NoArgTest) {
  * 
  *     try {
