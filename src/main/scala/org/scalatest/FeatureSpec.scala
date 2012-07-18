@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2008 Artima, Inc.
+ * Copyright 2001-2012 Artima, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,24 +34,57 @@ import Suite.anErrorThatShouldCauseAnAbort
  * define the acceptance requirements.
  * </td></tr></table>
  * 
+ * <p>
+ * TODO: Explain GivenWhenThen, and point to Informers section for more details.
  * Here's an example:
+ * </p>
  *
  * <pre class="stHighlight">
  * package org.scalatest.examples.featurespec
  * 
- * import org.scalatest.FeatureSpec
+ * import org.scalatest._
  * 
- * class SetSpec extends FeatureSpec {
+ * class TVSet {
+ *   private var on: Boolean = false
+ *   def isOn: Boolean = on
+ *   def pressPowerButton() {
+ *     on = !on
+ *   }
+ * }
  * 
- *   feature("A Set") {
- *     scenario("When is empty should have size 0") {
- *       assert(Set.empty.size === 0)
+ * class TVSetSpec extends FeatureSpec with GivenWhenThen {
+ * 
+ *   info("As a TV set owner")
+ *   info("I want to be able to turn the TV on and off")
+ *   info("So I can watch TV when I want")
+ *   info("And save energy when I'm not watching TV")
+ * 
+ *   feature("TV power button") {
+ *     scenario("User presses power button when TV is off") {
+ * 
+ *       given("a TV set that is switched off")
+ *       val tv = new TVSet
+ *       assert(!tv.isOn)
+ * 
+ *       when("the power button is pressed")
+ *       tv.pressPowerButton()
+ * 
+ *       then("the TV should switch on")
+ *       assert(tv.isOn)
  *     }
  *     
- *     scenario("When is empty and head is invoked, should produce NoSuchElementException") {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
- *       }
+ *     scenario("User presses power button when TV is on") {
+ * 
+ *       given("a TV set that is switched on")
+ *       val tv = new TVSet
+ *       tv.pressPowerButton()
+ *       assert(tv.isOn)
+ * 
+ *       when("the power button is pressed")
+ *       tv.pressPowerButton()
+ * 
+ *       then("the TV should switch off")
+ *       assert(!tv.isOn)
  *     }
  *   }
  * }
@@ -104,7 +137,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> new SetSpec execute
+ * scala&gt; new TVSetSpec execute
  * </pre>
  *
  * <p>
@@ -112,10 +145,20 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">Feature: A Set
- *   Scenario: When is empty should have size 0
- *   Scenario: When is empty and head is invoked, should produce NoSuchElementException
- * </span> 
+ * <span class="stGreen">TVSetSpec:
+ * As a TV set owner 
+ * I want to be able to turn the TV on and off 
+ * So I can watch TV when I want 
+ * And save energy when I'm not watching TV 
+ * Feature: TV power button
+ *   Scenario: User presses power button when TV is off
+ *     Given a TV set that is switched off 
+ *     When the power button is pressed 
+ *     Then the TV should switch on 
+ *   Scenario: User presses power button when TV is on
+ *     Given a TV set that is switched on 
+ *     When the power button is pressed 
+ *     Then the TV should switch off 
  * </pre>
  *
  * <p>
@@ -140,17 +183,30 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * import org.scalatest.FeatureSpec
  * 
- * class SetSpec extends FeatureSpec {
- *   
- *   feature("A Set") {
- *     ignore("When is empty should have size 0") {
- *       assert(Set.empty.size === 0)
+ * class TVSet {
+ *   private var on: Boolean = false
+ *   def isOn: Boolean = on
+ *   def pressPowerButton() {
+ *     on = !on
+ *   }
+ * }
+ * 
+ * class TVSetSpec extends FeatureSpec {
+ * 
+ *   feature("TV power button") {
+ *     ignore("User presses power button when TV is off") {
+ *       val tv = new TVSet
+ *       assert(!tv.isOn)
+ *       tv.pressPowerButton()
+ *       assert(tv.isOn)
  *     }
- *     
- *     scenario("When is empty and head is invoked, should produce NoSuchElementException") {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
- *       }
+ * 
+ *     scenario("User presses power button when TV is on") {
+ *       val tv = new TVSet
+ *       tv.pressPowerButton()
+ *       assert(tv.isOn)
+ *       tv.pressPowerButton()
+ *       assert(!tv.isOn)
  *     }
  *   }
  * }
@@ -161,7 +217,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> new SetSpec execute
+ * scala&gt; new TVSetSpec execute
  * </pre>
  *
  * <p>
@@ -169,9 +225,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">Feature: A Set</span>
- *   <span class="stYellow">- Scenario: When is empty should have size 0 !!! IGNORED !!!</span>
- *   <span class="stGreen">Scenario: When is empty and head is invoked, should produce NoSuchElementException</span>
+ * <span class="stGreen">TVSetSpec:
+ * Feature: TV power button</span>
+ *   <span class="stYellow">Scenario: User presses power button when TV is off !!! IGNORED !!!</span>
+ *   <span class="stGreen">Scenario: User presses power button when TV is on</span>
  * </pre>
  *
  * <h2>Informers</h2>
@@ -192,49 +249,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <p>
  * One use case for the <code>Informer</code> is to pass more information about a scenario to the reporter. For example,
  * the <code>GivenWhenThen</code> trait provides methods that use the implicit <code>info</code> provided by <code>FeatureSpec</code>
- * to pass such information to the reporter. Here's an example:
+ * to pass such information to the reporter. TODO: refer to the initial example that mixes in GivenWhenThen.
  * </p>
- *
- * <pre class="stHighlight">
- * package org.scalatest.examples.featurespec.info
- * 
- * import collection.mutable
- * import org.scalatest._
- * 
- * class SetSpec extends FeatureSpec with GivenWhenThen {
- *   
- *   feature("An element can be added to an empty mutable Set") {
- *     scenario("When an element is added to an empty mutable Set") {
- *       given("an empty mutable Set")
- *       val set = mutable.Set.empty[String]
- * 
- *       when("an element is added")
- *       set += "clarity"
- * 
- *       then("the Set should have size 1")
- *       assert(set.size === 1)
- * 
- *       and("the Set should contain the added element")
- *       assert(set.contains("clarity"))
- * 
- *       info("That's all folks!")
- *     }
- *   }
- * }
- * </pre>
- *
- * If you run this <code>SetSpec</code> from the interpreter, you will see the following message
- * included in the printed report:
- *
- * <pre class="stREPL">
- * <span class="stGreen">Feature: An element can be added to an empty mutable Set
- *   Scenario: When an element is added to an empty mutable Set
- *     Given an empty mutable Set
- *     When an element is added 
- *     Then the Set should have size 1 
- *     And the Set should contain the added element 
- *     That's all folks!</span> 
- * </pre>
  *
  * <h2>Pending tests</h2>
  *
@@ -265,17 +281,28 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <pre class="stHighlight">
  * package org.scalatest.examples.featurespec.pending
  * 
- * import org.scalatest._
+ * import org.scalatest.FeatureSpec
  * 
- * class SetSpec extends FeatureSpec {
+ * class TVSet {
+ *   private var on: Boolean = false
+ *   def isOn: Boolean = on
+ *   def pressPowerButton() {
+ *     on = !on
+ *   }
+ * }
  * 
- *   feature("A Set") {
- *     scenario("When empty should have size 0") (pending)
- *     
- *     scenario("When empty and head is invoked should produce NoSuchElementException") {
- *       intercept[NoSuchElementException] {
- *         Set.empty.head
- *       }
+ * class TVSetSpec extends FeatureSpec {
+ * 
+ *   feature("TV power button") {
+ *
+ *     scenario("User presses power button when TV is off") (pending)
+ *
+ *     scenario("User presses power button when TV is on") {
+ *       val tv = new TVSet
+ *       tv.pressPowerButton()
+ *       assert(tv.isOn)
+ *       tv.pressPowerButton()
+ *       assert(!tv.isOn)
  *     }
  *   }
  * }
@@ -288,7 +315,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> new SetSpec execute
+ * scala&gt; new TVSetSpec execute
  * </pre>
  *
  * <p>
@@ -296,9 +323,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">Feature: A Set</span>
- *   <span class="stYellow">Scenario: When empty should have size 0 (pending)</span>
- *   <span class="stGreen">Scenario: When empty and head is invoked should produce NoSuchElementException</span>
+ * <span class="stGreen">TVSetSpec:
+ * Feature: TV power button</span>
+ *   <span class="stYellow">Scenario: User presses power button when TV is off (pending)</span>
+ *   <span class="stGreen">Scenario: User presses power button when TV is on</span>
  * </pre>
  * 
  * <p>
@@ -325,15 +353,43 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- *   feature("Integer arithmetic") {
- *&nbsp;
- *     scenario("addition") {
- *       given("two integers")
- *       when("they are added")
- *       then("the result is the sum of the two numbers")
+ * package org.scalatest.examples.featurespec.infopending
+ * 
+ * import org.scalatest._
+ * 
+ * class TVSet {
+ *   private var on: Boolean = false
+ * 
+ *   def isOn: Boolean = on
+ * 
+ *   def pressPowerButton() {
+ *     on = !on
+ *   }
+ * }
+ * 
+ * class TVSetSpec extends FeatureSpec with GivenWhenThen {
+ * 
+ *   info("As a TV set owner")
+ *   info("I want to be able to turn the TV on and off")
+ *   info("So I can watch TV when I want")
+ *   info("And save energy when I'm not watching TV")
+ * 
+ *   feature("TV power button") {
+ *     scenario("User presses power button when TV is off") {
+ *       given("a TV that is switched off")
+ *       when("the power button is pressed")
+ *       then("the TV should switch on")
  *       pending
  *     }
- *     // ...
+ * 
+ *     scenario("User presses power button when TV is on") {
+ *       given("a TV that is switched on")
+ *       when("the power button is pressed")
+ *       then("the TV should switch off")
+ *       pending
+ *     }
+ *   }
+ * }
  * </pre>
  *
  * <p>
@@ -341,11 +397,21 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * <span class="stGreen">Feature: Integer arithmetic</span> 
- *   <span class="stYellow">Scenario: addition (pending)
- *     Given two integers 
- *     When they are added 
- *     Then the result is the sum of the two numbers</span> 
+ * scala&gt; new TVSetSpec execute
+ * <span class="stGreen">TVSetSpec:
+ * As a TV set owner 
+ * I want to be able to turn the TV on and off 
+ * So I can watch TV when I want 
+ * And save energy when I'm not watching TV 
+ * Feature: TV power button</span> 
+ *   <span class="stYellow">Scenario: User presses power button when TV is off (pending)
+ *     Given a TV that is switched off 
+ *     When the power button is pressed 
+ *     Then the TV should switch on 
+ *   Scenario: User presses power button when TV is on (pending)
+ *     Given a TV that is switched on 
+ *     When the power button is pressed 
+ *     Then the TV should switch off </span> 
  * </pre>
  *
  * <h2>Tagging tests</h2>
