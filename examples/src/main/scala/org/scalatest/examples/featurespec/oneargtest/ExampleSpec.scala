@@ -13,7 +13,7 @@ class ExampleSpec extends fixture.FeatureSpec {
     val writer = new FileWriter(file)
     try {
       writer.write("ScalaTest is ") // set up the fixture
-      super.withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
+      withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
     }
     finally {
       writer.close() // clean up the fixture

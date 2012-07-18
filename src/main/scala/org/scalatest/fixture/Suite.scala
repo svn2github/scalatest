@@ -70,8 +70,9 @@ import exceptions.{TestCanceledException, TestPendingException}
  * </pre>
  *
  * <p>
- * To enable trait stacking it is a good idea to always delegate to <code>withFixture(NoArgTest)</code> instead of invoking the test
- * function directly. To do so, you'll need to convert the <code>OneArgTest</code> to a <code>NoArgTest</code>. You can do that by supplying
+ * To enable the stacking of traits that define <code>withFixture(NoArgTest)</code>, it is a good idea to let
+ * <code>withFixture(NoArgTest)</code> invoke the test function instead of invoking the test
+ * function directly. To do so, you'll need to convert the <code>OneArgTest</code> to a <code>NoArgTest</code>. You can do that by passing
  * the fixture object to the <code>toNoArgTest</code> method of <code>OneArgTest</code>. In other words, instead of
  * writing &ldquo;<code>test(theFixture)</code>&rdquo;, you'd delegate responsibility for
  * invoking the test function to the <code>withFixture(NoArgTest)</code> method of the same instance by writing:

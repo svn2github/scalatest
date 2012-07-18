@@ -954,11 +954,20 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <p>
- * As with <code>withFixture(NoArgTest)</code>, to enable trait stacking it is a good idea to always delegate to the <code>super</code> implementation
- * of <code>withFixture(NoArgTest)</code> instead of invoking the test function directly. In this case, however, you'll need to convert the
- * <code>OneArgTest</code> to a <code>NoArgTest</code>. You can do that by supplying the fixture object to <code>toNoArgTest</code> method of
- * <code>OneArgTest</code>. In other words, instead of writing &ldquo;<code>test("fixture")</code>&rdquo;, you'd write
- * &ldquo;<code>super.withFixture(test.toNoArgTest("fixture"))</code>&rdquo;.  Here's a complete example:
+ * To enable the stacking of traits that define <code>withFixture(NoArgTest)</code>, it is a good idea to let
+ * <code>withFixture(NoArgTest)</code> invoke the test function instead of invoking the test
+ * function directly. To do so, you'll need to convert the <code>OneArgTest</code> to a <code>NoArgTest</code>. You can do that by passing
+ * the fixture object to the <code>toNoArgTest</code> method of <code>OneArgTest</code>. In other words, instead of
+ * writing &ldquo;<code>test(theFixture)</code>&rdquo;, you'd delegate responsibility for
+ * invoking the test function to the <code>withFixture(NoArgTest)</code> method of the same instance by writing:
+ * </p>
+ *
+ * <pre>
+ * withFixture(test.toNoArgTest(theFixture))
+ * </pre>
+ *
+ * <p>
+ * Here's a complete example:
  * </p>
  *
  * <pre class="stHighlight">
@@ -977,7 +986,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     val writer = new FileWriter(file)
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
- *       super.withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
+ *       withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
  *     }
  *     finally {
  *       writer.close() // clean up the fixture
