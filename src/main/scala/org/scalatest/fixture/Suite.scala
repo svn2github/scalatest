@@ -98,24 +98,28 @@ import exceptions.{TestCanceledException, TestPendingException}
  *   type FixtureParam = F
  * 
  *   def withFixture(test: OneArgTest) {
- *     val file = File.createTempFile("hello", "world") // create the fixture
+ *
+ *     // create the fixture
+ *     val file = File.createTempFile("hello", "world")
  *     val writer = new FileWriter(file)
+ *     val theFixture = F(file, writer)
+ *
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
- *       withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
+ *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
  *     }
  *     finally {
  *       writer.close() // clean up the fixture
  *     }
  *   }
- * 
- *   def `test: testing should be easy` (f: F) {
+ *
+ *   def &#96;test: testing should be easy&#96; (f: F) {
  *     f.writer.write("easy!")
  *     f.writer.flush()
  *     assert(f.file.length === 18)
  *   }
  * 
- *   def `test: testing should be fun` (f: F) {
+ *   def &#96;test: testing should be fun&#96; (f: F) {
  *     f.writer.write("fun!")
  *     f.writer.flush()
  *     assert(f.file.length === 17)
@@ -124,19 +128,22 @@ import exceptions.{TestCanceledException, TestPendingException}
  * </pre>
  *
  * <p>
- * In the previous example, <code>withFixture</code> creates and initializes a file, then invokes the test function, passing in
- * an object holding <code>File</code> and <code>FileWriter</code> objects for that file.  In addition to setting up a fixture before a
- * test, the <code>withFixture</code> method allows you to clean it up afterwards. If you need to do some clean up that must happen even if a test
- * fails, you should invoke the test function from inside a <code>try</code> block and do the cleanup in a
+ * If a test fails, the <code>OneArgTest</code> function will complete abruptly with an exception describing the failure.
+ * To ensure clean up happens even if a test fails, you should invoke the test function from inside a <code>try</code> block and do the cleanup in a
  * <code>finally</code> clause, as shown in the previous example.
  * </p>
  *
- * <p>
- * Here's an example:
- * </p>
+ * <a name="sharingFixturesAcrossClasses"></a><h2>Sharing fixtures across classes</h2>
  *
+ * <p>
+ * If multiple test classes need the same fixture, you can define the <code>FixtureParam</code> and <code>withFixture(OneArgTest)</code> implementations
+ * in a trait, then mix that trait into the test classes that need it. For example, if your application requires a database and your integration tests
+ * use with that database, you will likely have many test classes that need a database fixture. You can create a "database fixture" trait that creates a
+ * database with a unique name, passes the connector into the test, then removes the database once the test completes. This is shown in the following example:
+ * </p>
+ * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.suite.loanfixture
+ * package org.scalatest.examples.fixture.suite.fixturetrait
  * 
  * import java.util.concurrent.ConcurrentHashMap
  * import org.scalatest.fixture
@@ -179,22 +186,22 @@ import exceptions.{TestCanceledException, TestPendingException}
  * 
  * class ExampleSuite extends fixture.Suite with DbFixture {
  * 
- *   override def populateDb(db: Db) {
+ *   override def populateDb(db: Db) { // setup the fixture
  *     db.append("ScalaTest is ")
  *   }
  * 
- *   def `test: testing should be easy` (db: Db) {
+ *   def &#96;test: testing should be easy&#96; (db: Db) {
  *       db.append("easy!")
  *       assert(db.toString === "ScalaTest is easy!")
  *   }
  * 
- *   def `test: testing should be fun` (db: Db) {
+ *   def &#96;test: testing should be fun&#96; (db: Db) {
  *       db.append("fun!")
  *       assert(db.toString === "ScalaTest is fun!")
  *   }
  * 
  *   // This test doesn't need a Db
- *   def `test: test code should be clear` {
+ *   def &#96;test: test code should be clear&#96; {
  *       val buf = new StringBuffer
  *       buf.append("ScalaTest code is ")
  *       buf.append("clear!")
@@ -204,10 +211,16 @@ import exceptions.{TestCanceledException, TestPendingException}
  * </pre>
  *
  * <p>
- * The reason you must perform cleanup in a <code>finally</code> clause is that <code>withFixture</code> is called by
- * <code>runTest</code>, which expects an exception to be thrown to indicate a failed test. Thus when you invoke
- * the <code>test</code> function, it may complete abruptly with an exception. The <code>finally</code> clause will
- * ensure the fixture cleanup happens as that exception propagates back up the call stack to <code>runTest</code>.
+ * Often when you create fixtures in a trait like <code>DbFixture</code>, you'll still need to enable individual test classes
+ * to "setup" a newly created fixture before it gets passed into the tests. A good way to accomplish this is to pass the newly
+ * created fixture into a setup method, like <code>populateDb</code> in the previous example, before passing it to the test
+ * function. Classes that need to perform such setup can override the method, as does <code>ExampleSuite</code>.
+ * </p>
+ *
+ * <p>
+ * If a test doesn't need the fixture, you can indicate that by leaving off the fixture parameter, as is done in the
+ * third test in the previous example, &ldquo;<code>test: test code should be clear</code>&rdquo;. For such methods, <code>runTest</code>
+ * will not invoke <code>withFixture(OneArgTest)</code>. It will instead directly invoke <code>withFixture(NoArgTest)</code>.
  * </p>
  *
  * <p>
