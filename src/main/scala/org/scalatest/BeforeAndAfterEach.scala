@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2008 Artima, Inc.
+ * Copyright 2001-2012 Artima, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,55 +16,122 @@
 package org.scalatest
 
 /**
- * Trait that can be mixed into suites that need methods invoked before and after
- * running each test. This trait facilitates a style of testing in which mutable
- * fixture objects held in instance variables are replaced or reinitialized before each test or
- * suite. Here's an example:
+ * Stackable trait that can be mixed into suites that need code executed before and after running each test.
+ *
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * Use trait <code>BeforeAndAfterEach</code> when you want to stack traits that perform side-effects before and/or after tests, rather
+ * than at the beginning or end of tests, or when you need access to the config map or test name in the before and/or after code.
+ * <em>Note: For more insight into where <code>BeforeAndAfterEach</code> fits into the big picture, see the </em>
+ * <a href="FlatSpec.html#sharedFixtures">Shared fixtures</a> section in the documentation for your chosen style trait.</em>
+ * </td></tr></table>
+ * 
+ * <p>
+ * A test <em>fixture</em> is composed of the objects and other artifacts (files, sockets, database
+ * connections, <em>etc.</em>) tests use to do their work.
+ * When multiple tests need to work with the same fixtures, it is important to try and avoid
+ * duplicating the fixture code across those tests. The more code duplication you have in your
+ * tests, the greater drag the tests will have on refactoring the actual production code.
+ * Trait <code>BeforeAndAfterEach</code> offers one way to eliminate such code duplication:
+ * a <code>beforeEach</code> method that will be run before each test (like JUnit's <code>setUp</code>),
+ * and an <code>afterEach</code> method that will be run after (like JUnit's <code>tearDown</code>).
+ * </p>
+ *
+ * <p>
+ * Here's an example:
+ * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec.composingbeforeandaftereach
+ * 
  * import org.scalatest._
- * import scala.collection.mutable.ListBuffer
- *
- * class MySuite extends BeforeAndAfterEach {
- *
- *   // Fixtures as reassignable variables and mutable objects
- *   var sb: StringBuilder = _
- *   val lb = new ListBuffer[String]
- *
+ * import collection.mutable.ListBuffer
+ * 
+ * trait Builder extends BeforeAndAfterEach { this: Suite =&gt;
+ * 
+ *   val builder = new StringBuilder
+ * 
  *   override def beforeEach() {
- *     sb = new StringBuilder("ScalaTest is ")
- *     lb.clear()
+ *     builder.append("ScalaTest is ")
+ *     super.beforeEach() // To be stackable, must call super.beforeEach
  *   }
- *
- *   def testEasy() {
- *     sb.append("easy!")
- *     assert(sb.toString === "ScalaTest is easy!")
- *     assert(lb.isEmpty)
- *     lb += "sweet"
+ * 
+ *   override def afterEach() {
+ *     try {
+ *       super.afterEach() // To be stackable, must call super.afterEach
+ *     }
+ *     finally {
+ *       builder.clear()
+ *     }
  *   }
- *
- *   def testFun() {
- *     sb.append("fun!")
- *     assert(sb.toString === "ScalaTest is fun!")
- *     assert(lb.isEmpty)
+ * }
+ * 
+ * trait Buffer extends BeforeAndAfterEach { this: Suite =&gt;
+ * 
+ *   val buffer = new ListBuffer[String]
+ * 
+ *   override def afterEach() {
+ *     try {
+ *       super.afterEach() // To be stackable, must call super.afterEach
+ *     }
+ *     finally {
+ *       buffer.clear()
+ *     }
+ *   }
+ * }
+ * 
+ * class ExampleSpec extends FlatSpec with Builder with Buffer {
+ * 
+ *   "Testing" should "be easy" in {
+ *     builder.append("easy!")
+ *     assert(builder.toString === "ScalaTest is easy!")
+ *     assert(buffer.isEmpty)
+ *     buffer += "sweet"
+ *   }
+ * 
+ *   it should "be fun" in {
+ *     builder.append("fun!")
+ *     assert(builder.toString === "ScalaTest is fun!")
+ *     assert(buffer.isEmpty)
+ *     buffer += "clear"
  *   }
  * }
  * </pre>
  *
  * <p>
- * Because this trait invokes <code>super.runTest</code> to
- * run each test, you may need to mix this trait in last to get the desired behavior. For example, this won't
- * work, because <code>BeforeAndAfterEach</code> is "super" to </code>FunSuite</code>:
+ * To get the same ordering as <code>withFixture</code>, place your <code>super.beforeEach</code> call at the end of each
+ * <code>beforeEach</code> method, and the <code>super.afterEach</code> call at the beginning of each <code>afterEach</code>
+ * method, as shown in the previous example. It is a good idea to invoke <code>super.afterEach</code> in a <code>try</code>
+ * block and perform cleanup in a <code>finally</code> clause, as shown in the previous example, because this ensures the
+ * cleanup code is performed even if <code>super.afterEach</code> throws an exception.
  * </p>
- * <pre class="stHighlight">
- * class MySuite extends BeforeAndAfterEach with FunSuite 
- * </pre>
+ *
  * <p>
- * You'd need to turn it around, so that <code>FunSuite</code> is "super" to <code>BeforeAndAfterEach</code>, like this:
+ * Besides enabling trait stacking, the other main advantage of <code>BeforeAndAfterEach</code> over <code>BeforeAndAfter</code> is
+ * that <code>BeforeAndAfterEach</code> allows you to make use of test data (the test name and the config map) in your before
+ * and/or after code, whereas <code>BeforeAndAfter</code> does not. To access the test data, simply override the form of
+ * <code>beforeEach</code> and/or <code>afterEach</code> that takes a <code>TestData</code> parameter, like this.
  * </p>
+ *
  * <pre class="stHighlight">
- * class MySuite extends FunSuite with BeforeAndAfterEach
+ *   override def beforeEach(td: TestData) {
+ *     // Can now use the test data in your "before" code:
+ *     //   td.name is the name of the test
+ *     //   td.configMap is the config map passed to runTest
+ *   }
+ *
+ *   override def afterEach(td: TestData) {
+ *     // Can now use the test data in your "after" code:
+ *     //   td.name is the name of the test
+ *     //   td.configMap is the config map passed to runTest
+ *   }
  * </pre>
+ *
+ * <p>
+ * The main disadvantage of <code>BeforeAndAfterEach</code> compared to <code>BeforeAndAfter</code> is that <code>BeforeAndAfterEach</code>
+ * requires more boilerplate. If you don't need trait stacking or access to the test data, use <a href="BeforeAndAfter.html"><code>BeforeAndAfter</code></a> instead
+ * of <code>BeforeAndAfterEach</code>.
+ * </p>
  *
  * @author Bill Venners
  */

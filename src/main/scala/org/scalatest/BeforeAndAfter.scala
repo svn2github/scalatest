@@ -18,77 +18,102 @@ package org.scalatest
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Trait that can be mixed into suites that need code executed before and after
- * running each test. This trait facilitates a style of testing in which mutable
- * fixture objects held in instance variables are replaced or reinitialized before each test or
- * suite. Here's an example:
+ * Trait that can be mixed into suites that need code executed before and after running each test.
+ *
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * Use trait <code>BeforeAndAfter</code> when you need to perform the same side-effects before and/or after tests, rather than at the beginning
+ * or end of tests. <em>Note: For more insight into where <code>BeforeAndAfter</code> fits into the big picture, see the </em>
+ * <a href="FlatSpec.html#sharedFixtures">Shared fixtures</a> section in the documentation for your chosen style trait.</em>
+ * </td></tr></table>
+ * 
+ * <p>
+ * A test <em>fixture</em> is composed of the objects and other artifacts (files, sockets, database
+ * connections, <em>etc.</em>) tests use to do their work.
+ * When multiple tests need to work with the same fixtures, it is important to try and avoid
+ * duplicating the fixture code across those tests. The more code duplication you have in your
+ * tests, the greater drag the tests will have on refactoring the actual production code.
+ * Trait <code>BeforeAndAfter</code> offers one way to eliminate such code duplication:
+ * a <code>before</code> clause that will register code to be run before each test,
+ * and an <code>after</code> clause that will register code to be run after.
+ * </p>
+ *
+ * <p>
+ * Here's an example:
+ * </p>
  *
  * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec.beforeandafter
+ * 
  * import org.scalatest._
- * import scala.collection.mutable.ListBuffer
- *
- * class MySuite extends FunSuite with BeforeAndAfter {
- *
- *   // Fixtures as reassignable variables and mutable objects
- *   var sb: StringBuilder = _
- *   val lb = new ListBuffer[String]
- *
+ * import collection.mutable.ListBuffer
+ * 
+ * class ExampleSpec extends FlatSpec with BeforeAndAfter {
+ * 
+ *   val builder = new StringBuilder
+ *   val buffer = new ListBuffer[String]
+ * 
  *   before {
- *     sb = new StringBuilder("ScalaTest is ")
- *     lb.clear()
+ *     builder.append("ScalaTest is ")
  *   }
- *
- *   def testEasy() {
- *     sb.append("easy!")
- *     assert(sb.toString === "ScalaTest is easy!")
- *     assert(lb.isEmpty)
- *     lb += "sweet"
+ * 
+ *   after {
+ *     builder.clear()
+ *     buffer.clear()
  *   }
- *
- *   def testFun() {
- *     sb.append("fun!")
- *     assert(sb.toString === "ScalaTest is fun!")
- *     assert(lb.isEmpty)
+ * 
+ *   "Testing" should "be easy" in {
+ *     builder.append("easy!")
+ *     assert(builder.toString === "ScalaTest is easy!")
+ *     assert(buffer.isEmpty)
+ *     buffer += "sweet"
+ *   }
+ * 
+ *   it should "be fun" in {
+ *     builder.append("fun!")
+ *     assert(builder.toString === "ScalaTest is fun!")
+ *     assert(buffer.isEmpty)
  *   }
  * }
  * </pre>
  *
  * <p>
- * Because this trait invokes <code>super.runTest</code> to
- * run each test, you will need to mix it in after a core suite trait to get the desired behavior. For example, this won't
- * compile, because <code>BeforeAndAfter</code> is "super" to </code>FunSuite</code>:
- * </p>
- * <pre class="stHighlight">
- * class MySuite extends BeforeAndAfter with FunSuite 
- * </pre>
- * <p>
- * You'd need to turn it around, so that <code>FunSuite</code> is "super" to <code>BeforeAndAfter</code>, like this:
- * </p>
- * <pre class="stHighlight">
- * class MySuite extends FunSuite with BeforeAndAfter
- * </pre>
- *
- * <p>
  * The <code>before</code> and <code>after</code> methods can each only be called once per <code>Suite</code>,
- * and cannot be invoked after <code>run</code> has been invoked.
+ * and cannot be invoked after <code>run</code> has been invoked.  If either of the registered before or after functions
+ * complete abruptly with an exception, it will be reported as an aborted suite and no more tests will be attempted in that suite.
  * </p>
  *
  * <p>
- * Note: The advantage this trait has over <code>BeforeAndAfterEach</code> is that its syntax is more concise. 
+ * Note that the only way <code>before</code> and <code>after</code> code can communicate with test code is via some side-effecting mechanism, commonly by
+ * reassigning instance <code>var</code>s or by changing the state of mutable objects held from instance <code>val</code>s (as in this example). If using
+ * instance <code>var</code>s or mutable objects held from instance <code>val</code>s you wouldn't be able to run tests in parallel in the same instance
+ * of the test class unless you synchronized access to the shared, mutable state. This is why ScalaTest's <code>ParallelTestExecution</code> trait extends
+ * <code>OneInstancePerTest</code>. By running each test in its own instance of the class, each test has its own copy of the instance variables, so you
+ * don't need to synchronize. Were you to mix <code>ParallelTestExecution</code> into the <code>ExampleSuite</code> above, the tests would run in parallel just fine
+ * without any synchronization needed on the mutable <code>StringBuilder</code> and <code>ListBuffer[String]</code> objects.
+ * </p>
+ *
+ * <p>
+ * Although <code>BeforeAndAfter</code> provides a minimal-boilerplate way to execute code before and after tests, it isn't designed to enable stackable
+ * traits, because the order of execution would be non-obvious.  If you want to factor out before and after code that is common to multiple test suites, you 
+ * should use trait <a href="BeforeAndAfterEach.html"><code>BeforeAndAfterEach</code></a> instead.
+ * </p>
+ *
+ * <p>
+ * The advantage this trait has over <code>BeforeAndAfterEach</code> is that its syntax is more concise. 
  * The main disadvantage is that it is not stackable, whereas <code>BeforeAndAfterEach</code> is. <em>I.e.</em>, 
  * you can write several traits that extend <code>BeforeAndAfterEach</code> and provide <code>beforeEach</code> methods
  * that include a call to <code>super.beforeEach</code>, and mix them together in various combinations. By contrast,
  * only one call to the <code>before</code> registration function is allowed in a suite or spec that mixes
  * in <code>BeforeAndAfter</code>. In addition, <code>BeforeAndAfterEach</code> allows you to access
- * the config map in its <code>beforeEach</code> and <code>afterEach</code> methods, whereas <code>BeforeAndAfter</code>
+ * the config map and test name via the <a href="TestData.html"><code>TestData</code></a> passed to its <code>beforeEach</code> and
+ * <code>afterEach</code> methods, whereas <code>BeforeAndAfter</code>
  * gives you no access to the config map.
  * </p>
  *
  * @author Bill Venners
  */
-trait BeforeAndAfter extends AbstractSuite {
-
-  this: Suite =>
+trait BeforeAndAfter extends AbstractSuite { this: Suite =>
 
   private val beforeFunctionAtomic = new AtomicReference[Option[() => Any]](None)
   private val afterFunctionAtomic = new AtomicReference[Option[() => Any]](None)
