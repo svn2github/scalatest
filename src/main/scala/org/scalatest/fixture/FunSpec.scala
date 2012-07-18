@@ -118,13 +118,13 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *   }
  * 
  *   describe("Testing") {
- *     it("should be easy") { f =>
+ *     it("should be easy") { f =&gt;
  *       f.writer.write("easy!")
  *       f.writer.flush()
  *       assert(f.file.length === 18)
  *     }
  * 
- *     it("should be fun") { f =>
+ *     it("should be fun") { f =&gt;
  *       f.writer.write("fun!")
  *       f.writer.flush()
  *       assert(f.file.length === 17)
@@ -169,7 +169,7 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *   }
  * }
  * 
- * trait DbFixture { this: fixture.Suite =>
+ * trait DbFixture { this: fixture.Suite =&gt;
  * 
  *   type FixtureParam = Db
  * 
@@ -197,19 +197,20 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *   }
  * 
  *   describe("Testing") {
- *     it("should be easy") { db =>
+ *     it("should be easy") { db =&gt;
  *       db.append("easy!")
  *       assert(db.toString === "ScalaTest is easy!")
  *     }
  *     
- *     it("should be fun") { db =>
+ *     it("should be fun") { db =&gt;
  *       db.append("fun!")
  *       assert(db.toString === "ScalaTest is fun!")
  *     }
  *   }
  *   
+ *   // This test doesn't need a Db
  *   describe("Test code") {
- *     it("should be clear") { _ =>
+ *     it("should be clear") { () =&gt;
  *       val buf = new StringBuffer
  *       buf.append("ScalaTest code is ")
  *       buf.append("clear!")
@@ -227,8 +228,9 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  * </p>
  *
  * <p>
- * If a test doesn't need the fixture, you can indicate that by leaving off the fixture parameter, as is done in the
- * third test in the previous example, &ldquo;<code>test: test code should be clear</code>&rdquo;. For such methods, <code>runTest</code>
+ * If a test doesn't need the fixture, you can indicate that by providing a no-arg instead of a one-arg function, as is done in the
+ * third test in the previous example, &ldquo;<code>Test code should be clear</code>&rdquo;. In other words, instead of starting your function literal
+ * with something like &ldquo;<code>db =&gt;</code>&rdquo;, you'd start it with &ldquo;<code>() =&gt;</code>&rdquo;. For such tests, <code>runTest</code>
  * will not invoke <code>withFixture(OneArgTest)</code>. It will instead directly invoke <code>withFixture(NoArgTest)</code>.
  * </p>
  *

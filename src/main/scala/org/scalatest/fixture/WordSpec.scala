@@ -117,13 +117,13 @@ import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
  *   }
  * 
  *   "Testing" should {
- *     "be easy" in { f =>
+ *     "be easy" in { f =&gt;
  *       f.writer.write("easy!")
  *       f.writer.flush()
  *       assert(f.file.length === 18)
  *     }
  * 
- *     "be fun" in { f =>
+ *     "be fun" in { f =&gt;
  *       f.writer.write("fun!")
  *       f.writer.flush()
  *       assert(f.file.length === 17)
@@ -168,7 +168,7 @@ import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * trait DbFixture { this: fixture.Suite =>
+ * trait DbFixture { this: fixture.Suite =&gt;
  * 
  *   type FixtureParam = Db
  * 
@@ -196,19 +196,20 @@ import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
  *   }
  * 
  *   "Testing" should {
- *     "should be easy" in { db =>
+ *     "should be easy" in { db =&gt;
  *       db.append("easy!")
  *       assert(db.toString === "ScalaTest is easy!")
  *     }
  *     
- *     "should be fun" in { db =>
+ *     "should be fun" in { db =&gt;
  *       db.append("fun!")
  *       assert(db.toString === "ScalaTest is fun!")
  *     }
  *   }
  *   
+ *   // This test doesn't need a Db
  *   "Test code" should {
- *     "should be clear" in { _ =>
+ *     "should be clear" in { () =&gt;
  *       val buf = new StringBuffer
  *       buf.append("ScalaTest code is ")
  *       buf.append("clear!")
@@ -226,8 +227,9 @@ import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <p>
- * If a test doesn't need the fixture, you can indicate that by leaving off the fixture parameter, as is done in the
- * third test in the previous example, &ldquo;<code>test: test code should be clear</code>&rdquo;. For such methods, <code>runTest</code>
+ * If a test doesn't need the fixture, you can indicate that by providing a no-arg instead of a one-arg function, as is done in the
+ * third test in the previous example, &ldquo;<code>Test code should be clear</code>&rdquo;. In other words, instead of starting your function literal
+ * with something like &ldquo;<code>db =&gt;</code>&rdquo;, you'd start it with &ldquo;<code>() =&gt;</code>&rdquo;. For such tests, <code>runTest</code>
  * will not invoke <code>withFixture(OneArgTest)</code>. It will instead directly invoke <code>withFixture(NoArgTest)</code>.
  * </p>
  *

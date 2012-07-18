@@ -108,13 +108,13 @@ import scala.collection.immutable.ListSet
  *     }
  *   }
  * 
- *   test("Testing should be easy") { f =>
+ *   test("testing should be easy") { f =&gt;
  *     f.writer.write("easy!")
  *     f.writer.flush()
  *     assert(f.file.length === 18)
  *   }
  * 
- *   test("Testing should be fun") { f =>
+ *   test("testing should be fun") { f =&gt;
  *     f.writer.write("fun!")
  *     f.writer.flush()
  *     assert(f.file.length === 17)
@@ -158,7 +158,7 @@ import scala.collection.immutable.ListSet
  *   }
  * }
  * 
- * trait DbFixture { this: fixture.Suite =>
+ * trait DbFixture { this: fixture.Suite =&gt;
  * 
  *   type FixtureParam = Db
  * 
@@ -185,18 +185,18 @@ import scala.collection.immutable.ListSet
  *     db.append("ScalaTest is ")
  *   }
  * 
- *   test("Testing should be easy") { db =>
+ *   test("testing should be easy") { db =&gt;
  *       db.append("easy!")
  *       assert(db.toString === "ScalaTest is easy!")
  *   }
  * 
- *   test("Testing should be fun") { db =>
+ *   test("testing should be fun") { db =&gt;
  *       db.append("fun!")
  *       assert(db.toString === "ScalaTest is fun!")
  *   }
  * 
  *   // This test doesn't need a Db
- *   test("test code should be clear") { _ =>
+ *   test("test code should be clear") { () =&gt;
  *       val buf = new StringBuffer
  *       buf.append("ScalaTest code is ")
  *       buf.append("clear!")
@@ -213,10 +213,12 @@ import scala.collection.immutable.ListSet
  * </p>
  *
  * <p>
- * If a test doesn't need the fixture, you can indicate that by leaving off the fixture parameter, as is done in the
- * third test in the previous example, &ldquo;<code>test: test code should be clear</code>&rdquo;. For such methods, <code>runTest</code>
+ * If a test doesn't need the fixture, you can indicate that by providing a no-arg instead of a one-arg function, as is done in the
+ * third test in the previous example, &ldquo;<code>test code should be clear</code>&rdquo;. In other words, instead of starting your function literal
+ * with something like &ldquo;<code>db =&gt;</code>&rdquo;, you'd start it with &ldquo;<code>() =&gt;</code>&rdquo;. For such tests, <code>runTest</code>
  * will not invoke <code>withFixture(OneArgTest)</code>. It will instead directly invoke <code>withFixture(NoArgTest)</code>.
  * </p>
+ *
  *
  * <p>
  * Both examples shown above demonstrate the technique of giving each test its own "fixture sandbox" to play in. When your fixtures

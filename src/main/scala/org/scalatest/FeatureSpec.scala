@@ -30,7 +30,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * Trait <code>FeatureSpec</code>'s is primarily intended for acceptance testing, including the process of programmers working alongside non-programmers to
+ * Trait <code>FeatureSpec</code> is primarily intended for acceptance testing, including the process of programmers working alongside non-programmers to
  * define the acceptance requirements.
  * </td></tr></table>
  * 
