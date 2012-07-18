@@ -309,7 +309,7 @@ import exceptions._
  *   fail()
  * }
  * catch {
- *   case _: IndexOutOfBoundsException => // Expected, so continue
+ *   case _: IndexOutOfBoundsException =&gt; // Expected, so continue
  * }
  * </pre>
  *
@@ -1182,17 +1182,21 @@ import exceptions._
  *   type FixtureParam = F
  * 
  *   def withFixture(test: OneArgTest) {
- *     val file = File.createTempFile("hello", "world") // create the fixture
+ *
+ *     // create the fixture
+ *     val file = File.createTempFile("hello", "world")
  *     val writer = new FileWriter(file)
+ *     val theFixture = F(file, writer)
+ *
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
- *       withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
+ *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
  *     }
  *     finally {
  *       writer.close() // clean up the fixture
  *     }
  *   }
- * 
+ *
  *   def &#96;test: testing should be easy&#96; (f: F) {
  *     f.writer.write("easy!")
  *     f.writer.flush()
@@ -1296,7 +1300,7 @@ import exceptions._
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends AbstractSuite { this: Suite =>
+ * trait Builder extends AbstractSuite { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -1311,7 +1315,7 @@ import exceptions._
  *   }
  * }
  * 
- * trait Buffer extends AbstractSuite { this: Suite =>
+ * trait Buffer extends AbstractSuite { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 
@@ -1379,7 +1383,7 @@ import exceptions._
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends BeforeAndAfterEach { this: Suite =>
+ * trait Builder extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -1398,7 +1402,7 @@ import exceptions._
  *   }
  * }
  * 
- * trait Buffer extends BeforeAndAfterEach { this: Suite =>
+ * trait Buffer extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 

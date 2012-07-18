@@ -143,7 +143,7 @@ import exceptions.{TestCanceledException, TestPendingException}
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.fixture.suite.fixturetrait
+ * package org.scalatest.examples.fixture.suite.sharing
  * 
  * import java.util.concurrent.ConcurrentHashMap
  * import org.scalatest.fixture

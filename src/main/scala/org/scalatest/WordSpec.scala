@@ -915,7 +915,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *       super.withFixture(test)
  *     }
  *     catch {
- *       case e: Exception =>
+ *       case e: Exception =&gt;
  *         val currDir = new File(".")
  *         val fileNames = currDir.list()
  *         info("Dir snapshot: " + fileNames.mkString(", "))
@@ -994,7 +994,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSpec extends WordSpec {
  * 
- *   def withDatabase(testCode: Db => Any) {
+ *   def withDatabase(testCode: Db =&gt; Any) {
  *     val dbName = randomUUID.toString
  *     val db = createDb(dbName) // create the fixture
  *     try {
@@ -1006,7 +1006,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   def withFile(testCode: (File, FileWriter) => Any) {
+ *   def withFile(testCode: (File, FileWriter) =&gt; Any) {
  *     val file = File.createTempFile("hello", "world") // create the fixture
  *     val writer = new FileWriter(file)
  *     try {
@@ -1021,7 +1021,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   "Testing" should {
  *     // This test needs the file fixture
  *     "be productive" in {
- *       withFile { (file, writer) =>
+ *       withFile { (file, writer) =&gt;
  *         writer.write("productive!")
  *         writer.flush()
  *         assert(file.length === 24)
@@ -1032,7 +1032,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   "Test code" should {
  *     // This test needs the database fixture
  *     "be readable" in {
- *       withDatabase { db =>
+ *       withDatabase { db =&gt;
  *         db.append("readable!")
  *         assert(db.toString === "ScalaTest is readable!")
  *       }
@@ -1040,8 +1040,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  *     // This test needs both the file and the database
  *     "be clear and concise" in {
- *       withDatabase { db =>
- *         withFile { (file, writer) => // loan-fixture methods compose
+ *       withDatabase { db =&gt;
+ *         withFile { (file, writer) =&gt; // loan-fixture methods compose
  *           db.append("clear!")
  *           writer.write("concise!")
  *           writer.flush()
@@ -1120,13 +1120,13 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * 
  *   "Testing" should {
- *     "be easy" in { f =>
+ *     "be easy" in { f =&gt;
  *       f.writer.write("easy!")
  *       f.writer.flush()
  *       assert(f.file.length === 18)
  *     }
  * 
- *     "be fun" in { f =>
+ *     "be fun" in { f =&gt;
  *       f.writer.write("fun!")
  *       f.writer.flush()
  *       assert(f.file.length === 17)
@@ -1226,7 +1226,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends AbstractSuite { this: Suite =>
+ * trait Builder extends AbstractSuite { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -1241,7 +1241,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * trait Buffer extends AbstractSuite { this: Suite =>
+ * trait Buffer extends AbstractSuite { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 
@@ -1311,7 +1311,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends BeforeAndAfterEach { this: Suite =>
+ * trait Builder extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -1330,7 +1330,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * trait Buffer extends BeforeAndAfterEach { this: Suite =>
+ * trait Buffer extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 
@@ -1689,13 +1689,13 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  *   "Testing" should {
  *
- *     "be easy" in { writer =>
+ *     "be easy" in { writer =&gt;
  *       writer.write("Hello, test!")
  *       writer.flush()
  *       assert(new File(tmpFile).length === 12)
  *     }
  * 
- *     "be fun" in { writer =>
+ *     "be fun" in { writer =&gt;
  *       writer.write("Hi, test!")
  *       writer.flush()
  *       assert(new File(tmpFile).length === 9)
@@ -1734,7 +1734,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     val buffer = ListBuffer("ScalaTest", "is")
  *   }
  * 
- *   def withWriter(testCode: FileWriter => Any) {
+ *   def withWriter(testCode: FileWriter =&gt; Any) {
  *     val writer = new FileWriter(tmpFile) // set up the fixture
  *     try {
  *       testCode(writer) // "loan" the fixture to the test
@@ -1761,7 +1761,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  * 
  *     "be user-friendly" in { // This test needs the FileWriter fixture
- *       withWriter { writer =>
+ *       withWriter { writer =&gt;
  *         writer.write("Hello, user!")
  *         writer.flush()
  *         assert(new File(tmpFile).length === 12)
@@ -1783,7 +1783,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *         buffer += ("concise!")
  *         assert(builder.toString === "ScalaTest is clear!")
  *         assert(buffer === List("ScalaTest", "is", "concise!"))
- *         withWriter { writer =>
+ *         withWriter { writer =&gt;
  *           writer.write(builder.toString)
  *           writer.flush()
  *           assert(new File(tmpFile).length === 19)
@@ -1824,7 +1824,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * def withDataInDatabase(test: => Any) {
+ * def withDataInDatabase(test: =&gt; Any) {
  *   // initialize the database across the network
  *   try {
  *     test // "loan" the initialized database to the test
@@ -1865,7 +1865,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends AbstractSuite { this: Suite =>
+ * trait Builder extends AbstractSuite { this: Suite =&gt;
  *
  *   val builder = new StringBuilder
  *
@@ -1880,7 +1880,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  *
- * trait Buffer extends AbstractSuite { this: Suite =>
+ * trait Buffer extends AbstractSuite { this: Suite =&gt;
  *
  *   val buffer = new ListBuffer[String]
  *
@@ -1949,7 +1949,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends BeforeAndAfterEach { this: Suite =>
+ * trait Builder extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -1968,7 +1968,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * trait Buffer extends BeforeAndAfterEach { this: Suite =>
+ * trait Buffer extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 

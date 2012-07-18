@@ -627,7 +627,7 @@ import verb.BehaveWord
  *       super.withFixture(test)
  *     }
  *     catch {
- *       case e: Exception =>
+ *       case e: Exception =&gt;
  *         val currDir = new File(".")
  *         val fileNames = currDir.list()
  *         info("Dir snapshot: " + fileNames.mkString(", "))
@@ -709,7 +709,7 @@ import verb.BehaveWord
  * 
  * class ExampleSpec extends FunSpec {
  * 
- *   def withDatabase(testCode: Db => Any) {
+ *   def withDatabase(testCode: Db =&gt; Any) {
  *     val dbName = randomUUID.toString
  *     val db = createDb(dbName) // create the fixture
  *     try {
@@ -721,7 +721,7 @@ import verb.BehaveWord
  *     }
  *   }
  * 
- *   def withFile(testCode: (File, FileWriter) => Any) {
+ *   def withFile(testCode: (File, FileWriter) =&gt; Any) {
  *     val file = File.createTempFile("hello", "world") // create the fixture
  *     val writer = new FileWriter(file)
  *     try {
@@ -736,7 +736,7 @@ import verb.BehaveWord
  *   describe("Testing") {
  *     // This test needs the file fixture
  *     it("should be productive") {
- *       withFile { (file, writer) =>
+ *       withFile { (file, writer) =&gt;
  *         writer.write("productive!")
  *         writer.flush()
  *         assert(file.length === 24)
@@ -747,7 +747,7 @@ import verb.BehaveWord
  *   describe("Test code") {
  *     // This test needs the database fixture
  *     it("should be readable") {
- *       withDatabase { db =>
+ *       withDatabase { db =&gt;
  *         db.append("readable!")
  *         assert(db.toString === "ScalaTest is readable!")
  *       }
@@ -755,8 +755,8 @@ import verb.BehaveWord
  * 
  *     // This test needs both the file and the database
  *     it("should be clear and concise") {
- *       withDatabase { db =>
- *        withFile { (file, writer) => // loan-fixture methods compose
+ *       withDatabase { db =&gt;
+ *        withFile { (file, writer) =&gt; // loan-fixture methods compose
  *           db.append("clear!")
  *           writer.write("concise!")
  *           writer.flush()
@@ -823,25 +823,29 @@ import verb.BehaveWord
  *   type FixtureParam = F
  * 
  *   def withFixture(test: OneArgTest) {
- *     val file = File.createTempFile("hello", "world") // create the fixture
+ *
+ *     // create the fixture
+ *     val file = File.createTempFile("hello", "world")
  *     val writer = new FileWriter(file)
+ *     val theFixture = F(file, writer)
+ *
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
- *       withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
+ *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
  *     }
  *     finally {
  *       writer.close() // clean up the fixture
  *     }
  *   }
- * 
+ *
  *   describe("Testing") {
- *     it("should be easy") { f =>
+ *     it("should be easy") { f =&gt;
  *       f.writer.write("easy!")
  *       f.writer.flush()
  *       assert(f.file.length === 18)
  *     }
  * 
- *     it("should be fun") { f =>
+ *     it("should be fun") { f =&gt;
  *       f.writer.write("fun!")
  *       f.writer.flush()
  *       assert(f.file.length === 17)
@@ -941,7 +945,7 @@ import verb.BehaveWord
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends AbstractSuite { this: Suite =>
+ * trait Builder extends AbstractSuite { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -956,7 +960,7 @@ import verb.BehaveWord
  *   }
  * }
  * 
- * trait Buffer extends AbstractSuite { this: Suite =>
+ * trait Buffer extends AbstractSuite { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 
@@ -1026,7 +1030,7 @@ import verb.BehaveWord
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends BeforeAndAfterEach { this: Suite =>
+ * trait Builder extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -1045,7 +1049,7 @@ import verb.BehaveWord
  *   }
  * }
  * 
- * trait Buffer extends BeforeAndAfterEach { this: Suite =>
+ * trait Buffer extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 
@@ -1404,13 +1408,13 @@ import verb.BehaveWord
  * 
  *   describe("Testing") {
  *
- *     it("should be easy") { writer =>
+ *     it("should be easy") { writer =&gt;
  *       writer.write("Hello, test!")
  *       writer.flush()
  *       assert(new File(tmpFile).length === 12)
  *     }
  * 
- *     it("should be fun") { writer =>
+ *     it("should be fun") { writer =&gt;
  *       writer.write("Hi, test!")
  *       writer.flush()
  *       assert(new File(tmpFile).length === 9)
@@ -1449,7 +1453,7 @@ import verb.BehaveWord
  *     val buffer = ListBuffer("ScalaTest", "is")
  *   }
  * 
- *   def withWriter(testCode: FileWriter => Any) {
+ *   def withWriter(testCode: FileWriter =&gt; Any) {
  *     val writer = new FileWriter(tmpFile) // set up the fixture
  *     try {
  *       testCode(writer) // "loan" the fixture to the test
@@ -1476,7 +1480,7 @@ import verb.BehaveWord
  *     }
  * 
  *     it("should be friendly") { // This test needs the FileWriter fixture
- *       withWriter { writer =>
+ *       withWriter { writer =&gt;
  *         writer.write("Hello, user!")
  *         writer.flush()
  *         assert(new File(tmpFile).length === 12)
@@ -1498,7 +1502,7 @@ import verb.BehaveWord
  *         buffer += ("concise!")
  *         assert(builder.toString === "ScalaTest is clear!")
  *         assert(buffer === List("ScalaTest", "is", "concise!"))
- *         withWriter { writer =>
+ *         withWriter { writer =&gt;
  *           writer.write(builder.toString)
  *           writer.flush()
  *           assert(new File(tmpFile).length === 19)
@@ -1539,7 +1543,7 @@ import verb.BehaveWord
  * </p>
  *
  * <pre class="stHighlight">
- * def withDataInDatabase(test: => Any) {
+ * def withDataInDatabase(test: =&gt; Any) {
  *   // initialize the database across the network
  *   try {
  *     test // "loan" the initialized database to the test
@@ -1580,7 +1584,7 @@ import verb.BehaveWord
  * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends AbstractSuite { this: Suite =>
+ * trait Builder extends AbstractSuite { this: Suite =&gt;
  *
  *   val builder = new StringBuilder
  *
@@ -1595,7 +1599,7 @@ import verb.BehaveWord
  *   }
  * }
  *
- * trait Buffer extends AbstractSuite { this: Suite =>
+ * trait Buffer extends AbstractSuite { this: Suite =&gt;
  *
  *   val buffer = new ListBuffer[String]
  *
@@ -1664,7 +1668,7 @@ import verb.BehaveWord
  * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends BeforeAndAfterEach { this: Suite =>
+ * trait Builder extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -1683,7 +1687,7 @@ import verb.BehaveWord
  *   }
  * }
  * 
- * trait Buffer extends BeforeAndAfterEach { this: Suite =>
+ * trait Buffer extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 
