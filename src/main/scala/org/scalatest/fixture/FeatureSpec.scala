@@ -107,7 +107,7 @@ import org.scalatest.exceptions.NotAllowedException
  *     val theFixture = F(file, writer)
  * 
  *     try {
- *       writer.write("ScalaTest is ") // set up the fixture
+ *       writer.write("ScalaTest is designed to be ") // set up the fixture
  *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
  *     }
  *     finally {
@@ -115,17 +115,17 @@ import org.scalatest.exceptions.NotAllowedException
  *     }
  *   }
  * 
- *   feature("Testing") {
- *     scenario("User can write test code easily") { f =&gt;
- *       f.writer.write("easy!")
+ *   feature("Simplicity") {
+ *     scenario("User needs to read test code written by others") { f =&gt;
+ *       f.writer.write("encourage clear code!")
  *       f.writer.flush()
- *       assert(f.file.length === 18)
+ *       assert(f.file.length === 49)
  *     }
  * 
- *     scenario("User's test code should be fun to read") { f =&gt;
- *       f.writer.write("fun!")
+ *     scenario("User needs to understand what the tests are doing") { f =&gt;
+ *       f.writer.write("be easy to reason about!")
  *       f.writer.flush()
- *       assert(f.file.length === 17)
+ *       assert(f.file.length === 52)
  *     }
  *   } 
  * }
@@ -191,28 +191,26 @@ import org.scalatest.exceptions.NotAllowedException
  * class ExampleSpec extends fixture.FeatureSpec with DbFixture {
  * 
  *   override def populateDb(db: Db) { // setup the fixture
- *     db.append("ScalaTest is ")
+ *     db.append("ScalaTest is designed to ")
  *   }
  * 
- *   feature("Testing") {
- *     scenario("When user write test code it should be easy") { db =&gt;
- *       db.append("easy!")
- *       assert(db.toString === "ScalaTest is easy!")
+ *   feature("Simplicity") {
+ * 
+ *     scenario("User needs to read test code written by others") { db =&gt;
+ *       db.append("encourage clear code!")
+ *       assert(db.toString === "ScalaTest is designed to encourage clear code!")
  *     }
  *     
- *     scenario("When user write test code it should be fun") { db =&gt;
- *       db.append("fun!")
- *       assert(db.toString === "ScalaTest is fun!")
+ *     scenario("User needs to understand what the tests are doing") { db =&gt;
+ *       db.append("be easy to reason about!")
+ *       assert(db.toString === "ScalaTest is designed to be easy to reason about!")
  *     }
- *   }
- *   
- *   // This test doesn't need a Db
- *   feature("Test code") {
- *     scenario("When user read test code it should be clear") { () =&gt;
+ * 
+ *     scenario("User needs to write tests") { () =&gt;
  *       val buf = new StringBuffer
- *       buf.append("ScalaTest code is ")
- *       buf.append("clear!")
- *       assert(buf.toString === "ScalaTest code is clear!")
+ *       buf.append("ScalaTest is designed to be ")
+ *       buf.append("easy to learn!")
+ *       assert(buf.toString === "ScalaTest is designed to be easy to learn!")
  *     }
  *   }
  * }
