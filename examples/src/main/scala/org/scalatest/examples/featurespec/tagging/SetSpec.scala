@@ -7,17 +7,30 @@ object DbTest extends Tag("com.mycompany.tags.DbTest")
 
 import org.scalatest.FeatureSpec
 
-class SetSpec extends FeatureSpec {
+class TVSet {
+  private var on: Boolean = false
+  def isOn: Boolean = on
+  def pressPowerButton() {
+    on = !on
+  }
+}
 
-  feature("A Set") {
-    scenario("When is empty should have size 0", SlowTest) {
-      assert(Set.empty.size === 0)
+class TVSetSpec extends FeatureSpec {
+
+  feature("TV power button") {
+    scenario("User presses power button when TV is off", SlowTest) {
+      val tv = new TVSet
+      assert(!tv.isOn)
+      tv.pressPowerButton()
+      assert(tv.isOn)
     }
-    
-    scenario("When is empty and head is invoked, should produce NoSuchElementException", SlowTest, DbTest) {
-      intercept[NoSuchElementException] {
-        Set.empty.head
-      }
+
+    scenario("User presses power button when TV is on", SlowTest, DbTest) {
+      val tv = new TVSet
+      tv.pressPowerButton()
+      assert(tv.isOn)
+      tv.pressPowerButton()
+      assert(!tv.isOn)
     }
   }
 }
