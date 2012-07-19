@@ -65,7 +65,7 @@ import org.scalatest._
  * </p>
  *
  * <pre class="stREPL">
- * scala&gt; (new ExampleSpec).execute(configMap = Map("hello" -&gt; "hi", "world" -&gt; "globe"))
+ * scala&gt; new ExampleSpec execute (configMap = Map("hello" -&gt; "hi", "world" -&gt; "globe"))
  * <span class="stGreen">ExampleSpec:
  * The config map
  * - should contain hello

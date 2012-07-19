@@ -1599,15 +1599,16 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala&gt; (new ExampleSuite).execute()
+   * scala&gt; new ExampleSuite execute
    * </pre>
    *
    * <p>
+   * (The above syntax actually invokes the overloaded parameterless form of <code>execute</code>, which calls this form with its default parameter values.)
    * To run just the test named <code>"my favorite test"</code> in a suite from the Scala interpreter, you would write:
    * </p>
    *
    * <pre class="stREPL">
-   * scala&gt; (new ExampleSuite).execute("my favorite test")
+   * scala&gt; new ExampleSuite execute ("my favorite test")
    * </pre>
    *
    * <p>
@@ -1615,7 +1616,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala&gt; (new ExampleSuite).execute(testName = "my favorite test")
+   * scala&gt; new ExampleSuite execute (testName = "my favorite test")
    * </pre>
    *
    * <p>
@@ -1630,7 +1631,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala&gt; (new ExampleSuite).execute(configMap = Map("inputFileName" -> "in.txt")
+   * scala&gt; new ExampleSuite execute (configMap = Map("inputFileName" -> "in.txt")
    * </pre>
    *
    * <p>
@@ -1643,7 +1644,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala&gt; (new ExampleSuite).execute(color = false)
+   * scala&gt; new ExampleSuite execute (color = false)
    * </pre>
    *
    * <p>
@@ -1657,7 +1658,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala&gt; (new ExampleSuite).execute(durations = true)
+   * scala&gt; new ExampleSuite execute (durations = true)
    * </pre>
    *
    * <p>
@@ -1672,7 +1673,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala&gt; (new ExampleSuite).execute(shortstacks = true)
+   * scala&gt; new ExampleSuite execute (shortstacks = true)
    * </pre>
    *
    * <p>
@@ -1680,7 +1681,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala&gt; (new ExampleSuite).execute(fullstacks = true)
+   * scala&gt; new ExampleSuite execute (fullstacks = true)
    * </pre>
    *
    * <p>
@@ -1700,7 +1701,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * <pre class="stREPL">
-   * scala&gt; (new ExampleSuite).execute(stats = true)
+   * scala&gt; new ExampleSuite execute (stats = true)
    * </pre>
    *
    *
@@ -1855,6 +1856,32 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     }
   }
 
+  /**
+   * Executes this <code>Suite</code>, printing results to the standard output.
+   *
+   * <p>
+   * This method, which simply invokes the other overloaded form of <code>execute</code> with default parameter values,
+   * is intended for use only as a mini-DSL for the Scala interpreter. It allows you to execute a <code>Suite</code> in the
+   * interpreter with a minimum of finger typing:
+   * </p>
+   *
+   * <pre class="stREPL">
+   * scala&gt; new SetSpec execute
+   * <span class="stGreen">An empty Set</span>
+   * <span class="stGreen">- should have size 0</span>
+   * <span class="stYellow">- should produce NoSuchElementException when head is invoked !!! IGNORED !!!</span>
+   * </pre>
+   *
+   * <p>
+   * If you do ever want to invoke <code>execute</code> outside the Scala interpreter, it is best style to invoke it with
+   * empty parens to indicate it has a side effect, like this:
+   * </p>
+   *
+   * <pre class="stREPL">
+   * // Use empty parens form in regular code (outside the Scala interpreter)
+   * (new ExampleSuite).execute()
+   * </pre>
+   */
   final def execute { execute() }
 
   /**
@@ -2683,7 +2710,7 @@ private[scalatest] object Suite {
     }
   }
 
-  // This attempts to strip dollar signs that happen when using the interpretter. It is quite fragile
+  // This attempts to strip dollar signs that happen when using the interpreter. It is quite fragile
   // and already broke once. In the early days, all funky dollar sign encrusted names coming out of
   // the interpreter started with "line". Now they don't, but in both cases they seemed to have at
   // least one "$iw$" in them. So now I leave the string alone unless I see a "$iw$" in it. Worst case

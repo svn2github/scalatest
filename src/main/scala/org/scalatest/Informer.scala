@@ -30,98 +30,53 @@ package org.scalatest
  * </p>
  *
  * <p>
- * Here's an example of using an <code>Informer</code>:
+ * Here's an example in which the <code>Informer</code> is used both directly via <code>info</code>
+ * method of trait <a href="FlatSpec.html"><code>FlatSpec</code></a> and indirectly via the methods of
+ * trait <a href="GivenWhenThen.html"><code>GivenWhenThen</code></a>:
  * </p>
  * 
  * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec.info
+ * 
+ * import collection.mutable
  * import org.scalatest._
  * 
- * class ExampleSuite extends Suite {
- *   def testAddition(info: Informer) {
- *     assert(1 + 1 === 2)
- *     info("Addition seems to work")
+ * class SetSpec extends FlatSpec with GivenWhenThen {
+ *   
+ *   "A mutable Set" should "allow an element to be added" in {
+ *     given("an empty mutable Set")
+ *     val set = mutable.Set.empty[String]
+ * 
+ *     when("an element is added")
+ *     set += "clarity"
+ * 
+ *     then("the Set should have size 1")
+ *     assert(set.size === 1)
+ * 
+ *     and("the Set should contain the added element")
+ *     assert(set.contains("clarity"))
+ * 
+ *     info("That's all folks!")
  *   }
  * }
  * </pre>
  *
  * <p>
- * If you run this <code>Suite</code> from the interpreter, you will see the message
+ * If you run this <code>FlatSpec</code> from the interpreter, you will see the following message
  * included in the printed report:
  * </p>
  *
  * <pre class="stREPL">
- * scala&gt; (new MySuite).execute()
- * <span class="stGreen">- testAddition(Informer)
- *   + Addition seems to work</span>
- * scala> (new ExampleSuite).execute()
- * <span class="stGreen">ExampleSuite:
- * - testAddition(Reporter)
- *   + Addition seems to work</span>
+ * scala&gt; new SetSpec execute
+ * <span class="stGreen">A mutable Set
+ * - should allow an element to be added
+ *   + Given an empty mutable Set 
+ *   + When an element is added 
+ *   + Then the Set should have size 1 
+ *   + And the Set should contain the added element 
+ *   + That's all folks! </span>
  * </pre>
  *
- * <p>
- * Traits <code>FunSuite</code>, <code>FunSpec</code>, <code>FlatSpec</code>, <code>WordSpec</code>, <code>FeatureSpec</code>, and 
- * their sister traits in <code>org.scalatest.fixture</code> package declare an implicit <code>info</code> method that returns
- * an <code>Informer</code>. This implicit <code>info</code> is used, for example, to enable the syntax offered by the
- * <a href="GivenWhenThen.html"><code>GivenWhenThen</code> trait</a>, which contains methods that take an implicit <code>Informer</code>.
- * Here's an example of a <code>FeatureSpec</code> that mixes in <code>GivenWhenThen</code>:
- * </p>
- * 
- * <pre class="stHighlight">
- * import org.scalatest.FeatureSpec
- * import org.scalatest.GivenWhenThen
- * 
- * class ArithmeticSpec extends FeatureSpec with GivenWhenThen {
- * 
- *   feature("Integer arithmetic") {
- *
- *     scenario("addition") {
- * 
- *       given("two integers")
- *       val x = 2
- *       val y = 3
- * 
- *       when("they are added")
- *       val sum = x + y
- * 
- *       then("the result is the sum of the two numbers")
- *       assert(sum === 5)
- *     }
- *
- *     scenario("subtraction") {
- * 
- *       given("two integers")
- *       val x = 7
- *       val y = 2
- * 
- *       when("one is subtracted from the other")
- *       val diff = x - y
- * 
- *       then("the result is the difference of the two numbers")
- *       assert(diff === 5)
- *     }
- *   }
- * }
- * </pre>
- *
- * <p>
- * Were you to run this <code>FeatureSpec</code> in the interpreter, you would see the following messages
- * included in the printed report:
- * </p>
- *
- * <pre class="stREPL">
- * scala&gt; (new ArithmeticFeatureSpec).run()
- * <span class="stGreen">Feature: Integer arithmetic 
- *   Scenario: addition
- *     Given two integers 
- *     When they are added 
- *     Then the result is the sum of the two numbers 
- *   Scenario: subtraction
- *     Given two integers 
- *     When one is subtracted from the other 
- *     Then the result is the difference of the two numbers</span> 
- * </pre>
- * 
  * @author Bill Venners
  */
 trait Informer {

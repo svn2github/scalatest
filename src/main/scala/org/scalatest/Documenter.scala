@@ -15,9 +15,7 @@
  */
 package org.scalatest
 
-/**
- * Trait to which markup text tests can be reported.
- * 
+ /*
  * <p>
  * A <code>Documenter</code> is essentially
  * used to wrap a <code>Reporter</code> and provide easy ways to send markup text
@@ -124,15 +122,25 @@ package org.scalatest
  * 
  * @author Bill Venners
  */
+/**
+ * Trait to which markup text tests can be reported.
+ * 
+ * <p>
+ * Note: <code>Documenter</code> will be described in more detail in a future 2.0 milestone release. As of this release
+ * you can't see its effects yet.
+ * </p>
+ * 
+ * @author Bill Venners
+ */
 trait Documenter extends (String => Unit) {
 
   /**
    * Provide documentation to the <code>Reporter</code>.
    *
-   * @param message an object whose <code>toString</code> result will be forwarded to the wrapped <code>Reporter</code>
-   *   via an <code>MarkupProvided</code> event.
+   * @param text an string of markup text that will be forwarded to the wrapped <code>Reporter</code>
+   *   via a <code>MarkupProvided</code> event.
    *
    * @throws NullPointerException if <code>message</code> reference is <code>null</code>
    */
-  def apply(message: String): Unit
+  def apply(text: String): Unit
 }

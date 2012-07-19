@@ -19,7 +19,7 @@ package org.scalatest
  * Trait used to pass an <code>Informer</code> and a <code>Documenter</code> to
  * test methods in trait <code>Suite</code> and <code>fixture.Suite</code>.
  */
-trait Rep {
+private[scalatest] trait Rep {
 
   /**
    * An <code>Informer</code> that during test execution will forward strings (and other objects) passed to its

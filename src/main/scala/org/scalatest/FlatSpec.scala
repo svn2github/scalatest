@@ -207,7 +207,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala> new SetSpec execute
+ * scala&gt; new SetSpec execute
  * </pre>
  *
  * <p>
