@@ -16,7 +16,7 @@ class ExampleSpec extends fixture.FeatureSpec {
     val theFixture = F(file, writer)
 
     try {
-      writer.write("ScalaTest is ") // set up the fixture
+      writer.write("ScalaTest is designed to be ") // set up the fixture
       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
     }
     finally {
@@ -24,17 +24,17 @@ class ExampleSpec extends fixture.FeatureSpec {
     }
   }
 
-  feature("Testing") {
-    scenario("User can write test code easily") { f =>
-      f.writer.write("easy!")
+  feature("Simplicity") {
+    scenario("User needs to read test code written by others") { f =>
+      f.writer.write("encourage clear code!")
       f.writer.flush()
-      assert(f.file.length === 18)
+      assert(f.file.length === 49)
     }
 
-    scenario("User's test code should be fun to read") { f =>
-      f.writer.write("fun!")
+    scenario("User needs to understand what the tests are doing") { f =>
+      f.writer.write("be easy to reason about!")
       f.writer.flush()
-      assert(f.file.length === 17)
+      assert(f.file.length === 52)
     }
   } 
 }

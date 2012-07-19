@@ -940,32 +940,32 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   type FixtureParam = F
  * 
  *   def withFixture(test: OneArgTest) {
- *
+ * 
  *     // create the fixture
  *     val file = File.createTempFile("hello", "world")
  *     val writer = new FileWriter(file)
  *     val theFixture = F(file, writer)
- *
+ * 
  *     try {
- *       writer.write("ScalaTest is ") // set up the fixture
+ *       writer.write("ScalaTest is designed to be ") // set up the fixture
  *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
  *     }
  *     finally {
  *       writer.close() // clean up the fixture
  *     }
  *   }
- *
- *   feature("Testing") {
- *     scenario("User can write test code easily") { f =&gt;
- *       f.writer.write("easy!")
+ * 
+ *   feature("Simplicity") {
+ *     scenario("User needs to read test code written by others") { f =>
+ *       f.writer.write("encourage clear code!")
  *       f.writer.flush()
- *       assert(f.file.length === 18)
+ *       assert(f.file.length === 49)
  *     }
  * 
- *     scenario("User's test code should be fun to read") { f =&gt;
- *       f.writer.write("fun!")
+ *     scenario("User needs to understand what the tests are doing") { f =>
+ *       f.writer.write("be easy to reason about!")
  *       f.writer.flush()
- *       assert(f.file.length === 17)
+ *       assert(f.file.length === 52)
  *     }
  *   } 
  * }
@@ -992,8 +992,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <pre class="stHighlight">
  * package org.scalatest.examples.featurespec.beforeandafter
  * 
- * import org.scalatest.FeatureSpec
- * import org.scalatest.BeforeAndAfter
+ * import org.scalatest._
  * import collection.mutable.ListBuffer
  * 
  * class ExampleSpec extends FeatureSpec with BeforeAndAfter {
@@ -1002,7 +1001,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   val buffer = new ListBuffer[String]
  * 
  *   before {
- *     builder.append("ScalaTest is ")
+ *     builder.append("ScalaTest is designed to ")
  *   }
  * 
  *   after {
@@ -1010,17 +1009,17 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     buffer.clear()
  *   }
  * 
- *   feature("Testing") {
- *     scenario("user can write test code easily") {
- *       builder.append("easy!")
- *       assert(builder.toString === "ScalaTest is easy!")
+ *   feature("Simplicity") {
+ *     scenario("User needs to read test code written by others") {
+ *       builder.append("encourage clear code!")
+ *       assert(builder.toString === "ScalaTest is designed to encourage clear code!")
  *       assert(buffer.isEmpty)
  *       buffer += "sweet"
  *     }
  * 
- *     scenario("user's test code should be fun to read") {
- *       builder.append("fun!")
- *       assert(builder.toString === "ScalaTest is fun!")
+ *     scenario("User needs to understand what the tests are doing") {
+ *       builder.append("be easy to reason about!")
+ *       assert(builder.toString === "ScalaTest is designed to be easy to reason about!")
  *       assert(buffer.isEmpty)
  *     }
  *   }
@@ -1059,7 +1058,6 @@ import Suite.anErrorThatShouldCauseAnAbort
  * package org.scalatest.examples.featurespec.composingwithfixture
  * 
  * import org.scalatest._
- * import org.scalatest.AbstractSuite
  * import collection.mutable.ListBuffer
  * 
  * trait Builder extends AbstractSuite { this: Suite =&gt;
@@ -1067,7 +1065,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   val builder = new StringBuilder
  * 
  *   abstract override def withFixture(test: NoArgTest) {
- *     builder.append("ScalaTest is ")
+ *     builder.append("ScalaTest is designed to ")
  *     try {
  *       super.withFixture(test) // To be stackable, must call super.withFixture
  *     }
@@ -1093,19 +1091,19 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSpec extends FeatureSpec with Builder with Buffer {
  * 
- *   feature("Testing") {
- *     scenario("User can write test code easily") {
- *       builder.append("easy!")
- *       assert(builder.toString === "ScalaTest is easy!")
- *       assert(buffer.isEmpty)
- *       buffer += "sweet"
- *     }
- * 
- *     scenario("User's test code should be fun to read") {
- *       builder.append("fun!")
- *       assert(builder.toString === "ScalaTest is fun!")
+ *   feature("Simplicity") {
+ *     scenario("User needs to read test code written by others") {
+ *       builder.append("encourage clear code!")
+ *       assert(builder.toString === "ScalaTest is designed to encourage clear code!")
  *       assert(buffer.isEmpty)
  *       buffer += "clear"
+ *     }
+ * 
+ *     scenario("User needs to understand what the tests are doing") {
+ *       builder.append("be easy to reason about!")
+ *       assert(builder.toString === "ScalaTest is designed to be easy to reason about!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "easy"
  *     }
  *   }
  * }
@@ -1144,7 +1142,6 @@ import Suite.anErrorThatShouldCauseAnAbort
  * package org.scalatest.examples.featurespec.composingbeforeandaftereach
  * 
  * import org.scalatest._
- * import org.scalatest.BeforeAndAfterEach
  * import collection.mutable.ListBuffer
  * 
  * trait Builder extends BeforeAndAfterEach { this: Suite =&gt;
@@ -1152,7 +1149,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   val builder = new StringBuilder
  * 
  *   override def beforeEach() {
- *     builder.append("ScalaTest is ")
+ *     builder.append("ScalaTest is designed to ")
  *     super.beforeEach() // To be stackable, must call super.beforeEach
  *   }
  * 
@@ -1166,7 +1163,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * trait Buffer extends BeforeAndAfterEach { this: Suite =&gt;
+ * trait Buffer extends BeforeAndAfterEach { this: Suite =>
  * 
  *   val buffer = new ListBuffer[String]
  * 
@@ -1182,19 +1179,19 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSpec extends FeatureSpec with Builder with Buffer {
  * 
- *   feature("Testing") {
- *     scenario("User can write test code easily") {
- *       builder.append("easy!")
- *       assert(builder.toString === "ScalaTest is easy!")
- *       assert(buffer.isEmpty)
- *       buffer += "sweet"
- *     }
- * 
- *     scenario("User's test code should be fun to read") {
- *       builder.append("fun!")
- *       assert(builder.toString === "ScalaTest is fun!")
+ *   feature("Simplicity") {
+ *     scenario("User needs to read test code written by others") {
+ *       builder.append("encourage clear code!")
+ *       assert(builder.toString === "ScalaTest is designed to encourage clear code!")
  *       assert(buffer.isEmpty)
  *       buffer += "clear"
+ *     }
+ * 
+ *     scenario("User needs to understand what the tests are doing") {
+ *       builder.append("be easy to reason about!")
+ *       assert(builder.toString === "ScalaTest is designed to be easy to reason about!")
+ *       assert(buffer.isEmpty)
+ *       buffer += "easy"
  *     }
  *   }
  * }

@@ -1,7 +1,6 @@
 package org.scalatest.examples.featurespec.beforeandafter
 
-import org.scalatest.FeatureSpec
-import org.scalatest.BeforeAndAfter
+import org.scalatest._
 import collection.mutable.ListBuffer
 
 class ExampleSpec extends FeatureSpec with BeforeAndAfter {
@@ -10,7 +9,7 @@ class ExampleSpec extends FeatureSpec with BeforeAndAfter {
   val buffer = new ListBuffer[String]
 
   before {
-    builder.append("ScalaTest is ")
+    builder.append("ScalaTest is designed to ")
   }
 
   after {
@@ -18,17 +17,17 @@ class ExampleSpec extends FeatureSpec with BeforeAndAfter {
     buffer.clear()
   }
 
-  feature("Testing") {
-    scenario("user can write test code easily") {
-      builder.append("easy!")
-      assert(builder.toString === "ScalaTest is easy!")
+  feature("Simplicity") {
+    scenario("User needs to read test code written by others") {
+      builder.append("encourage clear code!")
+      assert(builder.toString === "ScalaTest is designed to encourage clear code!")
       assert(buffer.isEmpty)
       buffer += "sweet"
     }
 
-    scenario("user's test code should be fun to read") {
-      builder.append("fun!")
-      assert(builder.toString === "ScalaTest is fun!")
+    scenario("User needs to understand what the tests are doing") {
+      builder.append("be easy to reason about!")
+      assert(builder.toString === "ScalaTest is designed to be easy to reason about!")
       assert(buffer.isEmpty)
     }
   }
