@@ -19,13 +19,11 @@ class ExampleSpec extends FeatureSpec {
     }
   }
 
-  feature("Calculator Add") {
-    scenario("1 + 1 should be 2") {
-      assert(1 + 1 === 2)
-    }
+  scenario("This scenario should succeed") {
+    assert(1 + 1 === 2)
+  }
 
-    scenario("2 + 2 should be 4") {
-      assert(2 + 2 === 3)
-    }
+  scenario("This scenario should fail") {
+    assert(1 + 1 === 3)
   }
 }

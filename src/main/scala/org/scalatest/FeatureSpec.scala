@@ -543,23 +543,23 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  *   def fixture = 
  *     new {
- *       val builder = new StringBuilder("ScalaTest is ")
+ *       val builder = new StringBuilder("ScalaTest is designed to ")
  *       val buffer = new ListBuffer[String]
  *     }
  *   
- *   feature("Fixtures can be shared") {
- *     scenario("User learns how to share fixtures") {
+ *   feature("Simplicity") {
+ *     scenario("User needs to read test code written by others") {
  *       val f = fixture
- *       f.builder.append("easy!")
- *       assert(f.builder.toString === "ScalaTest is easy!")
+ *       f.builder.append("encourage clear code!")
+ *       assert(f.builder.toString === "ScalaTest is designed to encourage clear code!")
  *       assert(f.buffer.isEmpty)
  *       f.buffer += "sweet"
  *     }
  *   
- *     scenario("User enjoys writing tests with shared fixtures") {
+ *     scenario("User needs to understand what the tests are doing") {
  *       val f = fixture
- *       f.builder.append("fun!")
- *       assert(f.builder.toString === "ScalaTest is fun!")
+ *       f.builder.append("be easy to reason about!")
+ *       assert(f.builder.toString === "ScalaTest is designed to be easy to reason about!")
  *       assert(f.buffer.isEmpty)
  *     }
  *   }
@@ -655,20 +655,20 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * class ExampleSuite extends FeatureSpec with OneInstancePerTest {
  * 
- *   val builder = new StringBuilder("ScalaTest is ")
+ *   val builder = new StringBuilder("ScalaTest is designed to ")
  *   val buffer = new ListBuffer[String]
  * 
- *   feature("Fixtures can be shared") {
- *     scenario("User learns how to share fixtures") {
- *       builder.append("easy!")
- *       assert(builder.toString === "ScalaTest is easy!")
+ *   feature("Simplicity") {
+ *     scenario("User needs to read test code written by others") {
+ *       builder.append("encourage clear code!")
+ *       assert(builder.toString === "ScalaTest is designed to encourage clear code!")
  *       assert(buffer.isEmpty)
  *       buffer += "sweet"
  *     }
  * 
- *     scenario("User enjoys reading tests with shared fixture") {
- *       builder.append("fun!")
- *       assert(builder.toString === "ScalaTest is fun!")
+ *     scenario("User needs to understand what the tests are doing") {
+ *       builder.append("be easy to reason about!")
+ *       assert(builder.toString === "ScalaTest is designed to be easy to reason about!")
  *       assert(buffer.isEmpty)
  *     } 
  *   }
@@ -751,7 +751,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *       super.withFixture(test)
  *     }
  *     catch {
- *       case e: Exception =&gt;
+ *       case e: Exception =>
  *         val currDir = new File(".")
  *         val fileNames = currDir.list()
  *         info("Dir snapshot: " + fileNames.mkString(", "))
@@ -759,14 +759,12 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   feature("Calculator Add") {
- *     scenario("1 + 1 should be 2") {
- *       assert(1 + 1 === 2)
- *     }
+ *   scenario("This scenario should succeed") {
+ *     assert(1 + 1 === 2)
+ *   }
  * 
- *     scenario("2 + 2 should be 4") {
- *       assert(2 + 2 === 3)
- *     }
+ *   scenario("This scenario should fail") {
+ *     assert(1 + 1 === 3)
  *   }
  * }
  * </pre>
@@ -777,12 +775,11 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stREPL">
- * scala&gt; new ExampleSuite execute
- * <span class="stGreen">ExampleSuite:
- * Feature: Calculator Add
- * Scenario: 1 + 1 should be 2
- * <span class="stRed">Scenario: 2 + 2 should be 4 *** FAILED ***
- * 4 did not equal 3 (<console>:82)
+ * scala&gt; new ExampleSpec execute
+ * <span class="stGreen">ExampleSpec:
+ * Scenario: This scenario should succeed</span>
+ * <span class="stRed">Scenario: This scenario should fail *** FAILED ***
+ *   2 did not equal 3 (<console>:115)
  *   + Dir snapshot: hello.txt, world.txt </span>
  * </pre>
  *
