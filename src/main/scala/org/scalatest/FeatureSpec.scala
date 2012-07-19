@@ -600,37 +600,38 @@ import Suite.anErrorThatShouldCauseAnAbort
  * class ExampleSpec extends FeatureSpec {
  * 
  *   trait Builder {
- *     val builder = new StringBuilder("ScalaTest is ")
+ *     val builder = new StringBuilder("ScalaTest is designed to ")
  *   }
  * 
  *   trait Buffer {
- *     val buffer = ListBuffer("ScalaTest", "is")
+ *     val buffer = ListBuffer("ScalaTest", "is", "designed", "to")
  *   }
  * 
- *   feature("Fixtures can be shared") {
+ *   feature("Simplicity") {
  *     // This test needs the StringBuilder fixture
- *     scenario("User should be productive when writes tests") {
+ *     scenario("User needs to read test code written by others") {
  *       new Builder {
- *         builder.append("productive!")
- *         assert(builder.toString === "ScalaTest is productive!")
+ *         builder.append("encourage clear code!")
+ *         assert(builder.toString === "ScalaTest is designed to encourage clear code!")
  *       }
  *     }
  *     
  *     // This test needs the ListBuffer[String] fixture
- *     scenario("User can write readable test code") {
+ *     scenario("User needs to understand what the tests are doing") {
  *       new Buffer {
- *         buffer += ("readable!")
- *         assert(buffer === List("ScalaTest", "is", "readable!"))
+ *         buffer += ("be", "easy", "to", "reason", "about!")
+ *         assert(buffer === List("ScalaTest", "is", "designed", "to", "be", "easy", "to", "reason", "about!"))
  *       }
  *     }
  * 
  *     // This test needs both the StringBuilder and ListBuffer
- *     scenario("User's test code should be clear and concise") {
+ *     scenario("User needs to write tests") {
  *       new Builder with Buffer {
- *         builder.append("clear!")
- *         buffer += ("concise!")
- *         assert(builder.toString === "ScalaTest is clear!")
- *         assert(buffer === List("ScalaTest", "is", "concise!"))
+ *         builder.append("be easy to learn!")
+ *         buffer += ("be", "easy", "to", "remember", "how", "to", "write!")
+ *         assert(builder.toString === "ScalaTest is designed to be easy to learn!")
+ *         assert(buffer === List("ScalaTest", "is", "designed", "to", "be", "easy",
+ *           "to", "remember", "how", "to", "write!"))
  *       }
  *     }
  *   }
@@ -751,7 +752,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *       super.withFixture(test)
  *     }
  *     catch {
- *       case e: Exception =>
+ *       case e: Exception =&gt;
  *         val currDir = new File(".")
  *         val fileNames = currDir.list()
  *         info("Dir snapshot: " + fileNames.mkString(", "))
@@ -834,7 +835,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     val dbName = randomUUID.toString
  *     val db = createDb(dbName) // create the fixture
  *     try {
- *       db.append("ScalaTest is ") // perform setup
+ *       db.append("ScalaTest is designed to ") // perform setup
  *       testCode(db) // "loan" the fixture to the test
  *     }
  *     finally {
@@ -846,7 +847,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     val file = File.createTempFile("hello", "world") // create the fixture
  *     val writer = new FileWriter(file)
  *     try {
- *       writer.write("ScalaTest is ") // set up the fixture
+ *       writer.write("ScalaTest is designed to ") // set up the fixture
  *       testCode(file, writer) // "loan" the fixture to the test
  *     }
  *     finally {
@@ -854,31 +855,31 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     }
  *   }
  * 
- *   feature("Fixtures can be shared") {
+ *   feature("Simplicity") {
  *     // This test needs the file fixture
- *     scenario("User should be productive when writes tests") {
+ *     scenario("User needs to read test code written by others") {
  *       withFile { (file, writer) =&gt;
- *         writer.write("productive!")
+ *         writer.write("encourage clear code!")
  *         writer.flush()
- *         assert(file.length === 24)
+ *         assert(file.length === 46)
  *       }
  *     }
  *     // This test needs the database fixture
- *     scenario("User can write readable test code") {
+ *     scenario("User needs to understand what the tests are doing") {
  *       withDatabase { db =&gt;
- *         db.append("readable!")
- *         assert(db.toString === "ScalaTest is readable!")
+ *         db.append("be easy to reason about!")
+ *         assert(db.toString === "ScalaTest is designed to be easy to reason about!")
  *       }
  *     }
  *     // This test needs both the file and the database
- *     scenario("User's test code should be clear and concise") {
+ *     scenario("User needs to write tests") {
  *       withDatabase { db =&gt;
  *         withFile { (file, writer) =&gt; // loan-fixture methods compose
- *           db.append("clear!")
- *           writer.write("concise!")
+ *           db.append("be easy to learn!")
+ *           writer.write("be easy to remember how to write!")
  *           writer.flush()
- *           assert(db.toString === "ScalaTest is clear!")
- *           assert(file.length === 21)
+ *           assert(db.toString === "ScalaTest is designed to be easy to learn!")
+ *           assert(file.length === 58)
  *         }
  *       }
  *     }
@@ -956,13 +957,13 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * 
  *   feature("Simplicity") {
- *     scenario("User needs to read test code written by others") { f =>
+ *     scenario("User needs to read test code written by others") { f =&gt;
  *       f.writer.write("encourage clear code!")
  *       f.writer.flush()
  *       assert(f.file.length === 49)
  *     }
  * 
- *     scenario("User needs to understand what the tests are doing") { f =>
+ *     scenario("User needs to understand what the tests are doing") { f =&gt;
  *       f.writer.write("be easy to reason about!")
  *       f.writer.flush()
  *       assert(f.file.length === 52)
@@ -1163,7 +1164,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   }
  * }
  * 
- * trait Buffer extends BeforeAndAfterEach { this: Suite =>
+ * trait Buffer extends BeforeAndAfterEach { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 
