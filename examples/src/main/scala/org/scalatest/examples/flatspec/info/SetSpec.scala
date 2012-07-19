@@ -5,7 +5,7 @@ import org.scalatest._
 
 class SetSpec extends FlatSpec with GivenWhenThen {
   
-  "An element" can "be added to an empty mutable Set" in {
+  "A mutable Set" should "allow an element to be added" in {
     given("an empty mutable Set")
     val set = mutable.Set.empty[String]
 

@@ -616,7 +616,7 @@ import exceptions._
  * <span class="stGreen">- invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  * 
- * 
+ *  <!--
  * <h2>Using <code>info</code> and <code>markup</code></h2>
  *
  * <p>
@@ -679,7 +679,7 @@ import exceptions._
  * Trait <code>Suite</code> also carries a <a href="Documenter.html"><code>Documenter</code></a> named <code>markup</code>, which
  * you can use to transmit markup text to the <code>Reporter</code>.
  * </p>
- *
+ * -->
  * <h2>Executing suites in parallel</h2>
  *
  * <p>

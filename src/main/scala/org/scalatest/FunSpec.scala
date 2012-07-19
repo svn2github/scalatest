@@ -194,8 +194,8 @@ import verb.BehaveWord
  * 
  * class SetSpec extends FunSpec with GivenWhenThen {
  *   
- *   describe("An element") {
- *     it("can be added to an empty mutable Set") {
+ *   describe("A mutable Set") {
+ *     it("should allow an element to be added") {
  *       given("an empty mutable Set")
  *       val set = mutable.Set.empty[String]
  * 
@@ -218,8 +218,9 @@ import verb.BehaveWord
  * included in the printed report:
  *
  * <pre class="stREPL">
- * <span class="stGreen">An element
- * - can be added to an empty mutable Set
+ * scala&gt; new SetSpec execute
+ * <span class="stGreen">A mutable Set
+ * - should allow an element to be added
  *   + Given an empty mutable Set 
  *   + When an element is added 
  *   + Then the Set should have size 1 
@@ -1099,6 +1100,274 @@ import verb.BehaveWord
  * complete abruptly, it is considered a failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
+ * <a name="SharedTests"></a><h2>Shared tests</h2>
+ *
+ * <p>
+ * Sometimes you may want to run the same test code on different fixture objects. In other words, you may want to write tests that are "shared"
+ * by different fixture objects.
+ * To accomplish this in a <code>FunSpec</code>, you first place shared tests in <em>behavior functions</em>. These behavior functions will be
+ * invoked during the construction phase of any <code>FunSpec</code> that uses them, so that the tests they contain will be registered as tests in that <code>FunSpec</code>.
+ * For example, given this stack class:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * import scala.collection.mutable.ListBuffer
+ * 
+ * class Stack[T] {
+ *
+ *   val MAX = 10
+ *   private val buf = new ListBuffer[T]
+ *
+ *   def push(o: T) {
+ *     if (!full)
+ *       buf.prepend(o)
+ *     else
+ *       throw new IllegalStateException("can't push onto a full stack")
+ *   }
+ *
+ *   def pop(): T = {
+ *     if (!empty)
+ *       buf.remove(0)
+ *     else
+ *       throw new IllegalStateException("can't pop an empty stack")
+ *   }
+ *
+ *   def peek: T = {
+ *     if (!empty)
+ *       buf(0)
+ *     else
+ *       throw new IllegalStateException("can't pop an empty stack")
+ *   }
+ *
+ *   def full: Boolean = buf.size == MAX
+ *   def empty: Boolean = buf.size == 0
+ *   def size = buf.size
+ *
+ *   override def toString = buf.mkString("Stack(", ", ", ")")
+ * }
+ * </pre>
+ *
+ * <p>
+ * You may want to test the <code>Stack</code> class in different states: empty, full, with one item, with one item less than capacity,
+ * <em>etc</em>. You may find you have several tests that make sense any time the stack is non-empty. Thus you'd ideally want to run
+ * those same tests for three stack fixture objects: a full stack, a stack with a one item, and a stack with one item less than
+ * capacity. With shared tests, you can factor these tests out into a behavior function, into which you pass the
+ * stack fixture to use when running the tests. So in your <code>FunSpec</code> for stack, you'd invoke the
+ * behavior function three times, passing in each of the three stack fixtures so that the shared tests are run for all three fixtures. You
+ * can define a behavior function that encapsulates these shared tests inside the <code>FunSpec</code> that uses them. If they are shared
+ * between different <code>FunSpec</code>s, however, you could also define them in a separate trait that is mixed into each <code>FunSpec</code> that uses them.
+ * </p>
+ *
+ * <p>
+ * <a name="StackBehaviors">For</a> example, here the <code>nonEmptyStack</code> behavior function (in this case, a behavior <em>method</em>) is defined in a trait along with another
+ * method containing shared tests for non-full stacks:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * trait StackBehaviors { this: FunSpec =&gt;
+ * 
+ *   def nonEmptyStack(newStack: =&gt; Stack[Int], lastItemAdded: Int) {
+ *
+ *     it("should be non-empty") {
+ *       assert(!newStack.empty)
+ *     }
+ *
+ *     it("should return the top item on peek") {
+ *       assert(newStack.peek === lastItemAdded)
+ *     }
+ *
+ *     it("should not remove the top item on peek") {
+ *       val stack = newStack
+ *       val size = stack.size
+ *       assert(stack.peek === lastItemAdded)
+ *       assert(stack.size === size)
+ *     }
+ *
+ *     it("should remove the top item on pop") {
+ *       val stack = newStack
+ *       val size = stack.size
+ *       assert(stack.pop === lastItemAdded)
+ *       assert(stack.size === size - 1)
+ *     }
+ *   }
+ *
+ *   def nonFullStack(newStack: =&gt; Stack[Int]) {
+ *
+ *     it("should not be full") {
+ *       assert(!newStack.full)
+ *     }
+ *
+ *     it("should add to the top on push") {
+ *       val stack = newStack
+ *       val size = stack.size
+ *       stack.push(7)
+ *       assert(stack.size === size + 1)
+ *       assert(stack.peek === 7)
+ *     }
+ *   }
+ * }
+ * </pre>
+ *
+ * <p>
+ * Given these behavior functions, you could invoke them directly, but <code>FunSpec</code> offers a DSL for the purpose,
+ * which looks like this:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * it should behave like nonEmptyStack(stackWithOneItem, lastValuePushed)
+ * it should behave like nonFullStack(stackWithOneItem)
+ * </pre>
+ *
+ * <p>
+ * If you prefer to use an imperative style to change fixtures, for example by mixing in <code>BeforeAndAfterEach</code> and
+ * reassigning a <code>stack</code> <code>var</code> in <code>beforeEach</code>, you could write your behavior functions
+ * in the context of that <code>var</code>, which means you wouldn't need to pass in the stack fixture because it would be
+ * in scope already inside the behavior function. In that case, your code would look like this:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * it should behave like nonEmptyStack // assuming lastValuePushed is also in scope inside nonEmptyStack
+ * it should behave like nonFullStack
+ * </pre>
+ *
+ * <p>
+ * The recommended style, however, is the functional, pass-all-the-needed-values-in style. Here's an example:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * class SharedTestExampleSpec extends FunSpec with StackBehaviors {
+ * 
+ *   // Stack fixture creation methods
+ *   def emptyStack = new Stack[Int]
+ * 
+ *   def fullStack = {
+ *     val stack = new Stack[Int]
+ *     for (i <- 0 until stack.MAX)
+ *       stack.push(i)
+ *     stack
+ *   }
+ * 
+ *   def stackWithOneItem = {
+ *     val stack = new Stack[Int]
+ *     stack.push(9)
+ *     stack
+ *   }
+ * 
+ *   def stackWithOneItemLessThanCapacity = {
+ *     val stack = new Stack[Int]
+ *     for (i <- 1 to 9)
+ *       stack.push(i)
+ *     stack
+ *   }
+ * 
+ *   val lastValuePushed = 9
+ * 
+ *   describe("A Stack") {
+ * 
+ *     describe("(when empty)") {
+ *       
+ *       it("should be empty") {
+ *         assert(emptyStack.empty)
+ *       }
+ * 
+ *       it("should complain on peek") {
+ *         intercept[IllegalStateException] {
+ *           emptyStack.peek
+ *         }
+ *       }
+ * 
+ *       it("should complain on pop") {
+ *         intercept[IllegalStateException] {
+ *           emptyStack.pop
+ *         }
+ *       }
+ *     }
+ * 
+ *     describe("(with one item)") {
+ *       it should behave like nonEmptyStack(stackWithOneItem, lastValuePushed)
+ *       it should behave like nonFullStack(stackWithOneItem)
+ *     }
+ *     
+ *     describe("(with one item less than capacity)") {
+ *       it should behave like nonEmptyStack(stackWithOneItemLessThanCapacity, lastValuePushed)
+ *       it should behave like nonFullStack(stackWithOneItemLessThanCapacity)
+ *     }
+ * 
+ *     describe("(full)") {
+ *       
+ *       it("should be full") {
+ *         assert(fullStack.full)
+ *       }
+ * 
+ *       it should behave like nonEmptyStack(fullStack, lastValuePushed)
+ * 
+ *       it("should complain on a push") {
+ *         intercept[IllegalStateException] {
+ *           fullStack.push(10)
+ *         }
+ *       }
+ *     }
+ *   }
+ * }
+ * </pre>
+ *
+ * <p>
+ * If you load these classes into the Scala interpreter (with scalatest's JAR file on the class path), and execute it,
+ * you'll see:
+ * </p>
+ *
+ * <pre class="stREPL">
+ * scala> (new StackSpec).execute()
+ * <span class="stGreen">A Stack (when empty) 
+ * - should be empty
+ * - should complain on peek
+ * - should complain on pop
+ * A Stack (with one item) 
+ * - should be non-empty
+ * - should return the top item on peek
+ * - should not remove the top item on peek
+ * - should remove the top item on pop
+ * - should not be full
+ * - should add to the top on push
+ * A Stack (with one item less than capacity) 
+ * - should be non-empty
+ * - should return the top item on peek
+ * - should not remove the top item on peek
+ * - should remove the top item on pop
+ * - should not be full
+ * - should add to the top on push
+ * A Stack (full) 
+ * - should be full
+ * - should be non-empty
+ * - should return the top item on peek
+ * - should not remove the top item on peek
+ * - should remove the top item on pop
+ * - should complain on a push</span>
+ * </pre>
+ * 
+ * <p>
+ * One thing to keep in mind when using shared tests is that in ScalaTest, each test in a suite must have a unique name.
+ * If you register the same tests repeatedly in the same suite, one problem you may encounter is an exception at runtime
+ * complaining that multiple tests are being registered with the same test name. A good way to solve this problem in a <code>FunSpec</code> is to surround
+ * each invocation of a behavior function with a <code>describe</code> clause, which will prepend a string to each test name.
+ * For example, the following code in a <code>FunSpec</code> would register a test with the name <code>"A Stack (when empty) should be empty"</code>:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ *   describe("A Stack") {
+ * 
+ *     describe("(when empty)") {
+ *       
+ *       it("should be empty") {
+ *         assert(emptyStack.empty)
+ *       }
+ *       // ...
+ * </pre>
+ *
+ * <p>
+ * If the <code>"should be empty"</code> test was factored out into a behavior function, it could be called repeatedly so long
+ * as each invocation of the behavior function is inside a different set of <code>describe</code> clauses.
+ *
  * <a name="sharedFixtures"></a><h2>OLD ONE FOR REFERENCE: Shared fixtures</h2>
  *
  * <p>
@@ -1739,274 +2008,6 @@ import verb.BehaveWord
  * failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
- * <a name="SharedTests"></a><h2>Shared tests</h2>
- *
- * <p>
- * Sometimes you may want to run the same test code on different fixture objects. In other words, you may want to write tests that are "shared"
- * by different fixture objects.
- * To accomplish this in a <code>FunSpec</code>, you first place shared tests in <em>behavior functions</em>. These behavior functions will be
- * invoked during the construction phase of any <code>FunSpec</code> that uses them, so that the tests they contain will be registered as tests in that <code>FunSpec</code>.
- * For example, given this stack class:
- * </p>
- *
- * <pre class="stHighlight">
- * import scala.collection.mutable.ListBuffer
- * 
- * class Stack[T] {
- *
- *   val MAX = 10
- *   private val buf = new ListBuffer[T]
- *
- *   def push(o: T) {
- *     if (!full)
- *       buf.prepend(o)
- *     else
- *       throw new IllegalStateException("can't push onto a full stack")
- *   }
- *
- *   def pop(): T = {
- *     if (!empty)
- *       buf.remove(0)
- *     else
- *       throw new IllegalStateException("can't pop an empty stack")
- *   }
- *
- *   def peek: T = {
- *     if (!empty)
- *       buf(0)
- *     else
- *       throw new IllegalStateException("can't pop an empty stack")
- *   }
- *
- *   def full: Boolean = buf.size == MAX
- *   def empty: Boolean = buf.size == 0
- *   def size = buf.size
- *
- *   override def toString = buf.mkString("Stack(", ", ", ")")
- * }
- * </pre>
- *
- * <p>
- * You may want to test the <code>Stack</code> class in different states: empty, full, with one item, with one item less than capacity,
- * <em>etc</em>. You may find you have several tests that make sense any time the stack is non-empty. Thus you'd ideally want to run
- * those same tests for three stack fixture objects: a full stack, a stack with a one item, and a stack with one item less than
- * capacity. With shared tests, you can factor these tests out into a behavior function, into which you pass the
- * stack fixture to use when running the tests. So in your <code>FunSpec</code> for stack, you'd invoke the
- * behavior function three times, passing in each of the three stack fixtures so that the shared tests are run for all three fixtures. You
- * can define a behavior function that encapsulates these shared tests inside the <code>FunSpec</code> that uses them. If they are shared
- * between different <code>FunSpec</code>s, however, you could also define them in a separate trait that is mixed into each <code>FunSpec</code> that uses them.
- * </p>
- *
- * <p>
- * <a name="StackBehaviors">For</a> example, here the <code>nonEmptyStack</code> behavior function (in this case, a behavior <em>method</em>) is defined in a trait along with another
- * method containing shared tests for non-full stacks:
- * </p>
- * 
- * <pre class="stHighlight">
- * trait StackBehaviors { this: FunSpec =&gt;
- * 
- *   def nonEmptyStack(newStack: =&gt; Stack[Int], lastItemAdded: Int) {
- *
- *     it("should be non-empty") {
- *       assert(!newStack.empty)
- *     }
- *
- *     it("should return the top item on peek") {
- *       assert(newStack.peek === lastItemAdded)
- *     }
- *
- *     it("should not remove the top item on peek") {
- *       val stack = newStack
- *       val size = stack.size
- *       assert(stack.peek === lastItemAdded)
- *       assert(stack.size === size)
- *     }
- *
- *     it("should remove the top item on pop") {
- *       val stack = newStack
- *       val size = stack.size
- *       assert(stack.pop === lastItemAdded)
- *       assert(stack.size === size - 1)
- *     }
- *   }
- *
- *   def nonFullStack(newStack: =&gt; Stack[Int]) {
- *
- *     it("should not be full") {
- *       assert(!newStack.full)
- *     }
- *
- *     it("should add to the top on push") {
- *       val stack = newStack
- *       val size = stack.size
- *       stack.push(7)
- *       assert(stack.size === size + 1)
- *       assert(stack.peek === 7)
- *     }
- *   }
- * }
- * </pre>
- *
- * <p>
- * Given these behavior functions, you could invoke them directly, but <code>FunSpec</code> offers a DSL for the purpose,
- * which looks like this:
- * </p>
- *
- * <pre class="stHighlight">
- * it should behave like nonEmptyStack(stackWithOneItem, lastValuePushed)
- * it should behave like nonFullStack(stackWithOneItem)
- * </pre>
- *
- * <p>
- * If you prefer to use an imperative style to change fixtures, for example by mixing in <code>BeforeAndAfterEach</code> and
- * reassigning a <code>stack</code> <code>var</code> in <code>beforeEach</code>, you could write your behavior functions
- * in the context of that <code>var</code>, which means you wouldn't need to pass in the stack fixture because it would be
- * in scope already inside the behavior function. In that case, your code would look like this:
- * </p>
- *
- * <pre class="stHighlight">
- * it should behave like nonEmptyStack // assuming lastValuePushed is also in scope inside nonEmptyStack
- * it should behave like nonFullStack
- * </pre>
- *
- * <p>
- * The recommended style, however, is the functional, pass-all-the-needed-values-in style. Here's an example:
- * </p>
- *
- * <pre class="stHighlight">
- * class SharedTestExampleSpec extends FunSpec with StackBehaviors {
- * 
- *   // Stack fixture creation methods
- *   def emptyStack = new Stack[Int]
- * 
- *   def fullStack = {
- *     val stack = new Stack[Int]
- *     for (i <- 0 until stack.MAX)
- *       stack.push(i)
- *     stack
- *   }
- * 
- *   def stackWithOneItem = {
- *     val stack = new Stack[Int]
- *     stack.push(9)
- *     stack
- *   }
- * 
- *   def stackWithOneItemLessThanCapacity = {
- *     val stack = new Stack[Int]
- *     for (i <- 1 to 9)
- *       stack.push(i)
- *     stack
- *   }
- * 
- *   val lastValuePushed = 9
- * 
- *   describe("A Stack") {
- * 
- *     describe("(when empty)") {
- *       
- *       it("should be empty") {
- *         assert(emptyStack.empty)
- *       }
- * 
- *       it("should complain on peek") {
- *         intercept[IllegalStateException] {
- *           emptyStack.peek
- *         }
- *       }
- * 
- *       it("should complain on pop") {
- *         intercept[IllegalStateException] {
- *           emptyStack.pop
- *         }
- *       }
- *     }
- * 
- *     describe("(with one item)") {
- *       it should behave like nonEmptyStack(stackWithOneItem, lastValuePushed)
- *       it should behave like nonFullStack(stackWithOneItem)
- *     }
- *     
- *     describe("(with one item less than capacity)") {
- *       it should behave like nonEmptyStack(stackWithOneItemLessThanCapacity, lastValuePushed)
- *       it should behave like nonFullStack(stackWithOneItemLessThanCapacity)
- *     }
- * 
- *     describe("(full)") {
- *       
- *       it("should be full") {
- *         assert(fullStack.full)
- *       }
- * 
- *       it should behave like nonEmptyStack(fullStack, lastValuePushed)
- * 
- *       it("should complain on a push") {
- *         intercept[IllegalStateException] {
- *           fullStack.push(10)
- *         }
- *       }
- *     }
- *   }
- * }
- * </pre>
- *
- * <p>
- * If you load these classes into the Scala interpreter (with scalatest's JAR file on the class path), and execute it,
- * you'll see:
- * </p>
- *
- * <pre class="stREPL">
- * scala> (new StackSpec).execute()
- * <span class="stGreen">A Stack (when empty) 
- * - should be empty
- * - should complain on peek
- * - should complain on pop
- * A Stack (with one item) 
- * - should be non-empty
- * - should return the top item on peek
- * - should not remove the top item on peek
- * - should remove the top item on pop
- * - should not be full
- * - should add to the top on push
- * A Stack (with one item less than capacity) 
- * - should be non-empty
- * - should return the top item on peek
- * - should not remove the top item on peek
- * - should remove the top item on pop
- * - should not be full
- * - should add to the top on push
- * A Stack (full) 
- * - should be full
- * - should be non-empty
- * - should return the top item on peek
- * - should not remove the top item on peek
- * - should remove the top item on pop
- * - should complain on a push</span>
- * </pre>
- * 
- * <p>
- * One thing to keep in mind when using shared tests is that in ScalaTest, each test in a suite must have a unique name.
- * If you register the same tests repeatedly in the same suite, one problem you may encounter is an exception at runtime
- * complaining that multiple tests are being registered with the same test name. A good way to solve this problem in a <code>FunSpec</code> is to surround
- * each invocation of a behavior function with a <code>describe</code> clause, which will prepend a string to each test name.
- * For example, the following code in a <code>FunSpec</code> would register a test with the name <code>"A Stack (when empty) should be empty"</code>:
- * </p>
- *
- * <pre class="stHighlight">
- *   describe("A Stack") {
- * 
- *     describe("(when empty)") {
- *       
- *       it("should be empty") {
- *         assert(emptyStack.empty)
- *       }
- *       // ...
- * </pre>
- *
- * <p>
- * If the <code>"should be empty"</code> test was factored out into a behavior function, it could be called repeatedly so long
- * as each invocation of the behavior function is inside a different set of <code>describe</code> clauses.
- *
  * @author Bill Venners
  */
 @Style("org.scalatest.finders.FunSpecFinder")

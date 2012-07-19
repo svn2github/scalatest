@@ -5,8 +5,8 @@ import org.scalatest._
 
 class SetSpec extends FunSpec with GivenWhenThen {
   
-  describe("An element") {
-    it("can be added to an empty mutable Set") {
+  describe("A mutable Set") {
+    it("should allow an element to be added") {
       given("an empty mutable Set")
       val set = mutable.Set.empty[String]
 
