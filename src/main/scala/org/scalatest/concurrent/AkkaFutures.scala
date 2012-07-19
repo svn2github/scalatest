@@ -15,7 +15,7 @@ import akka.dispatch.{Future => FutureOfAkka}
 import akka.dispatch.Promise
 import org.scalatest.exceptions.TestCanceledException
 
-trait AkkaFutures extends Futures {
+private[scalatest] trait AkkaFutures extends Futures {
 
   implicit def convertAkkaFuture[T](akkaFuture: FutureOfAkka[T]): FutureConcept[T] = 
     new FutureConcept[T] {    
