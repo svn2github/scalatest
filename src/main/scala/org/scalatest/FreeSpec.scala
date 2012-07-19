@@ -129,7 +129,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  * 
  * <pre class="stREPL">
- * scala&gt; (new StackSpec).execute()
+ * scala&gt; new StackSpec execute
  * <span class="stGreen">StackSpec:
  * A Stack 
  *   whenever it is empty 
@@ -189,7 +189,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  * 
  * <pre class="stREPL">
- * scala&gt; (new ComputerRoomRulesSpec).execute()
+ * scala&gt; new ComputerRoomRulesSpec execute
  * <span class="stGreen">ComputerRoomRulesSpec:
  * Achtung! 
  *   Alle touristen und non-technischen lookenpeepers! 
