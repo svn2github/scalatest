@@ -36,7 +36,6 @@
     <property name="dist" value="${build}/dist" />
     <property name="instrumented" value="${build}/instrumented" />
     <property name="doc" value="${build}/doc" />
-    <property name="jdoc" value="${build}/jdoc" />
     <property name="zipper" value="zipper" />
     <property name="project.name" value="ScalaTest" />
     <property name="demo" value="${build}/demo" />
@@ -61,9 +60,6 @@
         <mkdir dir="${build.generated.tests}" />
         <mkdir dir="${dist}" />
         <mkdir dir="${demodoc}" />
-        <mkdir dir="${doc}" />
-        <mkdir dir="${jdoc}" />
-        <mkdir dir="${jdoc}" />
 
         <copy file="pom_template.xml" tofile="${build}/pom.xml" overwrite="true">
           <filterset>
@@ -78,7 +74,6 @@
 	
         <path id="build.class.path">
             <pathelement location="${classes}" />
-            <pathelement location="lib/txtmark.jar" />
             <path refid="lib.path"></path>
         </path>
 
@@ -121,7 +116,7 @@
         </taskdef>
 
         <path id="scaladoc.source.path">
-            <pathelement location="${scalasrc}" />
+            <pathelement location="${build}/docsrc" />
             <pathelement location="${build.generated.src}" />
         </path>
 
@@ -269,25 +264,29 @@
     </target>
 
     <target name="doc" depends="compile-main">
-        <javadoc sourcepath="${javasrc}" destdir="${jdoc}" packagenames="org.scalatest,org.scalatest.tools" classpathref="build.class.path" windowtitle="ScalaTest ${release}" doctitle="ScalaTest ${release}" bottom="Copyright (C) 2001-2010 Artima, Inc. All rights reserved." />
+      <delete dir="${build}/doc" />
+      <mkdir  dir="${build}/doc" />
 
-        <scaladoc addparams="-no-specialization" srcref="scaladoc.source.path" destdir="${doc}" classpathref="build.class.path" doctitle="ScalaTest ${release}">
-            <include name="**/*.scala" />
-        </scaladoc>
+      <delete dir="${build}/docsrc" />
+      <mkdir  dir="${build}/docsrc" />
 
-        <concat destfile="${doc}/lib/template.css" force="yes">
-          <filelist dir="${html}" files="template.css, addl.css"/>
-        </concat>
+      <copy todir="${build}/docsrc">
+        <fileset dir="src/main/scala" />
+      </copy>
 
-        <!--
-      <javadoc sourcepath="${example}"
-        destdir="${demodoc}"
-        packagenames="com.artima.examples.*"
-        classpath="${classes}:${junit:junit:jar}"
-        windowtitle="ScalaTest Examples ${release}"
-        doctitle="ScalaTest Examples ${release}"
-        bottom="Copyright (C) 2001-2009 Artima, Inc. All rights reserved."/>
--->
+      <exec executable="support/docjavatags.scala"/>
+
+      <scaladoc addparams="-no-specialization"
+                srcref="scaladoc.source.path"
+                destdir="${doc}"
+                classpathref="lib.path"
+                doctitle="ScalaTest ${release}">
+        <include name="**/*.scala" />
+      </scaladoc>
+
+      <concat destfile="${doc}/lib/template.css" force="yes">
+        <filelist dir="${html}" files="template.css, addl.css"/>
+      </concat>
     </target>
 
      <!-- Put everything in ${jar.contents} into the scalatest.jar file -->
@@ -715,7 +714,6 @@
      <target name="deploy" depends="jar,jartests,jarsrc,jartestsrc,doc">
 
       <jar jarfile="${build}/scalatest-scaladoc.jar" basedir="${doc}"/>
-      <jar jarfile="${build}/scalatest-javadoc.jar"  basedir="${jdoc}"/>
 
       <property name="deploy.main"
                 value="${dist}/lib/scalatest.jar"/>
@@ -727,8 +725,6 @@
                 value="${build}/scalatest-test-sources.jar"/>
       <property name="deploy.scaladoc" 
                 value="${build}/scalatest-scaladoc.jar"/>
-      <property name="deploy.javadoc" 
-                value="${build}/scalatest-javadoc.jar"/>
       <property name="deploy.release"
                 value="${release}"/>
 
@@ -787,10 +783,6 @@
                     artifactId="scalatest_${old.scala.version}"
                     version="${scalatest.version}"
                     classifier="scaladoc"/>
-        <dependency groupId="org.scalatest"
-                    artifactId="scalatest_${old.scala.version}"
-                    version="${scalatest.version}"
-                    classifier="javadoc"/>
       </artifact:dependencies>
 
       <copy file="pom_template.xml" tofile="${build}/pom.xml" overwrite="true">
@@ -824,8 +816,6 @@
                 value="target/redeploy/scalatest-test-sources.jar"/>
       <property name="deploy.scaladoc" 
                 value="target/redeploy/scalatest-scaladoc.jar"/>
-      <property name="deploy.javadoc" 
-                value="target/redeploy/scalatest-javadoc.jar"/>
       <property name="deploy.release"
                 value="${scalatest.version}"/>
 
@@ -841,7 +831,6 @@
       -    deploy.sources
       -    deploy.test-sources
       -    deploy.scaladoc
-      -    deploy.javadoc
       -
       -->
     <target name="deploy-jars">
@@ -915,17 +904,6 @@
         <arg value="${mvn.deploy.plugin}" />
         <arg value="-Dfile=${deploy.scaladoc}" />
         <arg value="-Dclassifier=scaladoc" />
-        <arg value="-Durl=${maven.repository.url}" />
-        <arg value="-DpomFile=${build}/pom.xml" />
-        <arg value="-DrepositoryId=${repository.id}" />
-        <arg value="-DuniqueVersion=false" />
-        <arg value="-Pgpg" />
-      </artifact:mvn>
-
-      <artifact:mvn>
-        <arg value="${mvn.deploy.plugin}" />
-        <arg value="-Dfile=${deploy.javadoc}" />
-        <arg value="-Dclassifier=javadoc" />
         <arg value="-Durl=${maven.repository.url}" />
         <arg value="-DpomFile=${build}/pom.xml" />
         <arg value="-DrepositoryId=${repository.id}" />
