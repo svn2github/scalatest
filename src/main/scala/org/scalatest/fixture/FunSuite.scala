@@ -17,6 +17,7 @@ package org.scalatest.fixture
 
 import org.scalatest._
 import scala.collection.immutable.ListSet
+import org.scalatest.Suite.autoTagClassAnnotations
 
 /**
  * A sister trait to <code>org.scalatest.FunSuite</code> that can pass a fixture object into its tests.
@@ -666,8 +667,13 @@ trait FunSuite extends Suite { thisSuite =>
    * This trait's implementation returns tags that were passed as strings contained in <code>Tag</code> objects passed to
    * methods <code>test</code> and <code>ignore</code>.
    * </p>
+   * 
+   * <p>
+   * In addition, this trait's implementation will also auto-tag tests with class level annotations.  
+   * For example, if you annotate @Ignore at the class level, all test methods in the class will be auto-annotated with @Ignore.
+   * </p>
    */
-  override def tags: Map[String, Set[String]] = atomic.get.tagsMap
+  override def tags: Map[String, Set[String]] = autoTagClassAnnotations(atomic.get.tagsMap, this)
 
   protected override def runTests(testName: Option[String], args: Args) {
     runTestsImpl(thisSuite, testName, args, info, true, runTest)

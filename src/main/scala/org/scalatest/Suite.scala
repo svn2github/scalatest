@@ -42,6 +42,7 @@ import scala.collection.immutable.TreeSet
 import Suite.getIndentedTextForTest
 import Suite.getEscapedIndentedTextForTest
 import Suite.getDecodedName
+import Suite.autoTagClassAnnotations
 import org.scalatest.events._
 import org.scalatest.tools.StandardOutReporter
 import Suite.getMessageForException
@@ -1926,6 +1927,11 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * <code>Map</code> for each unique tag annotation name discovered through reflection. The mapped value for each tag name key will contain
    * the test method name, as provided via the <code>testNames</code> method. 
    * </p>
+   * 
+   * <p>
+   * In addition to test methods annotations, this trait's implementation will also auto-tag test methods with class level annotations.  
+   * For example, if you annotate @Ignore at the class level, all test methods in the class will be auto-annotated with @Ignore.
+   * </p>
    *
    * <p>
    * Subclasses may override this method to define and/or discover tags in a custom manner, but overriding method implementations
@@ -1941,25 +1947,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         if annotationClass.isAnnotationPresent(classOf[TagAnnotation])
       } yield annotationClass.getName
 
-    val testNameList = testNames
+    val testNameSet = testNames
       
     val testTags = Map() ++ 
-      (for (testName <- testNameList; if !getTags(testName).isEmpty)
+      (for (testName <- testNameSet; if !getTags(testName).isEmpty)
         yield testName -> (Set() ++ getTags(testName)))
 
-    val suiteTags = for { 
-      a <- getClass.getDeclaredAnnotations
-      annotationClass = a.annotationType
-      if annotationClass.isAnnotationPresent(classOf[TagAnnotation])
-    } yield annotationClass.getName
-    
-    val autoTestTags = 
-      if (suiteTags.size > 0)
-        Map() ++ testNameList.map(tn => (tn, suiteTags.toSet))
-      else
-        Map.empty[String, Set[String]]
-    
-    Runner.mergeMap[String, Set[String]](List(testTags, autoTestTags)) ( _ ++ _ ) 
+    autoTagClassAnnotations(testTags, this)
   }
 
   /**
@@ -3315,6 +3309,22 @@ used for test events like succeeded/failed, etc.
         val (leading, trailing) = quotedWords.splitAt(quotedWords.length - 2)
         leading.mkString(", ") + ", " + Resources("leftCommaAndRight", trailing(0), trailing(1))
     }
+  }
+  
+  def autoTagClassAnnotations(tags: Map[String, Set[String]], theSuite: Suite) = {
+    val suiteTags = for { 
+      a <- theSuite.getClass.getDeclaredAnnotations
+      annotationClass = a.annotationType
+      if annotationClass.isAnnotationPresent(classOf[TagAnnotation])
+    } yield annotationClass.getName
+    
+    val autoTestTags = 
+      if (suiteTags.size > 0)
+        Map() ++ theSuite.testNames.map(tn => (tn, suiteTags.toSet))
+      else
+        Map.empty[String, Set[String]]
+    
+    Runner.mergeMap[String, Set[String]](List(tags, autoTestTags)) ( _ ++ _ )
   }
 }
 

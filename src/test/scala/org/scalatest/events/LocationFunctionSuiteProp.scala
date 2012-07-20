@@ -394,4 +394,64 @@ class LocationFunctionSuiteProp extends FunctionSuiteProp {
     val expectedScopeOpenedList = List(ScopeOpenedPair("Test", expectedSourceFileName, thisLineNumber - 22))
     val expectedScopeClosedList = List(ScopeClosedPair("Test", expectedSourceFileName, thisLineNumber - 23))
   }
+  
+  def pathFreeSpec = new TestLocationFunctionPathFreeSpec
+  
+  def pathFunSpec = new TestLocationFunctionPathFunSpec
+}
+
+class TestLocationFunctionPathFreeSpec extends path.FreeSpec with TestLocationFunctionServices {
+  val expectedSourceFileName = "LocationFunctionSuiteProp.scala"
+  "Test" - {
+    "should succeed" in {
+      
+    }
+    "should pending" in {
+      pending
+    }
+    "should cancel" in {
+      cancel
+    }
+    "should ignore" ignore {
+      
+    }
+  }
+  val suiteTypeName: String = "path.FreeSpec"
+  val expectedStartingList = List(TestStartingPair("Test should succeed", expectedSourceFileName, thisLineNumber - 14), 
+                                  TestStartingPair("Test should pending", expectedSourceFileName, thisLineNumber - 12),
+                                  TestStartingPair("Test should cancel", expectedSourceFileName, thisLineNumber - 10))
+  val expectedResultList = List(TestResultPair(classOf[TestSucceeded], expectedSourceFileName, thisLineNumber - 17), 
+                                TestResultPair(classOf[TestPending], expectedSourceFileName, thisLineNumber - 15),
+                                TestResultPair(classOf[TestCanceled], expectedSourceFileName, thisLineNumber - 13),
+                                TestResultPair(classOf[TestIgnored], expectedSourceFileName, thisLineNumber - 11))
+  val expectedScopeOpenedList = List(ScopeOpenedPair("Test", expectedSourceFileName, thisLineNumber - 22))
+  val expectedScopeClosedList = List(ScopeClosedPair("Test", expectedSourceFileName, thisLineNumber - 23))
+}
+
+class TestLocationFunctionPathFunSpec extends path.FunSpec with TestLocationFunctionServices {
+  val expectedSourceFileName = "LocationFunctionSuiteProp.scala"
+  describe("A Spec") {
+    it("succeed") {
+       
+    }
+    it("pending") {
+      pending
+    }
+    it("cancel") {
+      cancel
+    }
+    ignore("ignore") {
+    
+    }
+  }
+  val suiteTypeName: String = "path.FunSpec"
+  val expectedStartingList = List(TestStartingPair("A Spec succeed", expectedSourceFileName, thisLineNumber - 14), 
+                                  TestStartingPair("A Spec pending", expectedSourceFileName, thisLineNumber - 12),
+                                  TestStartingPair("A Spec cancel", expectedSourceFileName, thisLineNumber - 10))
+  val expectedResultList = List(TestResultPair(classOf[TestSucceeded], expectedSourceFileName, thisLineNumber - 17), 
+                                TestResultPair(classOf[TestPending], expectedSourceFileName, thisLineNumber - 15),
+                                TestResultPair(classOf[TestCanceled], expectedSourceFileName, thisLineNumber - 13),
+                                TestResultPair(classOf[TestIgnored], expectedSourceFileName, thisLineNumber - 11))
+  val expectedScopeOpenedList = List(ScopeOpenedPair("A Spec", expectedSourceFileName, thisLineNumber - 22))
+  val expectedScopeClosedList = List(ScopeClosedPair("A Spec", expectedSourceFileName, thisLineNumber - 23))
 }

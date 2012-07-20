@@ -23,6 +23,7 @@ import org.scalatest.Suite
 import org.junit.runner.notification.RunListener
 import org.junit.runner.notification.Failure
 import org.scalatest.events._
+import org.scalatest.Suite.autoTagClassAnnotations
 
 /**
  * A suite of tests that can be run with either JUnit or ScalaTest. This trait allows you to write JUnit 4 tests
@@ -216,6 +217,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
     if (filter.tagsToInclude.isDefined) 0 else (testNames.size - tags.size)
 
   // Returns just tests that have org.junit.Ignore on them, but calls it org.scalatest.Ignore!
+  // Also autotag suite level annotation.
   override def tags: Map[String, Set[String]] = {
 
     def getMethodForJUnitTestName(testName: String) =
@@ -227,7 +229,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
       for (testName <- testNames; if hasIgnoreTag(testName))
         yield testName -> Set("org.scalatest.Ignore")
 
-    Map() ++ elements
+    autoTagClassAnnotations(Map() ++ elements, this)
   }
 
   override def run(testName: Option[String], args: Args) {

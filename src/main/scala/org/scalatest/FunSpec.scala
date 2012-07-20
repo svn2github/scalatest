@@ -17,6 +17,7 @@ package org.scalatest
 
 import scala.collection.immutable.ListSet
 import verb.BehaveWord
+import Suite.autoTagClassAnnotations
 
 /**
  * Trait that facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
@@ -1747,8 +1748,13 @@ trait FunSpec extends Suite { thisSuite =>
    * This trait's implementation returns tags that were passed as strings contained in <code>Tag</code> objects passed to 
    * methods <code>test</code> and <code>ignore</code>. 
    * </p>
+   * 
+   * <p>
+   * In addition, this trait's implementation will also auto-tag tests with class level annotations.  
+   * For example, if you annotate @Ignore at the class level, all test methods in the class will be auto-annotated with @Ignore.
+   * </p>
    */
-  override def tags: Map[String, Set[String]] = atomic.get.tagsMap
+  override def tags: Map[String, Set[String]] = autoTagClassAnnotations(atomic.get.tagsMap, this)
 
   /**
    * Run zero to many of this <code>FunSpec</code>'s tests.

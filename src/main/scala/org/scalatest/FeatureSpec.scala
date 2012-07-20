@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.ConcurrentModificationException
 import org.scalatest.events._
 import Suite.anErrorThatShouldCauseAnAbort
+import Suite.autoTagClassAnnotations
 
 /**
  * A suite of tests in which each test represents one <em>scenario</em> of a <em>feature</em>. 
@@ -1732,8 +1733,13 @@ trait FeatureSpec extends Suite { thisSuite =>
    * This trait's implementation returns tags that were passed as strings contained in <code>Tag</code> objects passed to 
    * methods <code>test</code> and <code>ignore</code>. 
    * </p>
+   * 
+   * <p>
+   * In addition, this trait's implementation will also auto-tag tests with class level annotations.  
+   * For example, if you annotate @Ignore at the class level, all test methods in the class will be auto-annotated with @Ignore.
+   * </p>
    */
-  override def tags: Map[String, Set[String]] = atomic.get.tagsMap
+  override def tags: Map[String, Set[String]] = autoTagClassAnnotations(atomic.get.tagsMap, this)
 
   /**
    * Run a test. This trait's implementation runs the test registered with the name specified by

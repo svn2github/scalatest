@@ -3,6 +3,7 @@ package org.scalatest.path
 import org.scalatest.verb.BehaveWord
 import scala.collection.immutable.ListSet
 import org.scalatest._
+import org.scalatest.Suite.autoTagClassAnnotations
 
 /**
  * A sister trait to <code>org.scalatest.FreeSpec</code> that isolates tests by running each test in its own
@@ -849,7 +850,7 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
      */
     def - (fun: => Unit) {
       // TODO: Fix the resource name
-      handleNestedBranch(string, None, fun, "describeCannotAppearInsideAnIt", "FreeSpec.scala", "-", 6, -2)
+      handleNestedBranch(string, None, fun, "describeCannotAppearInsideAnIt", "FreeSpec.scala", "-", 3, -2)
     }
 
     /**
@@ -1125,6 +1126,11 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    * This trait's implementation returns tags that were passed as strings contained in <code>Tag</code> objects passed
    * to methods <code>test</code> and <code>ignore</code>.
    * </p>
+   * 
+   * <p>
+   * In addition, this trait's implementation will also auto-tag tests with class level annotations.  
+   * For example, if you annotate @Ignore at the class level, all test methods in the class will be auto-annotated with @Ignore.
+   * </p>
    *
    * <p>
    * This trait's implementation of this method is  marked as final. For insight onto why, see the
@@ -1133,7 +1139,7 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    */
   final override def tags: Map[String, Set[String]] = {
     ensureTestResultsRegistered(thisSuite)
-    atomic.get.tagsMap
+    autoTagClassAnnotations(atomic.get.tagsMap, this)
   }
 
   /**

@@ -20,6 +20,8 @@ trait FunctionSuiteExamples extends Tables {
   def fixturePropSpec: fixture.PropSpec with FixtureServices
   def wordSpec: WordSpec with FixtureServices
   def fixtureWordSpec: fixture.WordSpec with FixtureServices
+  def pathFreeSpec: path.FreeSpec with FixtureServices
+  def pathFunSpec: path.FunSpec with FixtureServices
   
   def examples =
     Table(
@@ -37,7 +39,9 @@ trait FunctionSuiteExamples extends Tables {
       propSpec,
       fixturePropSpec,
       wordSpec,
-      fixtureWordSpec
+      fixtureWordSpec, 
+      pathFreeSpec, 
+      pathFunSpec
     )
   
 }
