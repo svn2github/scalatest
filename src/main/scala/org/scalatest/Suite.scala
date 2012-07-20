@@ -621,6 +621,50 @@ import exceptions._
  * to encourage ignored tests to be eventually fixed and added back into the active suite of tests.
  * </p>
  *
+ * <p>
+ * If you wish to temporarily ignore an entire suite of tests, you can annotate the test class with <code>@Ignore</code>, like this:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.ignoreall
+ *
+ * import org.scalatest._
+ *
+ * @Ignore 
+ * class SetSuite extends Suite {
+ *
+ *   def &#96;test: an empty Set should have size 0&#96; {
+ *     assert(Set.empty.size === 0)
+ *   }
+ *
+ *   def &#96;test: invoking head on an empty Set should produce NoSuchElementException&#96; {
+ *     intercept[NoSuchElementException] {
+ *       Set.empty.head
+ *     }
+ *   }
+ * }
+ * </pre>
+ *
+ * <p>
+ * When you mark a test class with a tag annotation, ScalaTest will mark each test defined in that class with that tag.
+ * Thus, marking the <code>SetSuite</code> in the above example with the <code>@Ignore</code> tag annotation means that both tests
+ * in the class will be ignored. If you run the above <code>SetSuite</code> in the Scala interpreter, you'll see:
+ * </p>
+ *
+ * <pre class="stREPL">
+ * scala&gt; new SetSuite execute
+ * <span class="stGreen">SetSuite:</span>
+ * <span class="stYellow">- an empty Set should have size 0 !!! IGNORED !!!
+ * - invoking head on an empty Set should produce NoSuchElementException !!! IGNORED !!!</span>
+ * </pre>
+ *
+ * <p>
+ * Note that marking a test class as ignored won't prevent it from being discovered by ScalaTest. Ignored classes
+ * will be discovered and run, and all their tests will be reported as ignored. This is intended to keep the ignored
+ * class somewhat visible, to encourage the developers to eventually fix and un-ignore it. If you want to
+ * prevent a class from being discovered at all, use the <a href="DoNotDiscover.html"><code>DoNotDiscover</code></a> annotation instead.
+ * </p>
+ *
  * <a name="pendingTests"></a><h2>Pending tests</h2></a>
  *
  * <p>

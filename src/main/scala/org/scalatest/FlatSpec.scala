@@ -298,7 +298,8 @@ import Suite.autoTagClassAnnotations
  *
  * <pre class="stREPL">
  * scala&gt; new SetSpec execute
- * <span class="stGreen">An empty Set</span>
+ * <span class="stGreen">SetSpec:
+ * An empty Set</span>
  * <span class="stYellow">- should have size 0 !!! IGNORED !!!
  * - should produce NoSuchElementException when head is invoked !!! IGNORED !!!</span>
  * </pre>
