@@ -274,6 +274,12 @@
         <fileset dir="src/main/scala" />
       </copy>
 
+      <replaceregexp match="@Style(.*)" replace="">
+        <fileset dir="target/docsrc">
+          <include name="**/*.scala" />
+        </fileset>
+      </replaceregexp>
+
       <exec executable="support/docjavatags.scala"/>
 
       <scaladoc addparams="-no-specialization"

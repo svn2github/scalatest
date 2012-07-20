@@ -23,9 +23,9 @@ exec scala "$0" "$@"
  *
  * This script aborts if any unexpected files are found in the java
  * directory, in order to make it obvious that something changed that
- * needs to be looked at.  If it's a new tag file, add it to the filenames
- * set and see if it works.  Otherwise, modify this script as needed
- * to get things working again.
+ * needs to be looked at.  If it's a new tag file, try adding it to the
+ * filenames set and see if it works.  Otherwise, modify this script as
+ * needed to get things working again.
  */
 
 import java.io.File
@@ -52,27 +52,32 @@ def parseContents(className: String, text: String): (String, String) = {
 }
 
 //
-// Extracts return type of value() method declared in body of java class
-// and constructs a modified body with the java declaration of value()
-// method replaced by a scala version.
+// Constructs a modified class body where the java declaration of the value()
+// method, where present, is replaced by a scala version.
 //
-// Returns a tuple containing the value type and the modified body.
-//
-def parseValueType(body: String): (String, String) = {
+def genNewBody(body: String): String = {
   val matcher =
     Pattern.compile("""(?m)^\s*(.*?) *value\(\);""").matcher(body)
 
   if (matcher.find()) {
     val valueType = matcher.group(1)
 
-    val buf = new StringBuffer
-    matcher.appendReplacement(buf, " def value() = valueArg")
-    matcher.appendTail(buf)
-    val newBody = buf.toString
+    val newValueType =
+      valueType match {
+        case "Class<? extends Suite>" => "Class[_ <: Suite]"
+        case "String"                 => "String"
+        case _ =>
+          throw new RuntimeException("unexpected valueType [" +
+                                     valueType + "]")
+    }
 
-    (valueType, newBody)
+    val buf = new StringBuffer
+    matcher.appendReplacement(buf, " def value(): "+ newValueType)
+    matcher.appendTail(buf)
+
+    buf.toString
   }
-  else ("", "")
+  else ""
 }
 
 def main() {
@@ -93,22 +98,7 @@ def main() {
 
     val (top, body) = parseContents(className, contents)
 
-    val (valueType, newBody) = parseValueType(body)
-
-    val constructorArgs =
-      valueType match {
-        case "Class<? extends Suite>" => "(valueArg: Class[_ <: Suite])"
-        case "String"                 => "(valueArg: String)"
-        case ""                       => ""
-        case _ =>
-          throw new RuntimeException("unexpected valueType [" +
-                                     valueType + "]")
-    }
-
-    // use whatever works...
-    val superClass =
-      if (className == "Style") "StaticAnnotation"
-      else                      "java.lang.annotation.Annotation"
+    val newBody = genNewBody(body)
 
     val newContents =
       top
@@ -119,8 +109,8 @@ def main() {
         .replaceAll("""public *@interface""", "")
         .replaceAll("""(?m)^import.*$""",     "")
         .replaceAll(className + "$",
-                    "class "+ className + constructorArgs +
-                    " extends "+ superClass +" "+ newBody +"\n")
+                    "trait "+ className +
+                    " extends java.lang.annotation.Annotation "+ newBody +"\n")
 
      val newFile = new PrintWriter(docsrcDir +"/"+ className +".scala")
      newFile.print(newContents)
