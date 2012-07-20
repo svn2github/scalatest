@@ -21,6 +21,11 @@ import java.lang.annotation.*;
  * Annotation to associate a <em>wrapper suite</em> with a non-<code>Suite</code> class, so it can be run via ScalaTest.
  *
  * <p>
+ * Note: This is actually an annotation defined in Java, not a Scala trait. It must be defined in Java instead of Scala so it will be accessible
+ * at runtime. It has been inserted into Scaladoc by pretending it is a trait.
+ * </p>
+ *
+ * <p>
  * A class will be considered annotated with <code>WrapWith</code> if it is annotated directly or one of its superclasses (but
  * not supertraits) are annotated with <code>WrapWith</code>.
  * The wrapper suite must have a public, one-arg constructor that takes a <code>Class</code> instance whose type parameter
@@ -31,18 +36,23 @@ import java.lang.annotation.*;
  * </p>
  *
  * <pre class="stHighlight">
- * @WrapWith(classOf[Specs1Runner])
- * class LegacySpec extends Specification {
+ * import org.scalacheck.Properties
+ *
+ * @WrapWith(classOf[ScalaCheckPropertiesSpec])
+ * class StringSpecification extends Properties("String") {
  *   // ...
  * }
  * </pre>
  *
  * <p>
- * The <code>Specs1Runner</code> would need to have a public, no-arg constructor that accepts subclasses of <code>Specification</code>:
+ * The <code>ScalaCheckPropertiesSpec</code> would need to have a public, no-arg constructor that accepts subclasses of <code>org.scalacheck.Properties</code>:
  * </p>
  *
  * <pre class="stHighlight">
- * class Specs1Runner(clazz: Class[_ <: Specification]) {
+ * import org.scalacheck.Properties
+ * import org.scalatest.Suite
+ *
+ * class ScalaCheckPropertiesSpec(clazz: Class[_ <: Properties]) extends Suite {
  *   // ...
  * }
  * </pre>

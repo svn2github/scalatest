@@ -17,6 +17,17 @@ package org.scalatest;
 
 import java.lang.annotation.*; 
 
+/**
+ * Annotation used to tag a test, or suite of tests, as ignored.
+ *
+ * <p>
+ * Note: This is actually an annotation defined in Java, not a Scala trait. It must be defined in Java instead of Scala so it will be accessible
+ * at runtime. It has been inserted into Scaladoc by pretending it is a trait.
+ * </p>
+ *
+ * @author Bill Venners
+ * @author Chua Chee Seng
+ */
 @TagAnnotation
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
