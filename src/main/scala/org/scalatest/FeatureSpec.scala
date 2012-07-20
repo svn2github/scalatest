@@ -165,8 +165,40 @@ import Suite.autoTagClassAnnotations
  *   Scenario: User presses power button when TV is on
  *     Given a TV set that is switched on 
  *     When the power button is pressed 
- *     Then the TV should switch off 
+ *     Then the TV should switch off</span>
  * </pre>
+ *
+ * <p>
+ * Or, to run just the &ldquo;<code>Feature: TV power button Scenario: User presses power button when TV is on</code>&rdquo; method, you could pass that test's name, or any unique substring of the
+ * name, such as <code>"TV is on"</code>. Here's an example:
+ * </p>
+ *
+ * <pre class="stREPL">
+ * scala&gt; new TVSetSpec execute "TV is on"
+ * <span class="stGreen">TVSetSpec:
+ * As a TV set owner 
+ * I want to be able to turn the TV on and off 
+ * So I can watch TV when I want 
+ * And save energy when I'm not watching TV 
+ * Feature: TV power button
+ *   Scenario: User presses power button when TV is on
+ *     Given a TV set that is switched on 
+ *     When the power button is pressed 
+ *     Then the TV should switch off</span>
+ * </pre>
+ *
+ * <p>
+ * You can also pass to <code>execute</code> a <a href="#configMapSection"><em>config map</em></a> of key-value
+ * pairs, which will be passed down into suites and tests, as well as other parameters that configure the run itself.
+ * For more information on running in the Scala interpreter, see the documentation for <code>execute</code> (below) and the
+ * <a href="Shell.html">ScalaTest shell</a>.
+ * </p>
+ *
+ * <p>
+ * The <code>execute</code> method invokes a <code>run</code> method takes two
+ * parameters. This <code>run</code> method, which actually executes the suite, will usually be invoked by a test runner, such
+ * as <a href="run$.html"><code>run</code></a>, <a href="tools/Runner$.html"><code>tools.Runner</code></a>, a build tool, or an IDE.
+ * </p>
  *
  * <p>
  * See also: <a href="http://www.scalatest.org/getting_started_with_feature_spec" target="_blank">Getting started with <code>FeatureSpec</code>.</a>

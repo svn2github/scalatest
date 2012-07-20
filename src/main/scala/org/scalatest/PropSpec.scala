@@ -47,13 +47,13 @@ import Suite.autoTagClassAnnotations
  *     )
  *   
  *   property("an empty Set should have size 0") {
- *     forAll(examples) { set =>
+ *     forAll(examples) { set =&gt;
  *       set.size should be (0)
  *     }
  *   }
  * 
  *   property("invoking head on an empty set should produce NoSuchElementException") {
- *     forAll(examples) { set =>
+ *     forAll(examples) { set =&gt;
  *       evaluating { set.head } should produce [NoSuchElementException]
  *     }
  *   }

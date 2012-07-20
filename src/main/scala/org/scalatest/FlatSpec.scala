@@ -1455,7 +1455,7 @@ import Suite.autoTagClassAnnotations
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new SharedTestExampleSpec).execute()
+ * scala&gt; new SharedTestExampleSpec execute
  * <span class="stGreen">A Stack (when empty)
  * - should be empty
  * - should complain on peek

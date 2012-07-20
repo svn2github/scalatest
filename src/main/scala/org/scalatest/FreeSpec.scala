@@ -1527,7 +1527,7 @@ import Suite.autoTagClassAnnotations
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new SharedTestExampleSpec).execute()
+ * scala&gt; new SharedTestExampleSpec execute
  * <span class="stGreen">SharedTestExampleSpec:
  * A Stack 
  *   when empty 

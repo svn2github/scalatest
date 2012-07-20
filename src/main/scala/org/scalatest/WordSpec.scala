@@ -1591,7 +1591,7 @@ import Suite.autoTagClassAnnotations
  * 
  *   def stackWithOneItemLessThanCapacity = {
  *     val stack = new Stack[Int]
- *     for (i <- 1 to 9)
+ *     for (i &lt;- 1 to 9)
  *       stack.push(i)
  *     stack
  *   }

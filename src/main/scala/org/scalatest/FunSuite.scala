@@ -115,7 +115,7 @@ import Suite.autoTagClassAnnotations
  * </p>
  *
  * <pre class="stREPL">
- * scala> new SetSuite execute
+ * scala&gt; new SetSuite execute
  * </pre>
  *
  * <p>
@@ -1264,7 +1264,7 @@ import Suite.autoTagClassAnnotations
  *  
  *   def stackWithOneItemLessThanCapacity = {
  *     val stack = new Stack[Int]
- *     for (i <- 1 to 9)
+ *     for (i &lt;- 1 to 9)
  *       stack.push(i)
  *     stack
  *   }
@@ -1318,7 +1318,7 @@ import Suite.autoTagClassAnnotations
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new StackFunSuite).execute()
+ * scala&gt; new StackFunSuite execute
  * <span class="stGreen">StackFunSuite:
  * - empty is invoked on an empty stack
  * - peek is invoked on an empty stack

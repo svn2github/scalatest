@@ -107,7 +107,7 @@ import Suite.autoTagClassAnnotations
  * </p>
  *
  * <pre class="stREPL">
- * scala> new SetSpec execute
+ * scala&gt; new SetSpec execute
  * </pre>
  *
  * <p>
@@ -117,10 +117,34 @@ import Suite.autoTagClassAnnotations
  * <pre class="stREPL">
  * <span class="stGreen">A Set</span>
  * <span class="stGreen">  when empty</span>
- * <span class="stGreen"> - should have size 0</span>
- * <span class="stGreen"> - should produce NoSuchElementException when head is invoked</span>
+ * <span class="stGreen">  - should have size 0</span>
+ * <span class="stGreen">  - should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
+ * <p>
+ * Or, to run just the &ldquo;<code>A Set when empty should have size 0</code>&rdquo; test, you could pass that test's name, or any unique substring of the
+ * name, such as <code>"size 0"</code> or even just <code>"0"</code>. Here's an example:
+ * </p>
+ *
+ * <pre class="stREPL">
+ * scala&gt; new SetSuite execute "size 0"
+ * <span class="stGreen">A Set</span>
+ * <span class="stGreen">  when empty</span>
+ * <span class="stGreen">  - should have size 0</span>
+ * </pre>
+ *
+ * <p>
+ * You can also pass to <code>execute</code> a <a href="#configMapSection"><em>config map</em></a> of key-value
+ * pairs, which will be passed down into suites and tests, as well as other parameters that configure the run itself.
+ * For more information on running in the Scala interpreter, see the documentation for <code>execute</code> (below) and the
+ * <a href="Shell.html">ScalaTest shell</a>.
+ * </p>
+ *
+ * <p>
+ * The <code>execute</code> method invokes a <code>run</code> method takes two
+ * parameters. This <code>run</code> method, which actually executes the suite, will usually be invoked by a test runner, such
+ * as <a href="run$.html"><code>run</code></a>, <a href="tools/Runner$.html"><code>tools.Runner</code></a>, a build tool, or an IDE.
+ * </p>
  * <p>
  * <em>Note: Trait <code>FunSpec</code>'s syntax is in great part inspired by <a href="http://rspec.info/" target="_blank">RSpec</a>, a Ruby BDD framework.</em>
  *</p>
@@ -176,8 +200,8 @@ import Suite.autoTagClassAnnotations
  * <pre class="stREPL">
  * <span class="stGreen">A Set</span>
  * <span class="stGreen">  when empty</span>
- * <span class="stYellow">- should have size 0 !!! IGNORED !!!</span>
- * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
+ * <span class="stYellow">  - should have size 0 !!! IGNORED !!!</span>
+ * <span class="stGreen">  - should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
  * <p>
@@ -1323,7 +1347,7 @@ import Suite.autoTagClassAnnotations
  * 
  *   def stackWithOneItemLessThanCapacity = {
  *     val stack = new Stack[Int]
- *     for (i <- 1 to 9)
+ *     for (i &lt;- 1 to 9)
  *       stack.push(i)
  *     stack
  *   }
@@ -1385,7 +1409,7 @@ import Suite.autoTagClassAnnotations
  * </p>
  *
  * <pre class="stREPL">
- * scala> (new StackSpec).execute()
+ * scala&gt; new StackSpec execute
  * <span class="stGreen">A Stack (when empty) 
  * - should be empty
  * - should complain on peek
