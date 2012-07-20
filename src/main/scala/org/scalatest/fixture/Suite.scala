@@ -29,7 +29,7 @@ import exceptions.{TestCanceledException, TestPendingException}
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
  * Use trait <code>fixture.Suite</code> in situations for which <a href="../Suite.html"><code>Suite</code></a>
- * would be a good choice, such as large projects or static code generation, when all or most tests need the same fixture objects
+ * would be a good choice, when all or most tests need the same fixture objects
  * that must be cleaned up afterwords. <em>Note: <code>fixture.Suite</code> is intended for use in special situations, with trait <code>Suite</code> used for general needs. For
  * more insight into where <code>fixture.Suite</code> fits in the big picture, see the <a href="../Suite.html#withFixtureOneArgTest"><code>withFixture(OneArgTest)</code></a> subsection of the <a href="../Suite.html#sharedFixtures">Shared fixtures</a> section in the documentation for trait <code>Suite</code>.</em>
  * </td></tr></table>

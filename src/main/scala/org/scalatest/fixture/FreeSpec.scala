@@ -33,7 +33,7 @@ import org.scalatest.Suite.autoTagClassAnnotations
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
  * Use trait <code>fixture.FreeSpec</code> in situations for which <a href="../FreeSpec.html"><code>FreeSpec</code></a>
- * would be a good choice, such as XXXXXXX, when all or most tests need the same fixture objects
+ * would be a good choice, when all or most tests need the same fixture objects
  * that must be cleaned up afterwords. <em>Note: <code>fixture.FreeSpec</code> is intended for use in special situations, with trait <code>FreeSpec</code> used for general needs. For
  * more insight into where <code>fixture.FreeSpec</code> fits in the big picture, see the <a href="../FreeSpec.html#withFixtureOneArgTest"><code>withFixture(OneArgTest)</code></a> subsection of the <a href="../FreeSpec.html#sharedFixtures">Shared fixtures</a> section in the documentation for trait <code>FreeSpec</code>.</em>
  * </td></tr></table>

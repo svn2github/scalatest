@@ -22,6 +22,14 @@ import org.scalatest.Suite.autoTagClassAnnotations
 /**
  * A sister trait to <code>org.scalatest.PropSpec</code> that can pass a fixture object into its tests.
  *
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * Use trait <code>fixture.PropSpec</code> in situations for which <a href="../PropSpec.html"><code>PropSpec</code></a>
+ * would be a good choice, when all or most tests need the same fixture objects
+ * that must be cleaned up afterwords. <em>Note: <code>fixture.PropSpec</code> is intended for use in special situations, with trait <code>PropSpec</code> used for general needs. For
+ * more insight into where <code>fixture.PropSpec</code> fits in the big picture, see the <a href="../PropSpec.html#withFixtureOneArgTest"><code>withFixture(OneArgTest)</code></a> subsection of the <a href="../PropSpec.html#sharedFixtures">Shared fixtures</a> section in the documentation for trait <code>PropSpec</code>.</em>
+ * </td></tr></table>
+ * 
  * <p>
  * The purpose of <code>fixture.PropSpec</code> and its subtraits is to facilitate writing tests in
  * a functional style. Some users may prefer writing tests in a functional style in general, but one

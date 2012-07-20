@@ -34,7 +34,7 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
  * Use trait <code>fixture.FunSpec</code> in situations for which <a href="../FunSpec.html"><code>FunSpec</code></a>
- * would be a good choice, such as XXXXXXX, when all or most tests need the same fixture objects
+ * would be a good choice, when all or most tests need the same fixture objects
  * that must be cleaned up afterwords. <em>Note: <code>fixture.FunSpec</code> is intended for use in special situations, with trait <code>FunSpec</code> used for general needs. For
  * more insight into where <code>fixture.FunSpec</code> fits in the big picture, see the <a href="../FunSpec.html#withFixtureOneArgTest"><code>withFixture(OneArgTest)</code></a> subsection of the <a href="../FunSpec.html#sharedFixtures">Shared fixtures</a> section in the documentation for trait <code>FunSpec</code>.</em>
  * </td></tr></table>
