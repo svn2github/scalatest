@@ -58,6 +58,71 @@ import tools.Runner
 import exceptions.StackDepthExceptionHelper.getStackDepthFun
 import exceptions._
 
+/*
+ * <h2>Using <code>info</code> and <code>markup</code></h2>
+ *
+ * <p>
+ * One of the parameters to <code>Suite</code>'s <code>run</code> method is a <code>Reporter</code>, which
+ * will collect and report information about the running suite of tests.
+ * Information about suites and tests that were run, whether tests succeeded or failed, 
+ * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
+ * Most often the reporting done by default will be sufficient, but
+ * occasionally you may wish to provide custom information to the <code>Reporter</code> from a test.
+ * For this purpose, an <a href="Informer.html"><code>Informer</code></a> that will forward information
+ * to the current <code>Reporter</code> is provided via the <code>info</code> parameterless method.
+ * You can pass the extra information to the <code>Informer</code> via its <code>apply</code> method.
+ * The <code>Informer</code> will then pass the information to the <code>Reporter</code> via an <code>InfoProvided</code> event.
+ * Here's an example that shows both a direct use as well as an indirect use through the methods
+ * of <a href="GivenWhenThen.html"><code>GivenWhenThen</code></a>:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * package org.scalatest.examples.suite.info
+ *
+ * import collection.mutable
+ * import org.scalatest._
+ * 
+ * class SetSuite extends Suite with GivenWhenThen {
+ *
+ *   def &#96;test: an element can be added to an empty mutable Set&#96; {
+ *
+ *     given("an empty mutable Set")
+ *     val set = mutable.Set.empty[String]
+ *
+ *     when("an element is added")
+ *     set += "clarity"
+ *
+ *     then("the Set should have size 1")
+ *     assert(set.size === 1)
+ *
+ *     and("the Set should contain the added element")
+ *     assert(set.contains("clarity"))
+ *
+ *     info("That's all folks!")
+ *   }
+ * }
+ * </pre>
+ *
+ * If you run this <code>Suite</code> from the interpreter, you will see the messages
+ * included in the output:
+ *
+ * <pre class="stREPL">
+ * scala&gt; new SetSuite execute
+ * <span class="stGreen">SetSuite:
+ * - an element can be added to an empty mutable Set
+ *   + Given an empty mutable Set
+ *   + When an element is added
+ *   + Then the Set should have size 1
+ *   + And the Set should contain the added element
+ *   + That's all folks!</span>
+ * </pre>
+ *
+ * <p>
+ * Trait <code>Suite</code> also carries a <a href="Documenter.html"><code>Documenter</code></a> named <code>markup</code>, which
+ * you can use to transmit markup text to the <code>Reporter</code>.
+ * </p>
+ */
+
 /**
  * A suite of tests. A <code>Suite</code> instance encapsulates a conceptual
  * suite (<em>i.e.</em>, a collection) of tests.
@@ -555,7 +620,7 @@ import exceptions._
  * to encourage ignored tests to be eventually fixed and added back into the active suite of tests.
  * </p>
  *
- * <h2>Pending tests</h2>
+ * <a name="pendingTests"></a><h2>Pending tests</h2></a>
  *
  * <p>
  * A <em>pending test</em> is one that has been given a name but is not yet implemented. The purpose of
@@ -616,70 +681,29 @@ import exceptions._
  * <span class="stGreen">- invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  * 
- *  <!--
- * <h2>Using <code>info</code> and <code>markup</code></h2>
- *
  * <p>
- * One of the parameters to the <code>run</code> method is a <code>Reporter</code>, which
- * will collect and report information about the running suite of tests.
- * Information about suites and tests that were run, whether tests succeeded or failed, 
- * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
- * Most often the reporting done by default will be sufficient, but
- * occasionally you may wish to provide custom information to the <code>Reporter</code> from a test.
- * For this purpose, an <a href="Informer.html"><code>Informer</code></a> that will forward information
- * to the current <code>Reporter</code> is provided via the <code>info</code> parameterless method.
- * You can pass the extra information to the <code>Informer</code> via its <code>apply</code> method.
- * The <code>Informer</code> will then pass the information to the <code>Reporter</code> via an <code>InfoProvided</code> event.
- * Here's an example that shows both a direct use as well as an indirect use through the methods
- * of <a href="GivenWhenThen.html"><code>GivenWhenThen</code></a>:
+ * One difference between an ignored test and a pending one is that an ignored test is intended to be used during a
+ * significant refactorings of the code under test, when tests break and you don't want to spend the time to fix
+ * all of them immediately. You can mark some of those broken tests as ignored temporarily, so that you can focus the red
+ * bar on just failing tests you actually want to fix immediately. Later you can go back and fix the ignored tests.
+ * In other words, by ignoring some failing tests temporarily, you can more easily notice failed tests that you actually
+ * want to fix. By contrast, a pending test is intended to be used before a test and/or the code under test is written.
+ * Pending indicates you've decided to write a test for a bit of behavior, but either you haven't written the test yet, or
+ * have only written part of it, or perhaps you've written the test but don't want to implement the behavior it tests
+ * until after you've implemented a different bit of behavior you realized you need first. Thus ignored tests are designed
+ * to facilitate refactoring of existing code whereas pending tests are designed to facilitate the creation of new code.
  * </p>
  *
- * <pre class="stHighlight">
- * package org.scalatest.examples.suite.info
- *
- * import collection.mutable
- * import org.scalatest._
- * 
- * class SetSuite extends Suite with GivenWhenThen {
- *
- *   def &#96;test: an element can be added to an empty mutable Set&#96; {
- *
- *     given("an empty mutable Set")
- *     val set = mutable.Set.empty[String]
- *
- *     when("an element is added")
- *     set += "clarity"
- *
- *     then("the Set should have size 1")
- *     assert(set.size === 1)
- *
- *     and("the Set should contain the added element")
- *     assert(set.contains("clarity"))
- *
- *     info("That's all folks!")
- *   }
- * }
- * </pre>
- *
- * If you run this <code>Suite</code> from the interpreter, you will see the messages
- * included in the output:
- *
- * <pre class="stREPL">
- * scala&gt; new SetSuite execute
- * <span class="stGreen">SetSuite:
- * - an element can be added to an empty mutable Set
- *   + Given an empty mutable Set
- *   + When an element is added
- *   + Then the Set should have size 1
- *   + And the Set should contain the added element
- *   + That's all folks!</span>
- * </pre>
- *
  * <p>
- * Trait <code>Suite</code> also carries a <a href="Documenter.html"><code>Documenter</code></a> named <code>markup</code>, which
- * you can use to transmit markup text to the <code>Reporter</code>.
+ * One other difference between ignored and pending tests is that ignored tests are implemented as a test tag that is
+ * excluded by default. Thus an ignored test is never executed. By contrast, a pending test is implemented as a
+ * test that throws <code>TestPendingException</code> (which is what calling the <code>pending</code> method does). Thus
+ * the body of pending tests are executed up until they throw <code>TestPendingException</code>. The reason for this difference
+ * is that it enables your unfinished test to send <code>InfoProvided</code> messages to the reporter before it completes
+ * abruptly with <code>TestPendingException</code>, as shown in the previous example on <code>Informer</code>s
+ * that used the <code>GivenWhenThen</code> trait.
  * </p>
- * -->
+ *
  * <h2>Executing suites in parallel</h2>
  *
  * <p>

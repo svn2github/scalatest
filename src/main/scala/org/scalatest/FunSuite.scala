@@ -54,8 +54,7 @@ import scala.collection.immutable.ListSet
  * by the primary constructor of <code>SetSuite</code>. You specify the name of the test as
  * a string between the parentheses, and the test code itself between curly braces.
  * The test code is a function passed as a by-name parameter to <code>test</code>, which registers
- * it for later execution. One benefit of <code>FunSuite</code> compared to <code>Suite</code> is you need not name all your
- * tests starting with &#8220;<code>test: </code>.&#8221;
+ * it for later execution. 
  * </p>
  *
  * <p>
@@ -78,13 +77,17 @@ import scala.collection.immutable.ListSet
  * See also: <a href="http://www.scalatest.org/getting_started_with_fun_suite" target="_blank">Getting started with <code>FunSuite</code>.</a>
  * </p>
  * 
+ * <p>
+ * <em>Note: Trait <code>FunSuite</code> was in part inspired by <a href="http://rehersal.sourceforge.net/documentation.shtml" target="_blank">Rehersal</a>,
+ * an early test framework for Scala.</em>
+ * </p>
+ *
  * <a name="ignoredTests"></a><h2>Ignored tests</h2></a>
  *
  * <p>
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
  * good intention of resurrecting the test at a later time, <code>FunSuite</code> provides registration
- * methods that start with <code>ignore</code> instead of <code>test</code>. For example, to temporarily
- * disable the test named <code>Addition</code>, just change &#8220;<code>test</code>&#8221; into &#8220;<code>ignore</code>,&#8221; like this:
+ * methods that start with <code>ignore</code> instead of <code>test</code>. Here's an example: to temporarily
  * </p>
  *
  * <pre class="stHighlight">
@@ -124,10 +127,10 @@ import scala.collection.immutable.ListSet
  * <span class="stGreen">- Invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  *
- * <h2>Informers</h2>
+ * <a name="informers"></a><h2>Informers</h2></a>
  *
  * <p>
- * One of the parameters to the <code>run</code> method is a <code>Reporter</code>, which
+ * One of the parameters to <code>FunSuite</code>'s <code>run</code> method is a <code>Reporter</code>, which
  * will collect and report information about the running suite of tests.
  * Information about suites and tests that were run, whether tests succeeded or failed, 
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
@@ -182,7 +185,7 @@ import scala.collection.immutable.ListSet
  *   + That's all folks!</span>
  * </pre>
  *
- * <h2>Pending tests</h2>
+ * <a name="pendingTests"></a><h2>Pending tests</h2></a>
  *
  * <p>
  * A <em>pending test</em> is one that has been given a name but is not yet implemented. The purpose of
@@ -249,20 +252,43 @@ import scala.collection.immutable.ListSet
  * <span class="stGreen">- Invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  * 
+ * <p>
+ * One difference between an ignored test and a pending one is that an ignored test is intended to be used during a
+ * significant refactorings of the code under test, when tests break and you don't want to spend the time to fix
+ * all of them immediately. You can mark some of those broken tests as ignored temporarily, so that you can focus the red
+ * bar on just failing tests you actually want to fix immediately. Later you can go back and fix the ignored tests.
+ * In other words, by ignoring some failing tests temporarily, you can more easily notice failed tests that you actually
+ * want to fix. By contrast, a pending test is intended to be used before a test and/or the code under test is written.
+ * Pending indicates you've decided to write a test for a bit of behavior, but either you haven't written the test yet, or
+ * have only written part of it, or perhaps you've written the test but don't want to implement the behavior it tests
+ * until after you've implemented a different bit of behavior you realized you need first. Thus ignored tests are designed
+ * to facilitate refactoring of existing code whereas pending tests are designed to facilitate the creation of new code.
+ * </p>
+ *
+ * <p>
+ * One other difference between ignored and pending tests is that ignored tests are implemented as a test tag that is
+ * excluded by default. Thus an ignored test is never executed. By contrast, a pending test is implemented as a
+ * test that throws <code>TestPendingException</code> (which is what calling the <code>pending</code> method does). Thus
+ * the body of pending tests are executed up until they throw <code>TestPendingException</code>. The reason for this difference
+ * is that it enables your unfinished test to send <code>InfoProvided</code> messages to the reporter before it completes
+ * abruptly with <code>TestPendingException</code>, as shown in the previous example on <code>Informer</code>s
+ * that used the <code>GivenWhenThen</code> trait.
+ * </p>
+ *
  * <a name="taggingTests"></a><h2>Tagging tests</h2>
  *
  * <p>
  * A <code>FunSuite</code>'s tests may be classified into groups by <em>tagging</em> them with string names.
  * As with any suite, when executing a <code>FunSuite</code>, groups of tests can
  * optionally be included and/or excluded. To tag a <code>FunSuite</code>'s tests,
- * you pass objects that extend abstract class <code>org.scalatest.Tag</code> to methods
- * that register tests, <code>test</code> and <code>ignore</code>. Class <code>Tag</code> takes one parameter, a string name.  If you have
- * created Java annotation interfaces for use as group names in direct subclasses of <code>org.scalatest.Suite</code>,
- * then you will probably want to use group names on your <code>FunSuite</code>s that match. To do so, simply 
- * pass the fully qualified names of the Java interfaces to the <code>Tag</code> constructor. For example, if you've
- * defined Java annotation interfaces with fully qualified names, <code>com.mycompany.tags.SlowTest</code> and
+ * you pass objects that extend class <code>org.scalatest.Tag</code> to methods
+ * that register tests. Class <code>Tag</code> takes one parameter, a string name.  If you have
+ * created tag annotation interfaces as described in the <a href="Tag.html"><code>Tag</code> documentation</a>, then you
+ * will probably want to use tag names on your test functions that match. To do so, simply 
+ * pass the fully qualified names of the tag interfaces to the <code>Tag</code> constructor. For example, if you've
+ * defined tag annotation interfaces with fully qualified names, <code>com.mycompany.tags.SlowTest</code> and
  * <code>com.mycompany.tags.DbTest</code>, then you could
- * create matching groups for <code>FunSuite</code>s like this:
+ * create matching tags for <code>FunSuite</code>s like this:
  * </p>
  *
  * <pre class="stHighlight">
@@ -288,8 +314,7 @@ import scala.collection.immutable.ListSet
  *   }
  *
  *   test("Invoking head on an empty Set should produce NoSuchElementException",
- *        SlowTest, DbTest)
- *   {
+ *        SlowTest, DbTest) {
  *     intercept[NoSuchElementException] {
  *       Set.empty.head
  *     }
@@ -298,8 +323,8 @@ import scala.collection.immutable.ListSet
  * </pre>
  *
  * <p>
- * This code marks both tests, "Addition" and "Subtraction," with the <code>com.mycompany.tags.SlowTest</code> tag, 
- * and test "Subtraction" with the <code>com.mycompany.tags.DbTest</code> tag.
+ * This code marks both tests with the <code>com.mycompany.tags.SlowTest</code> tag, 
+ * and the second test with the <code>com.mycompany.tags.DbTest</code> tag.
  * </p>
  *
  * <p>
@@ -1031,7 +1056,7 @@ import scala.collection.immutable.ListSet
  * complete abruptly, it is considered a failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
- * <a name="SharedTests"></a><h2>Shared tests</h2>
+ * <a name="sharedTests"></a><h2>Shared tests</h2>
  *
  * <p>
  * Sometimes you may want to run the same test code on different fixture objects. In other words, you may want to write tests that are "shared"
@@ -2077,7 +2102,7 @@ trait FunSuite extends Suite { thisSuite =>
    * Because the parameter passed to it is
    * type <code>Unit</code>, the expression will be evaluated before being passed, which
    * is sufficient to register the shared tests. For examples of shared tests, see the
-   * <a href="#SharedTests">Shared tests section</a> in the main documentation for this trait.
+   * <a href="#sharedTests">Shared tests section</a> in the main documentation for this trait.
    * </p>
    */
   protected def testsFor(unit: Unit) {}

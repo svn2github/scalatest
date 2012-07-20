@@ -21,9 +21,6 @@ import verb.BehaveWord
 /**
  * Trait that facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
  * are combined with text that specifies the behavior the tests verify.
- * (Note: In BDD, the word <em>example</em> is usually used instead of <em>test</em>. The word test will not appear
- * in your code if you use <code>WordSpec</code>, so if you prefer the word <em>example</em> you can use it. However, in this documentation
- * the word <em>test</em> will be used, for clarity and to be consistent with the rest of ScalaTest.)
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
@@ -60,18 +57,30 @@ import verb.BehaveWord
  *
  * <p>
  * A <code>FunSpec</code> contains <em>describe clauses</em> and tests. You define a describe clause
- * with <code>describe</code>, and a test with <code>it</code>. Both
- * <code>describe</code> and <code>it</code> are methods, defined in
+ * with <code>describe</code>, and a test with either <code>it</code> or <code>they</code>. 
+ * <code>describe</code>,  <code>it</code>, and and <code>they</code> are methods, defined in
  * <code>FunSpec</code>, which will be invoked
  * by the primary constructor of <code>SetSpec</code>. 
  * A describe clause names, or gives more information about, the <em>subject</em> (class or other entity) you are specifying
- * and testing. In the previous example, "A Set"
+ * and testing. In the previous example, <code>"A Set"</code>
  * is the subject under specification and test. With each test you provide a string (the <em>spec text</em>) that specifies
  * one bit of behavior of the subject, and a block of code that tests that behavior.
  * You place the spec text between the parentheses, followed by the test code between curly
  * braces.  The test code will be wrapped up as a function passed as a by-name parameter to
- * <code>it</code>, which will register the test for later execution.
+ * <code>it</code> (or <code>they</code>), which will register the test for later execution.
  * </p>
+ *
+ * <p>
+ * Note: the <code>they</code> method is intended for use when the subject is plural, for example:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * describe("The combinators") {
+ *   they("should be easy to learn") {}
+ *   they("should be efficient") {}
+ *   they("should do something cool") {}
+ * }
+ * </pre>
  *
  * <p>
  * A <code>FunSpec</code>'s lifecycle has two phases: the <em>registration</em> phase and the
@@ -80,7 +89,7 @@ import verb.BehaveWord
  * </p>
  *
  * <p>
- * Tests can only be registered with the <code>it</code> method while the <code>FunSpec</code> is
+ * Tests can only be registered with the <code>it</code> or <code>they</code> methods while the <code>FunSpec</code> is
  * in its registration phase. Any attempt to register a test after the <code>FunSpec</code> has
  * entered its ready phase, <em>i.e.</em>, after <code>run</code> has been invoked on the <code>FunSpec</code>,
  * will be met with a thrown <code>TestRegistrationClosedException</code>. The recommended style
@@ -93,7 +102,7 @@ import verb.BehaveWord
  * When you execute a <code>FunSpec</code>, it will send <code>Formatter</code>s in the events it sends to the
  * <code>Reporter</code>. ScalaTest's built-in reporters will report these events in such a way
  * that the output is easy to read as an informal specification of the <em>subject</em> being tested.
- * For example, if you ran <code>SetSpec</code> from within the Scala interpreter:
+ * For example, were you to run <code>SetSpec</code> from within the Scala interpreter:
  * </p>
  *
  * <pre class="stREPL">
@@ -124,7 +133,7 @@ import verb.BehaveWord
  * <p>
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
  * good intention of resurrecting the test at a later time, <code>FunSpec</code> provides registration
- * methods that start with <code>ignore</code> instead of <code>it</code>. For example, to temporarily
+ * methods that start with <code>ignore</code> instead of <code>it</code> or <code>they</code>. For example, to temporarily
  * disable the test with the name <code>"should pop values in last-in-first-out order"</code>, just change &#8220;<code>it</code>&#8221; into &#8220;<code>ignore</code>,&#8221; like this:
  * </p>
  *
@@ -170,14 +179,14 @@ import verb.BehaveWord
  * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
- * <h2>Informers</h2>
+ * <a name="informers"></a><h2>Informers</h2></a>
  *
  * <p>
- * One of the parameters to the <code>run</code> method is a <code>Reporter</code>, which
+ * One of the parameters to <code>FunSpec</code>'s <code>run</code> method is a <code>Reporter</code>, which
  * will collect and report information about the running suite of tests.
  * Information about suites and tests that were run, whether tests succeeded or failed, 
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
- * Most often the reporting done by default by <code>FunSuite</code>'s methods will be sufficient, but
+ * Most often the reporting done by default by <code>FunSpec</code>'s methods will be sufficient, but
  * occasionally you may wish to provide custom information to the <code>Reporter</code> from a test.
  * For this purpose, an <code>Informer</code> that will forward information to the current <code>Reporter</code>
  * is provided via the <code>info</code> parameterless method.
@@ -227,7 +236,7 @@ import verb.BehaveWord
  *   + That's all folks! </span> 
  * </pre>
  *
- * <h2>Pending tests</h2>
+ * <a name="pendingTests"></a><h2>Pending tests</h2></a>
  *
  * <p>
  * A <em>pending test</em> is one that has been given a name but is not yet implemented. The purpose of
@@ -305,14 +314,14 @@ import verb.BehaveWord
  * A <code>FunSpec</code>'s tests may be classified into groups by <em>tagging</em> them with string names.
  * As with any suite, when executing a <code>FunSpec</code>, groups of tests can
  * optionally be included and/or excluded. To tag a <code>FunSpec</code>'s tests,
- * you pass objects that extend abstract class <code>org.scalatest.Tag</code> to the methods
- * that register tests, <code>it</code> and <code>ignore</code>. Class <code>Tag</code> takes one parameter,
- * a string name.  If you have
- * created Java annotation interfaces for use as group names in direct subclasses of <code>org.scalatest.Suite</code>,
- * then you will probably want to use group names on your <code>FunSpec</code>s that match. To do so, simply 
- * pass the fully qualified names of the Java interfaces to the <code>Tag</code> constructor. For example, if you've
- * defined Java annotation interfaces with fully qualified names, <code>com.mycompany.tags.SlowTest</code> and <code>com.mycompany.tags.DbTest</code>, then you could
- * create matching groups for <code>FunSpec</code>s like this:
+ * you pass objects that extend class <code>org.scalatest.Tag</code> to methods
+ * that register tests. Class <code>Tag</code> takes one parameter, a string name.  If you have
+ * created tag annotation interfaces as described in the <a href="Tag.html"><code>Tag</code> documentation</a>, then you
+ * will probably want to use tag names on your test functions that match. To do so, simply 
+ * pass the fully qualified names of the tag interfaces to the <code>Tag</code> constructor. For example, if you've
+ * defined tag annotation interfaces with fully qualified names, <code>com.mycompany.tags.SlowTest</code> and
+ * <code>com.mycompany.tags.DbTest</code>, then you could
+ * create matching tags for <code>FunSpec</code>s like this:
  * </p>
  *
  * <pre class="stHighlight">
@@ -351,7 +360,7 @@ import verb.BehaveWord
  *
  * <p>
  * This code marks both tests with the <code>com.mycompany.tags.SlowTest</code> tag, 
- * and test <code>"A calculator should subtract correctly"</code> with the <code>com.mycompany.tags.DbTest</code> tag.
+ * and the second test with the <code>com.mycompany.tags.DbTest</code> tag.
  * </p>
  *
  * <p>
@@ -1106,7 +1115,7 @@ import verb.BehaveWord
  * complete abruptly, it is considered a failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
- * <a name="SharedTests"></a><h2>Shared tests</h2>
+ * <a name="sharedTests"></a><h2>Shared tests</h2>
  *
  * <p>
  * Sometimes you may want to run the same test code on different fixture objects. In other words, you may want to write tests that are "shared"
@@ -2108,7 +2117,7 @@ trait FunSpec extends Suite { thisSuite =>
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FunSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FunSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FunSpec</code>.
      * </p>
      */
@@ -2127,7 +2136,7 @@ trait FunSpec extends Suite { thisSuite =>
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FunSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FunSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FunSpec</code>.
      * </p>
      */
@@ -2220,7 +2229,7 @@ trait FunSpec extends Suite { thisSuite =>
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FunSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FunSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FunSpec</code>.
      * </p>
      */
@@ -2239,7 +2248,7 @@ trait FunSpec extends Suite { thisSuite =>
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FunSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FunSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FunSpec</code>.
      * </p>
      */
@@ -2413,7 +2422,7 @@ trait FunSpec extends Suite { thisSuite =>
    * </pre>
    *
    * <p>
-   * For more information and examples of the use of <cod>behave</code>, see the <a href="#SharedTests">Shared tests section</a>
+   * For more information and examples of the use of <cod>behave</code>, see the <a href="#sharedTests">Shared tests section</a>
    * in the main documentation for this trait.
    * </p>
    */

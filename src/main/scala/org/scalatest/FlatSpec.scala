@@ -27,30 +27,19 @@ import Suite.anErrorThatShouldCauseAnAbort
 /**
  * Trait that facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
  * are combined with text that specifies the behavior the tests verify.
- * (In BDD, the word <em>example</em> is usually used instead of <em>test</em>. The word test will not appear
- * in your code if you use <code>FlatSpec</code>, so if you prefer the word <em>example</em> you can use it. However, in this documentation
- * the word <em>test</em> will be used, for clarity and to be consistent with the rest of ScalaTest.)
- * Trait <code>FlatSpec</code> is so named because
- * your specification text and tests line up flat against the left-side indentation level, with no nesting needed.
  * </p>
  *
- * <p>
- * <code>FlatSpec</code>'s no-nesting approach contrasts with traits <code>FunSpec</code> and <code>WordSpec</code>, which use nesting
- * to reduce duplication of specification text. Although nesting does have the advantage of reducing text duplication,
- * figuring out the full specification text for one test can require back-tracking out of several levels of nesting, mentally prepending
- * each fragment of text encountered. Thus the tradeoff with the nesting approach of <code>FunSpec</code> and <code>WordSpec</code> is that
- * they have less duplicated text at the cost of being a bit challenging to read. Trait <code>FlatSpec</code> offers the opposite
- * tradeoff. In a <code>FlatSpec</code> text is duplicated more, but figuring out the full specification text for a particular test is
- * easier.
- * </p>
- * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
  * Trait <code>FlatSpec</code> is a good first step for teams wishing to move from xUnit to BDD, because its structure is flat like xUnit, so simple and familiar, 
  * but the test names must be written in a specification style: &ldquo;X should Y,&rdquo; &ldquo;A must B,&rdquo; <em>etc.  </em>
  * </td></tr></table>
  * 
+ * <p>
+ * Trait <code>FlatSpec</code> is so named because
+ * your specification text and tests line up flat against the left-side indentation level, with no nesting needed.
  * Here's an example <code>FlatSpec</code>:
+ * </p>
  *
  * <pre class="stHighlight">
  * package org.scalatest.examples.flatspec
@@ -118,7 +107,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * "subject," which is sometimes called the <em>system under test</em> (or SUT). The 
  * subject is the entity being specified and tested and also serves as the subject of the sentences you write for each test.
  * Often you will want to write multiple tests for the same subject. In a <code>FlatSpec</code>, you name the subject once,
- * with a <code>behavior of</code> clause or its shorthand, then write tests for that subject with <code>it should</code>/<code>must</code><code>can "do something"</code> phrases.
+ * with a <code>behavior of</code> clause or its shorthand, then write tests for that subject with <code>it should</code>/<code>must</code>/<code>can "do something"</code> phrases.
  * Each <code>it</code> refers to the most recently declared subject. For example, the four tests shown in this snippet are all testing
  * a stack that contains one item:
  * </p>
@@ -155,6 +144,18 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <p>
+ * Because sometimes the subject could be plural, you can alternatively use <code>they</code> instead of <code>it</code>:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * "The combinators" should "be easy to learn" in {}
+ *
+ * they should "be efficient" in {}
+ *
+ * they should "do something cool" in {}
+ * </pre>
+ * 
+ * <p>
  * A <code>FlatSpec</code>'s lifecycle has two phases: the <em>registration</em> phase and the
  * <em>ready</em> phase. It starts in registration phase and enters ready phase the first time
  * <code>run</code> is called on it. It then remains in ready phase for the remainder of its lifetime.
@@ -178,7 +179,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
  * good intention of resurrecting the test at a later time, <code>FlatSpec</code> provides a method
- * <code>ignore</code> that can be used instead of <code>it</code> to register a test. For example, to temporarily
+ * <code>ignore</code> that can be used instead of <code>it</code> or <code>they</code> to register a test. For example, to temporarily
  * disable the test with the name <code>"An empty Set should produce NoSuchElementException when head is invoked"</code>, just
  * change &#8220;<code>it</code>&#8221; into &#8220;<code>ignore</code>,&#8221; like this:
  * </p>
@@ -228,7 +229,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- * package org.scalatest.examples.flatspec.ignore
+ * package org.scalatest.examples.flatspec.ignoreafter
  * 
  * import org.scalatest.FlatSpec
  * 
@@ -264,10 +265,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <span class="stGreen">- should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
- * <h2>Informers</h2>
+ * <a name="informers"></a><h2>Informers</h2></a>
  *
  * <p>
- * One of the parameters to the <code>run</code> method is a <code>Reporter</code>, which
+ * One of the parameters to <code>FlatSpec</code>'s <code>run</code> method is a <code>Reporter</code>, which
  * will collect and report information about the running suite of tests.
  * Information about suites and tests that were run, whether tests succeeded or failed, 
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
@@ -326,7 +327,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   + That's all folks! </span>
  * </pre>
  *
- * <a name="PendingTests"><h2>Pending tests</h2></a>
+ * <a name="pendingTests"></a><h2>Pending tests</h2></a>
  *
  * <p>
  * A <em>pending test</em> is one that has been given a name but is not yet implemented. The purpose of
@@ -437,14 +438,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  * A <code>FlatSpec</code>'s tests may be classified into groups by <em>tagging</em> them with string names.
  * As with any suite, when executing a <code>FlatSpec</code>, groups of tests can
  * optionally be included and/or excluded. To tag a <code>FlatSpec</code>'s tests,
- * you pass objects that extend abstract class <code>org.scalatest.Tag</code> to <code>taggedAs</code> method
- * invoked on the string that describes the test you want to tag. Class <code>Tag</code> takes one parameter,
- * a string name.  If you have
- * created Java annotation interfaces for use as group names in direct subclasses of <code>org.scalatest.Suite</code>,
- * then you will probably want to use group names on your <code>FlatSpec</code>s that match. To do so, simply 
- * pass the fully qualified names of the Java interfaces to the <code>Tag</code> constructor. For example, if you've
- * defined Java annotation interfaces with fully qualified names, <code>com.mycompany.tags.SlowTest</code> and <code>com.mycompany.tags.DbTest</code>, then you could
- * create matching groups for <code>FlatSpec</code>s like this:
+ * you pass objects that extend class <code>org.scalatest.Tag</code> to methods
+ * that register tests. Class <code>Tag</code> takes one parameter, a string name.  If you have
+ * created tag annotation interfaces as described in the <a href="Tag.html"><code>Tag</code> documentation</a>, then you
+ * will probably want to use tag names on your test functions that match. To do so, simply 
+ * pass the fully qualified names of the tag interfaces to the <code>Tag</code> constructor. For example, if you've
+ * defined tag annotation interfaces with fully qualified names, <code>com.mycompany.tags.SlowTest</code> and
+ * <code>com.mycompany.tags.DbTest</code>, then you could
+ * create matching tags for <code>FlatSpec</code>s like this:
  * </p>
  *
  * <pre class="stHighlight">
@@ -481,7 +482,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *
  * <p>
  * This code marks both tests with the <code>com.mycompany.tags.SlowTest</code> tag, 
- * and test <code>"A calculator should subtract correctly"</code> with the <code>com.mycompany.tags.DbTest</code> tag.
+ * and the second test with the <code>com.mycompany.tags.DbTest</code> tag.
  * </p>
  *
  * <p>
@@ -1201,7 +1202,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * complete abruptly, it is considered a failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
- * <a name="SharedTests"></a><h2>Shared tests</h2>
+ * <a name="sharedTests"></a><h2>Shared tests</h2>
  *
  * <p>
  * Sometimes you may want to run the same test code on different fixture objects. In other words, you may want to write tests that are "shared"
@@ -2277,7 +2278,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
+     * For examples of pending test registration, see the <a href="FlatSpec.html#pendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  And for examples of tagged test registration, see
      * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
@@ -2389,7 +2390,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
+     * For examples of pending test registration, see the <a href="FlatSpec.html#pendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2539,7 +2540,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FlatSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FlatSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2558,7 +2559,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FlatSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FlatSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2577,7 +2578,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FlatSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FlatSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2689,7 +2690,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      *
      * <p>
-     * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
+     * For examples of pending test registration, see the <a href="FlatSpec.html#pendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  For examples of the registration of ignored tests,
      * see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>. For examples of tagged test registration, see
@@ -2786,7 +2787,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      *
      * <p>
-     * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
+     * For examples of pending test registration, see the <a href="FlatSpec.html#pendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  For examples of the registration of ignored tests,
      * see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
@@ -2992,7 +2993,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
+     * For examples of pending test registration, see the <a href="FlatSpec.html#pendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  And for examples of tagged test registration, see
      * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
@@ -3104,7 +3105,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
+     * For examples of pending test registration, see the <a href="FlatSpec.html#pendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -3254,7 +3255,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FlatSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FlatSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -3273,7 +3274,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FlatSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FlatSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -3292,7 +3293,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of shared tests, see the <a href="FlatSpec.html#SharedTests">Shared tests section</a>
+     * For examples of shared tests, see the <a href="FlatSpec.html#sharedTests">Shared tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -3776,7 +3777,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * </pre>
    *
    * <p>
-   * For more information and examples of the use of <code>behave</code>, see the <a href="#SharedTests">Shared tests section</a>
+   * For more information and examples of the use of <code>behave</code>, see the <a href="#sharedTests">Shared tests section</a>
    * in the main documentation for this trait.
    * </p>
    */

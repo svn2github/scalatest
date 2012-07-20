@@ -42,7 +42,9 @@ import Suite.anErrorThatShouldCauseAnAbort
  * with BDD and able to agree on how to structure the specification text.
  * </td></tr></table>
  * 
+ * <p>
  * Here's an example <code>FreeSpec</code>:
+ * </p>
  *
  * <pre class="stHighlight">
  * package org.scalatest.examples.freespec
@@ -220,12 +222,6 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <code>TestRegistrationClosedException</code>.
  * </p>
  *
- * <p>
- * Note: In BDD, the word <em>example</em> is usually used instead of <em>test</em>. The word test will not appear
- * in your code if you use <code>FreeSpec</code>, so if you prefer the word <em>example</em> you can use it. However, in this documentation
- * the word <em>test</em> will be used, for clarity and to be consistent with the rest of ScalaTest.
- * </p>
- *
  * <a name="ignoredTests"></a><h2>Ignored tests</h2></a>
  *
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
@@ -277,11 +273,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <span class="stGreen">  - should produce NoSuchElementException when head is invoked</span>
  * </pre>
  *
- * <a name="informers" />
- * <h2>Informers</h2>
+ * <a name="informers"></a><h2>Informers</h2></a>
  *
  * <p>
- * One of the parameters to the <code>run</code> method is a <code>Reporter</code>, which
+ * One of the parameters to <code>FreeSpec</code>'s <code>run</code> method is a <code>Reporter</code>, which
  * will collect and report information about the running suite of tests.
  * Information about suites and tests that were run, whether tests succeeded or failed, 
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
@@ -342,8 +337,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   + That's all folks! </span>
  * </pre>
  *
- * <a name="pendingTests" />
- * <h2>Pending tests</h2>
+ * <a name="pendingTests"></a><h2>Pending tests</h2></a>
  *
  * <p>
  * A <em>pending test</em> is one that has been given a name but is not yet implemented. The purpose of
@@ -433,8 +427,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </p>
  *
  * <pre class="stHighlight">
- *  "The Scala language" should {
- *     "add correctly" in { 
+ *  "The Scala language" - {
+ *     "should add correctly" in { 
  *       given("two integers")
  *       when("they are added")
  *       then("the result is the sum of the two numbers")
@@ -460,13 +454,13 @@ import Suite.anErrorThatShouldCauseAnAbort
  * A <code>FreeSpec</code>'s tests may be classified into groups by <em>tagging</em> them with string names.
  * As with any suite, when executing a <code>FreeSpec</code>, groups of tests can
  * optionally be included and/or excluded. To tag a <code>FreeSpec</code>'s tests,
- * you pass objects that extend abstract class <code>org.scalatest.Tag</code> to <code>taggedAs</code> method
- * invoked on the string that describes the test you want to tag. Class <code>Tag</code> takes one parameter,
- * a string name.  If you have
- * created Java annotation interfaces for use as group names in direct subclasses of <code>org.scalatest.Suite</code>,
- * then you will probably want to use group names on your <code>FreeSpec</code>s that match. To do so, simply 
- * pass the fully qualified names of the Java interfaces to the <code>Tag</code> constructor. For example, if you've
- * defined Java annotation interfaces with fully qualified names, <code>com.mycompany.groups.SlowTest</code> and <code>com.mycompany.groups.DbTest</code>, then you could
+ * you pass objects that extend class <code>org.scalatest.Tag</code> to methods
+ * that register tests. Class <code>Tag</code> takes one parameter, a string name.  If you have
+ * created tag annotation interfaces as described in the <a href="Tag.html"><code>Tag</code> documentation</a>, then you
+ * will probably want to use tag names on your test functions that match. To do so, simply 
+ * pass the fully qualified names of the tag interfaces to the <code>Tag</code> constructor. For example, if you've
+ * defined tag annotation interfaces with fully qualified names, <code>com.mycompany.tags.SlowTest</code> and
+ * <code>com.mycompany.tags.DbTest</code>, then you could
  * create matching tags for <code>FreeSpec</code>s like this:
  * </p>
  *
@@ -511,7 +505,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *
  * <p>
  * This code marks both tests with the <code>com.mycompany.tags.SlowTest</code> tag, 
- * and test <code>"A calculator should subtract correctly"</code> with the <code>com.mycompany.tags.DbTest</code> tag.
+ * and the second test with the <code>com.mycompany.tags.DbTest</code> tag.
  * </p>
  *
  * <p>
@@ -1260,7 +1254,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * complete abruptly, it is considered a failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
- * <a name="SharedTests"></a><h2>Shared tests</h2>
+ * <a name="sharedTests"></a><h2>Shared tests</h2>
  *
  * <p>
  * Sometimes you may want to run the same test code on different fixture objects. In other words, you may want to write tests that are "shared"
@@ -2588,7 +2582,7 @@ trait FreeSpec extends Suite { thisSuite =>
    * </pre>
    *
    * <p>
-   * For more information and examples of the use of <cod>behave</code>, see the <a href="#SharedTests">Shared tests section</a>
+   * For more information and examples of the use of <cod>behave</code>, see the <a href="#sharedTests">Shared tests section</a>
    * in the main documentation for this trait.
    * </p>
    */

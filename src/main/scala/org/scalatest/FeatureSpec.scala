@@ -35,10 +35,11 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </td></tr></table>
  * 
  * <p>
- * TODO: Explain GivenWhenThen, and point to Informers section for more details.
- * Here's an example:
+ * Although not required, <code>FeatureSpec</code> is often used together with <a href="GivenWhenThen.html"><code>GivenWhenThen</code></a> to express acceptance requirements
+ * in more detail. Here's an example:
  * </p>
  *
+ * <a name="initialExample"></a>
  * <pre class="stHighlight">
  * package org.scalatest.examples.featurespec
  * 
@@ -91,6 +92,11 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </pre>
  *
  * <p>
+ * Note: for more information on the calls to <code>given</code>, <code>when</code>, and <code>then</code>, see the documentation 
+ * for <a href="GivenWhenThen.html">trait <code>GivenWhenThen</code></a> and the <a href="#informers"><code>Informers</code> section</a> below.
+ * </p>
+ *
+ * <p>
  * A <code>FeatureSpec</code> contains <em>feature clauses</em> and <em>scenarios</em>. You define a feature clause
  * with <code>feature</code>, and a scenario with <code>scenario</code>. Both
  * <code>feature</code> and <code>scenario</code> are methods, defined in
@@ -133,7 +139,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * When you run a <code>FeatureSpec</code>, it will send <code>Formatter</code>s in the events it sends to the
  * <code>Reporter</code>. ScalaTest's built-in reporters will report these events in such a way
  * that the output is easy to read as an informal specification of the <em>subject</em> being tested.
- * For example, if you ran <code>StackFeatureSpec</code> from within the Scala interpreter:
+ * For example, were you to run<code>TVSetSpec</code> from within the Scala interpreter:
  * </p>
  *
  * <pre class="stREPL">
@@ -221,7 +227,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </pre>
  *
  * <p>
- * It will run only <code>When is empty and head is invoked, should produce NoSuchElementException</code> and report that <code>When is empty should have size 0</code> was ignored:
+ * It will run only the second scenario and report that the first scenario was ignored:
  * </p>
  *
  * <pre class="stREPL">
@@ -231,10 +237,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   <span class="stGreen">Scenario: User presses power button when TV is on</span>
  * </pre>
  *
- * <h2>Informers</h2>
+ * <a name="informers"></a><h2>Informers</h2></a>
  *
  * <p>
- * One of the parameters to the <code>run</code> method is a <code>Reporter</code>, which
+ * One of the parameters to <code>FeatureSpec</code>'s <code>run</code> method is a <code>Reporter</code>, which
  * will collect and report information about the running suite of tests.
  * Information about suites and tests that were run, whether tests succeeded or failed, 
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
@@ -249,10 +255,10 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <p>
  * One use case for the <code>Informer</code> is to pass more information about a scenario to the reporter. For example,
  * the <code>GivenWhenThen</code> trait provides methods that use the implicit <code>info</code> provided by <code>FeatureSpec</code>
- * to pass such information to the reporter. TODO: refer to the initial example that mixes in GivenWhenThen.
+ * to pass such information to the reporter. You can see this in action in the <a href="#initialExample">initial example</a> of this trait's documentation.
  * </p>
  *
- * <h2>Pending tests</h2>
+ * <a name="pendingTests"></a><h2>Pending tests</h2></a>
  *
  * <p>
  * A <em>pending test</em> is one that has been given a name but is not yet implemented. The purpose of
@@ -311,7 +317,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <p>
  * (Note: "<code>(pending)</code>" is the body of the test. Thus the test contains just one statement, an invocation
  * of the <code>pending</code> method, which throws <code>TestPendingException</code>.)
- * If you run this version of <code>ArithmeticSpec</code> with:
+ * If you run this version of <code>TVSetSpec</code> with:
  * </p>
  *
  * <pre class="stREPL">
@@ -420,14 +426,14 @@ import Suite.anErrorThatShouldCauseAnAbort
  * A <code>FeatureSpec</code>'s tests may be classified into groups by <em>tagging</em> them with string names.
  * As with any suite, when executing a <code>FeatureSpec</code>, groups of tests can
  * optionally be included and/or excluded. To tag a <code>FeatureSpec</code>'s tests,
- * you pass objects that extend abstract class <code>org.scalatest.Tag</code> to methods
- * that register tests, <code>test</code> and <code>ignore</code>. Class <code>Tag</code> takes one parameter, a string name.  If you have
- * created Java annotation interfaces for use as group names in direct subclasses of <code>org.scalatest.Suite</code>,
- * then you will probably want to use group names on your <code>FeatureSpec</code>s that match. To do so, simply 
- * pass the fully qualified names of the Java interfaces to the <code>Tag</code> constructor. For example, if you've
- * defined Java annotation interfaces with fully qualified names, <code>com.mycompany.tags.SlowTest</code> and
+ * you pass objects that extend class <code>org.scalatest.Tag</code> to methods
+ * that register tests. Class <code>Tag</code> takes one parameter, a string name.  If you have
+ * created tag annotation interfaces as described in the <a href="Tag.html"><code>Tag</code> documentation</a>, then you
+ * will probably want to use tag names on your test functions that match. To do so, simply 
+ * pass the fully qualified names of the tag interfaces to the <code>Tag</code> constructor. For example, if you've
+ * defined tag annotation interfaces with fully qualified names, <code>com.mycompany.tags.SlowTest</code> and
  * <code>com.mycompany.tags.DbTest</code>, then you could
- * create matching groups for <code>FeatureSpec</code>s like this:
+ * create matching tags for <code>FeatureSpec</code>s like this:
  * </p>
  *
  * <pre class="stHighlight">
@@ -476,8 +482,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </pre>
  *
  * <p>
- * This code marks both tests  with the <code>com.mycompany.tags.SlowTest</code> tag, 
- * and test "When 4 - 1 is entered, the result should be 3" with the <code>com.mycompany.tags.DbTest</code> tag.
+ * This code marks both tests with the <code>com.mycompany.tags.SlowTest</code> tag, 
+ * and the second test with the <code>com.mycompany.tags.DbTest</code> tag.
  * </p>
  *
  * <p>
@@ -1221,7 +1227,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * complete abruptly, it is considered a failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
- * <a name="SharedScenarios"></a><h2>Shared scenarios</h2>
+ * <a name="sharedScenarios"></a><h2>Shared scenarios</h2>
  *
  * <p>
  * Sometimes you may want to run the same test code on different fixture objects. In other words, you may want to write tests that are "shared"
@@ -2508,7 +2514,7 @@ trait FeatureSpec extends Suite { thisSuite =>
    * Because the parameter passed to it is
    * type <code>Unit</code>, the expression will be evaluated before being passed, which
    * is sufficient to register the shared scenarios. For examples of shared scenarios, see the
-   * <a href="#SharedScenarios">Shared scenarios section</a> in the main documentation for this trait.
+   * <a href="#sharedScenarios">Shared scenarios section</a> in the main documentation for this trait.
    * </p>
    */
   protected def scenariosFor(unit: Unit) {}
