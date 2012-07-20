@@ -17,6 +17,38 @@ package org.scalatest;
 
 import java.lang.annotation.*; 
 
+/**
+ * Annotation used to annotate annotation interfaces that define tags for ScalaTest tests.
+ *
+ * <p>
+ * <em>Note: This is actually an annotation defined in Java, not a Scala trait. It must be defined in Java instead of Scala so it will be accessible
+ * at runtime. It has been inserted into Scaladoc by pretending it is a trait.</em>
+ * </p>
+ *
+ * <p>
+ * ScalaTest will only consider annotations that are themselves annotated with <code>TagAnnotation</code>
+ * as tag annotations, to avoid accidentally interpreting arbitrary annotations as tags. You use <code>TagAnnotation</code>,
+ * therefore, when you define a tag annotation (which you must do in Java). Here's an example:
+ * </p>
+ *
+ * <pre>
+ * package com.mycompany.myproject.testing.tags;
+ *
+ * import java.lang.annotation.*; 
+ * import org.scalatest.TagAnnotation * 
+ *
+ * @TagAnnotation
+ * @Retention(RetentionPolicy.RUNTIME)
+ * @Target({ElementType.METHOD, ElementType.TYPE})
+ * public @interface DbTest {}
+ * </pre>
+ *
+ * <p>
+ * For more information, see the documentation for <a href="Tag.html">class <code>Tag</code></a>.
+ * </p>
+ *
+ * </pre>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface TagAnnotation {
