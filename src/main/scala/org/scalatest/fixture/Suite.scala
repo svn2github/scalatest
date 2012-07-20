@@ -138,7 +138,7 @@ import exceptions.{TestCanceledException, TestPendingException}
  * <p>
  * If multiple test classes need the same fixture, you can define the <code>FixtureParam</code> and <code>withFixture(OneArgTest)</code> implementations
  * in a trait, then mix that trait into the test classes that need it. For example, if your application requires a database and your integration tests
- * use with that database, you will likely have many test classes that need a database fixture. You can create a "database fixture" trait that creates a
+ * use that database, you will likely have many test classes that need a database fixture. You can create a "database fixture" trait that creates a
  * database with a unique name, passes the connector into the test, then removes the database once the test completes. This is shown in the following example:
  * </p>
  * 
