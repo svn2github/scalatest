@@ -21,6 +21,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation used to mark a trait or class as defining a testing style that has a <code>org.scalatest.finders.Finder</code> implementation,
+ * which IDEs and other tools can use to discover tests and scopes.
+ *
+ * <p>
+ * <em>Note: This is actually an annotation defined in Java, not a Scala trait. It must be defined in Java instead of Scala so it will be accessible
+ * at runtime. It has been inserted into Scaladoc by pretending it is a trait.</em>
+ * </p>
+ *
+ * <p>
+ * This annotation is used to enable different styles of testing, including both native ScalaTest styles and custom user-created styles, to
+ * have rich IDE support. The "Finder API" is released separately from ScalaTest proper, because it is only used by tools such as IDEs.
+ * Documentation on the finder API itself will appear later, as we get closer to the 2.0 final release.
+ * </p>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Style {
