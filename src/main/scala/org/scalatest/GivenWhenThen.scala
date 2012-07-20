@@ -19,6 +19,51 @@ package org.scalatest
  * Trait that contains methods named <code>given</code>, <code>when</code>, <code>then</code>, and <code>and</code>,
  * which take a string message and implicit <code>Informer</code>, and forward the message to the informer.
  *
+ * <p>
+ * Here's an example:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * package org.scalatest.examples.flatspec.info
+ * 
+ * import collection.mutable
+ * import org.scalatest._
+ * 
+ * class SetSpec extends FlatSpec with GivenWhenThen {
+ *   
+ *   "A mutable Set" should "allow an element to be added" in {
+ *     given("an empty mutable Set")
+ *     val set = mutable.Set.empty[String]
+ * 
+ *     when("an element is added")
+ *     set += "clarity"
+ * 
+ *     then("the Set should have size 1")
+ *     assert(set.size === 1)
+ * 
+ *     and("the Set should contain the added element")
+ *     assert(set.contains("clarity"))
+ * 
+ *     info("That's all folks!")
+ *   }
+ * }
+ * </pre>
+ *
+ * <p>
+ * If you run this <code>FlatSpec</code> from the interpreter, you will see the following output:
+ * </p>
+ *
+ * <pre class="stREPL">
+ * scala&gt; new SetSpec execute
+ * <span class="stGreen">A mutable Set
+ * - should allow an element to be added
+ *   + Given an empty mutable Set 
+ *   + When an element is added 
+ *   + Then the Set should have size 1 
+ *   + And the Set should contain the added element 
+ *   + That's all folks! </span>
+ * </pre>
+ *
  * @author Bill Venners
  */
 trait GivenWhenThen {

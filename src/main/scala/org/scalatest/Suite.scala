@@ -501,7 +501,7 @@ import exceptions._
  * for instructions on how to access the config map in tests.)
  * </p>
  *
- * <h2>Ignored tests</h2>
+ * <a name="ignoredTests"></a><h2>Ignored tests</h2></a>
  *
  * <p>
  * Another common use case is that tests must be &#8220;temporarily&#8221; disabled, with the
@@ -692,7 +692,7 @@ import exceptions._
  * If you wish to execute the tests themselves in parallel, mix in <a href="ParallelTestExecution.html"><code>ParallelTestExecution</code></a>.
  * </p>
  *
- * <a name="TaggingTests"></a><h2>Tagging tests</h2>
+ * <a name="taggingTests"></a><h2>Tagging tests</h2>
  *
  * <p>
  * A <code>Suite</code>'s tests may be classified into groups by <em>tagging</em> them with string names. When executing
@@ -734,6 +734,12 @@ import exceptions._
  * <code>tagsToExclude</code> <code>Set</code>. If <code>tagsToInclude</code> is defined, only tests
  * belonging to tags mentioned in the <code>tagsToInclude</code> set, and not mentioned in <code>tagsToExclude</code>,
  * will be run.
+ * </p>
+ *
+ * <p>
+ * A tag annotation also allows you to tag all the tests of a <code>Suite</code> in
+ * one stroke by annotating the class.  For more information and examples, see the
+ * <a href="Tag.html">documentation for class <code>Tag</code></a>.
  * </p>
  *
  * <a name="sharedFixtures"></a><h2>Shared fixtures</h2>

@@ -4,6 +4,12 @@ package org.scalatest
  * Wrapper <code>Suite</code> that passes an instance of the config map to the constructor of the
  * wrapped <code>Suite</code> when <code>run</code> is invoked.
  *
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * Trait <code>ConfigMapWrapperSuite</code> is primarily intended to be used with the <a href="path/package.html">"path" traits</a>, which can't
+ * use the usual approaches to accessing the config map because of the eager manner in which they run tests.</em>
+ * </td></tr></table>
+ * 
  * <p>
  * Each time <code>run</code> is invoked on an instance of <code>ConfigMapWrapperSuite</code>, this
  * suite will create a new instance of the suite to wrap, passing to the constructor the config map passed to

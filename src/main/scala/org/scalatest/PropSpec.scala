@@ -22,7 +22,7 @@ import scala.collection.immutable.ListSet
  *
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * Trait <code>PropSpec</code> is perfect for teams that want to write tests exclusively in terms of property checks, and is also a good choice
+ * Trait <code>PropSpec</code> is a good fit for teams that want to write tests exclusively in terms of property checks, and is also a good choice
  * for writing the occasional test matrix when a different style trait is chosen as the main unit testing style.
  * </td></tr></table>
  * 
@@ -248,8 +248,7 @@ import scala.collection.immutable.ListSet
  * </pre>
  *
  *
- * If you run this <code>FunSuite</code> from the interpreter, you will see the following message
- * included in the printed report:
+ * If you run this <code>FunSuite</code> from the interpreter, you will see the following output:
  *
  * <pre class="stREPL">
  * scala&gt; new SetSuite execute
@@ -347,7 +346,7 @@ import scala.collection.immutable.ListSet
  * <span class="stGreen">- Invoking head on an empty Set should produce NoSuchElementException</span>
  * </pre>
  * 
- * <h2>Tagging tests</h2>
+ * <a name="taggingTests"></a><h2>Tagging tests</h2>
  *
  * <p>
  * A <code>FunSuite</code>'s tests may be classified into groups by <em>tagging</em> them with string names.
@@ -620,7 +619,7 @@ import scala.collection.immutable.ListSet
  * Rickard Nilsson for the <a href="http://code.google.com/p/scalacheck/">ScalaCheck test framework</a>.</em>
  * </p>
  *
- * <h2>Ignored tests</h2>
+ * <a name="ignoredTests"></a><h2>Ignored tests</h2></a>
  *
  * <p>
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the

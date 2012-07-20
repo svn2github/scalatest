@@ -103,8 +103,7 @@ package org.scalatest
  * </pre>
  *
  * <p>
- * Were you to run this <code>FeatureSpec</code> in the interpreter, you would see the following messages
- * included in the printed report:
+ * Were you to run this <code>FeatureSpec</code> in the interpreter, you would see the following output:
  * </p>
  *
  * <pre class="stREPL">

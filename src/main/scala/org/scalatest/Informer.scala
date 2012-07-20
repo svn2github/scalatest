@@ -62,8 +62,7 @@ package org.scalatest
  * </pre>
  *
  * <p>
- * If you run this <code>FlatSpec</code> from the interpreter, you will see the following message
- * included in the printed report:
+ * If you run this <code>FlatSpec</code> from the interpreter, you will see the following output:
  * </p>
  *
  * <pre class="stREPL">

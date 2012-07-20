@@ -46,8 +46,8 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * A good first step for teams wishing to move from xUnit to BDD, <code>FlatSpec</code>'s structure is flat like xUnit, so it is simple and familiar, 
- * but the test names must be written in a specification style: "X should Y," "A must B," <em>etc.  </em>
+ * Trait <code>FlatSpec</code> is a good first step for teams wishing to move from xUnit to BDD, because its structure is flat like xUnit, so simple and familiar, 
+ * but the test names must be written in a specification style: &ldquo;X should Y,&rdquo; &ldquo;A must B,&rdquo; <em>etc.  </em>
  * </td></tr></table>
  * 
  * Here's an example <code>FlatSpec</code>:
@@ -174,7 +174,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * See also: <a href="http://www.scalatest.org/getting_started_with_flat_spec" target="_blank">Getting started with <code>FlatSpec</code>.</a>
  * </p>
  *
- * <a name="IgnoredTests"></a><h2>Ignored tests</h2>
+ * <a name="ignoredTests"></a><h2>Ignored tests</h2></a>
  *
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
  * good intention of resurrecting the test at a later time, <code>FlatSpec</code> provides a method
@@ -312,8 +312,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * </pre>
  *
  * <p>
- * If you run this <code>FlatSpec</code> from the interpreter, you will see the following message
- * included in the printed report:
+ * If you run this <code>FlatSpec</code> from the interpreter, you will see the following output:
  * </p>
  *
  * <pre class="stREPL">
@@ -433,7 +432,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *   + Then the result is the sum of the two numbers</span> 
  * </pre>
  *
- * <a name="TaggingTests"></a><h2>Tagging tests</h2>
+ * <a name="taggingTests"></a><h2>Tagging tests</h2>
  *
  * A <code>FlatSpec</code>'s tests may be classified into groups by <em>tagging</em> them with string names.
  * As with any suite, when executing a <code>FlatSpec</code>, groups of tests can
@@ -493,6 +492,13 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <code>tagsToExclude</code> <code>Set</code>. If <code>tagsToInclude</code> is defined, only tests
  * belonging to tags mentioned in the <code>tagsToInclude</code> set, and not mentioned in <code>tagsToExclude</code>,
  * will be run.
+ * </p>
+ *
+ * <p>
+ * It is recommended, though not required, that you create a corresponding tag annotation when you
+ * create a <code>Tag</code> object. A tag annotation allows you to tag all the tests of a <code>FlatSpec</code> in
+ * one stroke by annotating the class. For more information and examples, see the
+ * <a href="Tag.html">documentation for class <code>Tag</code></a>.
  * </p>
  *
  * <a name="sharedFixtures"></a><h2>Shared fixtures</h2>
@@ -2230,9 +2236,9 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    *
    * <p>
    * For more information and examples of the use of the <code>it</code> field to register tagged tests, see
-   * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+   * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
    * For examples of tagged test registration, see
-   * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+   * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
    * </p>
    */
   protected final class ItVerbStringTaggedAs(verb: String, name: String, tags: List[Tag]) {
@@ -2251,7 +2257,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      *
      * <p>
      * For examples of tagged test registration, see
-     * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+     * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
     def in(testFun: => Unit) {
@@ -2273,7 +2279,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * <p>
      * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  And for examples of tagged test registration, see
-     * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+     * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
     def is(testFun: => PendingNothing) {
@@ -2293,9 +2299,9 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of ignored test registration, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a> in the main documentation
+     * For examples of ignored test registration, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  And for examples of tagged test registration, see
-     * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+     * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
     def ignore(testFun: => Unit) {
@@ -2404,7 +2410,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of ignored test registration, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a> in the main documentation
+     * For examples of ignored test registration, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2425,7 +2431,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of tagged test registration, see the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation
+     * For examples of tagged test registration, see the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2635,9 +2641,9 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * </p>
    *
    * <p>
-   * For more information and examples of the use of the <code>ignore</code> field, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+   * For more information and examples of the use of the <code>ignore</code> field, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
    * in the main documentation for trait <code>FlatSpec</code>. For examples of tagged test registration, see
-   * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+   * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
    * </p>
    */
   protected final class IgnoreVerbStringTaggedAs(verb: String, name: String, tags: List[Tag]) {
@@ -2655,9 +2661,9 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of the registration of ignored tests, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * For examples of the registration of ignored tests, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>. For examples of tagged test registration, see
-     * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+     * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
     def in(testFun: => Unit) {
@@ -2685,9 +2691,9 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * <p>
      * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  For examples of the registration of ignored tests,
-     * see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>. For examples of tagged test registration, see
-     * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+     * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
     def is(testFun: => PendingNothing) {
@@ -2734,7 +2740,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * </pre>
    *
    * <p>
-   * For more information and examples of the use of the <code>ignore</code> field, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+   * For more information and examples of the use of the <code>ignore</code> field, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
    * in the main documentation for trait <code>FlatSpec</code>.
    * </p>
    */
@@ -2753,7 +2759,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of the registration of ignored tests, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * For examples of the registration of ignored tests, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2782,7 +2788,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * <p>
      * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  For examples of the registration of ignored tests,
-     * see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2803,9 +2809,9 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of tagged test registration, see the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation
+     * For examples of tagged test registration, see the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  For examples of the registration of ignored tests,
-     * see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2829,7 +2835,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * </pre>
    *
    * <p>
-   * For more information and examples of the use of the <code>ignore</code> field, see <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+   * For more information and examples of the use of the <code>ignore</code> field, see <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
    * in the main documentation for this trait.
    * </p>
    */
@@ -2848,7 +2854,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For more information and examples of the use of the <code>ignore</code> field, see <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * For more information and examples of the use of the <code>ignore</code> field, see <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2867,7 +2873,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For more information and examples of the use of the <code>ignore</code> field, see <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * For more information and examples of the use of the <code>ignore</code> field, see <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2886,7 +2892,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For more information and examples of the use of the <code>ignore</code> field, see <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * For more information and examples of the use of the <code>ignore</code> field, see <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -2906,7 +2912,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * </pre>
    *
    * <p>
-   * For more information and examples of the use of the <code>ignore</code> field, see the <a href="#IgnoredTests">Ignored tests section</a>
+   * For more information and examples of the use of the <code>ignore</code> field, see the <a href="#ignoredTests">Ignored tests section</a>
    * in the main documentation for this trait.
    * </p>
    */
@@ -2945,9 +2951,9 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    *
    * <p>
    * For more information and examples of the use of the <code>they</code> field to register tagged tests, see
-   * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+   * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
    * For examples of tagged test registration, see
-   * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+   * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
    * </p>
    */
   protected final class TheyVerbStringTaggedAs(verb: String, name: String, tags: List[Tag]) {
@@ -2966,7 +2972,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      *
      * <p>
      * For examples of tagged test registration, see
-     * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+     * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
     def in(testFun: => Unit) {
@@ -2988,7 +2994,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * <p>
      * For examples of pending test registration, see the <a href="FlatSpec.html#PendingTests">Pending tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  And for examples of tagged test registration, see
-     * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+     * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
     def is(testFun: => PendingNothing) {
@@ -3008,9 +3014,9 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of ignored test registration, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a> in the main documentation
+     * For examples of ignored test registration, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.  And for examples of tagged test registration, see
-     * the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
+     * the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
     def ignore(testFun: => Unit) {
@@ -3119,7 +3125,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of ignored test registration, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a> in the main documentation
+     * For examples of ignored test registration, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -3140,7 +3146,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of tagged test registration, see the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a> in the main documentation
+     * For examples of tagged test registration, see the <a href="FlatSpec.html#taggingTests">Tagging tests section</a> in the main documentation
      * for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -3399,7 +3405,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of ignored test registration, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * For examples of ignored test registration, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -3474,7 +3480,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of tagged test registration, see the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a>
+     * For examples of tagged test registration, see the <a href="FlatSpec.html#taggingTests">Tagging tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */
@@ -3495,9 +3501,9 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </pre>
      *
      * <p>
-     * For examples of ignored test registration, see the <a href="FlatSpec.html#IgnoredTests">Ignored tests section</a>
+     * For examples of ignored test registration, see the <a href="FlatSpec.html#ignoredTests">Ignored tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
-     * For examples of tagged test registration, see the <a href="FlatSpec.html#TaggingTests">Tagging tests section</a>
+     * For examples of tagged test registration, see the <a href="FlatSpec.html#taggingTests">Tagging tests section</a>
      * in the main documentation for trait <code>FlatSpec</code>.
      * </p>
      */

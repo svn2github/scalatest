@@ -27,7 +27,7 @@ import verb.BehaveWord
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * For teams coming from Ruby's RSpec tool, <code>FunSpec</code> will feel familiar; More generally, for any team that prefers BDD, <code>FunSpec</code>'s nesting 
+ * For teams coming from Ruby's RSpec tool, <code>FunSpec</code> will feel familiar and comfortable; More generally, for any team that prefers BDD, <code>FunSpec</code>'s nesting 
  * and gentle guide to structuring text (with <code>describe</code> and <code>it</code>) provide an excellent general-purpose choice for writing specification-style tests. 
  * </td></tr></table>
  * 
@@ -119,7 +119,7 @@ import verb.BehaveWord
  * See also: <a href="http://www.scalatest.org/getting_started_with_spec" target="_blank">Getting started with <code>FunSpec</code>.</a>
  * </p>
  *
- * <h2>Ignored tests</h2>
+ * <a name="ignoredTests"></a><h2>Ignored tests</h2></a>
  *
  * <p>
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
@@ -214,8 +214,7 @@ import verb.BehaveWord
  * }
  * </pre>
  *
- * If you run this <code>FunSpec</code> from the interpreter, you will see the following message
- * included in the printed report:
+ * If you run this <code>FunSpec</code> from the interpreter, you will see the following output:
  *
  * <pre class="stREPL">
  * scala&gt; new SetSpec execute
@@ -300,7 +299,7 @@ import verb.BehaveWord
  * <span class="stGreen">  - should produce NoSuchElementException when head is invoked</span>
  * </pre>
  * 
- * <h2>Tagging tests</h2>
+ * <a name="taggingTests"></a><h2>Tagging tests</h2>
  *
  * <p>
  * A <code>FunSpec</code>'s tests may be classified into groups by <em>tagging</em> them with string names.
@@ -363,6 +362,13 @@ import verb.BehaveWord
  * <code>tagsToExclude</code> <code>Set</code>. If <code>tagsToInclude</code> is defined, only tests
  * belonging to tags mentioned in the <code>tagsToInclude</code> set, and not mentioned in <code>tagsToExclude</code>,
  * will be run.
+ * </p>
+ *
+ * <p>
+ * It is recommended, though not required, that you create a corresponding tag annotation when you
+ * create a <code>Tag</code> object. A tag annotation allows you to tag all the tests of a <code>FunSpec</code> in
+ * one stroke by annotating the class. For more information and examples, see the
+ * <a href="Tag.html">documentation for class <code>Tag</code></a>.
  * </p>
  *
  * <a name="sharedFixtures"></a><h2>Shared fixtures</h2>

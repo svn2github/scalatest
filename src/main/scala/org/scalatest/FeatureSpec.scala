@@ -30,7 +30,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * Trait <code>FeatureSpec</code> is primarily intended for acceptance testing, including the process of programmers working alongside non-programmers to
+ * Trait <code>FeatureSpec</code> is primarily intended for acceptance testing, including facilitating the process of programmers working alongside non-programmers to
  * define the acceptance requirements.
  * </td></tr></table>
  * 
@@ -169,7 +169,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <em>Note: Trait <code>FeatureSpec</code>'s syntax is in part inspired by <a href="http://cukes.info/" target="_blank">Cucumber</a>, a Ruby BDD framework.</em>
  *</p>
  *
- * <h2>Ignored tests</h2>
+ * <a name="ignoredTests"></a><h2>Ignored tests</h2></a>
  *
  * <p>
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
@@ -414,7 +414,7 @@ import Suite.anErrorThatShouldCauseAnAbort
  *     Then the TV should switch off </span> 
  * </pre>
  *
- * <h2>Tagging tests</h2>
+ * <a name="taggingTests"></a><h2>Tagging tests</h2>
  *
  * <p>
  * A <code>FeatureSpec</code>'s tests may be classified into groups by <em>tagging</em> them with string names.
@@ -488,6 +488,13 @@ import Suite.anErrorThatShouldCauseAnAbort
  * <code>tagsToExclude</code> <code>Set</code>. If <code>tagsToInclude</code> is defined, only tests
  * belonging to tags mentioned in the <code>tagsToInclude</code> set, and not mentioned in <code>tagsToExclude</code>,
  * will be run.
+ * </p>
+ *
+ * <p>
+ * It is recommended, though not required, that you create a corresponding tag annotation when you
+ * create a <code>Tag</code> object. A tag annotation allows you to tag all the tests of a <code>FeatureSpec</code> in
+ * one stroke by annotating the class. For more information and examples, see the
+ * <a href="Tag.html">documentation for class <code>Tag</code></a>.
  * </p>
  *
  * <a name="sharedFixtures"></a><h2>Shared fixtures</h2>
