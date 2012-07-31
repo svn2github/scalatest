@@ -360,8 +360,8 @@ class FunSuiteSuite extends Suite with SharedHelpers {
   }
   
   def testDecodedSuiteName() {
-    expect("My Fun Suite") { new My$u0020Fun$u0020Suite().decodedSuiteName.get }
-    expect(None) { new FunSuiteSuite().decodedSuiteName }
+    expectResult("My Fun Suite") { new My$u0020Fun$u0020Suite().decodedSuiteName.get }
+    expectResult(None) { new FunSuiteSuite().decodedSuiteName }
   }
   
   def testDecodedTestName() {
@@ -376,24 +376,24 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     val decodedReporter = new EventRecordingReporter
     decodedSuite.run(None, Args(decodedReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     val decodedEventList:List[Event] = decodedReporter.eventsReceived
-    expect(7) { decodedEventList.size }
+    expectResult(7) { decodedEventList.size }
     decodedEventList.foreach {event =>
       event match {
         case testStarting:TestStarting => 
-          expect(None) { testStarting.decodedTestName }
-          expect(None) { testStarting.decodedSuiteName }
+          expectResult(None) { testStarting.decodedTestName }
+          expectResult(None) { testStarting.decodedSuiteName }
         case testSucceed:TestSucceeded => 
-          expect("test Succeed") { testSucceed.testName }
-          expect(None) { testSucceed.decodedTestName }
+          expectResult("test Succeed") { testSucceed.testName }
+          expectResult(None) { testSucceed.decodedTestName }
         case testFail:TestFailed =>
-          expect("test Fail") { testFail.testName }
-          expect(None) { testFail.decodedTestName }
+          expectResult("test Fail") { testFail.testName }
+          expectResult(None) { testFail.decodedTestName }
         case testPending:TestPending =>
-          expect("test Pending") { testPending.testName }
-          expect(None) { testPending.decodedTestName }
+          expectResult("test Pending") { testPending.testName }
+          expectResult(None) { testPending.decodedTestName }
         case testIgnore:TestIgnored => 
-          expect("test Ignore") { testIgnore.testName }
-          expect(None) { testIgnore.decodedTestName }
+          expectResult("test Ignore") { testIgnore.testName }
+          expectResult(None) { testIgnore.decodedTestName }
         case _ =>
       }
     }

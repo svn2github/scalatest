@@ -32,13 +32,13 @@ class PropSpecSpec extends FunSpec with SharedHelpers {
         property("test that") {}
       }
 
-      expect(List("test this", "test that")) {
+      expectResult(List("test this", "test that")) {
         a.testNames.iterator.toList
       }
 
       val b = new PropSpec {}
 
-      expect(List[String]()) {
+      expectResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -47,7 +47,7 @@ class PropSpecSpec extends FunSpec with SharedHelpers {
         property("test this") {}
       }
 
-      expect(List("test that", "test this")) {
+      expectResult(List("test that", "test this")) {
         c.testNames.iterator.toList
       }
     }

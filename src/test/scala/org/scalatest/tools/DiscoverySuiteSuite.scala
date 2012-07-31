@@ -46,22 +46,22 @@ private[scalatest] class DiscoverySuiteSuite extends Suite {
     intercept[NullPointerException] {
       new DiscoverySuite(null, Set(), false, null)
     }
-    expect(Nil) {
+    expectResult(Nil) {
       DiscoverySuite.nestedSuiteNames("a.b.c", Set(), false)
     }
-    expect(List("a.b.c.Hi")) {
+    expectResult(List("a.b.c.Hi")) {
       DiscoverySuite.nestedSuiteNames("a.b.c", Set("a.b.c.Hi"), true)
     }
-    expect(List("a.b.c.d.Hi")) {
+    expectResult(List("a.b.c.d.Hi")) {
       DiscoverySuite.nestedSuiteNames("a.b.c", Set("a.b.c.d.Hi"), true)
     }
-    expect(List("a.b.c.Hi")) {
+    expectResult(List("a.b.c.Hi")) {
       DiscoverySuite.nestedSuiteNames("a.b.c", Set("a.b.c.Hi"), false)
     }
-    expect(Nil) {
+    expectResult(Nil) {
       DiscoverySuite.nestedSuiteNames("a.b.c", Set("a.b.c"), false)
     }
-    expect(Nil) {
+    expectResult(Nil) {
       DiscoverySuite.nestedSuiteNames("a.b.c", Set("a.b.c.d.Hi"), false)
     }
   }

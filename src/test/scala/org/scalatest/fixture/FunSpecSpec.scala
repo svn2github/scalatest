@@ -36,7 +36,7 @@ class FunSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Sh
         }
       }
 
-      expect(List("should do that", "should do this")) {
+      expectResult(List("should do that", "should do this")) {
         a.testNames.iterator.toList
       }
 
@@ -45,7 +45,7 @@ class FunSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Sh
         def withFixture(test: OneArgTest) {}
       }
 
-      expect(List[String]()) {
+      expectResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -58,7 +58,7 @@ class FunSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Sh
         }
       }
 
-      expect(List("should do this", "should do that")) {
+      expectResult(List("should do this", "should do that")) {
         c.testNames.iterator.toList
       }
     }

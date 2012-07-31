@@ -93,7 +93,7 @@ class ExamplesSuite extends FunSuite {
       }
       aExamples()
     }
-    expect(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
+    expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
       a.tags
     }
 
@@ -101,7 +101,7 @@ class ExamplesSuite extends FunSuite {
       def bExamples() {}
       bExamples()
     }
-    expect(Map()) {
+    expectResult(Map()) {
       b.tags
     }
 
@@ -112,7 +112,7 @@ class ExamplesSuite extends FunSuite {
       }
       cExamples()
     }
-    expect(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+    expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
       c.tags
     }
   }

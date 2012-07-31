@@ -24,8 +24,8 @@ class NonImplicitAssertionsSuite extends FunSuite with NonImplicitAssertions {
     assert(1 + 1 == 2)
     val thrown =
       intercept[TestFailedException] {
-        expect(2) { 1 + 1 + 1 }
+        expectResult(2) { 1 + 1 + 1 }
       }
-    expect("Expected 2, but got 3") { thrown.getMessage }
+    expectResult("Expected 2, but got 3") { thrown.getMessage }
   }
 }

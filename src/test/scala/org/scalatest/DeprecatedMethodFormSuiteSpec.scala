@@ -109,13 +109,13 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         def testThat() {}
       }
 
-      expect(List("testThat", "testThis")) {
+      expectResult(List("testThat", "testThis")) {
         a.testNames.iterator.toList
       }
 
       val b = new Suite {}
 
-      expect(List[String]()) {
+      expectResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -125,7 +125,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         def testThis() {}
       }
 
-      expect(List("testThat", "testThis")) {
+      expectResult(List("testThat", "testThis")) {
         c.testNames.iterator.toList
       }
     }

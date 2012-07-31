@@ -34,7 +34,7 @@ class FunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         }
       }
 
-      expect(List("that", "this")) {
+      expectResult(List("that", "this")) {
         a.testNames.iterator.toList
       }
 
@@ -43,7 +43,7 @@ class FunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         def withFixture(test: OneArgTest) {}
       }
 
-      expect(List[String]()) {
+      expectResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -56,7 +56,7 @@ class FunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         }
       }
 
-      expect(List("this", "that")) {
+      expectResult(List("this", "that")) {
         c.testNames.iterator.toList
       }
     }
