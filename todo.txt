@@ -1,3 +1,4 @@
+Seeing if I can commit.
 
 In Runner.parseConcurrenConfig method
 val enableSuiteSortingReporter = concurrentList.find(_.startsWith("-cS")).isDefined
