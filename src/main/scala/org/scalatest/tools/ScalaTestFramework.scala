@@ -102,7 +102,7 @@ class ScalaTestFramework extends Framework {
     import org.scalatest._
     
     private class SbtLogInfoReporter(presentAllDurations: Boolean, presentInColor: Boolean, presentShortStackTraces: Boolean, presentFullStackTraces: Boolean) 
-      extends StringReporter(presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces) {
+      extends StringReporter(presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces, false) {
     
       protected def printPossiblyInColor(text: String, ansiColor: String) {
           loggers.foreach { logger =>

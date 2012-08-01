@@ -53,7 +53,8 @@ private[scalatest] class ReporterFactory {
         configSet.contains(PresentAllDurations),
         !configSet.contains(PresentWithoutColor),
         configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
-        configSet.contains(PresentFullStackTraces) // If they say both S and F, F overrules
+        configSet.contains(PresentFullStackTraces), // If they say both S and F, F overrules
+        configSet.contains(PresentUnformatted)
       )
     else
       new FilterReporter(
@@ -61,7 +62,8 @@ private[scalatest] class ReporterFactory {
           configSet.contains(PresentAllDurations),
           !configSet.contains(PresentWithoutColor),
           configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
-          configSet.contains(PresentFullStackTraces) // If they say both S and F, F overrules
+          configSet.contains(PresentFullStackTraces), // If they say both S and F, F overrules
+          configSet.contains(PresentUnformatted)
         ),
         configSet
       )
@@ -73,7 +75,8 @@ private[scalatest] class ReporterFactory {
         configSet.contains(PresentAllDurations),
         !configSet.contains(PresentWithoutColor),
         configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
-        configSet.contains(PresentFullStackTraces) // If they say both S and F, F overrules
+        configSet.contains(PresentFullStackTraces), // If they say both S and F, F overrules
+        configSet.contains(PresentUnformatted)
       )
       else
         new FilterReporter(
@@ -81,7 +84,8 @@ private[scalatest] class ReporterFactory {
             configSet.contains(PresentAllDurations),
             !configSet.contains(PresentWithoutColor),
             configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
-            configSet.contains(PresentFullStackTraces) // If they say both S and F, F overrules
+            configSet.contains(PresentFullStackTraces), // If they say both S and F, F overrules
+            configSet.contains(PresentUnformatted)
           ),
           configSet
         )
@@ -94,7 +98,8 @@ private[scalatest] class ReporterFactory {
         configSet.contains(PresentAllDurations),
         !configSet.contains(PresentWithoutColor),
         configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
-        configSet.contains(PresentFullStackTraces) // If they say both S and F, F overrules
+        configSet.contains(PresentFullStackTraces), // If they say both S and F, F overrules
+        configSet.contains(PresentUnformatted)
       )
       else
         new FilterReporter(
@@ -103,7 +108,8 @@ private[scalatest] class ReporterFactory {
             configSet.contains(PresentAllDurations),
             !configSet.contains(PresentWithoutColor),
             configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
-            configSet.contains(PresentFullStackTraces) // If they say both S and F, F overrules
+            configSet.contains(PresentFullStackTraces), // If they say both S and F, F overrules
+            configSet.contains(PresentUnformatted)
           ),
           configSet
         )

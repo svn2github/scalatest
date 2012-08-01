@@ -266,10 +266,11 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  * <li> <code><b>D</b></code> - show all durations</li>
  * <li> <code><b>S</b></code> - show short stack traces</li>
  * <li> <code><b>F</b></code> - show full stack traces</li>
+ * <li> <code><b>U</b></code> - unformatted (some might say ugly)</li>
  * </ul>
  *
  * <p>
- * If you specify a W, D, S, or F for any reporter other than standard output, standard error, or file reporters, <code>Runner</code>
+ * If you specify a W, D, S, F, or U for any reporter other than standard output, standard error, or file reporters, <code>Runner</code>
  * will complain with an error message and not perform the run.
  * </p>
  *
@@ -287,6 +288,10 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  * by production code. When a <code>TestFailedException</code> is thrown in default mode, only the source filename and
  * line number of the line of test code that caused the test to fail are printed along with the error message, not the full stack
  * trace. 
+ * </p>
+ *
+ * <p>
+ * The 'U' unformatted configuration removes some formatting from the output and adds verbosity.
  * </p>
  *
  * <p>
@@ -1201,7 +1206,6 @@ object Runner {
         case 'Y' =>  throw new IllegalArgumentException("Use of Y was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'Z' => throw new IllegalArgumentException("Use of Z was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'T' => // Use for Dots
-        case 'U' => throw new IllegalArgumentException("Use of U was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'P' =>throw new IllegalArgumentException("Use of P was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'B' =>throw new IllegalArgumentException("Use of B was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'I' =>throw new IllegalArgumentException("Use of I was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
@@ -1220,6 +1224,7 @@ object Runner {
         case 'F' => set += PresentFullStackTraces
         case 'S' => set += PresentShortStackTraces
         case 'D' => set += PresentAllDurations
+        case 'U' => set += PresentUnformatted
         case c: Char => { 
 
           // this should be moved to the checker, and just throw an exception here with a debug message. Or allow a MatchError.
@@ -1386,6 +1391,8 @@ object Runner {
             throw new IllegalArgumentException("Cannot specify a W (present without color) configuration parameter for the graphic reporter: " + dashGString)
           if (configSet.contains(PresentAllDurations))
             throw new IllegalArgumentException("Cannot specify a D (present all durations) configuration parameter for the graphic reporter (because it shows them all anyway): " + dashGString)
+          if (configSet.contains(PresentUnformatted))
+            throw new IllegalArgumentException("Cannot specify a U (present unformatted) configuration parameter for the graphic reporter: " + dashGString)
           Some(new GraphicReporterConfiguration(configSet))
         case None => None
       }
@@ -1497,6 +1504,8 @@ object Runner {
             throw new IllegalArgumentException("Cannot specify a W (without color) configuration parameter for a custom reporter: " + dashRString + " " + customReporterClassName)
           if (configSet.contains(PresentAllDurations))
             throw new IllegalArgumentException("Cannot specify a D (present all durations) configuration parameter for a custom reporter: " + dashRString + " " + customReporterClassName)
+          if (configSet.contains(PresentUnformatted))
+            throw new IllegalArgumentException("Cannot specify a U (present unformatted) configuration parameter for a custom reporter: " + dashRString + " " + customReporterClassName)
           lb += new CustomReporterConfiguration(configSet, customReporterClassName)
         }
       }

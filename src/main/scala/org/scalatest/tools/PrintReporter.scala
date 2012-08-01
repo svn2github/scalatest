@@ -38,8 +38,10 @@ import StringReporter.colorizeLinesIndividually
  * @author Bill Venners
  */
 private[scalatest] abstract class PrintReporter(pw: PrintWriter, presentAllDurations: Boolean,
-        presentInColor: Boolean, presentShortStackTraces: Boolean, presentFullStackTraces: Boolean) extends StringReporter(
-presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces) {
+        presentInColor: Boolean, presentShortStackTraces: Boolean, presentFullStackTraces: Boolean,
+        presentUnformatted: Boolean) extends StringReporter(
+presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces,
+presentUnformatted) {
 
   /**
   * Construct a <code>PrintReporter</code> with passed
@@ -55,7 +57,8 @@ presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTr
     presentAllDurations: Boolean,
     presentInColor: Boolean,
     presentShortStackTraces: Boolean,
-    presentFullStackTraces: Boolean
+    presentFullStackTraces: Boolean,
+    presentUnformatted: Boolean
   ) =
     this(
       new PrintWriter(
@@ -66,7 +69,8 @@ presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTr
       presentAllDurations,
       presentInColor,
       presentShortStackTraces,
-      presentFullStackTraces
+      presentFullStackTraces,
+      presentUnformatted
     )
 
   /**
@@ -84,14 +88,16 @@ presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTr
     presentAllDurations: Boolean,
     presentInColor: Boolean,
     presentShortStackTraces: Boolean,
-    presentFullStackTraces: Boolean
+    presentFullStackTraces: Boolean,
+    presentUnformatted: Boolean
   ) =
     this(
       new PrintWriter(new BufferedOutputStream(new FileOutputStream(new File(filename)), BufferSize)),
       presentAllDurations,
       presentInColor,
       presentShortStackTraces,
-      presentFullStackTraces
+      presentFullStackTraces,
+      presentUnformatted
     )
 
   protected def printPossiblyInColor(text: String, ansiColor: String) {

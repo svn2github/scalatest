@@ -41,7 +41,8 @@ import org.scalatest.exceptions.StackDepth
  * @author Bill Venners
  */
 private[scalatest] abstract class StringReporter(presentAllDurations: Boolean,
-        presentInColor: Boolean, presentShortStackTraces: Boolean, presentFullStackTraces: Boolean) extends ResourcefulReporter {
+        presentInColor: Boolean, presentShortStackTraces: Boolean, presentFullStackTraces: Boolean,
+        presentUnformatted: Boolean) extends ResourcefulReporter {
 
   private def withPossibleLineNumber(stringToPrint: String, throwable: Option[Throwable]): String = {
     throwable match {
@@ -281,19 +282,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
     stringToPrintWhenNoError(resourceName, formatter, suiteName, testName, None)
 
   private def stringToPrintWhenNoError(resourceName: String, formatter: Option[Formatter], suiteName: String, testName: Option[String], duration: Option[Long]): Option[String] = {
-
-    formatter match {
-      case Some(IndentedText(formattedText, _, _)) =>
-        duration match {
-          case Some(milliseconds) =>
-            if (presentAllDurations)
-              Some(Resources("withDuration", formattedText, makeDurationString(milliseconds)))
-            else
-              Some(formattedText)
-          case None => Some(formattedText)
-        }
-      case Some(MotionToSuppress) => None
-      case _ =>
+    def genUnformattedText = {
         val arg =
           testName match {
             case Some(tn) => suiteName + ": " + tn
@@ -308,8 +297,26 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
               Some(unformattedText)
           case None => Some(unformattedText)
         }
-
     }
+
+    def genFormattedText = {
+      formatter match {
+        case Some(IndentedText(formattedText, _, _)) =>
+          duration match {
+            case Some(milliseconds) =>
+              if (presentAllDurations)
+                Some(Resources("withDuration", formattedText, makeDurationString(milliseconds)))
+              else
+                Some(formattedText)
+            case None => Some(formattedText)
+          }
+        case Some(MotionToSuppress) => None
+        case _ => genUnformattedText
+      }
+    }
+
+    if (presentUnformatted) genUnformattedText
+    else                    genFormattedText
   }
 
   def apply(event: Event) {
