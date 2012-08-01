@@ -162,22 +162,31 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
   private def stringsToPrintOnError(noteResourceName: String, errorResourceName: String, message: String, throwable: Option[Throwable],
     formatter: Option[Formatter], suiteName: Option[String], testName: Option[String], duration: Option[Long]): List[String] = {
 
-    val stringToPrint =
+    def genFormattedText = {
       formatter match {
         case Some(IndentedText(formattedText, _, _)) =>
           Resources("specTextAndNote", formattedText, Resources(noteResourceName))
         case _ =>
-          // Deny MotionToSuppress directives in error events, because error info needs to be seen by users
-          suiteName match {
-            case Some(sn) =>
-              testName match {
-                case Some(tn) => Resources(errorResourceName, sn + ": " + tn)
-                case None => Resources(errorResourceName, sn)
-              }
-            // Should not get here with built-in ScalaTest stuff, but custom stuff could get here.
-            case None => Resources(errorResourceName, Resources("noNameSpecified"))
-          }
+          genUnformattedText
       }
+    }
+
+    def genUnformattedText = {
+      // Deny MotionToSuppress directives in error events, because error info needs to be seen by users
+      suiteName match {
+        case Some(sn) =>
+          testName match {
+            case Some(tn) => Resources(errorResourceName, sn + ": " + tn + ": " + message)
+            case None => Resources(errorResourceName, sn + ": " + message)
+          }
+        // Should not get here with built-in ScalaTest stuff, but custom stuff could get here.
+        case None => Resources(errorResourceName, Resources("noNameSpecified"))
+      }
+    }
+
+    val stringToPrint =
+      if (presentUnformatted) genUnformattedText
+      else                    genFormattedText
 
     val stringToPrintWithPossibleDuration =
       duration match {
