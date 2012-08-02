@@ -516,7 +516,7 @@ import org.openqa.selenium.JavascriptExecutor
  * In addition to the common use of name-value cookie, you can pass these extra fields when creating the cookie, available ways are:
  * </p>
  * 
- * <pre class="stHighlight"> // TODO: Use a single method with default values instead of overloading, if can copy Selenium's defaults
+ * <pre class="stHighlight">
  * cookie(name: String, value: String)
  * cookie(name: String, value: String, path: String)
  * cookie(name: String, value: String, path: String, expiry: Date)
@@ -629,7 +629,7 @@ import org.openqa.selenium.JavascriptExecutor
  * syntax with your page objects. Here's an example:
  * </p>
  *
- * <pre>
+ * <pre class="stHighlight">
  * class HomePage extends Page {
  *   val url = "localhost:9000/index.html
  * }
@@ -644,20 +644,44 @@ import org.openqa.selenium.JavascriptExecutor
  * To execute arbitrary JavaScript, for example, to test some JavaScript functions on your page, pass it to <code>executeScript</code>:
  * </p>
  *
- * <pre>
- * executeScript("modifyDOM();")
+ * <pre class="stHighlight">
+ * go to (host + "index.html")
+ * val result1 = executeScript("return document.title;")
+ * result1 should be ("Test Title")
+ * val result2 = executeScript("return 'Hello ' + arguments[0]", "ScalaTest")
+ * result2 should be ("Hello ScalaTest")
+ * </pre>
+ *
+ * <p>
+ * To execute an asynchronous bit of JavaScript, pass it to <code>executeAsyncScript</code>. You can set the script timeout with <code>setScriptTimeout</code>:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * val script = """
+ *   var callback = arguments[arguments.length - 1];
+ *   window.setTimeout(function() {callback('Hello ScalaTest')}, 500);
+ * """
+ * setScriptTimeout(1 second)
+ * val result = executeAsyncScript(script)
+ * result should be ("Hello ScalaTest")
  * </pre>
  *
  * <h2>Querying for elements</h2>
  *
- * <pre>
+ * <p>
+ * You can query for arbitrary elements via <code>find</code> and <code>findAll</code>. The <code>find</code> method returns the first matching element, wrapped in a <code>Some</code>,
+ * or <code>None</code> if no element is found. The <code>findAll</code> method returns an <code>IndexedSeq</code> of all matching elements. If no elements match the query, <code>findAll</code>
+ * returns an empty <code>IndexedSeq</code>. These methods allow you to perform rich queries using <code>for</code> expressions. Here are some examples:
+ * </p>
+ *
+ * <pre class="stHighlight">
  * val ele: Option[Element] = find("q")
  *
  * val eles: IndexedSeq[Element] = findAll(className("small"))
  * for (e <- eles; if e.tagName != "input")
  *   e should be ('displayed)
  * val textFields = eles filter { tf.isInstanceOf[TextField] }
- * <pre>
+ * </pre>
  *
  * @author Chua Chee Seng
  * @author Bill Venners
@@ -677,7 +701,6 @@ trait WebBrowser {
     def underlying: WebElement
   }
 
-  // TODO: go to a Page instance. if Page, just ask for Url by accessing url.
   trait Page {
     val url: String
   }
@@ -1263,16 +1286,16 @@ trait WebBrowser {
     driver.navigate.refresh()
   }
   
-  // TODO: Use a single cookie method with default param values instead of overloading
+  // TODO: Maybe use a single cookie method with default param values instead of overloading
   object add {
     private def addCookie(cookie: Cookie)(implicit driver: WebDriver) {
       driver.manage.addCookie(cookie)
     }
-    
+ 
     def cookie(name: String, value: String)(implicit driver: WebDriver) {
       addCookie(new Cookie(name, value))
     }
-    
+ 
     def cookie(name: String, value: String, path: String)(implicit driver: WebDriver) { 
       addCookie(new Cookie(name, value, path))
     }
@@ -1384,18 +1407,27 @@ trait WebBrowser {
     }
   }
   
+  /**
+   * Executes JavaScript in the context of the currently selected frame or window.
+   */
   def executeScript(script: String, args: AnyRef*)(implicit driver: WebDriver): AnyRef =
     driver match {
       case executor: JavascriptExecutor => executor.executeScript(script, args.toArray : _*)
       case _ => throw new UnsupportedOperationException("Web driver " + driver.getClass.getName + " does not support javascript execution.")
     }
   
+  /**
+   * Executes an asynchronous piece of JavaScript in the context of the currently selected frame or window.
+   */
   def executeAsyncScript(script: String, args: AnyRef*)(implicit driver: WebDriver): AnyRef =
     driver match {
       case executor: JavascriptExecutor => executor.executeAsyncScript(script, args.toArray : _*)
       case _ => throw new UnsupportedOperationException("Web driver " + driver.getClass.getName + " does not support javascript execution.")
     }
   
+  /**
+   * Sets the amount of time to wait for an asynchronous script to finish execution before throwing an exception.
+   */
   def setScriptTimeout(timeout: Span)(implicit driver: WebDriver) {
     driver.manage().timeouts().setScriptTimeout(timeout.totalNanos, TimeUnit.NANOSECONDS);
   }
@@ -1443,31 +1475,137 @@ trait WebBrowser {
   }
 }
 
+/**
+ * Companion object that facilitates the importing of <code>WebBrowser</code> members as 
+ * an alternative to mixing it in. One use case is to import <code>WebBrowser</code> members so you can use
+ * them in the Scala interpreter.
+ */
 object WebBrowser extends WebBrowser
 
+/**
+ * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for HTMLUnit (an <code>org.openqa.selenium.htmlunit.HtmlUnitDriver</code>), with JavaScript
+ * enabled by default.
+ *
+ * <p>
+ * Note: You can disable JavaScript with:
+ * </p>
+ *
+ * <pre>
+ * webDriver.setJavascriptEnabled(false)
+ * </pre>
+ */
 trait HtmlUnit extends WebBrowser {
+
+  /**
+   * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for HTMLUnit (an <code>org.openqa.selenium.htmlunit.HtmlUnitDriver</code>), with JavaScript
+   * enabled by default.
+   *
+   * <p>
+   * Note: You can disable JavaScript with:
+   * </p>
+   *
+   * <pre>
+   * webDriver.setJavascriptEnabled(false)
+   * </pre>
+   */
   implicit val webDriver = new HtmlUnitDriver()
+
   webDriver.setJavascriptEnabled(true)
 }
+
+/**
+ * Companion object that facilitates the importing of <code>HtmlUnit</code> members as 
+ * an alternative to mixing it in. One use case is to import <code>HtmlUnit</code> members so you can use
+ * them in the Scala interpreter.
+ */
 object HtmlUnit extends HtmlUnit
 
+/**
+ * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Firefox (an <code>org.openqa.selenium.firefox.FirefoxDriver</code>).
+ *
+ * <p>
+ * The <code>FirefoxDriver</code> uses the <code>FirefoxProfile</code> defined as <code>firefoxProfile</code>. By default this is just a <code>new FirefoxProfile</code>.
+ * You can mutate this object to modify the profile, or override <code>firefoxProfile</code>.
+ * </p>
+ */
 trait Firefox extends WebBrowser {
+
+  /**
+   * The <code>FirefoxProfile</code> passed to the constructor of the <code>FirefoxDriver</code> returned by <code>webDriver</code>.
+   *
+   * <p>
+   * The <code>FirefoxDriver</code> uses the <code>FirefoxProfile</code> defined as <code>firefoxProfile</code>. By default this is just a <code>new FirefoxProfile</code>.
+   * You can mutate this object to modify the profile, or override <code>firefoxProfile</code>.
+   * </p>
+   */
   val firefoxProfile = new FirefoxProfile()
+
+  /**
+   * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Firefox (an <code>org.openqa.selenium.firefox.FirefoxDriver</code>), with a default
+   * Firefox profile.
+   *
+   * <p>
+   * The <code>FirefoxDriver</code> uses the <code>FirefoxProfile</code> defined as <code>firefoxProfile</code>. By default this is just a <code>new FirefoxProfile</code>.
+   * You can mutate this object to modify the profile, or override <code>firefoxProfile</code>.
+   * </p>
+   */
   implicit val webDriver = new FirefoxDriver(firefoxProfile)
 }
+
+/**
+ * Companion object that facilitates the importing of <code>Firefox</code> members as 
+ * an alternative to mixing it in. One use case is to import <code>Firefox</code> members so you can use
+ * them in the Scala interpreter.
+ */
 object Firefox extends Firefox
 
+/**
+ * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Safari (an <code>org.openqa.selenium.safari.SafariDriver</code>).
+ */
 trait Safari extends WebBrowser {
+  /**
+   * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Safari (an <code>org.openqa.selenium.safari.SafariDriver</code>).
+   */
   implicit val webDriver = new SafariDriver()
 }
+
+/**
+ * Companion object that facilitates the importing of <code>Safari</code> members as 
+ * an alternative to mixing it in. One use case is to import <code>Safari</code> members so you can use
+ * them in the Scala interpreter.
+ */
 object Safari extends Safari
 
+/**
+ * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Chrome (an <code>org.openqa.selenium.chrome.ChromeDriver</code>).
+ */
 trait Chrome extends WebBrowser {
+  /**
+   * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Chrome (an <code>org.openqa.selenium.chrome.ChromeDriver</code>).
+   */
   implicit val webDriver = new ChromeDriver()
 }
+
+/**
+ * Companion object that facilitates the importing of <code>Chrome</code> members as 
+ * an alternative to mixing it in. One use case is to import <code>Chrome</code> members so you can use
+ * them in the Scala interpreter.
+ */
 object Chrome extends Chrome
 
+/**
+ * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Internet Explorer (an <code>org.openqa.selenium.ie.InternetExplorerDriver</code>).
+ */
 trait InternetExplorer extends WebBrowser {
+  /**
+   * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Internet Explorer (an <code>org.openqa.selenium.ie.InternetExplorerDriver</code>).
+   */
   implicit val webDriver = new InternetExplorerDriver()
 }
+
+/**
+ * Companion object that facilitates the importing of <code>InternetExplorer</code> members as 
+ * an alternative to mixing it in. One use case is to import <code>InternetExplorer</code> members so you can use
+ * them in the Scala interpreter.
+ */
 object InternetExplorer extends InternetExplorer
