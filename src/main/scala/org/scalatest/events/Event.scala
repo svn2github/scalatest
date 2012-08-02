@@ -424,6 +424,7 @@ final case class TestSucceeded (
       <testName>{ testName }</testName>
       <testText>{ testText }</testText>
       <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <recordedEvents>{ recordedEvents.map(_.toXml) }</recordedEvents>
       <formatter>{ formatterOption(formatter) }</formatter>
       <location>{ locationOption(location) }</location>
       <rerunner>{ stringOption(rerunner) }</rerunner>
@@ -550,6 +551,7 @@ final case class TestFailed (
       <testName>{ testName }</testName>
       <testText>{ testText }</testText>
       <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <recordedEvents>{ recordedEvents.map(_.toXml) }</recordedEvents>
       <throwable>{ throwableOption(throwable) }</throwable>
       <formatter>{ formatterOption(formatter) }</formatter>
       <location>{ locationOption(location) }</location>
@@ -761,6 +763,7 @@ final case class TestPending (
       <testName>{ testName }</testName>
       <testText>{ testText }</testText>
       <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <recordedEvents>{ recordedEvents.map(_.toXml) }</recordedEvents>
       <formatter>{ formatterOption(formatter) }</formatter>
       <location>{ locationOption(location) }</location>
       <threadName>{ threadName }</threadName>
@@ -878,6 +881,7 @@ final case class TestCanceled (
       <testName>{ testName }</testName>
       <testText>{ testText }</testText>
       <decodedTestName>{ stringOption(decodedTestName) }</decodedTestName>
+      <recordedEvents>{ recordedEvents.map(_.toXml) }</recordedEvents>
       <throwable>{ throwableOption(throwable) }</throwable>
       <formatter>{ formatterOption(formatter) }</formatter>
       <location>{ locationOption(location) }</location>
