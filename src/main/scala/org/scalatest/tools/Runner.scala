@@ -85,13 +85,13 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-t <em>&lt;test name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#selectingSuitesAndTests">select the test</a> with the specified name<br/>(Note: must follow <code>-s</code> or <code>-i</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-t "An empty Stack should complain when popped"</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-z <em>&lt;test name substring&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><a href="#selectingSuitesAndTests">select tests</a> whose names include the specified substring<br/>(Note: must follow <code>-s</code> or <code>-i</code>)</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-z "popped"</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-g<em>[NCXEHLOPQMD]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the graphical reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-g</code></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-f<em>[NCXEHLOPQMDWSF] &lt;filename&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the file reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-f output.txt</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-f<em>[NCXEHLOPQMDWSFU] &lt;filename&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the file reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-f output.txt</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-u <em>&lt;directory name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the JUnit XML reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-u target/junitxmldir</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-v</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">print the ScalaTest version</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-v</code> <em>or, also</em> <code>-version</code></td></tr>
  * <!--<tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-d <em>&lt;directory name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the dashboard reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-d target/dashboarddir</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-a <em>&lt;number of files to archive&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">specify the number of dashboard files to archive</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-a 30</code></td></tr>-->
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-o<em>[NCXEHLOPQMDWSF]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the standard output reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-o</code></td></tr>
- * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-e<em>[NCXEHLOPQMDWSF]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the standard error reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-e</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-o<em>[NCXEHLOPQMDWSFU]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the standard output reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-o</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-e<em>[NCXEHLOPQMDWSFU]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the standard error reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-e</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-C<em>[NCXEHLOPQMD] &lt;reporter class&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select a custom reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-C com.company.project.BarReporter</code></td></tr>
  * </table>
  *
@@ -266,7 +266,7 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  * <li> <code><b>D</b></code> - show all durations</li>
  * <li> <code><b>S</b></code> - show short stack traces</li>
  * <li> <code><b>F</b></code> - show full stack traces</li>
- * <li> <code><b>U</b></code> - unformatted (some might say ugly)</li>
+ * <li> <code><b>U</b></code> - unformatted mode</li>
  * </ul>
  *
  * <p>
@@ -292,7 +292,12 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  *
  * <p>
  * The 'U' unformatted configuration removes some formatting from the output and adds verbosity.
+ * The purpose of unformatted (or, "ugly") mode is to facilitate debugging of parallel runs. If you have tests that fail or hang during parallel runs, but
+ * succeed when run sequentially, unformatted mode can help. In unformatted mode, you can see exactly what is happening when it is happening. Rather than attempting to make the output
+ * look as pretty and human-readable as possible, unformatted mode will just print out verbose information about each event as it arrives, helping you track down the problem
+ * you are trying to debug.
  * </p>
+ *
  *
  * <p>
  * By default, a standard output, error, or file reporter inserts ansi escape codes into the output printed to change and later reset
