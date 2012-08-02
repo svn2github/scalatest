@@ -404,11 +404,14 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
       case TestIgnored(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, formatter, location, payload, threadName, timeStamp) => 
 
         val stringToPrint =
-          formatter match {
-            case Some(IndentedText(formattedText, _, _)) => Some(Resources("specTextAndNote", formattedText, Resources("ignoredNote")))
-            case Some(MotionToSuppress) => None
-            case _ => Some(Resources("testIgnored", suiteName + ": " + testName))
-          }
+          if (presentUnformatted)
+            Some(Resources("testIgnored", suiteName + ": " + testName))
+          else
+            formatter match {
+              case Some(IndentedText(formattedText, _, _)) => Some(Resources("specTextAndNote", formattedText, Resources("ignoredNote")))
+              case Some(MotionToSuppress) => None
+              case _ => Some(Resources("testIgnored", suiteName + ": " + testName))
+            }
  
         stringToPrint match {
           case Some(string) => printPossiblyInColor(string, ansiYellow)
@@ -495,11 +498,14 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
       case TestPending(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, duration, formatter, location, payload, threadName, timeStamp) =>
 
         val stringToPrint =
-          formatter match {
-            case Some(IndentedText(formattedText, _, _)) => Some(Resources("specTextAndNote", formattedText, Resources("pendingNote")))
-            case Some(MotionToSuppress) => None
-            case _ => Some(Resources("testPending", suiteName + ": " + testName))
-          }
+          if (presentUnformatted)
+            Some(Resources("testPending", suiteName + ": " + testName))
+          else
+            formatter match {
+              case Some(IndentedText(formattedText, _, _)) => Some(Resources("specTextAndNote", formattedText, Resources("pendingNote")))
+              case Some(MotionToSuppress) => None
+              case _ => Some(Resources("testPending", suiteName + ": " + testName))
+            }
 
         stringToPrint match {
           case Some(string) => printPossiblyInColor(string, ansiYellow)
