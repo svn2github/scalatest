@@ -475,17 +475,17 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
   }
 
   // Used by FlatSpec, which doesn't nest. So this one just makes a new one off of the trunk
-  def registerFlatBranch(description: String, registrationClosedResource: String, sourceFile: String, methodName: String, adjustment: Int) {
+  def registerFlatBranch(description: String, registrationClosedResource: String, sourceFile: String, methodName: String, stackDepth: Int, adjustment: Int) {
 
     val oldBundle = atomic.get
     val (_, testNamesList, testsMap, tagsMap, registrationClosed) = oldBundle.unpack
 
     if (registrationClosed)
-      throw new TestRegistrationClosedException(Resources(registrationClosedResource), getStackDepthFun(sourceFile, methodName, adjustment - 2))
+      throw new TestRegistrationClosedException(Resources(registrationClosedResource), getStackDepthFun(sourceFile, methodName, stackDepth + adjustment))
 
     // Need to use Trunk here. I think it will be visible to all threads because
     // of the atomic, even though it wasn't inside it.
-    val newBranch = DescriptionBranch(Trunk, description, None, getLineInFile(Thread.currentThread().getStackTrace, adjustment + 3))
+    val newBranch = DescriptionBranch(Trunk, description, None, getLineInFile(Thread.currentThread().getStackTrace, stackDepth))
     Trunk.subNodes ::= newBranch
 
     // Update atomic, making the current branch to the new branch

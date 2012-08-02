@@ -124,28 +124,30 @@ class LocationFunctionSuiteProp extends FunctionSuiteProp {
   }
   
   def featureSpec = new FeatureSpec with FixtureServices {
-    scenario("succeed") {
+    feature("Test") {
+      scenario("succeed") {
       
-    }
-    scenario("pending") {
-      pending
-    }
-    scenario("cancel") {
-      cancel
-    }
-    ignore("ignore") {
-      
+      }
+      scenario("pending") {
+        pending
+      }
+      scenario("cancel") {
+        cancel
+      }
+      ignore("ignore") {
+        
+      }
     }
     val suiteTypeName: String = "FeatureSpec"
-    val expectedStartingList = List(TestStartingPair("Scenario: succeed", expectedSourceFileName, thisLineNumber - 13), 
-                                   TestStartingPair("Scenario: pending", expectedSourceFileName, thisLineNumber - 11),
-                                   TestStartingPair("Scenario: cancel", expectedSourceFileName, thisLineNumber - 9))
-    val expectedResultList = List(TestResultPair(classOf[TestSucceeded], expectedSourceFileName, thisLineNumber - 16), 
-                                 TestResultPair(classOf[TestPending], expectedSourceFileName, thisLineNumber - 14),
-                                 TestResultPair(classOf[TestCanceled], expectedSourceFileName, thisLineNumber - 12),
-                                 TestResultPair(classOf[TestIgnored], expectedSourceFileName, thisLineNumber - 10))
-    val expectedScopeOpenedList = Nil
-    val expectedScopeClosedList = Nil
+    val expectedStartingList = List(TestStartingPair("Feature: Test Scenario: succeed", expectedSourceFileName, thisLineNumber - 14), 
+                                   TestStartingPair("Feature: Test Scenario: pending", expectedSourceFileName, thisLineNumber - 12),
+                                   TestStartingPair("Feature: Test Scenario: cancel", expectedSourceFileName, thisLineNumber - 10))
+    val expectedResultList = List(TestResultPair(classOf[TestSucceeded], expectedSourceFileName, thisLineNumber - 17), 
+                                 TestResultPair(classOf[TestPending], expectedSourceFileName, thisLineNumber - 15),
+                                 TestResultPair(classOf[TestCanceled], expectedSourceFileName, thisLineNumber - 13),
+                                 TestResultPair(classOf[TestIgnored], expectedSourceFileName, thisLineNumber - 11))
+    val expectedScopeOpenedList = List(ScopeOpenedPair("Feature: Test", expectedSourceFileName, thisLineNumber - 22))
+    val expectedScopeClosedList = List(ScopeClosedPair("Feature: Test", expectedSourceFileName, thisLineNumber - 23))
   }
   
   def fixtureFeatureSpec = new fixture.FeatureSpec with FixtureServices with StringFixture {
@@ -185,25 +187,26 @@ class LocationFunctionSuiteProp extends FunctionSuiteProp {
     "Test 3" should "cancel" in {
       cancel
     }
-    "Test 4" should "be ignored" ignore {
+    behavior of "Test 4"
+    it should "be ignored" ignore {
       
     }
     val suiteTypeName: String = "FlatSpec"
-    val expectedStartingList = List(TestStartingPair("Test 1 should succeed", expectedSourceFileName, thisLineNumber - 13), 
-                                   TestStartingPair("Test 2 should pending", expectedSourceFileName, thisLineNumber - 11),
-                                   TestStartingPair("Test 3 should cancel", expectedSourceFileName, thisLineNumber - 9))
-    val expectedResultList = List(TestResultPair(classOf[TestSucceeded], expectedSourceFileName, thisLineNumber - 16), 
-                                 TestResultPair(classOf[TestPending], expectedSourceFileName, thisLineNumber - 14),
-                                 TestResultPair(classOf[TestCanceled], expectedSourceFileName, thisLineNumber - 12),
+    val expectedStartingList = List(TestStartingPair("Test 1 should succeed", expectedSourceFileName, thisLineNumber - 14), 
+                                   TestStartingPair("Test 2 should pending", expectedSourceFileName, thisLineNumber - 12),
+                                   TestStartingPair("Test 3 should cancel", expectedSourceFileName, thisLineNumber - 10))
+    val expectedResultList = List(TestResultPair(classOf[TestSucceeded], expectedSourceFileName, thisLineNumber - 17), 
+                                 TestResultPair(classOf[TestPending], expectedSourceFileName, thisLineNumber - 15),
+                                 TestResultPair(classOf[TestCanceled], expectedSourceFileName, thisLineNumber - 13),
                                  TestResultPair(classOf[TestIgnored], expectedSourceFileName, thisLineNumber - 10))
-    val expectedScopeOpenedList = List(ScopeOpenedPair("Test 1", expectedSourceFileName, thisLineNumber - 20), 
-                                       ScopeOpenedPair("Test 2", expectedSourceFileName, thisLineNumber - 18),
-                                       ScopeOpenedPair("Test 3", expectedSourceFileName, thisLineNumber - 16),
-                                       ScopeOpenedPair("Test 4", expectedSourceFileName, thisLineNumber - 14))
-    val expectedScopeClosedList = List(ScopeClosedPair("Test 1", expectedSourceFileName, thisLineNumber - 24),
-                                       ScopeClosedPair("Test 2", expectedSourceFileName, thisLineNumber - 22),
-                                       ScopeClosedPair("Test 3", expectedSourceFileName, thisLineNumber - 20),
-                                       ScopeClosedPair("Test 4", expectedSourceFileName, thisLineNumber - 18))
+    val expectedScopeOpenedList = List(ScopeOpenedPair("Test 1", expectedSourceFileName, thisLineNumber - 21), 
+                                       ScopeOpenedPair("Test 2", expectedSourceFileName, thisLineNumber - 19),
+                                       ScopeOpenedPair("Test 3", expectedSourceFileName, thisLineNumber - 17),
+                                       ScopeOpenedPair("Test 4", expectedSourceFileName, thisLineNumber - 15))
+    val expectedScopeClosedList = List(ScopeClosedPair("Test 1", expectedSourceFileName, thisLineNumber - 25),
+                                       ScopeClosedPair("Test 2", expectedSourceFileName, thisLineNumber - 23),
+                                       ScopeClosedPair("Test 3", expectedSourceFileName, thisLineNumber - 21),
+                                       ScopeClosedPair("Test 4", expectedSourceFileName, thisLineNumber - 19))
   }
   
   def fixtureFlatSpec = new fixture.FlatSpec with FixtureServices with StringFixture {
@@ -216,25 +219,26 @@ class LocationFunctionSuiteProp extends FunctionSuiteProp {
     "Test 3" should "cancel" in { param =>
       cancel
     }
-    "Test 4" should "be ignored" ignore { param =>
+    behavior of "Test 4"
+    it should "be ignored" ignore { param =>
       
     }
     val suiteTypeName: String = "FixtureFlatSpec"
-    val expectedStartingList = List(TestStartingPair("Test 1 should succeed", expectedSourceFileName, thisLineNumber - 13), 
-                                   TestStartingPair("Test 2 should pending", expectedSourceFileName, thisLineNumber - 11),
-                                   TestStartingPair("Test 3 should cancel", expectedSourceFileName, thisLineNumber - 9))
-    val expectedResultList = List(TestResultPair(classOf[TestSucceeded], expectedSourceFileName, thisLineNumber - 16), 
-                                 TestResultPair(classOf[TestPending], expectedSourceFileName, thisLineNumber - 14),
-                                 TestResultPair(classOf[TestCanceled], expectedSourceFileName, thisLineNumber - 12),
+    val expectedStartingList = List(TestStartingPair("Test 1 should succeed", expectedSourceFileName, thisLineNumber - 14), 
+                                   TestStartingPair("Test 2 should pending", expectedSourceFileName, thisLineNumber - 12),
+                                   TestStartingPair("Test 3 should cancel", expectedSourceFileName, thisLineNumber - 10))
+    val expectedResultList = List(TestResultPair(classOf[TestSucceeded], expectedSourceFileName, thisLineNumber - 17), 
+                                 TestResultPair(classOf[TestPending], expectedSourceFileName, thisLineNumber - 15),
+                                 TestResultPair(classOf[TestCanceled], expectedSourceFileName, thisLineNumber - 13),
                                  TestResultPair(classOf[TestIgnored], expectedSourceFileName, thisLineNumber - 10))
-    val expectedScopeOpenedList = List(ScopeOpenedPair("Test 1", expectedSourceFileName, thisLineNumber - 20), 
-                                       ScopeOpenedPair("Test 2", expectedSourceFileName, thisLineNumber - 18),
-                                       ScopeOpenedPair("Test 3", expectedSourceFileName, thisLineNumber - 16),
-                                       ScopeOpenedPair("Test 4", expectedSourceFileName, thisLineNumber - 14))
-    val expectedScopeClosedList = List(ScopeClosedPair("Test 1", expectedSourceFileName, thisLineNumber - 24),
-                                       ScopeClosedPair("Test 2", expectedSourceFileName, thisLineNumber - 22),
-                                       ScopeClosedPair("Test 3", expectedSourceFileName, thisLineNumber - 20),
-                                       ScopeClosedPair("Test 4", expectedSourceFileName, thisLineNumber - 18))
+    val expectedScopeOpenedList = List(ScopeOpenedPair("Test 1", expectedSourceFileName, thisLineNumber - 21), 
+                                       ScopeOpenedPair("Test 2", expectedSourceFileName, thisLineNumber - 19),
+                                       ScopeOpenedPair("Test 3", expectedSourceFileName, thisLineNumber - 17),
+                                       ScopeOpenedPair("Test 4", expectedSourceFileName, thisLineNumber - 15))
+    val expectedScopeClosedList = List(ScopeClosedPair("Test 1", expectedSourceFileName, thisLineNumber - 25),
+                                       ScopeClosedPair("Test 2", expectedSourceFileName, thisLineNumber - 23),
+                                       ScopeClosedPair("Test 3", expectedSourceFileName, thisLineNumber - 21),
+                                       ScopeClosedPair("Test 4", expectedSourceFileName, thisLineNumber - 19))
   }
   
   def freeSpec = new FreeSpec with FixtureServices {
