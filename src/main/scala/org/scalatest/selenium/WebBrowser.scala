@@ -631,7 +631,7 @@ import org.openqa.selenium.JavascriptExecutor
  *
  * <pre class="stHighlight">
  * class HomePage extends Page {
- *   val url = "localhost:9000/index.html
+ *   val url = "localhost:9000/index.html"
  * }
  *
  * val homePage = new HomePage
