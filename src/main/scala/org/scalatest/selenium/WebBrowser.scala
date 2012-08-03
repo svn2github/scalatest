@@ -1357,6 +1357,8 @@ trait WebBrowser {
   
   val cookies = new CookiesNoun
   
+  def isScreenshotSupported(implicit driver: WebDriver): Boolean = driver.isInstanceOf[TakesScreenshot]
+  
   object capture {
     
     private var targetDir = new File(System.getProperty("java.io.tmpdir"))

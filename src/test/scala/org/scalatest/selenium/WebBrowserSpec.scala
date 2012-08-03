@@ -30,6 +30,11 @@ import org.scalatest.Suite
 import org.scalatest.Args
 import org.scalatest.ScreenshotOnFailure
 import org.scalatest.SharedHelpers.SilentReporter
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxProfile
+import org.openqa.selenium.safari.SafariDriver
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.ie.InternetExplorerDriver
 
 class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with WebBrowser with HtmlUnit {
 
@@ -704,8 +709,36 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       }
       catch {
         case unsupported: UnsupportedOperationException => 
-          pending
+          cancel
       }
+    }
+    
+    it("isScreenshotSupported should return false for HtmlUnitDriver") {
+      val driver = try new HtmlUnitDriver catch { case _=> cancel }
+      isScreenshotSupported(driver) should be (false)
+    }
+    
+    it("isScreenshotSupported should return false for FirefoxDriver") {
+      val driver = try {
+        new FirefoxDriver(new FirefoxProfile())
+      }
+      catch { case _=> cancel }
+      isScreenshotSupported(driver) should be (true)
+    }
+    
+    it("isScreenshotSupported should return false for SafariDriver") {
+      val driver = try new SafariDriver catch { case _=> cancel }
+      isScreenshotSupported(driver) should be (true)
+    }
+    
+    it("isScreenshotSupported should return false for ChromeDriver") {
+      val driver = try new ChromeDriver catch { case _=> cancel }
+      isScreenshotSupported(driver) should be (true)
+    }
+    
+    it("isScreenshotSupported should return false for InternetExplorerDriver") {
+      val driver = try new InternetExplorerDriver catch { case _=> cancel }
+      isScreenshotSupported(driver) should be (true)
     }
     
     ignore("should support wait method") {
