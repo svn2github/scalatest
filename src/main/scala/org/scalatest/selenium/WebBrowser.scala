@@ -679,6 +679,24 @@ import org.scalatest.ScreenshotCapturer
  * val textFields = eles filter { tf.isInstanceOf[TextField] }
  * </pre>
  *
+ * <h2>Cleaning up</h2>
+ * 
+ * <p>
+ * To close the current browser window, and exit the driver if the current window was the only one remaining, use <code>close</code>:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * close()
+ * </pre>
+ * 
+ * <p>
+ * To close all windows, and exit the driver, use <code>quit</code>:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * quit()
+ * </pre>
+ * 
  * @author Chua Chee Seng
  * @author Bill Venners
  */
@@ -1043,7 +1061,7 @@ trait WebBrowser {
     }
   }
   
-  def close(implicit driver: WebDriver) {
+  def close()(implicit driver: WebDriver) {
     driver.close()
   }
   
@@ -1249,7 +1267,7 @@ trait WebBrowser {
       })
   }
   
-  def quit(implicit driver: WebDriver) {
+  def quit()(implicit driver: WebDriver) {
     driver.quit()
   }
   

@@ -709,36 +709,51 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       }
       catch {
         case unsupported: UnsupportedOperationException => 
-          cancel
+          cancel(unsupported)
       }
     }
     
     it("isScreenshotSupported should return false for HtmlUnitDriver") {
-      val driver = try new HtmlUnitDriver catch { case _ => cancel }
-      isScreenshotSupported(driver) should be (false)
+      val driver = try new HtmlUnitDriver catch { case e => cancel(e) }
+      try isScreenshotSupported(driver) should be (false)
+      finally close()(driver)
     }
     
     it("isScreenshotSupported should return false for FirefoxDriver") {
       val driver = try {
         new FirefoxDriver(new FirefoxProfile())
       }
-      catch { case _=> cancel }
-      isScreenshotSupported(driver) should be (true)
+      catch { case e => cancel(e) }
+      try isScreenshotSupported(driver) should be (true)
+      finally close()(driver)
     }
   
-    it("isScreenshotSupported should return false for SafariDriver") {
-      val driver = try new SafariDriver catch { case _ => cancel }
-      isScreenshotSupported(driver) should be (true)
+    /* Safari is blowing up on Bill's Mac leaving windows open and hanging for 
+       a long time before finally giving up. Get:
+       [scalatest] Aug 3, 2012 4:39:18 AM org.openqa.selenium.safari.SafariDriverServer start
+       [scalatest] INFO: Server started at http://Mi-Novia.local:38801/
+       [scalatest] - isScreenshotSupported should return false for SafariDriver !!! CANCELED !!!
+       [scalatest]   Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+       [scalatest] Build info: version: 'unknown', revision: 'unknown', time: 'unknown'
+       [scalatest] System info: os.name: 'Mac OS X', os.arch: 'x86_64', os.version: '10.7.4', java.version: '1.6.0_33'
+       [scalatest] Driver info: driver.version: SafariDriver (WebBrowserSpec.scala:732)
+    */
+    ignore("isScreenshotSupported should return false for SafariDriver") {
+      val driver = try new SafariDriver catch { case e => cancel(e) }
+      try isScreenshotSupported(driver) should be (true)
+      finally close()(driver)
     }
   
     it("isScreenshotSupported should return false for ChromeDriver") {
-      val driver = try new ChromeDriver catch { case _ => cancel }
-      isScreenshotSupported(driver) should be (true)
+      val driver = try new ChromeDriver catch { case e => cancel(e) }
+      try isScreenshotSupported(driver) should be (true)
+      finally close()(driver)
     }
   
     it("isScreenshotSupported should return false for InternetExplorerDriver") {
-      val driver = try new InternetExplorerDriver catch { case _ => cancel }
-      isScreenshotSupported(driver) should be (true)
+      val driver = try new InternetExplorerDriver catch { case e => cancel(e) }
+      try isScreenshotSupported(driver) should be (true)
+      finally close()(driver)
     }
   
     ignore("should support wait method") {
