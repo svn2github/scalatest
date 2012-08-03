@@ -45,6 +45,7 @@ import org.openqa.selenium.support.ui.Select
 import org.scalatest.exceptions.TestFailedException
 import org.scalatest.exceptions.StackDepthException
 import org.openqa.selenium.JavascriptExecutor
+import org.scalatest.ScreenshotCapturer
 
 /**
  * Trait that provides a domain specific language (DSL) for writing browser-based tests using <a href="http://seleniumhq.org">Selenium</a>.  
@@ -618,10 +619,18 @@ import org.openqa.selenium.JavascriptExecutor
  * </pre>
  *
  * <p>
- * If you mix in <code>ScreenshotFixture</code>, ScalaTest will capture a screenshot and store it to either the system temp directory
- * or a directory you choose, and send the filename to the report, associated with the failed test.
+ * If you mix in <a href="../ScreenshotOnFailure.html"><code>ScreenshotOnFailure</code></a>, ScalaTest will capture a screenshot and store it to either the system temp directory
+ * or a directory you choose, and send the filename to the report, associated with the failed test. The <code>ScreenshotOnFailure</code> trait requires that it be
+ * mixed into a <a href="../ScreenshotCapturer.html"><code>ScreenshotCapturer</code></a>, which trait <code>WebBrowser</code> does not extend. To satisfy this
+ * requirement, you can extend one of <code>WebBrowser</code>'s subtraits, such as:
  * </p>
  * 
+ * <pre class="stHighlight">
+ * class WebAppSpec extends Firefox with ScreenshotOnFailure {
+ *   // ...
+ * }
+ * </pre>
+ *
  * <h2>Using the page object pattern</h2>
  *
  * <p>
@@ -1494,7 +1503,7 @@ object WebBrowser extends WebBrowser
  * webDriver.setJavascriptEnabled(false)
  * </pre>
  */
-trait HtmlUnit extends WebBrowser {
+trait HtmlUnit extends WebBrowser with ScreenshotCapturer {
 
   /**
    * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for HTMLUnit (an <code>org.openqa.selenium.htmlunit.HtmlUnitDriver</code>), with JavaScript
@@ -1511,6 +1520,13 @@ trait HtmlUnit extends WebBrowser {
   implicit val webDriver = new HtmlUnitDriver()
 
   webDriver.setJavascriptEnabled(true)
+
+  /**
+   * Captures a screenshot and saves it as a file in the specified directory.
+   */
+  def captureScreenshot(directory: String) {
+    capture to directory
+  }
 }
 
 /**
@@ -1528,7 +1544,7 @@ object HtmlUnit extends HtmlUnit
  * You can mutate this object to modify the profile, or override <code>firefoxProfile</code>.
  * </p>
  */
-trait Firefox extends WebBrowser {
+trait Firefox extends WebBrowser with ScreenshotCapturer {
 
   /**
    * The <code>FirefoxProfile</code> passed to the constructor of the <code>FirefoxDriver</code> returned by <code>webDriver</code>.
@@ -1550,6 +1566,13 @@ trait Firefox extends WebBrowser {
    * </p>
    */
   implicit val webDriver = new FirefoxDriver(firefoxProfile)
+
+  /**
+   * Captures a screenshot and saves it as a file in the specified directory.
+   */
+  def captureScreenshot(directory: String) {
+    capture to directory
+  }
 }
 
 /**
@@ -1562,11 +1585,18 @@ object Firefox extends Firefox
 /**
  * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Safari (an <code>org.openqa.selenium.safari.SafariDriver</code>).
  */
-trait Safari extends WebBrowser {
+trait Safari extends WebBrowser with ScreenshotCapturer {
   /**
    * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Safari (an <code>org.openqa.selenium.safari.SafariDriver</code>).
    */
   implicit val webDriver = new SafariDriver()
+
+  /**
+   * Captures a screenshot and saves it as a file in the specified directory.
+   */
+  def captureScreenshot(directory: String) {
+    capture to directory
+  }
 }
 
 /**
@@ -1579,11 +1609,18 @@ object Safari extends Safari
 /**
  * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Chrome (an <code>org.openqa.selenium.chrome.ChromeDriver</code>).
  */
-trait Chrome extends WebBrowser {
+trait Chrome extends WebBrowser with ScreenshotCapturer {
   /**
    * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Chrome (an <code>org.openqa.selenium.chrome.ChromeDriver</code>).
    */
   implicit val webDriver = new ChromeDriver()
+
+  /**
+   * Captures a screenshot and saves it as a file in the specified directory.
+   */
+  def captureScreenshot(directory: String) {
+    capture to directory
+  }
 }
 
 /**
@@ -1596,11 +1633,18 @@ object Chrome extends Chrome
 /**
  * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Internet Explorer (an <code>org.openqa.selenium.ie.InternetExplorerDriver</code>).
  */
-trait InternetExplorer extends WebBrowser {
+trait InternetExplorer extends WebBrowser with ScreenshotCapturer {
   /**
    * <code>WebBrowser</code> subtrait that defines an implicit <code>WebDriver</code> for Internet Explorer (an <code>org.openqa.selenium.ie.InternetExplorerDriver</code>).
    */
   implicit val webDriver = new InternetExplorerDriver()
+
+  /**
+   * Captures a screenshot and saves it as a file in the specified directory.
+   */
+  def captureScreenshot(directory: String) {
+    capture to directory
+  }
 }
 
 /**
