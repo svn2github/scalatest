@@ -53,7 +53,7 @@ trait ScreenshotOnFailure extends AbstractSuite { this: Suite with ScreenshotCap
   abstract override def withFixture(test: NoArgTest) {
     try super.withFixture(test)
     catch {
-      case e: TestFailedException => 
+      case e: exceptions.TestFailedException => 
         try captureScreenshot(screenshotDir)
         catch {
           case innerE =>
