@@ -45,7 +45,7 @@ trait TestLocationFunctionServices {
         val expectedScopeClosedPairOpt = expectedScopeClosedList.find { pair => pair.testName == scopeClosed.message }
         expectedScopeClosedPairOpt match {
           case Some(expectedScopeClosedPair) => expectedScopeClosedPair.checked = checkFileNameLineNumber(suiteTypeName, expectedScopeClosedPair.fileName, expectedScopeClosedPair.lineNumber, event)
-          case None => fail("Unknown ScopeOpened for testName=" + scopeClosed.message + " in " + suiteTypeName)
+          case None => fail("Unknown ScopeClosed for testName=" + scopeClosed.message + " in " + suiteTypeName)
         }
       case _ =>
         val expectedResultPairOpt = expectedResultList.find { pair => pair.clazz == event.getClass() }

@@ -306,8 +306,8 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
     registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", sourceFileName, methodName, 4, -3, testTags: _*)
   }
 
-  private def registerBranch(description: String, childPrefix: Option[String], methodName: String, fun: () => Unit) {
-    registerNestedBranch(description, childPrefix, fun(), "describeCannotAppearInsideAnIt", sourceFileName, methodName, 5, -2)
+  private def registerBranch(description: String, childPrefix: Option[String], methodName: String, stackDepth: Int, adjustment: Int, fun: () => Unit) {
+    registerNestedBranch(description, childPrefix, fun(), "describeCannotAppearInsideAnIt", sourceFileName, methodName, stackDepth, adjustment)
   }
 
   /**
@@ -579,7 +579,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def when(f: => Unit) {
-      registerBranch(string, Some("when"), "when", f _)
+      registerBranch(string, Some("when"), "when", 4, -2, f _)
     }
 
     /**
@@ -601,7 +601,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def when(resultOfAfterWordApplication: ResultOfAfterWordApplication) {
-      registerBranch(string, Some("when " + resultOfAfterWordApplication.text), "when", resultOfAfterWordApplication.f)
+      registerBranch(string, Some("when " + resultOfAfterWordApplication.text), "when", 4, -2, resultOfAfterWordApplication.f)
     }
 
     /**
@@ -610,7 +610,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      */
     @deprecated("Please use \"which\" instead of \"that\".")
     def that(f: => Unit) {
-      registerBranch(string + " that", None, "that", f _)
+      registerBranch(string + " that", None, "that", 4, -2, f _)
     }
     
     /**
@@ -630,7 +630,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def which(f: => Unit) {
-      registerBranch(string + " which", None, "which", f _)
+      registerBranch(string + " which", None, "which", 4, -2, f _)
     }
 
     /**
@@ -639,7 +639,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      */
     @deprecated("Please use \"which\" instead of \"that\".")
     def that(resultOfAfterWordApplication: ResultOfAfterWordApplication) {
-      registerBranch(string + " that " + resultOfAfterWordApplication.text, None, "that", resultOfAfterWordApplication.f)
+      registerBranch(string + " that " + resultOfAfterWordApplication.text, None, "that", 4, -2, resultOfAfterWordApplication.f)
     }
     
     /**
@@ -659,7 +659,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def which(resultOfAfterWordApplication: ResultOfAfterWordApplication) {
-      registerBranch(string + " which " + resultOfAfterWordApplication.text, None, "which", resultOfAfterWordApplication.f)
+      registerBranch(string + " which " + resultOfAfterWordApplication.text, None, "which", 4, -2, resultOfAfterWordApplication.f)
     }
   }
 
@@ -808,7 +808,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    */
   protected implicit val subjectRegistrationFunction: StringVerbBlockRegistration =
     new StringVerbBlockRegistration {
-      def apply(left: String, verb: String, f: () => Unit) = registerBranch(left, Some(verb), "apply", f)
+      def apply(left: String, verb: String, f: () => Unit) = registerBranch(left, Some(verb), "apply", 5, -2, f)
     }
 
   /**
@@ -837,9 +837,9 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
     (left, verb, resultOfAfterWordApplication) => {
       val afterWordFunction =
         () => {
-          registerBranch(resultOfAfterWordApplication.text, None, verb, resultOfAfterWordApplication.f)
+          registerBranch(resultOfAfterWordApplication.text, None, verb, 5, -2, resultOfAfterWordApplication.f)
         }
-      registerBranch(left, Some(verb), verb, afterWordFunction)
+      registerBranch(left, Some(verb), verb, 5, -2, afterWordFunction)
     }
   }
 
