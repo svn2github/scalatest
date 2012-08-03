@@ -618,19 +618,6 @@ import org.scalatest.ScreenshotCapturer
  * capture set "/home/your_name/screenshots"
  * </pre>
  *
- * <p>
- * If you mix in <a href="../ScreenshotOnFailure.html"><code>ScreenshotOnFailure</code></a>, ScalaTest will capture a screenshot and store it to either the system temp directory
- * or a directory you choose, and send the filename to the report, associated with the failed test. The <code>ScreenshotOnFailure</code> trait requires that it be
- * mixed into a <a href="../ScreenshotCapturer.html"><code>ScreenshotCapturer</code></a>, which trait <code>WebBrowser</code> does not extend. To satisfy this
- * requirement, you can extend one of <code>WebBrowser</code>'s subtraits, such as:
- * </p>
- * 
- * <pre class="stHighlight">
- * class WebAppSpec extends Firefox with ScreenshotOnFailure {
- *   // ...
- * }
- * </pre>
- *
  * <h2>Using the page object pattern</h2>
  *
  * <p>
@@ -1655,3 +1642,19 @@ trait InternetExplorer extends WebBrowser with ScreenshotCapturer {
  * them in the Scala interpreter.
  */
 object InternetExplorer extends InternetExplorer
+
+/*
+ * <p>
+ * If you mix in <a href="../ScreenshotOnFailure.html"><code>ScreenshotOnFailure</code></a>, ScalaTest will capture a screenshot and store it to either the system temp directory
+ * or a directory you choose, and send the filename to the report, associated with the failed test. The <code>ScreenshotOnFailure</code> trait requires that it be
+ * mixed into a <a href="../ScreenshotCapturer.html"><code>ScreenshotCapturer</code></a>, which trait <code>WebBrowser</code> does not extend. To satisfy this
+ * requirement, you can extend one of <code>WebBrowser</code>'s subtraits, such as:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * class WebAppSpec extends Firefox with ScreenshotOnFailure {
+ *   // ...
+ * }
+ * </pre>
+ *
+*/

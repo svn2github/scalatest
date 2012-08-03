@@ -30,7 +30,9 @@ import org.scalatest.Suite
 import org.scalatest.Args
 import org.scalatest.ScreenshotOnFailure
 import org.scalatest.SharedHelpers.SilentReporter
+import org.scalatest.Ignore
 
+@Ignore
 class ScreenshotSpec extends JettySpec with ShouldMatchers with SpanSugar with WebBrowser with HtmlUnit {
 
   describe("ScreenshotFixture") {

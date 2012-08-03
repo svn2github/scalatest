@@ -714,7 +714,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     }
     
     it("isScreenshotSupported should return false for HtmlUnitDriver") {
-      val driver = try new HtmlUnitDriver catch { case _=> cancel }
+      val driver = try new HtmlUnitDriver catch { case _ => cancel }
       isScreenshotSupported(driver) should be (false)
     }
     
@@ -725,25 +725,25 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       catch { case _=> cancel }
       isScreenshotSupported(driver) should be (true)
     }
-    
+  
     it("isScreenshotSupported should return false for SafariDriver") {
-      val driver = try new SafariDriver catch { case _=> cancel }
+      val driver = try new SafariDriver catch { case _ => cancel }
       isScreenshotSupported(driver) should be (true)
     }
-    
+  
     it("isScreenshotSupported should return false for ChromeDriver") {
-      val driver = try new ChromeDriver catch { case _=> cancel }
+      val driver = try new ChromeDriver catch { case _ => cancel }
       isScreenshotSupported(driver) should be (true)
     }
-    
+  
     it("isScreenshotSupported should return false for InternetExplorerDriver") {
-      val driver = try new InternetExplorerDriver catch { case _=> cancel }
+      val driver = try new InternetExplorerDriver catch { case _ => cancel }
       isScreenshotSupported(driver) should be (true)
     }
-    
+  
     ignore("should support wait method") {
       // This example is taken from http://seleniumhq.org/docs/03_webdriver.html
-      
+  
       // Visit Google
       go to "http://www.google.com"
       // Alternatively the same thing can be done like this
