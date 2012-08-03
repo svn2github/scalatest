@@ -733,10 +733,10 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       // Should see: "cheese! - Google Search"
       title should be ("Cheese! - Google Search")
     }
-    
+ 
     ignore("should be able to use ScalaTest's eventually in place of Selenium's wait") {
       import org.scalatest.concurrent.Eventually._
-      
+
       go to "http://www.google.com"
       click on "q"
       textField("q").value = "Cheese!"
@@ -768,61 +768,6 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       st(2).getLineNumber
     else
       st(3).getLineNumber
-  }
-
-  describe("ScreenshotFixture") {
-    
-    val systemTmpDir = System.getProperty("java.io.tmpdir")
-      
-    def tmpFiles(tmpDir: String): Seq[String] = for {
-      f <- new File(tmpDir).listFiles()
-        fName = f.toString
-        if fName.startsWith("Scala") && fName.endsWith("Test")
-      } yield fName
-      
-    it("should by default save the file in the system's default temp dir") {
-      class MySuite extends Suite with HtmlUnit with ScreenshotOnFailure {
-        def `test: screenshot should be saved` {
-          go to "http://www.artima.com"
-          assert(1 + 1 === 3)
-        }    
-      }
-      val beforeFiles = tmpFiles(systemTmpDir)
-      (new MySuite).run(None, Args(SilentReporter))
-      val afterFiles = tmpFiles(systemTmpDir)
-      assert(beforeFiles.size === afterFiles.size - 1)
-    }
-    
-    it("should not create a temp file if a test succeeds") {
-      class MySuite extends Suite with HtmlUnit with ScreenshotOnFailure {
-        def `test: no screenshot needed for this one` {
-          assert(1 + 1 === 2)
-        }    
-      }
-      val beforeFiles = tmpFiles(systemTmpDir)
-      (new MySuite).run(None, Args(SilentReporter))
-      val afterFiles = tmpFiles(systemTmpDir)
-      assert(beforeFiles === afterFiles)
-    }
-    
-    it("should create a temp file in a user-chosen directory") {
-      class MySuite extends Suite with HtmlUnit with ScreenshotOnFailure {
-        override val screenshotDir = "myTmpDir"
-        def `test: screenshot should be saved` {
-          go to "http://www.artima.com"
-          assert(1 + 1 === 3)
-        }    
-      }
-      val theTmpDir = new File("myTmpDir")
-      theTmpDir.mkdir()
-      try {
-        val beforeFiles = tmpFiles("myTmpDir")
-        (new MySuite).run(None, Args(SilentReporter))
-        val afterFiles = tmpFiles("myTmpDir")
-        assert(beforeFiles.size === afterFiles.size - 1)
-      }
-      finally theTmpDir.delete()
-    }
   }
 }
 
