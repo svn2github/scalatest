@@ -248,9 +248,9 @@ import org.scalatest.ScreenshotCapturer
  * </p>
  * 
  * <pre>
- * &lt;input type="radio" name="group1" value="Option 1"&gt; Option 1&lt;input&gt;
- * &lt;input type="radio" name="group1" value="Option 2"&gt; Option 2&lt;input&gt;
- * &lt;input type="radio" name="group1" value="Option 3"&gt; Option 3&lt;input&gt;
+ * &lt;input type="radio" name="group1" value="Option 1"&gt; Option 1&lt;/input&gt;
+ * &lt;input type="radio" name="group1" value="Option 2"&gt; Option 2&lt;/input&gt;
+ * &lt;input type="radio" name="group1" value="Option 3"&gt; Option 3&lt;/input&gt;
  * </pre>
  * 
  * <p>
@@ -258,8 +258,8 @@ import org.scalatest.ScreenshotCapturer
  * </p>
  *
  * <pre class="stHighlight">
- * radioButton("group1").value = "Option 2"
- * radioButton("group1").selection = Some("Option 2")
+ * radioButtonGroup("group1").value = "Option 2"
+ * radioButtonGroup("group1").selection = Some("Option 2")
  * </pre>
  *
  * <p>
@@ -267,8 +267,8 @@ import org.scalatest.ScreenshotCapturer
  * </p>
  *
  * <pre class="stHighlight">
- * radioButton("group1").value should be ("Option 2")
- * radioButton("group1").selection should be (Some("Option 2"))
+ * radioButtonGroup("group1").value should be ("Option 2")
+ * radioButtonGroup"group1").selection should be (Some("Option 2"))
  * </pre>
  * 
  * <p>
