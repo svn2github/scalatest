@@ -302,6 +302,26 @@ import org.scalatest._
  * "4" should not (beOddAsInt)
  * </pre>
  *
+ * <p>
+ * You can also define a method that produces a matcher using matcher
+ * composition and a passed parameter. For example, here's how you could create a <code>Matcher[File]</code> from a
+ * <code>Matcher[String]</code>:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * import java.io.File
+ *
+ * def endWithExtension(ext: String) = endWith(ext) compose { (f: File) =&gt; f.getPath }
+ * </pre>
+ *
+ * <p>
+ * Every time you call the above <code>endWithExtension</code> method, you'll get a new <code>Matcher[File]</code>. Here's an example:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * new File("output.txt") should endWithExtension("txt")
+ * </pre>
+ * 
  * <h2>Matcher's variance</h2>
  *
  * <p>
