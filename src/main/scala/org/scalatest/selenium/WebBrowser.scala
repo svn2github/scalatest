@@ -388,7 +388,7 @@ import org.scalatest.ScreenshotCapturer
  * </p>
  * 
  * <pre class="stHighlight">
- * selectList("select2").clear("option5")
+ * multiSel("select2").clear("option5")
  * </pre>
  * 
  * <p>
@@ -396,7 +396,7 @@ import org.scalatest.ScreenshotCapturer
  * </p>
  * 
  * <pre class="stHighlight">
- * selectList("select2").clearAll()
+ * multiSel("select2").clearAll()
  * </pre>
  * 
  * <p>
