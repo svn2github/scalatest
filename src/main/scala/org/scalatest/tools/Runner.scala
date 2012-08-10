@@ -534,7 +534,7 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  * declares no zero-arg constructor, which was created by containing suite that does declare a no-arg constructor. In this case, <code>-s</code> would be
  * used to specify the class ScalaTest can instantiate directly, the containing suite that has a public, no-arg constructor, and <code>-i</code> would be
  * used to select the desired nested suite. One important use case for <code>-i</code> is to enable such a nested suite that aborted during the previous run
- * to be rerun. <!-- TODO: Need to point them to more info, maybe in AbstractSuite's rerunner method description? -->
+ * to be rerun. <!-- TODO: Need to point them to more info, maybe in AbstractStyle's rerunner method description? -->
  * </p>
  *
  * <p>

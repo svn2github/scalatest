@@ -15,49 +15,9 @@
  */
 package org.scalatest
 
-/**
- * Trait defining abstract "lifecycle" methods that are implemented in <code>Suite</code> and can
- * be overridden in stackable modification traits.
- *
- * <p>
- * The main purpose of <code>AbstractSuite</code> is to differentiate core <code>Suite</code>
- * traits, such as <code>Suite</code>, <code>FunSuite</code>, and <code>FunSpec</code> from stackable
- * modification traits for <code>Suite</code>s such as <code>BeforeAndAfterEach</code>, <code>OneInstancePerTest</code>,
- * and <code>SequentialNestedSuiteExecution</code>. Because these stackable traits extend <code>AbstractSuite</code>
- * instead of <code>Suite</code>, you can't define a suite by simply extending one of the stackable traits:
- * </p>
- *
- * <pre class="stHighlight">
- * class MySuite extends BeforeAndAfterEach // Won't compile
- * </pre>
- *
- * <p>
- * Instead, you need to extend a core <code>Suite</code> trait and mix the stackable <code>BeforeAndAfterEach</code> trait
- * into that, like this:
- * </p>
- *
- * <pre class="stHighlight">
- * class MySuite extends FunSuite with BeforeAndAfterEach // Compiles fine
- * </pre>
- *
- * @author Bill Venners
- */
-trait AbstractSuite { this: Suite =>
+import Suite.getSimpleNameOfAnObjectsClass
 
-  /**
-   * Runs the passed test function with a fixture established by this method.
-   *
-   * <p>
-   * This method should set up the fixture needed by the tests of the
-   * current suite, invoke the test function, and if needed, perform any clean
-   * up needed after the test completes. Because the <code>NoArgTest</code> function
-   * passed to this method takes no parameters, preparing the fixture will require
-   * side effects, such as initializing an external database.
-   * </p>
-   *
-   * @param test the no-arg test function to run with a fixture
-   */
-  protected def withFixture(test: NoArgTest)
+trait NewSuite { thisSuite =>
 
   /**
    * Runs this suite of tests.
@@ -71,40 +31,6 @@ trait AbstractSuite { this: Suite =>
   def run(testName: Option[String], args: Args)
 
   /**
-   * Runs zero to many of this suite's nested suites.
-   *
-   * @param args the <code>Args</code> for this run
-   *
-   * @throws NullPointerException if <code>args</code> is <code>null</code>.
-   */
-  protected def runNestedSuites(args: Args)
-
-  /**
-   * Runs zero to many of this suite's tests.
-   *
-   * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
-   *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
-   * @param args the <code>Args</code> for this run
-   *
-   * @throws NullPointerException if either <code>testName</code> or <code>args</code> is <code>null</code>.
-   */
-  protected def runTests(testName: Option[String], args: Args)
-
-  /**
-   * Runs a test.
-   *
-   * @param testName the name of one test to execute.
-   * @param args the <code>Args</code> for this run
-   *
-   * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>configMap</code>,
-   *     or <code>tracker</code> is <code>null</code>.
-   */
-  protected def runTest(
-    testName: String,
-    args: Args
-  )
-
-  /**
   * A <code>Set</code> of test names. If this <code>Suite</code> contains no tests, this method returns an empty <code>Set</code>.
   *
   * <p>
@@ -114,12 +40,6 @@ trait AbstractSuite { this: Suite =>
   * </p>
   */
   def testNames: Set[String]
-
-  /**
-  * An <code>IndexedSeq</code> of this <code>Suite</code> object's nested <code>Suite</code>s. If this <code>Suite</code> contains no nested <code>Suite</code>s,
-  * this method returns an empty <code>IndexedSeq</code>.
-  */
-  def nestedSuites: IndexedSeq[Suite]
 
   /**
    * A <code>Map</code> whose keys are <code>String</code> tag names with which tests in this <code>Suite</code> are marked, and
@@ -157,6 +77,46 @@ trait AbstractSuite { this: Suite =>
    */
   val styleName: String
 
+  /**
+   * A user-friendly suite name for this <code>Suite</code>.
+   *
+   * <p>
+   * This trait's
+   * implementation of this method returns the simple name of this object's class. This
+   * trait's implementation of <code>runNestedSuites</code> calls this method to obtain a
+   * name for <code>Report</code>s to pass to the <code>suiteStarting</code>, <code>suiteCompleted</code>,
+   * and <code>suiteAborted</code> methods of the <code>Reporter</code>.
+   * </p>
+   *
+   * @return this <code>Suite</code> object's suite name.
+   */
+  def suiteName: String = getSimpleNameOfAnObjectsClass(thisSuite)
+
+  /**
+   * A string ID for this <code>Suite</code> that is intended to be unique among all suites reported during a run.
+   *
+   * <p>
+   * This trait's
+   * implementation of this method returns the fully qualified name of this object's class. 
+   * Each suite reported during a run will commonly be an instance of a different <code>Suite</code> class,
+   * and in such cases, this default implementation of this method will suffice. However, in special cases
+   * you may need to override this method to ensure it is unique for each reported suite. For example, if you write
+   * a <code>Suite</code> subclass that reads in a file whose name is passed to its constructor and dynamically
+   * creates a suite of tests based on the information in that file, you will likely need to override this method
+   * in your <code>Suite</code> subclass, perhaps by appending the pathname of the file to the fully qualified class name. 
+   * That way if you run a suite of tests based on a directory full of these files, you'll have unique suite IDs for
+   * each reported suite.
+   * </p>
+   *
+   * <p>
+   * The suite ID is <em>intended</em> to be unique, because ScalaTest does not enforce that it is unique. If it is not
+   * unique, then you may not be able to uniquely identify a particular test of a particular suite. This ability is used,
+   * for example, to dynamically tag tests as having failed in the previous run when rerunning only failed tests.
+   * </p>
+   *
+   * @return this <code>Suite</code> object's ID.
+   */
+  def suiteId = thisSuite.getClass.getName
 
   /**
    * <strong>This overloaded form of <code>run</code> has been deprecated and will be removed in a future
@@ -196,3 +156,4 @@ trait AbstractSuite { this: Suite =>
     run(testName, Args(reporter, stopper, filter, configMap, distributor, tracker, Set.empty))
   } 
 }
+

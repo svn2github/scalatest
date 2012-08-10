@@ -19,7 +19,7 @@ package org.scalatest.matchers
 
 import org.scalatest._
 
-class ShouldAndMustSpec extends Spec with ShouldMatchers with MustMatchers {
+class ShouldAndMustSpec extends FunSpec with ShouldMatchers with MustMatchers {
 
   describe("people who want both should and must at the same time") {
     it("should feel satisfied when they try it and it works") {

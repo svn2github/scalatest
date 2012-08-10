@@ -1,10 +1,10 @@
 
 package org.scalatest.tools
 
-import org.scalatest.Spec
+import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 
-class SbtCommandParserSpec extends Spec with ShouldMatchers {
+class SbtCommandParserSpec extends FunSpec with ShouldMatchers {
 
   val parser = new SbtCommandParser
 

@@ -679,7 +679,7 @@ import org.scalatest.Suite.autoTagClassAnnotations
  * @author Bill Venners
  * @author Chua Chee Seng
  */
-@Style("org.scalatest.finders.FreeSpecFinder")
+@Finders(Array("org.scalatest.finders.FreeSpecFinder"))
 trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
   
   private final val engine = PathEngine.getEngine()

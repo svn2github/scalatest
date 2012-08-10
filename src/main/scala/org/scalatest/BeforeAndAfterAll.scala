@@ -163,7 +163,7 @@ package org.scalatest
  *
  * @author Bill Venners
  */
-trait BeforeAndAfterAll  extends AbstractSuite { this: Suite =>
+trait BeforeAndAfterAll  extends AbstractStyle { this: Suite =>
 
   /**
    * Defines a method to be run before any of this suite's tests or nested suites are run.

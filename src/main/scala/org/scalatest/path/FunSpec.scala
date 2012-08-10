@@ -680,7 +680,7 @@ import org.scalatest.Suite.autoTagClassAnnotations
  * @author Bill Venners
  * @author Chua Chee Seng
  */
-@Style("org.scalatest.finders.FunSpecFinder")
+@Finders(Array("org.scalatest.finders.FunSpecFinder"))
 trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
   
   private final val engine = PathEngine.getEngine()

@@ -24,7 +24,7 @@ package org.scalatest
  *
  * @author Bill Venners
  */
-trait SeveredStackTraces extends AbstractSuite { this: Suite =>
+trait SeveredStackTraces extends AbstractStyle { this: Suite =>
 
   /**
    * Invokes <code>super.withFixture(test)</code> and transforms a thrown <code>StackDepth</code> exception by severing

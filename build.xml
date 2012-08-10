@@ -277,7 +277,7 @@
         <fileset dir="src/main/scala" />
       </copy>
 
-      <replaceregexp match="@Style(.*)" replace="">
+      <replaceregexp match="@Finders(.*)" replace="">
         <fileset dir="target/docsrc">
           <include name="**/*.scala" />
         </fileset>

@@ -13,7 +13,7 @@ exec scala "$0" "$@"
  *  
  *   DoNotDiscover.java
  *   Ignore.java
- *   Style.java
+ *   Finders.java
  *   TagAnnotation.java
  *   WrapWith.java
  *
@@ -66,6 +66,7 @@ def genNewBody(body: String): String = {
       valueType match {
         case "Class<? extends Suite>" => "Class[_ <: Suite]"
         case "String"                 => "String"
+        case "String[]"                 => "Array[String]"
         case _ =>
           throw new RuntimeException("unexpected valueType [" +
                                      valueType + "]")
@@ -85,11 +86,11 @@ def main() {
 
   val filenames = Set("DoNotDiscover.java",
                       "Ignore.java",
-                      "Style.java",
+                      "Finders.java",
                       "TagAnnotation.java",
                       "WrapWith.java")
 
-  for (file <- new File(srcDir) list; if file.endsWith(".java")) {
+  for (file <- (new File(srcDir)).list; if file.endsWith(".java")) {
     if (!filenames.contains(file))
       throw new RuntimeException("found unexpected java file [" + file + "]")
 

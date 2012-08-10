@@ -15,7 +15,7 @@
  */
 package org.scalatest.concurrent
 
-import org.scalatest.AbstractSuite
+import org.scalatest.AbstractStyle
 import org.scalatest.Suite
 import Timeouts._
 import org.scalatest.exceptions.ModifiableMessage
@@ -120,7 +120,7 @@ import org.scalatest.exceptions.TimeoutField
  * to run.
  * </p>
  */
-trait TimeLimitedTests extends AbstractSuite { this: Suite =>
+trait TimeLimitedTests extends AbstractStyle { this: Suite =>
 
   /**
    * A stackable implementation of <code>withFixture</code> that wraps a call to <code>super.withFixture</code> in a 

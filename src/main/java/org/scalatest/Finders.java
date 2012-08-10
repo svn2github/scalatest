@@ -38,6 +38,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Style {
-    String value();
+public @interface Finders {
+    String[] value();
 }
+

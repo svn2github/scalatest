@@ -603,7 +603,7 @@ import Suite.autoTagClassAnnotations
  *
  * @author Bill Venners
  */
-@Style("org.scalatest.finders.PropSpecFinder")
+@Finders(Array("org.scalatest.finders.PropSpecFinder"))
 trait PropSpec extends Suite { thisSuite =>
 
   private final val engine = new Engine("concurrentPropSpecMod", "PropSpec")

@@ -22,7 +22,7 @@ import org.scalatest.SharedHelpers.thisLineNumber
 import org.scalatest.exceptions.TestFailedException
 */
 
-class InsideSpec extends Spec with ShouldMatchers with OptionValues {
+class InsideSpec extends FunSpec with ShouldMatchers with OptionValues {
 
   case class Address(street: String, city: String, state: String, zip: String)
   case class Name(first: String, middle: String, last: String)

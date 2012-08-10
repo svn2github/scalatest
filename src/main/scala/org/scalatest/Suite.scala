@@ -1005,7 +1005,7 @@ import exceptions._
  * Although the get-fixture method, fixture-context object, and <code>OneInstancePerTest</code> approaches take care of setting up a fixture at the beginning of each
  * test, they don't address the problem of cleaning up a fixture at the end of the test. If you just need to perform a side-effect at the beginning or end of
  * a test, and don't need to actually pass any fixture objects into the test, you can override <code>withFixture(NoArgTest)</code>, one of ScalaTest's
- * lifecycle methods defined in trait <a href="AbstractSuite.html"><code>AbstractSuite</code></a>.
+ * lifecycle methods defined in trait <a href="AbstractStyle.html"><code>AbstractStyle</code></a>.
  * </p>
  *
  * <p>
@@ -1370,10 +1370,10 @@ import exceptions._
  * package org.scalatest.examples.suite.composingwithfixture
  *
  * import org.scalatest.Suite
- * import org.scalatest.AbstractSuite
+ * import org.scalatest.AbstractStyle
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends AbstractSuite { this: Suite =&gt;
+ * trait Builder extends AbstractStyle { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -1388,7 +1388,7 @@ import exceptions._
  *   }
  * }
  * 
- * trait Buffer extends AbstractSuite { this: Suite =&gt;
+ * trait Buffer extends AbstractStyle { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 
@@ -1622,8 +1622,8 @@ import exceptions._
  *
  * @author Bill Venners
  */
-@Style("org.scalatest.finders.MethodFinder")
-trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite =>
+@Finders(Array("org.scalatest.finders.MethodFinder"))
+trait Suite extends Assertions with Style with Serializable { thisSuite =>
 
   import Suite.TestMethodPrefix, Suite.InformerInParens, Suite.IgnoreAnnotation
 
@@ -2320,6 +2320,9 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       throw new NullPointerException("testName was null")
     if (args == null)
       throw new NullPointerException("args was null")
+    
+    if (!this.isInstanceOf[Spec])
+      println("Suite is deprecated as a style trait. Extend trait Spec instead. This is just a name change.")
 
     import args._
 

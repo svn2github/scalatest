@@ -86,7 +86,7 @@ class PayloadSpec extends FlatSpec with SharedHelpers with ShouldMatchers with T
   it should "forward the payload to be carried in TestFailed event" in {
     forAll (examples) { e =>
       val a = 
-        new Spec {
+        new FunSpec {
           it("should do something") {
             withPayload("a payload") {
               throw e

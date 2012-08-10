@@ -355,7 +355,7 @@ class ConductorDeprecatedSuite extends FunSuite with ShouldMatchers with SharedH
 
   test("ConductorMethods is a stackable trait that delegates test function execution to withFixture(NoArgTest)") {
     var calledSuperWithFixtureNoArgTest = false
-    trait SuperTrait extends AbstractSuite { this: Suite =>
+    trait SuperTrait extends AbstractStyle { this: Suite =>
       abstract override def withFixture(test: NoArgTest) {
         calledSuperWithFixtureNoArgTest = true
         super.withFixture(test)

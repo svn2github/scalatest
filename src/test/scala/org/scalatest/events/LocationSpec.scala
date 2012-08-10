@@ -6,7 +6,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest._
 
 @RunWith(classOf[JUnitRunner])
-class LocationSpec extends Spec with Checkers {
+class LocationSpec extends FunSpec with Checkers {
   
   class TestLocationFunSuite extends FunSuite {
     test("succeed") {
