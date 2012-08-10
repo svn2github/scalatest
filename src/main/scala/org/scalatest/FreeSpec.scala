@@ -943,34 +943,28 @@ import Suite.autoTagClassAnnotations
  * 
  *   "Testing" - {
  *     // This test needs the file fixture
- *     "should be productive" in {
- *       withFile { (file, writer) =&gt;
- *         writer.write("productive!")
- *         writer.flush()
- *         assert(file.length === 24)
- *       }
+ *     "should be productive" in withFile { (file, writer) =&gt;
+ *       writer.write("productive!")
+ *       writer.flush()
+ *       assert(file.length === 24)
  *     }
  *   }
  *   
  *   "Test code" - {
  *     // This test needs the database fixture
- *     "should be readable" in {
- *       withDatabase { db =&gt;
- *         db.append("readable!")
- *         assert(db.toString === "ScalaTest is readable!")
- *       }
+ *     "should be readable" in withDatabase { db =&gt;
+ *       db.append("readable!")
+ *       assert(db.toString === "ScalaTest is readable!")
  *     }
  * 
  *     // This test needs both the file and the database
- *     "should be clear and concise" in {
- *       withDatabase { db =&gt;
- *         withFile { (file, writer) =&gt; // loan-fixture methods compose
- *           db.append("clear!")
- *           writer.write("concise!")
- *           writer.flush()
- *           assert(db.toString === "ScalaTest is clear!")
- *           assert(file.length === 21)
- *         }
+ *     "should be clear and concise" in withDatabase { db =&gt;
+ *       withFile { (file, writer) =&gt; // loan-fixture methods compose
+ *         db.append("clear!")
+ *         writer.write("concise!")
+ *         writer.flush()
+ *         assert(db.toString === "ScalaTest is clear!")
+ *         assert(file.length === 21)
  *       }
  *     }
  *   }

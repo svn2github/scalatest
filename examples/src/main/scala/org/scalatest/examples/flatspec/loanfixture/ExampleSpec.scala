@@ -47,32 +47,26 @@ class ExampleSpec extends FlatSpec {
   }
 
   // This test needs the file fixture
-  "Testing" should "be productive" in {
-    withFile { (file, writer) =>
-      writer.write("productive!")
-      writer.flush()
-      assert(file.length === 24)
-    }
+  "Testing" should "be productive" in withFile { (file, writer) =>
+    writer.write("productive!")
+    writer.flush()
+    assert(file.length === 24)
   }
   
   // This test needs the database fixture
-  "Test code" should "be readable" in {
-    withDatabase { db =>
-      db.append("readable!")
-      assert(db.toString === "ScalaTest is readable!")
-    }
+  "Test code" should "be readable" in withDatabase { db =>
+    db.append("readable!")
+    assert(db.toString === "ScalaTest is readable!")
   }
 
   // This test needs both the file and the database
-  it should "be clear and concise" in {
-    withDatabase { db =>
-      withFile { (file, writer) => // loan-fixture methods compose
-        db.append("clear!")
-        writer.write("concise!")
-        writer.flush()
-        assert(db.toString === "ScalaTest is clear!")
-        assert(file.length === 21)
-      }
+  it should "be clear and concise" in withDatabase { db =>
+    withFile { (file, writer) => // loan-fixture methods compose
+      db.append("clear!")
+      writer.write("concise!")
+      writer.flush()
+      assert(db.toString === "ScalaTest is clear!")
+      assert(file.length === 21)
     }
   }
 }
