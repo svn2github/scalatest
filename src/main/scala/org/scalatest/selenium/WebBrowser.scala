@@ -424,11 +424,8 @@ import org.scalatest.ScreenshotCapturer
  * If the requested element is not found, <code>click on</code> will throw an exception, failing the test.
  * </p>
  * 
- * <pre class="stHighlight">
- * </pre>
- * 
  * <p>
- * Clicking on a input element will give it the,focus. If current focus is in on an input element within a form, you can submit the form by 
+ * Clicking on a input element will give it the focus. If current focus is in on an input element within a form, you can submit the form by 
  * calling <code>submit</code>:
  * </p>
  * 
@@ -702,19 +699,121 @@ import org.scalatest.ScreenshotCapturer
  */
 trait WebBrowser { 
 
+  /**
+   * A point containing an XY screen location.
+   */
   case class Point(x: Int, y: Int)
+
+  /**
+   * A dimension containing the width and height of a screen element.
+   */
   case class Dimension(width: Int, height: Int)
 
+  /**
+   * Wrapper class for a Selenium <code>WebElement</code>.
+   *
+   * <p>
+   * This class provides idiomatic Scala access to the services of an underlying <code>WebElement</code>.
+   * You can access the wrapped <code>WebElement</code> via the <code>underlying</code> method.
+   * </p>
+   */
   trait Element {
+
+    /**
+     * The XY location of the top-left corner of this <code>Element</code>.
+     *
+     * <p>
+     * This invokes <code>getLocation</code> on the underlying <code>WebElement</code>.
+     * </p>
+     *
+     * @return the location of the top-left corner of this element on the page
+     */
     def location: Point = Point(underlying.getLocation.getX, underlying.getLocation.getY)
+
+    /**
+     * The width/height size of this <code>Element</code>.
+     *
+     * <p>
+     * This invokes <code>getSize</code> on the underlying <code>WebElement</code>.
+     * </p>
+     *
+     * @return the size of the element on the page
+     */
     def size: Dimension = Dimension(underlying.getSize.getWidth, underlying.getSize.getHeight)
+
+    /**
+     * Indicates whether this <code>Element</code> is displayed.
+     *
+     * <p>
+     * This invokes <code>isDisplayed</code> on the underlying <code>WebElement</code>.
+     * </p>
+     *
+     * @return <code>true</code> if the element is currently displayed
+     */
     def isDisplayed: Boolean = underlying.isDisplayed
+
+    /**
+     * Indicates whether this <code>Element</code> is enabled.
+     *
+     * <p>
+     * This invokes <code>isEnabled</code> on the underlying <code>WebElement</code>, which
+     * will generally return <code>true</code> for everything but disabled input elements.
+     * </p>
+     *
+     * @return <code>true</code> if the element is currently enabled
+     */
     def isEnabled: Boolean = underlying.isEnabled
+
+    /**
+     * Indicates whether this <code>Element</code> is selected.
+     *
+     * <p>
+     * This method, which invokes <code>isSelected</code> on the underlying <code>WebElement</code>,
+     * is relevant only for input elements such as checkboxes, options in a single- or multiple-selection
+     * list box, and radio buttons. For any other element it will simply return <code>false</code>.
+     * </p>
+     *
+     * @return <code>true</code> if the element is currently selected or checked
+     */
     def isSelected: Boolean = underlying.isSelected
+
+    /**
+     * The tag name of this element.
+     *
+     * <p>
+     * This method invokes <code>getTagName</code> on the underlying <code>WebElement</code>.
+     * Note it returns the name of the tag, not the value of the of the <code>name</code> attribute.
+     * For example, it will return will return <code>"input"</code> for the element
+     * <code>&lt;input name="city" /&gt;</code>, not <code>"city"</code>.
+     * </p>
+     *
+     * @return the tag name of this element
+     */
     def tagName: String = underlying.getTagName
+
+    /**
+     * The underlying <code>WebElement</code> wrapped by this <code>Element</code>
+     */
     def underlying: WebElement
   }
 
+  /**
+   * Trait that facilitates using the <em>page object pattern</em> with the ScalaTest Selenium DSL.
+   *
+   * <p>
+   * If you use the page object pattern, mixing trait <code>Page</code> into your page classes will allow you to use the <code>go to</code>
+   * syntax with your page objects. Here's an example:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * class HomePage extends Page {
+   *   val url = "localhost:9000/index.html"
+   * }
+   *
+   * val homePage = new HomePage
+   * go to homePage
+   * </pre>
+   */
   trait Page {
     val url: String
   }
