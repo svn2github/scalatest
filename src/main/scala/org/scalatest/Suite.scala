@@ -2322,7 +2322,7 @@ trait Suite extends Assertions with Style with Serializable { thisSuite =>
       throw new NullPointerException("args was null")
     
     if (!this.isInstanceOf[Spec])
-      println("Suite is deprecated as a style trait. Extend trait Spec instead. This is just a name change.")
+      println("Unfortunately Suite has been deprecated as a style trait. Please extend trait Spec instead. (This is just a name change.)")
 
     import args._
 

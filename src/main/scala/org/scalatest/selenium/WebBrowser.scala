@@ -794,7 +794,7 @@ trait WebBrowser {
     /**
      * The underlying <code>WebElement</code> wrapped by this <code>Element</code>
      */
-    def underlying: WebElement
+    val underlying: WebElement
   }
 
   /**
@@ -820,43 +820,184 @@ trait WebBrowser {
 
   // fluentLinium has a doubleClick. Wonder how they are doing that?
 
-  class CookieWrapper(cookie: Cookie) 
-    extends Cookie(cookie.getName, cookie.getValue, cookie.getDomain, cookie.getPath, cookie.getExpiry, cookie.isSecure) {
-    override def equals(o: Any): Boolean = cookie.equals(o)
-    def domain: String = cookie.getDomain 
-    def expiry: Date = cookie.getExpiry 
-    def name: String = cookie.getName
-    def path: String = cookie.getPath 
-    def value: String = cookie.getValue
-    override def hashCode: Int = cookie.hashCode
-    def secure: Boolean = cookie.isSecure
-    override def toString: String = cookie.toString 
+  /**
+   * Wrapper class for a Selenium <code>Cookie</code>.
+   *
+   * <p>
+   * This class provides idiomatic Scala access to the services of an underlying <code>Cookie</code>.
+   * You can access the wrapped <code>Cookie</code> via the <code>underlying</code> method.
+   * </p>
+   */
+  final class WrappedCookie(val underlying: Cookie) {
+
+    /**
+     * The domain to which this cookie is visible.
+     *
+     * <p>
+     * This invokes <code>getDomain</code> on the underlying <code>Cookie</code>.
+     * </p>
+     *
+     * @return the domain of this cookie
+     */
+    def domain: String = underlying.getDomain 
+
+    /**
+     * The expire date of this cookie.
+     *
+     * <p>
+     * This invokes <code>getExpiry</code> on the underlying <code>Cookie</code>.
+     * </p>
+     *
+     * @return the expire date of this cookie
+     */
+    def expiry: Option[Date] = Option(underlying.getExpiry)
+    // TODO: A test that makes sure null expiry gets wrapped in an option
+
+    /**
+     * The name of this cookie.
+     *
+     * <p>
+     * This invokes <code>getName</code> on the underlying <code>Cookie</code>.
+     * </p>
+     *
+     * @return the name of this cookie
+     */
+    def name: String = underlying.getName
+
+    /**
+     * The path of this cookie.
+     *
+     * <p>
+     * This invokes <code>getPath</code> on the underlying <code>Cookie</code>.
+     * </p>
+     *
+     * @return the path of this cookie
+     */
+    def path: String = underlying.getPath 
+
+    /**
+     * The value of this cookie.
+     *
+     * <p>
+     * This invokes <code>getValue</code> on the underlying <code>Cookie</code>.
+     * </p>
+     *
+     * @return the value of this cookie
+     */
+    def value: String = underlying.getValue
+
+    /**
+     * Indicates whether the cookie requires a secure connection.
+     *
+     * <p>
+     * This invokes <code>isSecure</code> on the underlying <code>Cookie</code>.
+     * </p>
+     *
+     * @return true if this cookie requires a secure connection.
+     */
+    def secure: Boolean = underlying.isSecure
+
+    /**
+     * Returns the result of invoking <code>equals</code> on the underlying <code>Cookie</code>, passing
+     * in the specified <code>other</code> object.
+     *
+     * <p>
+     * Two Selenium <code>Cookie</code>s are considered equal if their name and values are equal.
+     * </p>
+     *
+     * @param other the object with which to compare for equality
+     *
+     * @return true if the passed object is equal to this one
+     */
+    override def equals(other: Any): Boolean = underlying.equals(other)
+
+    /**
+     * Returns the result of invoking <code>hashCode</code> on the underlying <code>Cookie</code>.
+     *
+     * @return a hash code for this object
+     */
+    override def hashCode: Int = underlying.hashCode
+
+    /**
+     * Returns the result of invoking <code>toString</code> on the underlying <code>Cookie</code>.
+     *
+     * @return a string representation of this object
+     */
+    override def toString: String = underlying.toString 
   }
 
+  /**
+   * This class is part of the ScalaTest's Selenium DSL. Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a>
+   * for an overview of the Selenium DSL.
+   */
   class CookiesNoun
 
+  /**
+   * This field supports cookie deletion in ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This field enables the following syntax:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * delete all cookies
+   *            ^
+   * </pre>
+   */
+  val cookies = new CookiesNoun
+  
+  /**
+   * This sealed abstract class supports switching in ScalaTest's Selenium DSL.
+   *
+   * <p>
+   * One subclass of <code>SwitchTarget</code> exists for each kind of target that
+   * can be switched to: active element, alert box, default content, frame (indentified by index,
+   * name or id, or enclosed element), and window.
+   * </p>
+   */
   sealed abstract class SwitchTarget[T] {
+
+    /**
+     * Abstract method implemented by subclasses that represent "targets" to which the user can switch.
+     *
+     * @param driver the <code>WebDriver</code> with which to perform the switch
+     */
     def switch(driver: WebDriver): T
   }
-    
+
+  /**
+   * This class supports switching in ScalaTest's Selenium DSL.
+   *
+   * <p>
+   * One subclass of <code>SwitchTarget</code> exists for each kind of target that
+   * can be switched to: active element, alert box, default content, frame (indentified by index,
+   * name or id, or enclosed element), and window.
+   * </p>
+   */
   final class ActiveElementTarget extends SwitchTarget[WebElement] {
     def switch(driver: WebDriver): WebElement = {
       driver.switchTo.activeElement
     }
   }
-  
+
+  // TODO: Need to switch to Element, not WebElement (Or maybe in addition to WebElement, for convenience
+  // in case a user has a WebElement.) Maybe we offer a factory method that gets an element given a WebElement?
+  // Also, return type of ActiveElementTarget's switch method should be the subclass of Element that it is. if
+  // the element is a text field, returned class should be TextField.
+
   final class AlertTarget extends SwitchTarget[Alert] {
     def switch(driver: WebDriver): Alert = { 
       driver.switchTo.alert
     }
   }
-  
+
   final class DefaultContentTarget extends SwitchTarget[WebDriver] {
     def switch(driver: WebDriver): WebDriver = {
       driver.switchTo.defaultContent
     }
   }
-    
+ 
   final class FrameIndexTarget(index: Int) extends SwitchTarget[WebDriver] {
     def switch(driver: WebDriver): WebDriver = 
       try {
@@ -875,7 +1016,7 @@ trait WebBrowser {
   final class FrameNameOrIdTarget(nameOrId: String) extends SwitchTarget[WebDriver] {
     def switch(driver: WebDriver): WebDriver = 
       try {
-        driver.switchTo.frame(nameOrId)
+        driver.switchTo.frame(nameOrId) // TODO: Verify this works. Does Selenium itself first try name then id?
       }
       catch {
         case e: org.openqa.selenium.NoSuchFrameException => 
@@ -887,6 +1028,7 @@ trait WebBrowser {
       }
   }
   
+  // TODO: Why isn't this an Element?
   final class FrameWebElementTarget(element: WebElement) extends SwitchTarget[WebDriver] {
     def switch(driver: WebDriver): WebDriver = 
       try {
@@ -929,23 +1071,35 @@ trait WebBrowser {
   private def isRadioButton(webElement: WebElement): Boolean = 
     webElement.getTagName == "input" && webElement.getAttribute("type") == "radio"
       
-  final class TextField(webElement: WebElement) extends Element {
+  // TODO: Equals, hashcode, and toString (forward to underlying) on these Element subclasses.
+  /**
+   * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This field enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * textField("q").value should be ("Cheese!")
+   * </pre>
+   */
+  final class TextField(val underlying: WebElement) extends Element {
     
-    if(!isTextField(webElement))
+    if(!isTextField(underlying))
       throw new TestFailedException(
-                     sde => Some("Element " + webElement + " is not text field."),
+                     sde => Some("Element " + underlying + " is not text field."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
     
-    def value: String = webElement.getAttribute("value")  
+    def value: String = underlying.getAttribute("value")  
     def value_=(value: String) {
-      webElement.clear()
-      webElement.sendKeys(value)
+      underlying.clear()
+      underlying.sendKeys(value)
     }
-    def text: String = webElement.getText
-    def attribute(name: String): String = webElement.getAttribute(name)
-    def underlying: WebElement = webElement
+    def text: String = underlying.getText
+    def attribute(name: String): String = underlying.getAttribute(name)
   }
   
   final class TextArea(webElement: WebElement) extends Element {
@@ -963,7 +1117,7 @@ trait WebBrowser {
     }
     def text: String = webElement.getText
     def attribute(name: String): String = webElement.getAttribute(name)
-    def underlying: WebElement = webElement
+    val underlying: WebElement = webElement
   }
   
   final class RadioButton(webElement: WebElement) extends Element {
@@ -974,7 +1128,7 @@ trait WebBrowser {
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
     def value: String = webElement.getAttribute("value")
-    def underlying: WebElement = webElement
+    val underlying: WebElement = webElement
   }
 
   final class RadioButtonGroup(groupName: String, driver: WebDriver) {
@@ -1034,7 +1188,7 @@ trait WebBrowser {
         webElement.click()
     }
     def value: String = webElement.getAttribute("value")
-    def underlying: WebElement = webElement
+    val underlying: WebElement = webElement
   }
   
   class RichIndexedSeq(seq: Seq[String]) {
@@ -1092,7 +1246,7 @@ trait WebBrowser {
       }
     }
     
-    def underlying: WebElement = webElement
+    val underlying: WebElement = webElement
   }
 
   class MultiSel(webElement: WebElement) extends Element {
@@ -1147,7 +1301,7 @@ trait WebBrowser {
       select.deselectAll()
     }
     
-    def underlying: WebElement = webElement
+    val underlying: WebElement = webElement
   }
   
   object go {
@@ -1231,7 +1385,7 @@ trait WebBrowser {
         new SingleSel(element)
     }
     else
-      new Element() { def underlying = element }
+      new Element() { val underlying = element }
   }
   
   def find(query: Query)(implicit driver: WebDriver): Option[Element] = 
@@ -1260,7 +1414,7 @@ trait WebBrowser {
       new NameQuery(queryString).findAllWebElements.map { e => createTypedElement(e) }
   }
   
-  def textField(query: Query)(implicit driver: WebDriver) = new TextField(query.getWebElement)
+  def textField(query: Query)(implicit driver: WebDriver): TextField = new TextField(query.getWebElement)
   
   def textField(queryString: String)(implicit driver: WebDriver): TextField = 
     try {
@@ -1425,14 +1579,14 @@ trait WebBrowser {
     }
   }
   
-  def cookie(name: String)(implicit driver: WebDriver): CookieWrapper = {
+  def cookie(name: String)(implicit driver: WebDriver): WrappedCookie = {
     getCookie(name)
   }
   
-  private def getCookie(name: String)(implicit driver: WebDriver): CookieWrapper = {
+  private def getCookie(name: String)(implicit driver: WebDriver): WrappedCookie = {
     driver.manage.getCookies.toList.find(_.getName == name) match {
       case Some(cookie) => 
-        new CookieWrapper(cookie)
+        new WrappedCookie(cookie)
       case None =>
         throw new TestFailedException(
                      sde => Some("Cookie '" + name + "' not found."),
@@ -1447,7 +1601,7 @@ trait WebBrowser {
       val cookie = getCookie(name)
       if (cookie == null)
         throw new org.openqa.selenium.NoSuchElementException("Cookie '" + name + "' not found.")
-      driver.manage.deleteCookie(cookie)
+      driver.manage.deleteCookie(cookie.underlying)
     }
     
     def cookie(name: String)(implicit driver: WebDriver) {
@@ -1458,8 +1612,6 @@ trait WebBrowser {
       driver.manage.deleteAllCookies()
     }
   }
-  
-  val cookies = new CookiesNoun
   
   def isScreenshotSupported(implicit driver: WebDriver): Boolean = driver.isInstanceOf[TakesScreenshot]
   
