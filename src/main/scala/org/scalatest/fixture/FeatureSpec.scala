@@ -111,9 +111,7 @@ import org.scalatest.exceptions.NotAllowedException
  *       writer.write("ScalaTest is designed to be ") // set up the fixture
  *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
  *     }
- *     finally {
- *       writer.close() // clean up the fixture
- *     }
+ *     finally writer.close() // clean up the fixture
  *   }
  * 
  *   feature("Simplicity") {
@@ -183,9 +181,7 @@ import org.scalatest.exceptions.NotAllowedException
  *       populateDb(db) // setup the fixture
  *       withFixture(test.toNoArgTest(db)) // "loan" the fixture to the test
  *     }
- *     finally {
- *       removeDb(dbName) // clean up the fixture
- *     }
+ *     finally removeDb(dbName) // clean up the fixture
  *   }
  * }
  * 

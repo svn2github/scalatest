@@ -19,9 +19,7 @@ class ExampleSuite extends fixture.FunSuite {
       writer.write("ScalaTest is ") // set up the fixture
       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
     }
-    finally {
-      writer.close() // clean up the fixture
-    }
+    finally writer.close() // clean up the fixture
   }
 
   test("Testing should be easy") { f =>

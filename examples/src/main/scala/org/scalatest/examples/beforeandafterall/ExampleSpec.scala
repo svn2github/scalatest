@@ -42,12 +42,8 @@ class ExampleSpec extends Specs(
     val fileName = configMap(tempFileName).asInstanceOf[String]
 
     val writer = new FileWriter(fileName)
-    try {
-      writer.write("Hello, suite of tests!")
-    }
-    finally {
-      writer.close()
-    }
+    try writer.write("Hello, suite of tests!")
+    finally writer.close()
   }
 
   // Delete the temp file

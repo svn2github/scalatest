@@ -7,9 +7,7 @@ class ExampleSpec extends WordSpec {
 
   override def withFixture(test: NoArgTest) {
 
-    try {
-      super.withFixture(test)
-    }
+    try super.withFixture(test)
     catch {
       case e: Exception =>
         val currDir = new File(".")

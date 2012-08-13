@@ -769,9 +769,7 @@ import Suite.autoTagClassAnnotations
  * // Your implementation
  * override def withFixture(test: NoArgTest) {
  *   // Perform setup
- *   try {
- *     super.withFixture(test) // Invoke the test function
- *   }
+ *   try super.withFixture(test) // Invoke the test function
  *   finally {
  *     // Perform cleanup
  *   }
@@ -793,9 +791,7 @@ import Suite.autoTagClassAnnotations
  * 
  *   override def withFixture(test: NoArgTest) {
  * 
- *     try {
- *       super.withFixture(test)
- *     }
+ *     try super.withFixture(test)
  *     catch {
  *       case e: Exception =&gt;
  *         val currDir = new File(".")
@@ -884,9 +880,7 @@ import Suite.autoTagClassAnnotations
  *       db.append("ScalaTest is ") // perform setup
  *       testCode(db) // "loan" the fixture to the test
  *     }
- *     finally {
- *       removeDb(dbName) // clean up the fixture
- *     }
+ *     finally removeDb(dbName) // clean up the fixture
  *   }
  * 
  *   def withFile(testCode: (File, FileWriter) =&gt; Any) {
@@ -896,9 +890,7 @@ import Suite.autoTagClassAnnotations
  *       writer.write("ScalaTest is ") // set up the fixture
  *       testCode(file, writer) // "loan" the fixture to the test
  *     }
- *     finally {
- *       writer.close() // clean up the fixture
- *     }
+ *     finally writer.close() // clean up the fixture
  *   }
  * 
  *   // This test needs the file fixture
@@ -987,9 +979,7 @@ import Suite.autoTagClassAnnotations
  *       writer.write("ScalaTest is ") // set up the fixture
  *       withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
  *     }
- *     finally {
- *       writer.close() // clean up the fixture
- *     }
+ *     finally writer.close() // clean up the fixture
  *   }
  * 
  *   "Testing" should "be easy" in { f =&gt;
@@ -1099,12 +1089,8 @@ import Suite.autoTagClassAnnotations
  * 
  *   abstract override def withFixture(test: NoArgTest) {
  *     builder.append("ScalaTest is ")
- *     try {
- *       super.withFixture(test) // To be stackable, must call super.withFixture
- *     }
- *     finally {
- *       builder.clear()
- *     }
+ *     try super.withFixture(test) // To be stackable, must call super.withFixture
+ *     finally builder.clear()
  *   }
  * }
  * 
@@ -1113,12 +1099,8 @@ import Suite.autoTagClassAnnotations
  *   val buffer = new ListBuffer[String]
  * 
  *   abstract override def withFixture(test: NoArgTest) {
- *     try {
- *       super.withFixture(test) // To be stackable, must call super.withFixture
- *     }
- *     finally {
- *       buffer.clear()
- *     }
+ *     try super.withFixture(test) // To be stackable, must call super.withFixture
+ *     finally buffer.clear()
  *   }
  * }
  * 
@@ -1185,12 +1167,8 @@ import Suite.autoTagClassAnnotations
  *   }
  * 
  *   override def afterEach() {
- *     try {
- *       super.afterEach() // To be stackable, must call super.afterEach
- *     }
- *     finally {
- *       builder.clear()
- *     }
+ *     try super.afterEach() // To be stackable, must call super.afterEach
+ *     finally builder.clear()
  *   }
  * }
  * 
@@ -1199,12 +1177,8 @@ import Suite.autoTagClassAnnotations
  *   val buffer = new ListBuffer[String]
  * 
  *   override def afterEach() {
- *     try {
- *       super.afterEach() // To be stackable, must call super.afterEach
- *     }
- *     finally {
- *       buffer.clear()
- *     }
+ *     try super.afterEach() // To be stackable, must call super.afterEach
+ *     finally buffer.clear()
  *   }
  * }
  * 

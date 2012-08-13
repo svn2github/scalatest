@@ -33,9 +33,7 @@ trait DbFixture { this: fixture.Suite =>
       populateDb(db) // setup the fixture
       withFixture(test.toNoArgTest(db)) // "loan" the fixture to the test
     }
-    finally {
-      removeDb(dbName) // clean up the fixture
-    }
+    finally removeDb(dbName) // clean up the fixture
   }
 }
 

@@ -113,9 +113,7 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *       writer.write("ScalaTest is ") // set up the fixture
  *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
  *     }
- *     finally {
- *       writer.close() // clean up the fixture
- *     }
+ *     finally writer.close() // clean up the fixture
  *   }
  * 
  *   describe("Testing") {
@@ -185,9 +183,7 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *       populateDb(db) // setup the fixture
  *       withFixture(test.toNoArgTest(db)) // "loan" the fixture to the test
  *     }
- *     finally {
- *       removeDb(dbName) // clean up the fixture
- *     }
+ *     finally removeDb(dbName) // clean up the fixture
  *   }
  * }
  * 

@@ -108,9 +108,7 @@ import exceptions.{TestCanceledException, TestPendingException}
  *       writer.write("ScalaTest is ") // set up the fixture
  *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
  *     }
- *     finally {
- *       writer.close() // clean up the fixture
- *     }
+ *     finally writer.close() // clean up the fixture
  *   }
  *
  *   def &#96;test: testing should be easy&#96; (f: F) {
@@ -178,9 +176,7 @@ import exceptions.{TestCanceledException, TestPendingException}
  *       populateDb(db) // setup the fixture
  *       withFixture(test.toNoArgTest(db)) // "loan" the fixture to the test
  *     }
- *     finally {
- *       removeDb(dbName) // clean up the fixture
- *     }
+ *     finally removeDb(dbName) // clean up the fixture
  *   }
  * }
  * 

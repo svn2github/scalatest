@@ -29,9 +29,7 @@ class ExampleSpec extends FlatSpec {
       db.append("ScalaTest is ") // perform setup
       testCode(db) // "loan" the fixture to the test
     }
-    finally {
-      removeDb(dbName) // clean up the fixture
-    }
+    finally removeDb(dbName) // clean up the fixture
   }
 
   def withFile(testCode: (File, FileWriter) => Any) {
@@ -41,9 +39,7 @@ class ExampleSpec extends FlatSpec {
       writer.write("ScalaTest is ") // set up the fixture
       testCode(file, writer) // "loan" the fixture to the test
     }
-    finally {
-      writer.close() // clean up the fixture
-    }
+    finally writer.close() // clean up the fixture
   }
 
   // This test needs the file fixture

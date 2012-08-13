@@ -9,12 +9,8 @@ trait Builder extends AbstractSuite { this: Suite =>
 
   abstract override def withFixture(test: NoArgTest) {
     builder.append("ScalaTest is ")
-    try {
-      super.withFixture(test) // To be stackable, must call super.withFixture
-    }
-    finally {
-      builder.clear()
-    }
+    try super.withFixture(test) // To be stackable, must call super.withFixture
+    finally builder.clear()
   }
 }
 
@@ -23,12 +19,8 @@ trait Buffer extends AbstractSuite { this: Suite =>
   val buffer = new ListBuffer[String]
 
   abstract override def withFixture(test: NoArgTest) {
-    try {
-      super.withFixture(test) // To be stackable, must call super.withFixture
-    }
-    finally {
-      buffer.clear()
-    }
+    try super.withFixture(test) // To be stackable, must call super.withFixture
+    finally buffer.clear()
   }
 }
 

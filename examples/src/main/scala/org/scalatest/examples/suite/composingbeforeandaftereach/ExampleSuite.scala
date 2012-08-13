@@ -14,12 +14,8 @@ trait Builder extends BeforeAndAfterEach { this: Suite =>
   }
 
   override def afterEach() {
-    try {
-      super.afterEach() // To be stackable, must call super.afterEach
-    }
-    finally {
-      builder.clear()
-    }
+    try super.afterEach() // To be stackable, must call super.afterEach
+    finally builder.clear()
   }
 }
 
@@ -28,12 +24,8 @@ trait Buffer extends BeforeAndAfterEach { this: Suite =>
   val buffer = new ListBuffer[String]
 
   override def afterEach() {
-    try {
-      super.afterEach() // To be stackable, must call super.afterEach
-    }
-    finally {
-      buffer.clear()
-    }
+    try super.afterEach() // To be stackable, must call super.afterEach
+    finally buffer.clear()
   }
 }
 
