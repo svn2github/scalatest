@@ -213,13 +213,13 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     val informerForThisTest =
       MessageRecordingInformer(
         messageRecorderForThisTest,
-        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => createInfoProvided(theSuite, report, tracker, Some(testName), message, payload, theTest.indentationLevel + 1, location, isConstructingThread, includeIcon, Some(testWasPending), Some(testWasCanceled))
+        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => createInfoProvided(theSuite, report, tracker, Some(testName), message, payload, theTest.indentationLevel + 1, location, isConstructingThread, includeIcon)
       )
 
     val documenterForThisTest =
       MessageRecordingDocumenter(
         messageRecorderForThisTest,
-        (message, None, isConstructingThread, testWasPending, testWasCanceled, location) => createMarkupProvided(theSuite, report, tracker, Some(testName), message, theTest.indentationLevel + 1, location, isConstructingThread, Some(testWasPending), Some(testWasCanceled))
+        (message, None, isConstructingThread, testWasPending, testWasCanceled, location) => createMarkupProvided(theSuite, report, tracker, Some(testName), message, theTest.indentationLevel + 1, location, isConstructingThread)
       )
 
     val oldInformer = atomicInformer.getAndSet(informerForThisTest)
@@ -297,9 +297,9 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
         val descriptionTextWithOptionalPrefix = prependChildPrefix(parent, descriptionText)
         val indentationLevel = desc.indentationLevel
-        reportScopeOpened(theSuite, args.reporter, args.tracker, None, descriptionTextWithOptionalPrefix, indentationLevel, false, None, None, lineInFile)
+        reportScopeOpened(theSuite, args.reporter, args.tracker, None, descriptionTextWithOptionalPrefix, indentationLevel, false, lineInFile)
         traverseSubNodes()
-        reportScopeClosed(theSuite, args.reporter, args.tracker, None, descriptionTextWithOptionalPrefix, indentationLevel, false, None, None, lineInFile)
+        reportScopeClosed(theSuite, args.reporter, args.tracker, None, descriptionTextWithOptionalPrefix, indentationLevel, false, lineInFile)
 
       case Trunk =>
         traverseSubNodes()
@@ -695,7 +695,7 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
         val informerForThisTest =
           PathMessageRecordingInformer( // TODO: Put locations into path traits!
             (message, payload, wasConstructingThread, testWasPending, theSuite, report, tracker, testName, indentation, includeIcon, thread) =>
-              createInfoProvided(theSuite, report, tracker, Some(testName), message, payload, indentation, None, wasConstructingThread, includeIcon, Some(testWasPending))
+              createInfoProvided(theSuite, report, tracker, Some(testName), message, payload, indentation, None, wasConstructingThread, includeIcon)
           )
 
         val oldInformer = atomicInformer.getAndSet(informerForThisTest)

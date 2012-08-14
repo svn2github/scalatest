@@ -36,6 +36,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
   }
 
   describe("A Suite") {
+/*
     it("should send InfoProvided events with aboutAPendingTest set to true and aboutACanceledTest set to false for info " +
             "calls made from a test that is pending") {
       val a = new Suite {
@@ -102,6 +103,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         assert(ip.aboutACanceledTest.isDefined && ip.aboutACanceledTest.get)
       }
     }
+*/
     it("should return the test names in alphabetical order from testNames") {
       val a = new Suite {
         def `test: this`() {}

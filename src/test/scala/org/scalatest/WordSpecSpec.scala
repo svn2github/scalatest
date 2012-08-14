@@ -768,6 +768,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       }
     }
+/*
     it("should send InfoProvided events with aboutAPendingTest set to true for info " +
             "calls made from a test that is pending") {
       val a = new WordSpec with GivenWhenThen {
@@ -834,6 +835,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         assert(event.message == "A WordSpec")
       }
     }
+*/
     it("should not put parentheses around should clauses that follow when") {
       val a = new WordSpec {
         "A Stack" when {

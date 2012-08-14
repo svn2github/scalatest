@@ -310,12 +310,7 @@ private[scalatest] class HtmlReporter(pw: PrintWriter, presentAllDurations: Bool
             case None => (None, None)
           }
         val lines = stringsToPrintOnError("infoProvidedNote", "infoProvided", message, throwable, formatter, suiteName, testName, None)
-        val shouldBeYellow =
-          aboutAPendingTest match {
-            case Some(isPending) => isPending
-            case None => false
-          }
-        for (line <- lines) printPossiblyInColor(line, if (shouldBeYellow) ansiYellow else ansiGreen)*/
+        for (line <- lines) printPossiblyInColor(line, ansiGreen)*/
 
       case TestPending(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, duration, formatter, location, payload, threadName, timeStamp) =>
 
@@ -346,12 +341,7 @@ private[scalatest] class HtmlReporter(pw: PrintWriter, presentAllDurations: Bool
         case None => (None, None)
       }
     val lines = stringsToPrintOnError("infoProvidedNote", "infoProvided", event.message, event.throwable, event.formatter, suiteName, testName, None)
-    val shouldBeYellow =
-      event.aboutAPendingTest match {
-        case Some(isPending) => isPending
-        case None => false
-      }
-    for (line <- lines) printPossiblyInColor(line, if (shouldBeYellow) ansiYellow else ansiGreen)
+    for (line <- lines) printPossiblyInColor(line, ansiGreen)
   }
   
   private def handleMarkupProvided(event: MarkupProvided) {
@@ -361,12 +351,7 @@ private[scalatest] class HtmlReporter(pw: PrintWriter, presentAllDurations: Bool
         case None => (None, None)
       }
     val lines = stringsToPrintOnError("infoProvidedNote", "infoProvided", event.text, None, event.formatter, suiteName, testName, None)
-    val shouldBeYellow =
-      event.aboutAPendingTest match {
-        case Some(isPending) => isPending
-        case None => false
-      }
-    for (line <- lines) printPossiblyInColor(line, if (shouldBeYellow) ansiYellow else ansiGreen)
+    for (line <- lines) printPossiblyInColor(line, ansiGreen)
   }
   
   private def handleRecordedEvents(recordedEvents: IndexedSeq[Event]) {

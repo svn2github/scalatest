@@ -779,6 +779,7 @@ class FixtureFreeSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       }
     }
+/*
     it("should send InfoProvided events with aboutAPendingTest set to true and aboutACanceledTest set to false for info " +
             "calls made from a test that is pending and not canceled") {
       val a = new FixtureFreeSpec with GivenWhenThen {
@@ -896,6 +897,7 @@ class FixtureFreeSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         assert(event.message == "A FreeSpec")
       }
     }
+*/
     it("should allow both tests that take fixtures and tests that don't") {
       val a = new FixtureFreeSpec {
 

@@ -513,6 +513,7 @@ class FeatureSpecSpec extends FunSpec with SharedHelpers {
         a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       }
     }
+/*
     it("should send InfoProvided events with aboutAPendingTest set to true and aboutACanceledTest set to false for info " +
             "calls made from a test that is pending") {
       val a = new FeatureSpec with GivenWhenThen {
@@ -645,6 +646,7 @@ class FeatureSpecSpec extends FunSpec with SharedHelpers {
         assert(mp.aboutACanceledTest.isDefined && mp.aboutACanceledTest.get)
       }
     }
+*/
     it("should invoke withFixture from runTest") {
       val a = new FeatureSpec {
         var withFixtureWasInvoked = false

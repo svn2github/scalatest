@@ -130,7 +130,7 @@ println("&&&&&&&&&&&")
     val (_, registeredSuites) = atomic.get.unpack
     snippets foreach {
       case Markup(text) => 
-        reportMarkupProvided(thisDoc, reporter, tracker, None, trimMarkup(stripMargin(text)), 0, None, true, None, None)
+        reportMarkupProvided(thisDoc, reporter, tracker, None, trimMarkup(stripMargin(text)), 0, None, true)
       case IncludedSuite(suite) =>
         println("Send SuiteStarting ... ")  // TODO: Why is runTestedSuites even here?
         suite.run(None, args)

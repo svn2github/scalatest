@@ -435,7 +435,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
       case ipEvent: InfoProvided =>
         handleInfoProvided(ipEvent)        
 
-      case ScopeOpened(ordinal, message, nameInfo, aboutAPendingTest, aboutACanceledTest, formatter, location, payload, threadName, timeStamp) =>
+      case ScopeOpened(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
 
         val testNameInfo = nameInfo.testName
         val stringToPrint = stringToPrintWhenNoError("scopeOpened", formatter, nameInfo.suiteName, 
@@ -443,28 +443,13 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
                                                        case Some(tnInfo) => Some(tnInfo.testName)
                                                        case None => None
                                                      }, Some(message))
-        val isPending = aboutAPendingTest.getOrElse(false)
-/*
-          aboutAPendingTest match {
-            case Some(isPending) => isPending
-            case None => false
-          }
-*/
-        val wasCanceled = aboutACanceledTest.getOrElse(false)
-/*
-          aboutACanceledTest match {
-            case Some(wasCanceled) => wasCanceled
-            case None => false
-          }
-*/
-        val shouldBeYellow = isPending || wasCanceled
         stringToPrint match {
-          case Some(string) => printPossiblyInColor(string, if (shouldBeYellow) ansiYellow else ansiGreen)
+          case Some(string) => printPossiblyInColor(string, ansiGreen)
           case None =>
         }
 
       // TODO: Reduce duplication among InfoProvided, ScopeOpened, and ScopeClosed
-      case ScopeClosed(ordinal, message, nameInfo, aboutAPendingTest, aboutACanceledTest, formatter, location, payload, threadName, timeStamp) =>
+      case ScopeClosed(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
 
         val testNameInfo = nameInfo.testName
         val stringToPrint = stringToPrintWhenNoError("scopeClosed", formatter, nameInfo.suiteName, 
@@ -472,23 +457,8 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
                               case Some(tnInfo) => Some(tnInfo.testName)
                               case None => None
                             }, Some(message)) // TODO: I htink I want ot say Scope Closed - + message
-        val isPending = aboutAPendingTest.getOrElse(false)
-/*
-          aboutAPendingTest match {
-            case Some(isPending) => isPending
-            case None => false
-          }
-*/
-        val wasCanceled = aboutACanceledTest.getOrElse(false)
-/*
-          aboutACanceledTest match {
-            case Some(wasCanceled) => wasCanceled
-            case None => false
-          }
-*/
-        val shouldBeYellow = isPending || wasCanceled
         stringToPrint match {
-          case Some(string) => printPossiblyInColor(string, if (shouldBeYellow) ansiYellow else ansiGreen)
+          case Some(string) => printPossiblyInColor(string, ansiGreen)
           case None =>
         }
 
@@ -529,22 +499,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
         case None => (None, None)
       }
     val lines = stringsToPrintOnError("infoProvidedNote", "infoProvided", event.message, event.throwable, event.formatter, suiteName, testName, None)
-    val isPending = event.aboutAPendingTest.getOrElse(false)
-/*
-          aboutAPendingTest match {
-            case Some(isPending) => isPending
-            case None => false
-          }
-*/
-    val wasCanceled = event.aboutACanceledTest.getOrElse(false)
-/*
-          aboutACanceledTest match {
-            case Some(wasCanceled) => wasCanceled
-            case None => false
-          }
-*/
-    val shouldBeYellow = isPending || wasCanceled
-    for (line <- lines) printPossiblyInColor(line, if (shouldBeYellow) ansiYellow else ansiGreen)
+    for (line <- lines) printPossiblyInColor(line, ansiGreen)
   }
   
   private def handleMarkupProvided(event: MarkupProvided) {

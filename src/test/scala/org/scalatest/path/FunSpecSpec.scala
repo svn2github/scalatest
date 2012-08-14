@@ -758,6 +758,7 @@ class FunSpecSpec extends org.scalatest.FreeSpec with SharedHelpers with GivenWh
       }
     }
 
+/*
     "should send InfoProvided events with aboutAPendingTest set to true for info calls made from a test that is pending" in {
       class AFunSpec extends PathFunSpec with GivenWhenThen {
         it("should do something else") {
@@ -802,6 +803,7 @@ class FunSpecSpec extends org.scalatest.FreeSpec with SharedHelpers with GivenWh
         assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
       }
     }
+*/
   }
   
   "when failure happens" - {

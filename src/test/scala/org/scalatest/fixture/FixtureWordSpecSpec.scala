@@ -733,6 +733,7 @@ class FixtureWordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       }
     }
+/*
     it("should send InfoProvided events with aboutAPendingTest set to true for info " +
             "calls made from a test that is pending") {
       val a = new FixtureWordSpec with GivenWhenThen {
@@ -809,6 +810,7 @@ class FixtureWordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         assert(event.message == "A WordSpec")
       }
     }
+*/
     it("should allow both tests that take fixtures and tests that don't") {
       val a = new FixtureWordSpec {
 

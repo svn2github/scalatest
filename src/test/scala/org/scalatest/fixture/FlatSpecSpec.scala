@@ -827,6 +827,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       }
     }
+/*
     it("should send InfoProvided events with aboutAPendingTest set to true for info " +
             "calls made from a test that is pending") {
       val a = new FlatSpec with GivenWhenThen {
@@ -879,6 +880,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
       }
     }
+*/
     it("should allow both tests that take fixtures and tests that don't") {
       val a = new FlatSpec {
 

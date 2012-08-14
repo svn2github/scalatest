@@ -1590,8 +1590,6 @@ final case class RunAborted (
  * @param message a localized message suitable for presenting to the user
  * @param nameInfo an optional <code>NameInfo</code> that if defined, provides names for the suite and optionally the test 
  *        in the context of which the information was provided
- * @param aboutAPendingTest indicates whether the information being provided via this event is about a pending test
- * @param aboutACanceledTest indicates whether the information being provided via this event is about a canceled test
  * @param throwable an optional <code>Throwable</code>
  * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
  *        how to present this event to the user
@@ -1607,8 +1605,6 @@ final case class InfoProvided (
   ordinal: Ordinal,
   message: String,
   nameInfo: Option[NameInfo],
-  aboutAPendingTest: Option[Boolean] = None,
-  aboutACanceledTest: Option[Boolean] = None,
   throwable: Option[Throwable] = None,
   formatter: Option[Formatter] = None,
   location: Option[Location] = None,
@@ -1623,10 +1619,6 @@ final case class InfoProvided (
     throw new NullPointerException("message was null")
   if (nameInfo == null)
     throw new NullPointerException("nameInfo was null")
-  if (aboutAPendingTest == null)
-    throw new NullPointerException("aboutAPendingTest was null")
-  if (aboutACanceledTest == null)
-    throw new NullPointerException("aboutACanceledTest was null")
   if (throwable == null)
     throw new NullPointerException("throwable was null")
   if (formatter == null)
@@ -1646,8 +1638,6 @@ final case class InfoProvided (
       </ordinal>
       <message>{ message }</message>
       <nameInfo>{ nameInfoOption(nameInfo) }</nameInfo>
-      <aboutAPendingTest>{ booleanOption(aboutAPendingTest) }</aboutAPendingTest>
-      <aboutACanceledTest>{ booleanOption(aboutACanceledTest) }</aboutACanceledTest>
       <throwable>{ throwableOption(throwable) }</throwable>
       <formatter>{ formatterOption(formatter) }</formatter>
       <location>{ locationOption(location) }</location>
@@ -1683,8 +1673,6 @@ final case class InfoProvided (
  * @param text a snippet of markup text (in Markdown format)
  * @param nameInfo an optional <code>NameInfo</code> that if defined, provides names for the suite and optionally the test 
  *        in the context of which the information was provided
- * @param aboutAPendingTest indicates whether the information being provided via this event is about a pending test
- * @param aboutACanceledTest indicates whether the information being provided via this event is about a canceled test
  * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
  *        how to present this event to the user
  * @param location An optional location that provides information indicating where in the source code an event originated.
@@ -1699,8 +1687,6 @@ final case class MarkupProvided (
   ordinal: Ordinal,
   text: String,
   nameInfo: Option[NameInfo],
-  aboutAPendingTest: Option[Boolean] = None,
-  aboutACanceledTest: Option[Boolean] = None,
   formatter: Option[Formatter] = None,
   location: Option[Location] = None,
   payload: Option[Any] = None,
@@ -1714,10 +1700,6 @@ final case class MarkupProvided (
     throw new NullPointerException("message was null")
   if (nameInfo == null)
     throw new NullPointerException("nameInfo was null")
-  if (aboutAPendingTest == null)
-    throw new NullPointerException("aboutAPendingTest was null")
-  if (aboutACanceledTest == null)
-    throw new NullPointerException("aboutACanceledTest was null")
   if (formatter == null)
     throw new NullPointerException("formatter was null")
   if (location == null)
@@ -1735,8 +1717,6 @@ final case class MarkupProvided (
       </ordinal>
       <text>{ text }</text>
       <nameInfo>{ nameInfoOption(nameInfo) }</nameInfo>
-      <aboutAPendingTest>{ booleanOption(aboutAPendingTest) }</aboutAPendingTest>
-      <aboutACanceledTest>{ booleanOption(aboutACanceledTest) }</aboutACanceledTest>
       <formatter>{ formatterOption(formatter) }</formatter>
       <location>{ locationOption(location) }</location>
       <threadName>{ threadName }</threadName>
@@ -1769,8 +1749,6 @@ final case class MarkupProvided (
  * @param message a localized message suitable for presenting to the user
  * @param nameInfo a <code>NameInfo</code> that provides names for the suite and optionally the test 
  *        in the context of which the scope was opened
- * @param aboutAPendingTest indicates whether the scope was opened in the context of a pending test
- * @param aboutACanceledTest indicates whether the scope was opened in the context of a canceled test
  * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
  *        how to present this event to the user
  * @param location An optional location that provides information indicating where in the source code an event originated.
@@ -1785,8 +1763,6 @@ final case class ScopeOpened (
   ordinal: Ordinal,
   message: String,
   nameInfo: NameInfo,
-  aboutAPendingTest: Option[Boolean] = None,
-  aboutACanceledTest: Option[Boolean] = None,
   formatter: Option[Formatter] = None,
   location: Option[Location] = None,
   payload: Option[Any] = None,
@@ -1800,10 +1776,6 @@ final case class ScopeOpened (
     throw new NullPointerException("message was null")
   if (nameInfo == null)
     throw new NullPointerException("nameInfo was null")
-  if (aboutAPendingTest == null)
-    throw new NullPointerException("aboutAPendingTest was null")
-  if (aboutACanceledTest == null)
-    throw new NullPointerException("aboutACanceledTest was null")
   if (formatter == null)
     throw new NullPointerException("formatter was null")
   if (location == null)
@@ -1821,8 +1793,6 @@ final case class ScopeOpened (
       </ordinal>
       <message>{ message }</message>
       <nameInfo>{ nameInfoOption(if (nameInfo != null) Some(nameInfo) else None) }</nameInfo>
-      <aboutAPendingTest>{ booleanOption(aboutAPendingTest) }</aboutAPendingTest>
-      <aboutACanceledTest>{ booleanOption(aboutACanceledTest) }</aboutACanceledTest>
       <formatter>{ formatterOption(formatter) }</formatter>
       <location>{ locationOption(location) }</location>
       <threadName>{ threadName }</threadName>
@@ -1855,8 +1825,6 @@ final case class ScopeOpened (
  * @param message a localized message suitable for presenting to the user
  * @param nameInfo a <code>NameInfo</code> that provides names for the suite and optionally the test 
  *        in the context of which the scope was closed
- * @param aboutAPendingTest indicates whether the scope was closed in the context of a pending test
- * @param aboutACanceledTest indicates whether the scope was closed in the context of a canceled test
  * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
  *        how to present this event to the user
  * @param location An optional location that provides information indicating where in the source code an event originated.
@@ -1871,8 +1839,6 @@ final case class ScopeClosed (
   ordinal: Ordinal,
   message: String,
   nameInfo: NameInfo,
-  aboutAPendingTest: Option[Boolean] = None,
-  aboutACanceledTest: Option[Boolean] = None,
   formatter: Option[Formatter] = None,
   location: Option[Location] = None,
   payload: Option[Any] = None,
@@ -1886,10 +1852,6 @@ final case class ScopeClosed (
     throw new NullPointerException("message was null")
   if (nameInfo == null)
     throw new NullPointerException("nameInfo was null")
-  if (aboutAPendingTest == null)
-    throw new NullPointerException("aboutAPendingTest was null")
-  if (aboutACanceledTest == null)
-    throw new NullPointerException("aboutACanceledTest was null")
   if (formatter == null)
     throw new NullPointerException("formatter was null")
   if (location == null)
@@ -1907,8 +1869,6 @@ final case class ScopeClosed (
       </ordinal>
       <message>{ message }</message>
       <nameInfo>{ nameInfoOption(if (nameInfo != null) Some(nameInfo) else None) }</nameInfo>
-      <aboutAPendingTest>{ booleanOption(aboutAPendingTest) }</aboutAPendingTest>
-      <aboutACanceledTest>{ booleanOption(aboutACanceledTest) }</aboutACanceledTest>
       <formatter>{ formatterOption(formatter) }</formatter>
       <location>{ locationOption(location) }</location>
       <threadName>{ threadName }</threadName>
@@ -3735,7 +3695,7 @@ object DeprecatedInfoProvided {
     formatter: Option[Formatter],
     payload: Option[Any]
   ): InfoProvided = {
-    InfoProvided(ordinal, message, nameInfo, aboutAPendingTest, Some(false), throwable, formatter, None, payload, Thread.currentThread.getName, (new Date).getTime)
+    InfoProvided(ordinal, message, nameInfo, throwable, formatter, None, payload, Thread.currentThread.getName, (new Date).getTime)
   }
 
 
@@ -3749,7 +3709,6 @@ object DeprecatedInfoProvided {
    * @param message a localized message suitable for presenting to the user
    * @param nameInfo an optional <code>NameInfo</code> that if defined, provides names for the suite and optionally the test
    *        in the context of which the information was provided
-   * @param aboutAPendingTest indicates whether the information being provided via this event is about a pending test
    * @param throwable an optional <code>Throwable</code>
    * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
    *        how to present this event to the user
@@ -3762,11 +3721,10 @@ object DeprecatedInfoProvided {
     ordinal: Ordinal,
     message: String,
     nameInfo: Option[NameInfo],
-    aboutAPendingTest: Option[Boolean],
     throwable: Option[Throwable],
     formatter: Option[Formatter]
   ): InfoProvided = {
-    InfoProvided(ordinal, message, nameInfo, aboutAPendingTest, Some(false), throwable, formatter, None, None, Thread.currentThread.getName, (new Date).getTime)
+    InfoProvided(ordinal, message, nameInfo, throwable, formatter, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -3779,7 +3737,6 @@ object DeprecatedInfoProvided {
    * @param message a localized message suitable for presenting to the user
    * @param nameInfo an optional <code>NameInfo</code> that if defined, provides names for the suite and optionally the test 
    *        in the context of which the information was provided
-   * @param aboutAPendingTest indicates whether the information being provided via this event is about a pending test
    * @param throwable an optional <code>Throwable</code>
    *
    * @throws NullPointerException if any of the passed values are <code>null</code>
@@ -3790,36 +3747,9 @@ object DeprecatedInfoProvided {
     ordinal: Ordinal,
     message: String,
     nameInfo: Option[NameInfo],
-    aboutAPendingTest: Option[Boolean],
     throwable: Option[Throwable]
   ): InfoProvided = {
-    InfoProvided(ordinal, message, nameInfo, aboutAPendingTest, Some(false), throwable, None, None, None, Thread.currentThread.getName, (new Date).getTime)
-  }
-
-  /**
-   * Constructs a new <code>InfoProvided</code> event with the passed parameters, passing <code>None</code> for
-   * the <code>throwable</code>, <code>None</code> for
-   * <code>formatter</code>, <code>None</code> as the <code>payload</code>,
-   * the current threads name as <code>threadname</code>, and the current time as <code>timeStamp</code>.
-   *
-   * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
-   *        other events reported during the same run
-   * @param message a localized message suitable for presenting to the user
-   * @param nameInfo an optional <code>NameInfo</code> that if defined, provides names for the suite and optionally the test 
-   *        in the context of which the information was provided
-   * @param aboutAPendingTest indicates whether the information being provided via this event is about a pending test
-   * @param throwable an optional <code>Throwable</code>
-   * * @throws NullPointerException if any of the passed values are <code>null</code>
-   *
-   * @return a new <code>InfoProvided</code> instance initialized with the passed and default values
-   */
-  def apply(
-    ordinal: Ordinal,
-    message: String,
-    nameInfo: Option[NameInfo],
-    aboutAPendingTest: Option[Boolean]
-  ): InfoProvided = {
-    InfoProvided(ordinal, message, nameInfo, aboutAPendingTest, Some(false), None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
+    InfoProvided(ordinal, message, nameInfo, throwable, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 
   /**
@@ -3844,6 +3774,6 @@ object DeprecatedInfoProvided {
     message: String,
     nameInfo: Option[NameInfo]
   ): InfoProvided = {
-    InfoProvided(ordinal, message, nameInfo, None, None, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
+    InfoProvided(ordinal, message, nameInfo, None, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }
 }

@@ -972,6 +972,7 @@ class FixtureSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester wi
       a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> 7), None, new Tracker(), Set.empty))
       assert(a.correctConfigMapWasPassed)
     }
+/*
     it("should send InfoProvided events with aboutAPendingTest set to true and aboutACanceledTest set to false for info " +
             "calls made from a test that is pending") {
       val a = new FixtureSuite {
@@ -1050,6 +1051,7 @@ class FixtureSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester wi
         assert(ip.aboutACanceledTest.isDefined && ip.aboutACanceledTest.get)
       }
     }
+*/
     it("should, when a test method takes an Informer and writes to it, report the info in the test completion event") {
       val msg = "hi there dude"
       class MySuite extends FixtureSuite {

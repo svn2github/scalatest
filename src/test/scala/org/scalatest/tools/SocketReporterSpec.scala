@@ -475,9 +475,9 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       
       val rep = new SocketReporter("localhost", socket.getLocalPort)
       rep(InfoProvided(new Ordinal(0), "some info", Some(NameInfo("a suite name", "a suite Id", Some("a suite class"), None,  Some(TestNameInfo("a test name", None)))),
-          Some(true), Some(false), None, None, Some(LineInFile(168, "SocketReporterSpec.scala")), None, Thread.currentThread.getName, timeStamp))
+          None, None, Some(LineInFile(168, "SocketReporterSpec.scala")), None, Thread.currentThread.getName, timeStamp))
       rep(MarkupProvided(new Ordinal(0), "some markup", Some(NameInfo("another suite name", "another suite Id", Some("another suite class"), None,  Some(TestNameInfo("another test name", None)))),
-          Some(false), Some(true), None, Some(LineInFile(188, "SocketReporterSpec.scala")), None, Thread.currentThread.getName, timeStamp))
+          None, Some(LineInFile(188, "SocketReporterSpec.scala")), None, Thread.currentThread.getName, timeStamp))
       rep.dispose()
       eventRecorder.stopped = true
       eventually(timeout(Span(10, Seconds))) { assert(eventRecorder.ready) } // Wait until the receiver is ready
@@ -491,8 +491,6 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "decodedSuiteName").text === "")
       assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "testName" \ "testName").text === "a test name")
       assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "testName" \ "decodedTestName").text === "")
-      assert((eventRecorder.infoProvidedEvents(0) \ "aboutAPendingTest").text === "true")
-      assert((eventRecorder.infoProvidedEvents(0) \ "aboutACanceledTest").text === "false")
       assert((eventRecorder.infoProvidedEvents(0) \ "location" \ "LineInFile" \ "lineNumber").text.toInt === 168)
       assert((eventRecorder.infoProvidedEvents(0) \ "location" \ "LineInFile" \ "fileName").text === "SocketReporterSpec.scala")
       assert((eventRecorder.infoProvidedEvents(0) \ "threadName").text === Thread.currentThread.getName)
@@ -506,8 +504,6 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "decodedSuiteName").text === "")
       assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "testName" \ "testName").text === "another test name")
       assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "testName" \ "decodedTestName").text === "")
-      assert((eventRecorder.markupProvidedEvents(0) \ "aboutAPendingTest").text === "false")
-      assert((eventRecorder.markupProvidedEvents(0) \ "aboutACanceledTest").text === "true")
       assert((eventRecorder.markupProvidedEvents(0) \ "location" \ "LineInFile" \ "lineNumber").text.toInt === 188)
       assert((eventRecorder.markupProvidedEvents(0) \ "location" \ "LineInFile" \ "fileName").text === "SocketReporterSpec.scala")
       assert((eventRecorder.markupProvidedEvents(0) \ "threadName").text === Thread.currentThread.getName)

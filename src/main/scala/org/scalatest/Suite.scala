@@ -2157,14 +2157,14 @@ trait Suite extends Assertions with Style with Serializable { thisSuite =>
     val informerForThisTest =
       MessageRecordingInformer(
         messageRecorderForThisTest, 
-        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => createInfoProvided(thisSuite, report, tracker, Some(testName), message, payload, 2, location, isConstructingThread, true, Some(testWasPending), Some(testWasCanceled))
+        (message, payload, isConstructingThread, testWasPending, testWasCanceled, location) => createInfoProvided(thisSuite, report, tracker, Some(testName), message, payload, 2, location, isConstructingThread, true)
       )
 
     // TODO: Was using reportInfoProvided here before, to double check with Bill for changing to markup provided.
     val documenterForThisTest =
       MessageRecordingDocumenter(
         messageRecorderForThisTest, 
-        (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => createMarkupProvided(thisSuite, report, tracker, Some(testName), message, 2, location, isConstructingThread, Some(testWasPending)) // TODO: Need a test that fails because testWasCanceleed isn't being passed
+        (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => createMarkupProvided(thisSuite, report, tracker, Some(testName), message, 2, location, isConstructingThread) // TODO: Need a test that fails because testWasCanceleed isn't being passed
       )
 
     class RepImpl(val info: Informer, val markup: Documenter) extends Rep
@@ -3096,9 +3096,7 @@ used for test events like succeeded/failed, etc.
     level: Int,
     location: Option[Location],
     includeNameInfo: Boolean,
-    includeIcon: Boolean = true,
-    aboutAPendingTest: Option[Boolean] = None,
-    aboutACanceledTest: Option[Boolean] = None) = {
+    includeIcon: Boolean = true) = {
     InfoProvided(
         tracker.nextOrdinal(),
         message,
@@ -3111,8 +3109,6 @@ used for test events like succeeded/failed, etc.
           ))
         else
           None,
-        aboutAPendingTest,
-        aboutACanceledTest,
         None,
         Some(getIndentedTextForInfo(message, level, includeIcon, testName.isDefined)),
         location,
@@ -3131,9 +3127,7 @@ used for test events like succeeded/failed, etc.
     level: Int,
     location: Option[Location],
     includeNameInfo: Boolean,
-    includeIcon: Boolean = true,
-    aboutAPendingTest: Option[Boolean] = None,
-    aboutACanceledTest: Option[Boolean] = None
+    includeIcon: Boolean = true
   ) {
     report(
       createInfoProvided(
@@ -3146,9 +3140,7 @@ used for test events like succeeded/failed, etc.
         level,
         location,
         includeNameInfo,
-        includeIcon,
-        aboutAPendingTest,
-        aboutACanceledTest
+        includeIcon
       )
     )
   }
@@ -3161,9 +3153,7 @@ used for test events like succeeded/failed, etc.
     message: String,
     level: Int,
     location: Option[Location],
-    includeNameInfo: Boolean,
-    aboutAPendingTest: Option[Boolean] = None,
-    aboutACanceledTest: Option[Boolean] = None  
+    includeNameInfo: Boolean
   ) = {
     MarkupProvided(
       tracker.nextOrdinal(),
@@ -3177,8 +3167,6 @@ used for test events like succeeded/failed, etc.
           ))
       else
         None,
-      aboutAPendingTest,
-      aboutACanceledTest,
       None, // Some(getIndentedTextForInfo(message, level, includeIcon, testName.isDefined))  for now don't send a formatter
       location
     )
@@ -3194,9 +3182,7 @@ used for test events like succeeded/failed, etc.
     message: String,
     level: Int,
     location: Option[Location],
-    includeNameInfo: Boolean,
-    aboutAPendingTest: Option[Boolean] = None,
-    aboutACanceledTest: Option[Boolean] = None
+    includeNameInfo: Boolean
   ) {
     report(
       createMarkupProvided(
@@ -3207,9 +3193,7 @@ used for test events like succeeded/failed, etc.
         message,
         level,
         location,
-        includeNameInfo,
-        aboutAPendingTest,
-        aboutACanceledTest
+        includeNameInfo
       )
     )
   }
@@ -3223,8 +3207,6 @@ used for test events like succeeded/failed, etc.
     message: String,
     level: Int,
     includeIcon: Boolean = true,
-    aboutAPendingTest: Option[Boolean] = None,
-    aboutACanceledTest: Option[Boolean] = None, 
     location: Option[Location]
   ) {
     report(
@@ -3237,8 +3219,6 @@ used for test events like succeeded/failed, etc.
                    case None => None
                  }
           ),
-        aboutAPendingTest,
-        aboutACanceledTest,
         Some(getIndentedTextForInfo(message, level, includeIcon, testName.isDefined)), 
         location
       )
@@ -3254,8 +3234,6 @@ used for test events like succeeded/failed, etc.
     message: String,
     level: Int,
     includeIcon: Boolean = true,
-    aboutAPendingTest: Option[Boolean] = None,
-    aboutACanceledTest: Option[Boolean] = None,
     location: Option[Location]
   ) {
     report(
@@ -3268,8 +3246,6 @@ used for test events like succeeded/failed, etc.
                    case None => None
                  }
           ),
-        aboutAPendingTest,
-        aboutACanceledTest,
         Some(MotionToSuppress),
         location
       )

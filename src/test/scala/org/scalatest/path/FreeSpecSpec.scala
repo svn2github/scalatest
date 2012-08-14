@@ -804,6 +804,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         // a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
       }
     }
+/*
     it("should send InfoProvided events with aboutAPendingTest set to true for info " +
             "calls made from a test that is pending") {
       class AFreeSpec extends PathFreeSpec with GivenWhenThen {
@@ -862,6 +863,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         assert(ip.message == "A FreeSpec" || ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
       }
     }
+*/
     it("should not put parentheses around should clauses that follow when") {
       class AFreeSpec extends PathFreeSpec {
         "A Stack" - {
