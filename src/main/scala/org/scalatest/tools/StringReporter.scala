@@ -423,17 +423,17 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
         val lines = stringsToPrintOnError("failedNote", "testFailed", message, throwable, formatter, Some(suiteName), Some(testName), duration)
         for (line <- lines) printPossiblyInColor(line, ansiRed)
 
-        handleRecordedEvents(recordedEvents)
+        handleRecordedEvents(recordedEvents, ansiRed)
         
       case TestCanceled(ordinal, message, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, throwable, duration, formatter, location, payload, threadName, timeStamp) =>
 
         val lines = stringsToPrintOnError("canceledNote", "testCanceled", message, throwable, formatter, Some(suiteName), Some(testName), duration)
         for (line <- lines) printPossiblyInColor(line, ansiYellow)
 
-        handleRecordedEvents(recordedEvents)
+        handleRecordedEvents(recordedEvents, ansiYellow)
         
       case ipEvent: InfoProvided =>
-        handleInfoProvided(ipEvent)        
+        handleInfoProvided(ipEvent, ansiGreen)        
 
       case ScopeOpened(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
 
@@ -482,13 +482,13 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
           case None =>
         }
         
-        handleRecordedEvents(recordedEvents)
+        handleRecordedEvents(recordedEvents, ansiYellow)
 
      // case _ => throw new RuntimeException("Unhandled event")
     }
   }
   
-  private def handleInfoProvided(event: InfoProvided) {
+  private def handleInfoProvided(event: InfoProvided, ansiColor: String) {
     val (suiteName, testName) =
       event.nameInfo match {
         case Some(NameInfo(suiteName, _, _, _, testNameInfo)) => (Some(suiteName), 
@@ -499,7 +499,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
         case None => (None, None)
       }
     val lines = stringsToPrintOnError("infoProvidedNote", "infoProvided", event.message, event.throwable, event.formatter, suiteName, testName, None)
-    for (line <- lines) printPossiblyInColor(line, ansiGreen)
+    for (line <- lines) printPossiblyInColor(line, ansiColor)
   }
   
   private def handleMarkupProvided(event: MarkupProvided) {
@@ -507,10 +507,10 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
     // Won't do anything here, because not reporting these events in the StringReporter.
   }
   
-  private def handleRecordedEvents(recordedEvents: IndexedSeq[RecordableEvent]) {
+  private def handleRecordedEvents(recordedEvents: IndexedSeq[RecordableEvent], ansiColor: String = ansiGreen) {
     recordedEvents.foreach { e =>
       e match {
-        case ipEvent: InfoProvided => handleInfoProvided(ipEvent)
+        case ipEvent: InfoProvided => handleInfoProvided(ipEvent, ansiColor)
         case mpEvent: MarkupProvided => handleMarkupProvided(mpEvent)
       }
     }
