@@ -518,8 +518,8 @@ import org.scalatest.ScreenshotCapturer
  * cookie(name: String, value: String)
  * cookie(name: String, value: String, path: String)
  * cookie(name: String, value: String, path: String, expiry: Date)
- * cookie(name: String, value: String, domain: String, path: String, expiry: Date)
- * cookie(name: String, value: String, domain: String, path: String, expiry: Date, secure: Boolean)
+ * cookie(name: String, value: String, path: String, expiry: Date, domain: String)
+ * cookie(name: String, value: String, path: String, expiry: Date, domain: String, secure: Boolean)
  * </pre>
  * 
  * and to read those extra fields:
@@ -795,6 +795,30 @@ trait WebBrowser {
      * The underlying <code>WebElement</code> wrapped by this <code>Element</code>
      */
     val underlying: WebElement
+    
+    /**
+     * Returns the result of invoking <code>equals</code> on the underlying <code>Element</code>, passing
+     * in the specified <code>other</code> object.
+     *
+     * @param other the object with which to compare for equality
+     *
+     * @return true if the passed object is equal to this one
+     */
+    override def equals(other: Any): Boolean = underlying.equals(other)
+
+    /**
+     * Returns the result of invoking <code>hashCode</code> on the underlying <code>Element</code>.
+     *
+     * @return a hash code for this object
+     */
+    override def hashCode: Int = underlying.hashCode
+
+    /**
+     * Returns the result of invoking <code>toString</code> on the underlying <code>Element</code>.
+     *
+     * @return a string representation of this object
+     */
+    override def toString: String = underlying.toString 
   }
 
   /**
@@ -851,7 +875,6 @@ trait WebBrowser {
      * @return the expire date of this cookie
      */
     def expiry: Option[Date] = Option(underlying.getExpiry)
-    // TODO: A test that makes sure null expiry gets wrapped in an option
 
     /**
      * The name of this cookie.
@@ -975,9 +998,9 @@ trait WebBrowser {
    * name or id, or enclosed element), and window.
    * </p>
    */
-  final class ActiveElementTarget extends SwitchTarget[WebElement] {
-    def switch(driver: WebDriver): WebElement = {
-      driver.switchTo.activeElement
+  final class ActiveElementTarget extends SwitchTarget[Element] {
+    def switch(driver: WebDriver): Element = {
+      createTypedElement(driver.switchTo.activeElement)
     }
   }
 
@@ -985,6 +1008,7 @@ trait WebBrowser {
   // in case a user has a WebElement.) Maybe we offer a factory method that gets an element given a WebElement?
   // Also, return type of ActiveElementTarget's switch method should be the subclass of Element that it is. if
   // the element is a text field, returned class should be TextField.
+  // Chee Seng: Can't do much for alert and window, since user don't provide WebElement for it currently.  For frame, see my comments near FrameWebElementTarget.
 
   final class AlertTarget extends SwitchTarget[Alert] {
     def switch(driver: WebDriver): Alert = { 
@@ -1016,7 +1040,7 @@ trait WebBrowser {
   final class FrameNameOrIdTarget(nameOrId: String) extends SwitchTarget[WebDriver] {
     def switch(driver: WebDriver): WebDriver = 
       try {
-        driver.switchTo.frame(nameOrId) // TODO: Verify this works. Does Selenium itself first try name then id?
+        driver.switchTo.frame(nameOrId) // TODO: Verify this works. Does Selenium itself first try name then id?  Chee Seng: Yes, we just forward it to selenium call actually (http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#frame%28java.lang.String%29)
       }
       catch {
         case e: org.openqa.selenium.NoSuchFrameException => 
@@ -1029,6 +1053,7 @@ trait WebBrowser {
   }
   
   // TODO: Why isn't this an Element?
+  // Chee Seng: Because we don't have an Element mapping for frame, I think it is possible to have lookup for frame, e.g. frame(0), frame("frame1"), but not sure if it is a good idea.
   final class FrameWebElementTarget(element: WebElement) extends SwitchTarget[WebDriver] {
     def switch(driver: WebDriver): WebDriver = 
       try {
@@ -1072,6 +1097,7 @@ trait WebBrowser {
     webElement.getTagName == "input" && webElement.getAttribute("type") == "radio"
       
   // TODO: Equals, hashcode, and toString (forward to underlying) on these Element subclasses.
+  // Chee Seng: Added in the Element traits, which forward to underlying equals, hashCode and toString call.
   /**
    * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
@@ -1504,7 +1530,7 @@ trait WebBrowser {
   }
   
   def submit()(implicit driver: WebDriver) {
-    (switch to activeElement).submit()
+    (switch to activeElement).underlying.submit()
   }
   
   def implicitlyWait(timeout: Span)(implicit driver: WebDriver) {
@@ -1553,28 +1579,13 @@ trait WebBrowser {
     driver.navigate.refresh()
   }
   
-  // TODO: Maybe use a single cookie method with default param values instead of overloading
   object add {
     private def addCookie(cookie: Cookie)(implicit driver: WebDriver) {
       driver.manage.addCookie(cookie)
     }
- 
-    def cookie(name: String, value: String)(implicit driver: WebDriver) {
-      addCookie(new Cookie(name, value))
-    }
- 
-    def cookie(name: String, value: String, path: String)(implicit driver: WebDriver) { 
-      addCookie(new Cookie(name, value, path))
-    }
     
-    def cookie(name: String, value: String, path: String, expiry: Date)(implicit driver: WebDriver) { 
-      addCookie(new Cookie(name, value, path, expiry))
-    }
-    
-    def cookie(name: String, value: String, domain: String, path: String, expiry: Date)(implicit driver: WebDriver) { 
-      addCookie(new Cookie(name, value, domain, path, expiry))
-    }
-    def cookie(name: String, value: String, domain: String, path: String, expiry: Date, secure: Boolean)(implicit driver: WebDriver) { 
+    // Default values determined from http://code.google.com/p/selenium/source/browse/trunk/java/client/src/org/openqa/selenium/Cookie.java
+    def cookie(name: String, value: String, path: String = "/", expiry: Date = null, domain: String = null, secure: Boolean = false)(implicit driver: WebDriver) { 
       addCookie(new Cookie(name, value, domain, path, expiry, secure))
     }
   }

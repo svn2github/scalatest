@@ -35,6 +35,7 @@ import org.openqa.selenium.firefox.FirefoxProfile
 import org.openqa.selenium.safari.SafariDriver
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.ie.InternetExplorerDriver
+import org.openqa.selenium.Cookie
 
 class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with WebBrowser with HtmlUnit {
 
@@ -719,7 +720,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       finally close()(driver)
     }
     
-    it("isScreenshotSupported should return false for FirefoxDriver") {
+    it("isScreenshotSupported should return true for FirefoxDriver") {
       val driver = try {
         new FirefoxDriver(new FirefoxProfile())
       }
@@ -738,19 +739,19 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
        [scalatest] System info: os.name: 'Mac OS X', os.arch: 'x86_64', os.version: '10.7.4', java.version: '1.6.0_33'
        [scalatest] Driver info: driver.version: SafariDriver (WebBrowserSpec.scala:732)
     */
-    ignore("isScreenshotSupported should return false for SafariDriver") {
+    ignore("isScreenshotSupported should return true for SafariDriver") {
       val driver = try new SafariDriver catch { case e => cancel(e) }
       try isScreenshotSupported(driver) should be (true)
       finally close()(driver)
     }
   
-    it("isScreenshotSupported should return false for ChromeDriver") {
+    it("isScreenshotSupported should return true for ChromeDriver") {
       val driver = try new ChromeDriver catch { case e => cancel(e) }
       try isScreenshotSupported(driver) should be (true)
       finally close()(driver)
     }
   
-    it("isScreenshotSupported should return false for InternetExplorerDriver") {
+    it("isScreenshotSupported should return true for InternetExplorerDriver") {
       val driver = try new InternetExplorerDriver catch { case e => cancel(e) }
       try isScreenshotSupported(driver) should be (true)
       finally close()(driver)
@@ -806,6 +807,13 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       switch to frame(0)
       switch to frame("name")
       switch to window(windowHandle)
+    }
+  }
+  
+  describe("WrappedCookie") {
+    it("should wrap null expiry in an option") {
+      val cookie = new WrappedCookie(new Cookie("name", "value", "path", null))
+      cookie.expiry should be (None)
     }
   }
   
