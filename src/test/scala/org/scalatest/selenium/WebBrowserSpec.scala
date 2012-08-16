@@ -240,6 +240,17 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       caught.failedCodeLineNumber should be (Some(thisLineNumber - 2))
       caught.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
     }
+    it("should be able to click on element from all query methods") {
+      go to (host + "click.html")
+      click on id("aLink")
+      click on name("aLinkName")
+      click on xpath("//html/body/a")
+      click on className("aClass")
+      click on cssSelector("a[id='aLink']")
+      click on linkText("Test Click")
+      click on partialLinkText("Click")
+      click on tagName("a")
+    }
   }
 
   describe("switch to") {

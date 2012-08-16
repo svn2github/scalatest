@@ -1353,8 +1353,8 @@ trait WebBrowser {
   sealed trait Query {
     val by: By
     val queryString: String
-    def getWebElement(implicit driver: WebDriver): WebElement = {
-      findWebElement(driver) match {
+    def element(implicit driver: WebDriver): Element = {
+      findElement(driver) match {
         case Some(element) => element
         case None => 
           throw new TestFailedException(
@@ -1365,16 +1365,29 @@ trait WebBrowser {
       }
     }
     
-    def findWebElement(implicit driver: WebDriver): Option[WebElement] = {
+    def findElement(implicit driver: WebDriver): Option[Element] = 
       try {
-        Some(driver.findElement(by))
+        Some(createTypedElement(driver.findElement(by)))
       }
       catch {
         case e: org.openqa.selenium.NoSuchElementException => None
-          
+      }
+    
+    def findAllElements(implicit driver: WebDriver): Seq[Element] = driver.findElements(by).toSeq.map(createTypedElement(_))
+    
+    def webElement(implicit driver: WebDriver): WebElement = {
+      try {
+        driver.findElement(by)
+      }
+      catch {
+        case e: org.openqa.selenium.NoSuchElementException => 
+          throw new TestFailedException(
+                     sde => Some("Element '" + queryString + "' not found."),
+                     None,
+                     getStackDepthFun("WebBrowser.scala", "name", 1)
+                   )
       }
     }
-    def findAllWebElements(implicit driver: WebDriver): Seq[WebElement] = driver.findElements(by).toSeq
   }
   case class IdQuery(queryString: String) extends Query { val by = By.id(queryString)}
   case class NameQuery(queryString: String) extends Query { val by = By.name(queryString) }
@@ -1414,116 +1427,115 @@ trait WebBrowser {
       new Element() { val underlying = element }
   }
   
-  def find(query: Query)(implicit driver: WebDriver): Option[Element] = 
-    query.findWebElement match {
-      case Some(webElement) => Some(createTypedElement(webElement))
-      case None => None
-    }
+  def find(query: Query)(implicit driver: WebDriver): Option[Element] = query.findElement
   
   def find(queryString: String)(implicit driver: WebDriver): Option[Element] = 
-    new IdQuery(queryString).findWebElement match {
-      case Some(webElement) => Some(createTypedElement(webElement))
-      case None => new NameQuery(queryString).findWebElement match {
-        case Some(webElement) => Some(createTypedElement(webElement))
+    new IdQuery(queryString).findElement match {
+      case Some(element) => Some(element)
+      case None => new NameQuery(queryString).findElement match {
+        case Some(element) => Some(element)
         case None => None
       }
     }
   
-  def findAll(query: Query)(implicit driver: WebDriver): Seq[Element] = 
-    query.findAllWebElements.map { e => createTypedElement(e) }
+  def findAll(query: Query)(implicit driver: WebDriver): Seq[Element] = query.findAllElements
   
   def findAll(queryString: String)(implicit driver: WebDriver): Seq[Element] = {
-    val byIdSeq = new IdQuery(queryString).findAllWebElements
+    val byIdSeq = new IdQuery(queryString).findAllElements
     if (byIdSeq.size > 0)
-      byIdSeq.map { e => createTypedElement(e) }
+      byIdSeq
     else 
-      new NameQuery(queryString).findAllWebElements.map { e => createTypedElement(e) }
+      new NameQuery(queryString).findAllElements
   }
   
-  def textField(query: Query)(implicit driver: WebDriver): TextField = new TextField(query.getWebElement)
+  def textField(query: Query)(implicit driver: WebDriver): TextField = new TextField(query.webElement)
   
   def textField(queryString: String)(implicit driver: WebDriver): TextField = 
     try {
-      new TextField(new IdQuery(queryString).getWebElement)
+      new TextField(new IdQuery(queryString).webElement)
     }
     catch {
-      case _ => new TextField(new NameQuery(queryString).getWebElement)
+      case _ => new TextField(new NameQuery(queryString).webElement)
     }
   
-  def textArea(query: Query)(implicit driver: WebDriver) = new TextArea(query.getWebElement)
+  def textArea(query: Query)(implicit driver: WebDriver) = new TextArea(query.webElement)
   
   def textArea(queryString: String)(implicit driver: WebDriver): TextArea = 
     try {
-      new TextArea(new IdQuery(queryString).getWebElement)
+      new TextArea(new IdQuery(queryString).webElement)
     }
     catch {
-      case _ => new TextArea(new NameQuery(queryString).getWebElement)
+      case _ => new TextArea(new NameQuery(queryString).webElement)
     }
   
   def radioButtonGroup(groupName: String)(implicit driver: WebDriver) = new RadioButtonGroup(groupName, driver)
   
-  def radioButton(query: Query)(implicit driver: WebDriver) = new RadioButton(query.getWebElement)
+  def radioButton(query: Query)(implicit driver: WebDriver) = new RadioButton(query.webElement)
   
   def radioButton(queryString: String)(implicit driver: WebDriver): RadioButton = 
     try {
-      new RadioButton(new IdQuery(queryString).getWebElement)
+      new RadioButton(new IdQuery(queryString).webElement)
     }
     catch {
-      case _ => new RadioButton(new NameQuery(queryString).getWebElement)
+      case _ => new RadioButton(new NameQuery(queryString).webElement)
     }
   
-  def checkbox(query: Query)(implicit driver: WebDriver) = new Checkbox(query.getWebElement)
+  def checkbox(query: Query)(implicit driver: WebDriver) = new Checkbox(query.webElement)
   
   def checkbox(queryString: String)(implicit driver: WebDriver): Checkbox = 
     try {
-      new Checkbox(new IdQuery(queryString).getWebElement)
+      new Checkbox(new IdQuery(queryString).webElement)
     }
     catch {
-      case _ => new Checkbox(new NameQuery(queryString).getWebElement)
+      case _ => new Checkbox(new NameQuery(queryString).webElement)
     }
   
-  def singleSel(query: Query)(implicit driver: WebDriver) = new SingleSel(query.getWebElement)
+  def singleSel(query: Query)(implicit driver: WebDriver) = new SingleSel(query.webElement)
   
   def singleSel(queryString: String)(implicit driver: WebDriver): SingleSel = 
     try {
-      new SingleSel(new IdQuery(queryString).getWebElement)
+      new SingleSel(new IdQuery(queryString).webElement)
     }
     catch {
-      case _ => new SingleSel(new NameQuery(queryString).getWebElement)
+      case _ => new SingleSel(new NameQuery(queryString).webElement)
     }
   
-  def multiSel(query: Query)(implicit driver: WebDriver) = new MultiSel(query.getWebElement)
+  def multiSel(query: Query)(implicit driver: WebDriver) = new MultiSel(query.webElement)
   
   def multiSel(queryString: String)(implicit driver: WebDriver): MultiSel = 
     try {
-      new MultiSel(new IdQuery(queryString).getWebElement)
+      new MultiSel(new IdQuery(queryString).webElement)
     }
     catch {
-      case _ => new MultiSel(new NameQuery(queryString).getWebElement)
+      case _ => new MultiSel(new NameQuery(queryString).webElement)
     }
     
   def button(webElement: WebElement): WebElement = webElement  // enable syntax 'click on aButton', where aButton is a WebElement.
   
   def button(queryString: String)(implicit driver: WebDriver): WebElement = 
     try {
-      new IdQuery(queryString).getWebElement
+      new IdQuery(queryString).webElement
     }
     catch {
-      case _ => new NameQuery(queryString).getWebElement
+      case _ => new NameQuery(queryString).webElement
     }
   
   object click {
     def on(element: WebElement) {
       element.click()
     }
+    
+    def on(query: Query)(implicit driver: WebDriver) {
+      query.webElement.click()
+    }
   
     def on(queryString: String)(implicit driver: WebDriver) {
       // stack depth is not correct if just call the button("...") directly.
       val target = try {
-        new IdQuery(queryString).getWebElement
+        new IdQuery(queryString).webElement
       }
       catch {
-        case _ => new NameQuery(queryString).getWebElement
+        case _ => new NameQuery(queryString).webElement
       }
       on(target)
     }
@@ -1564,7 +1576,7 @@ trait WebBrowser {
   def frame(index: Int) = new FrameIndexTarget(index)
   def frame(nameOrId: String) = new FrameNameOrIdTarget(nameOrId)
   def frame(element: WebElement) = new FrameWebElementTarget(element)
-  def frame(query: Query)(implicit driver: WebDriver) = new FrameWebElementTarget(query.getWebElement)
+  def frame(query: Query)(implicit driver: WebDriver) = new FrameWebElementTarget(query.webElement)
   def window(nameOrHandle: String) = new WindowTarget(nameOrHandle)
   
   def goBack()(implicit driver: WebDriver) {
