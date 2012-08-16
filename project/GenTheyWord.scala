@@ -48,4 +48,27 @@ object GenTheyWord {
                  "target/generated/src/test/scala/org/scalatest/fixture", 
                  "FunSpecSpecUsingThey")
   }
+  
+  def genTest(dir: File) {
+    generateFile("src/test/scala/org/scalatest", 
+                 "FunSpecSuite", 
+                 dir.getAbsolutePath, 
+                 "FunSpecSuiteUsingThey")
+    generateFile("src/test/scala/org/scalatest", 
+                 "FunSpecSpec", 
+                 dir.getAbsolutePath, 
+                 "FunSpecSpecUsingThey")
+    generateFile("src/test/scala/org/scalatest", 
+                 "FlatSpecSpec", 
+                 dir.getAbsolutePath, 
+                 "FlatSpecSpecUsingThey")
+    generateFile("src/test/scala/org/scalatest/path", 
+                 "FunSpecSpec", 
+                 dir.getAbsolutePath, 
+                 "FunSpecSpecUsingThey")
+    generateFile("src/test/scala/org/scalatest/fixture", 
+                 "FunSpecSpec", 
+                 dir.getAbsolutePath, 
+                 "FunSpecSpecUsingThey")
+  }
 }

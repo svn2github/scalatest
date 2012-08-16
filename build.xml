@@ -25,9 +25,9 @@
     <property name="jar.contents" value="${build}/jar_contents" />
     <!-- classes go in jar.contents. redundant, but makes the rest of build.xml easier to read -->
     <property name="classes" value="${jar.contents}" />
-    <property name="generators" value="src/generators/scala" />
-    <property name="build.generated.src" value="${build}/generated/src/main/scala" />
-    <property name="build.generated.tests" value="${build}/generated/src/test/scala" />
+    <property name="generators" value="project" />
+    <property name="build.generated.src" value="${build}/scala-${scala.version}/src_managed/main/scala" />
+    <property name="build.generated.tests" value="gen/${build}/scala-${scala.version}/src_managed/test/scala" />
     <property name="build.tests" value="${build}/tests" />
     <property name="build.tests.jar" value="${build}/tests.jar" />
     <property name="build.examples" value="${build}/examples" />
@@ -131,23 +131,23 @@
         </path>
 
         <uptodate property="gentables.uptodate"
-                  srcfile="src/generators/scala/GenTable.scala">
+                  srcfile="project/GenTable.scala">
           <mapper type="merge" to=
-            "target/generated/src/main/scala/org/scalatest/prop/TableFor1.scala">
+            "${build}/scala-${scala.version}/src_managed/main/scala/org/scalatest/prop/TableFor1.scala">
           </mapper>
         </uptodate>
 
         <uptodate property="genmustmatchers.uptodate"
-                  srcfile="src/generators/scala/GenMustMatchers.scala">
+                  srcfile="project/GenMustMatchers.scala">
           <mapper type="merge" to=
-            "target/generated/src/main/scala/org/scalatest/junit/MustMatchersForJUnit.scala">
+            "${build}/scala-${scala.version}/src_managed/main/scala/org/scalatest/junit/MustMatchersForJUnit.scala">
           </mapper>
         </uptodate>
 
         <uptodate property="gengen.uptodate"
-                  srcfile="src/generators/scala/GenGen.scala">
+                  srcfile="project/GenGen.scala">
           <mapper type="merge" to=
-            "target/generated/src/main/scala/org/scalatest/prop/GeneratorDrivenPropertyChecks.scala">
+            "${build}/scala-${scala.version}/src_managed/main/scala/org/scalatest/prop/GeneratorDrivenPropertyChecks.scala">
           </mapper>
         </uptodate>
     </target>
@@ -160,38 +160,58 @@
 
     <target name="clean">
         <delete dir="${build}" />
+    	<delete dir="gen" />
         <delete dir="test-output" quiet="true" />
     </target>
 
     <target name="compile-codegenerators" depends="init">
-        <scalac srcdir="${generators}" destdir="${build.generators}" target="jvm-1.5" deprecation="yes" classpathref="build.generators.class.path" />
+        <scalac srcdir="${generators}" destdir="${build.generators}" target="jvm-1.5" deprecation="yes" classpathref="build.generators.class.path">
+        	<include name="GenDeprecatedShouldMatchersTests.scala" />
+        	<include name="GenFunSuiteN.scala" />
+        	<include name="GenGen.scala" />
+        	<include name="GenMustMatchers.scala" />
+        	<include name="GenTable.scala" />
+        	<include name="GenTheyWord.scala" />
+        </scalac>
     </target>
 
     <target name="gentables" depends="init, compile-codegenerators"
             unless="gentables.uptodate">
         <java classname="GenTable" classpathref="run.generators.class.path"
-              fork="false" />
+              fork="false">
+        	<arg value="${build}/scala-${scala.version}/src_managed" />
+        </java>
     </target>
 
     <target name="genmustmatchers" depends="init, compile-codegenerators"
             unless="genmustmatchers.uptodate">
         <java classname="GenMustMatchers"
-              classpathref="run.generators.class.path" fork="false" />
+              classpathref="run.generators.class.path" fork="false">
+        	<arg value="${build}/scala-${scala.version}/src_managed" />
+        </java>
     </target>
 
     <target name="gengen" depends="init, compile-codegenerators"
             unless="gengen.uptodate">
-        <java classname="GenGen" classpathref="run.generators.class.path" fork="false" />
+        <java classname="GenGen" classpathref="run.generators.class.path" fork="false">
+        	<arg value="${build}/scala-${scala.version}/src_managed" />
+        </java>
     </target>
 
     <target name="gendeprecatedshouldtests" depends="init, compile-codegenerators">
         <!-- Then, run it. -->
-        <java classname="GenDeprecatedShouldMatchersTests" classpathref="run.generators.class.path" fork="false" />
+        <java classname="GenDeprecatedShouldMatchersTests" classpathref="run.generators.class.path" fork="false">
+        	<arg value="${build}/scala-${scala.version}/src_managed" />
+        </java>
     </target>
 
     <target name="gencode" depends="init, compile-codegenerators">
-        <java classname="GenMustMatchersTests" classpathref="run.generators.class.path" fork="false" />
-    	<java classname="GenTheyWord" classpathref="run.generators.class.path" fork="false" />
+        <java classname="GenMustMatchersTests" classpathref="run.generators.class.path" fork="false">
+        	<arg value="${build}/scala-${scala.version}/src_managed" />
+        </java>
+    	<java classname="GenTheyWord" classpathref="run.generators.class.path" fork="false">
+    		<arg value="${build}/scala-${scala.version}/src_managed" />
+    	</java>
     </target>
 
     <target name="compile" depends="compile-main, compile-tests, compile-examples"/>
@@ -240,7 +260,7 @@
         <scalac srcdir="${scalasrc.test}:${javasrc.test}" destdir="${build.tests}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC"/>
 
         <!-- Compile the Scala code from ${build.generated.tests} into ${classes}. Scalac will parse any referenced .java files. -->
-        <scalac srcdir="${build.generated.tests}" destdir="${build.tests}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs}" />
+        <scalac srcdir="${build.generated.tests}" destdir="${build.tests}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC" />
 
         <!-- Compile the Java code from ${javasrc.test} into ${build.tests} -->
         <javac srcdir="${javasrc.test}" destdir="${build.tests}" compiler="javac1.5" memoryMaximumSize="2000M" fork="true" classpath="${classes}:${org.scala-lang:scala-library:jar}:${junit:junit:jar}" debug="yes" />

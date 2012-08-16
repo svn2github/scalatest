@@ -835,8 +835,12 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
   }
 }
 
+@DoNotDiscover
 class `My Test` extends Suite {}
+@DoNotDiscover
 class NormalSuite extends Suite
+@DoNotDiscover
 @WrapWith(classOf[ConfigMapWrapperSuite]) 
 class WrappedSuite(configMap: Map[_, _]) extends Suite
+@DoNotDiscover
 class NotAccessibleSuite(name: String) extends Suite
