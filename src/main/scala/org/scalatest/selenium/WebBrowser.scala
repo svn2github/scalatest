@@ -462,7 +462,7 @@ import org.scalatest.ScreenshotCapturer
  * </pre>
  * 
  * <p>
- * Similar to what you got in Selenium, you can also switch to active element and default content:
+ * You can also switch to active element and default content:
  * </p>
  * 
  * <pre class="stHighlight">
@@ -972,6 +972,7 @@ trait WebBrowser {
   
   /**
    * This sealed abstract class supports switching in ScalaTest's Selenium DSL.
+   * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    *
    * <p>
    * One subclass of <code>SwitchTarget</code> exists for each kind of target that
@@ -990,39 +991,100 @@ trait WebBrowser {
   }
 
   /**
-   * This class supports switching in ScalaTest's Selenium DSL.
+   * This class supports switching to the currently active element in ScalaTest's Selenium DSL.
+   * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    *
    * <p>
-   * One subclass of <code>SwitchTarget</code> exists for each kind of target that
-   * can be switched to: active element, alert box, default content, frame (indentified by index,
-   * name or id, or enclosed element), and window.
+   * This class is enables the following syntax:
    * </p>
+   *
+   * <pre>
+   * switch to activeElement
+   *           ^
+   * </pre>
    */
   final class ActiveElementTarget extends SwitchTarget[Element] {
+
+    /**
+     * Switches the driver to the currently active element.
+     *
+     * @param driver the <code>WebDriver</code> with which to perform the switch
+     */
     def switch(driver: WebDriver): Element = {
       createTypedElement(driver.switchTo.activeElement)
     }
   }
 
-  // TODO: Need to switch to Element, not WebElement (Or maybe in addition to WebElement, for convenience
-  // in case a user has a WebElement.) Maybe we offer a factory method that gets an element given a WebElement?
-  // Also, return type of ActiveElementTarget's switch method should be the subclass of Element that it is. if
-  // the element is a text field, returned class should be TextField.
-  // Chee Seng: Can't do much for alert and window, since user don't provide WebElement for it currently.  For frame, see my comments near FrameWebElementTarget.
-
+  /**
+   * This class supports switching to the alert box in ScalaTest's Selenium DSL.
+   * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This class is enables the following syntax:
+   * </p>
+   *
+   * <pre>
+   * switch to alert
+   *           ^
+   * </pre>
+   */
   final class AlertTarget extends SwitchTarget[Alert] {
+
+    /**
+     * Switches the driver to the currently active element.
+     *
+     * @param driver the <code>WebDriver</code> with which to perform the switch
+     */
     def switch(driver: WebDriver): Alert = { 
       driver.switchTo.alert
     }
   }
 
+  /**
+   * This class supports switching to the default content in ScalaTest's Selenium DSL.
+   * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This class is enables the following syntax:
+   * </p>
+   *
+   * <pre>
+   * switch to defaultContent
+   *           ^
+   * </pre>
+   */
   final class DefaultContentTarget extends SwitchTarget[WebDriver] {
+
+    /**
+     * Switches the driver to the default content
+     *
+     * @param driver the <code>WebDriver</code> with which to perform the switch
+     */
     def switch(driver: WebDriver): WebDriver = {
       driver.switchTo.defaultContent
     }
   }
  
+  /**
+   * This class supports switching to a frame by index in ScalaTest's Selenium DSL.
+   * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This class is enables the following syntax:
+   * </p>
+   *
+   * <pre>
+   * switch to frame(0)
+   *           ^
+   * </pre>
+   */
   final class FrameIndexTarget(index: Int) extends SwitchTarget[WebDriver] {
+
+    /**
+     * Switches the driver to the frame at the index that was passed to the constructor.
+     *
+     * @param driver the <code>WebDriver</code> with which to perform the switch
+     */
     def switch(driver: WebDriver): WebDriver = 
       try {
         driver.switchTo.frame(index)
@@ -1036,11 +1098,30 @@ trait WebBrowser {
                    )
       }
   }
-  
+
+  /**
+   * This class supports switching to a frame by name or ID in ScalaTest's Selenium DSL.
+   * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This class is enables the following syntax:
+   * </p>
+   *
+   * <pre>
+   * switch to frame("name")
+   *           ^
+   * </pre>
+   */
   final class FrameNameOrIdTarget(nameOrId: String) extends SwitchTarget[WebDriver] {
+
+    /**
+     * Switches the driver to the frame with the name or ID that was passed to the constructor.
+     *
+     * @param driver the <code>WebDriver</code> with which to perform the switch
+     */
     def switch(driver: WebDriver): WebDriver = 
       try {
-        driver.switchTo.frame(nameOrId) // TODO: Verify this works. Does Selenium itself first try name then id?  Chee Seng: Yes, we just forward it to selenium call actually (http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#frame%28java.lang.String%29)
+        driver.switchTo.frame(nameOrId)
       }
       catch {
         case e: org.openqa.selenium.NoSuchFrameException => 
@@ -1051,10 +1132,19 @@ trait WebBrowser {
                    )
       }
   }
-  
-  // TODO: Why isn't this an Element?
-  // Chee Seng: Because we don't have an Element mapping for frame, I think it is possible to have lookup for frame, e.g. frame(0), frame("frame1"), but not sure if it is a good idea.
+
+  // TODO: I'm not sure how people would use this one. with a find followed by an underlying?
+  /**
+   * This class supports switching to a frame by name or ID in ScalaTest's Selenium DSL.
+   * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   */
   final class FrameWebElementTarget(element: WebElement) extends SwitchTarget[WebDriver] {
+
+    /**
+     * Switches the driver to the frame containing the <code>WebElement</code> that was passed to the constructor.
+     *
+     * @param driver the <code>WebDriver</code> with which to perform the switch
+     */
     def switch(driver: WebDriver): WebDriver = 
       try {
         driver.switchTo.frame(element)
@@ -1069,7 +1159,26 @@ trait WebBrowser {
       }
   }
 
+  /**
+   * This class supports switching to a window by name or handle in ScalaTest's Selenium DSL.
+   * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This class is enables the following syntax:
+   * </p>
+   *
+   * <pre>
+   * switch to window(windowHandle)
+   *           ^
+   * </pre>
+   */
   final class WindowTarget(nameOrHandle: String) extends SwitchTarget[WebDriver] {
+
+    /**
+     * Switches the driver to the window with the name or ID that was passed to the constructor.
+     *
+     * @param driver the <code>WebDriver</code> with which to perform the switch
+     */
     def switch(driver: WebDriver): WebDriver =
       try {
         driver.switchTo.window(nameOrHandle)
@@ -1096,8 +1205,6 @@ trait WebBrowser {
   private def isRadioButton(webElement: WebElement): Boolean = 
     webElement.getTagName == "input" && webElement.getAttribute("type") == "radio"
       
-  // TODO: Equals, hashcode, and toString (forward to underlying) on these Element subclasses.
-  // Chee Seng: Added in the Element traits, which forward to underlying equals, hashCode and toString call.
   /**
    * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
@@ -1128,6 +1235,18 @@ trait WebBrowser {
     def attribute(name: String): String = underlying.getAttribute(name)
   }
   
+  /**
+   * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This field enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * textArea("q").value should be ("Cheese!")
+   * </pre>
+   */
   final class TextArea(webElement: WebElement) extends Element {
     if(!isTextArea(webElement))
       throw new TestFailedException(
