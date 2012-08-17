@@ -3153,7 +3153,8 @@ used for test events like succeeded/failed, etc.
     message: String,
     level: Int,
     location: Option[Location],
-    includeNameInfo: Boolean
+    includeNameInfo: Boolean,
+    includeIcon: Boolean = true
   ) = {
     MarkupProvided(
       tracker.nextOrdinal(),
@@ -3167,7 +3168,7 @@ used for test events like succeeded/failed, etc.
           ))
       else
         None,
-      None, // Some(getIndentedTextForInfo(message, level, includeIcon, testName.isDefined))  for now don't send a formatter
+      Some(getIndentedTextForInfo(message, level, includeIcon, testName.isDefined)),
       location
     )
   }
@@ -3182,7 +3183,8 @@ used for test events like succeeded/failed, etc.
     message: String,
     level: Int,
     location: Option[Location],
-    includeNameInfo: Boolean
+    includeNameInfo: Boolean,
+    includeIcon: Boolean = true
   ) {
     report(
       createMarkupProvided(

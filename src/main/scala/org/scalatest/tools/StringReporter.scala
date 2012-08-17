@@ -463,7 +463,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
         }
 
       case mpEvent: MarkupProvided =>
-        handleMarkupProvided(mpEvent)
+        handleMarkupProvided(mpEvent, ansiGreen)
 
       case TestPending(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, duration, formatter, location, payload, threadName, timeStamp) =>
 
@@ -502,16 +502,62 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
     for (line <- lines) printPossiblyInColor(line, ansiColor)
   }
   
-  private def handleMarkupProvided(event: MarkupProvided) {
-    //println("Got markup: " + message)
-    // Won't do anything here, because not reporting these events in the StringReporter.
+  private def stringToPrintWhenMarkup(formatter: Option[Formatter],
+                                      suiteName: Option[String],
+                                      testName:  Option[String],
+                                      text:      String): Option[String] =
+  {
+    def genUnformattedText = {
+      val prefix =
+        (suiteName, testName) match {
+          case (None,        None)        => ""
+          case (None,        Some(tName)) => tName + ": "
+          case (Some(sName), None)        => sName + ": "
+          case (Some(sName), Some(tName)) => sName + ": " + tName + ": "
+        }
+
+      Some(prefix + text)
+    }
+
+    def genFormattedText = {
+      formatter match {
+        case Some(IndentedText(formattedText, _, _)) => Some(formattedText)
+        case Some(MotionToSuppress)                  => None
+        case _                                       => genUnformattedText
+      }
+    }
+
+    if (presentUnformatted) genUnformattedText
+    else                    genFormattedText
+  }
+
+  private def handleMarkupProvided(event: MarkupProvided, ansiColor: String) {
+    val (suiteName, testName) =
+      event.nameInfo match {
+        case Some(NameInfo(suiteName, _, _, _, testNameInfo)) =>
+          (Some(suiteName),
+           testNameInfo match {
+            case Some(tnInfo) => Some(tnInfo.testName)
+            case None => None
+          })
+        case None => (None, None)
+      }
+
+    val stringToPrint =
+      stringToPrintWhenMarkup(event.formatter, suiteName, testName, event.text)
+
+    stringToPrint match {
+      case Some(string) => printPossiblyInColor(string, ansiColor)
+      case None =>
+    }
   }
   
   private def handleRecordedEvents(recordedEvents: IndexedSeq[RecordableEvent], ansiColor: String = ansiGreen) {
     recordedEvents.foreach { e =>
       e match {
         case ipEvent: InfoProvided => handleInfoProvided(ipEvent, ansiColor)
-        case mpEvent: MarkupProvided => handleMarkupProvided(mpEvent)
+        case mpEvent: MarkupProvided => handleMarkupProvided(mpEvent,
+                                                             ansiColor)
       }
     }
   }

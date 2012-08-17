@@ -296,7 +296,6 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  * you are trying to debug.
  * </p>
  *
- *
  * <p>
  * By default, a standard output, error, or file reporter inserts ansi escape codes into the output printed to change and later reset
  * terminal colors. Information printed as a result of run starting, completed, and stopped events
