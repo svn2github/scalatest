@@ -268,7 +268,7 @@ import org.scalatest.ScreenshotCapturer
  *
  * <pre class="stHighlight">
  * radioButtonGroup("group1").value should be ("Option 2")
- * radioButtonGroup"group1").selection should be (Some("Option 2"))
+ * radioButtonGroup("group1").selection should be (Some("Option 2"))
  * </pre>
  * 
  * <p>
@@ -1265,6 +1265,18 @@ trait WebBrowser {
     val underlying: WebElement = webElement
   }
   
+  /**
+   * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This field enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * radioButton(id("opt1")).value should be ("Option 1!")
+   * </pre>
+   */
   final class RadioButton(webElement: WebElement) extends Element {
     if(!isRadioButton(webElement))
       throw new TestFailedException(
@@ -1276,6 +1288,18 @@ trait WebBrowser {
     val underlying: WebElement = webElement
   }
 
+  /**
+   * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This field enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * radioButtonGroup("group1").value should be ("Option 2")
+   * </pre>
+   */
   final class RadioButtonGroup(groupName: String, driver: WebDriver) {
     
     private def groupElements = driver.findElements(By.name(groupName)).toList.filter(isRadioButton(_))
@@ -1316,6 +1340,18 @@ trait WebBrowser {
     }
   }
 
+  /**
+   * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This field enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * checkbox("cbx1").select()
+   * </pre>
+   */
   final class Checkbox(webElement: WebElement) extends Element {
     if(!isCheckBox(webElement))
       throw new TestFailedException(
@@ -1344,6 +1380,19 @@ trait WebBrowser {
   implicit def vector2RichIndexedSeq(seq: Seq[String]): RichIndexedSeq = new RichIndexedSeq(seq)
   
   // Should never return null.
+
+  /**
+   * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This field enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * singleSel.clear()
+   * </pre>
+   */
   class SingleSel(webElement: WebElement) extends Element {
     if(webElement.getTagName.toLowerCase != "select")
       throw new TestFailedException(
@@ -1394,6 +1443,18 @@ trait WebBrowser {
     val underlying: WebElement = webElement
   }
 
+  /**
+   * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This field enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * multiSel("select2").clear("option5")
+   * </pre>
+   */
   class MultiSel(webElement: WebElement) extends Element {
     if(webElement.getTagName.toLowerCase != "select")
       throw new TestFailedException(
@@ -1508,6 +1569,19 @@ trait WebBrowser {
       }
     }
   }
+
+  /*
+   TODO: Perhaps make libraryish alternatives:
+   goTo(...)
+   clickOn(...)
+   switchTo(...)
+   addCookie(...)
+   deleteCookie(...)
+   deleteAllCookies()
+   captureTo(...)
+   setCaptureDir(...) // I think this should replace not augment capture set "dir name"
+  */
+
   case class IdQuery(queryString: String) extends Query { val by = By.id(queryString)}
   case class NameQuery(queryString: String) extends Query { val by = By.name(queryString) }
   case class XPathQuery(queryString: String) extends Query { val by = By.xpath(queryString) }
