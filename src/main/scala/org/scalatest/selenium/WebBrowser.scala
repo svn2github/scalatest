@@ -797,6 +797,11 @@ trait WebBrowser {
     val underlying: WebElement
     
     /**
+     * The attribute value of the given attribute name of this element.
+     */
+    def attribute(name: String): String = underlying.getAttribute(name)
+    
+    /**
      * Returns the result of invoking <code>equals</code> on the underlying <code>Element</code>, passing
      * in the specified <code>other</code> object.
      *
@@ -1133,12 +1138,11 @@ trait WebBrowser {
       }
   }
 
-  // TODO: I'm not sure how people would use this one. with a find followed by an underlying?
   /**
-   * This class supports switching to a frame by name or ID in ScalaTest's Selenium DSL.
+   * This class supports switching to a frame by web element in ScalaTest's Selenium DSL.
    * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    */
-  final class FrameWebElementTarget(element: WebElement) extends SwitchTarget[WebDriver] {
+  final class FrameWebElementTarget(webElement: WebElement) extends SwitchTarget[WebDriver] {
 
     /**
      * Switches the driver to the frame containing the <code>WebElement</code> that was passed to the constructor.
@@ -1147,7 +1151,32 @@ trait WebBrowser {
      */
     def switch(driver: WebDriver): WebDriver = 
       try {
-        driver.switchTo.frame(element)
+        driver.switchTo.frame(webElement)
+      }
+      catch {
+        case e: org.openqa.selenium.NoSuchFrameException => 
+          throw new TestFailedException(
+                     sde => Some("Frame element '" + webElement + "' not found."),
+                     None,
+                     getStackDepthFun("WebBrowser.scala", "switch", 1)
+                   )
+      }
+  }
+  
+  /**
+   * This class supports switching to a frame by element in ScalaTest's Selenium DSL.
+   * Please see the documentation for <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   */
+  final class FrameElementTarget(element: Element) extends SwitchTarget[WebDriver] {
+
+    /**
+     * Switches the driver to the frame containing the <code>Element</code> that was passed to the constructor.
+     *
+     * @param driver the <code>WebDriver</code> with which to perform the switch
+     */
+    def switch(driver: WebDriver): WebDriver = 
+      try {
+        driver.switchTo.frame(element.underlying)
       }
       catch {
         case e: org.openqa.selenium.NoSuchFrameException => 
@@ -1232,7 +1261,6 @@ trait WebBrowser {
       underlying.sendKeys(value)
     }
     def text: String = underlying.getText
-    def attribute(name: String): String = underlying.getAttribute(name)
   }
   
   /**
@@ -1261,7 +1289,6 @@ trait WebBrowser {
       webElement.sendKeys(value)
     }
     def text: String = webElement.getText
-    def attribute(name: String): String = webElement.getAttribute(name)
     val underlying: WebElement = webElement
   }
   
@@ -1520,6 +1547,14 @@ trait WebBrowser {
     }
   }
   
+  def goTo(url: String)(implicit driver: WebDriver) {
+    go to url
+  }
+  
+  def goTo(page: Page)(implicit driver: WebDriver) {
+    go to page
+  }
+  
   def close()(implicit driver: WebDriver) {
     driver.close()
   }
@@ -1553,7 +1588,7 @@ trait WebBrowser {
         case e: org.openqa.selenium.NoSuchElementException => None
       }
     
-    def findAllElements(implicit driver: WebDriver): Seq[Element] = driver.findElements(by).toSeq.map(createTypedElement(_))
+    def findAllElements(implicit driver: WebDriver): Iterable[Element] = driver.findElements(by).toIterable.map { e => createTypedElement(e) }
     
     def webElement(implicit driver: WebDriver): WebElement = {
       try {
@@ -1569,18 +1604,6 @@ trait WebBrowser {
       }
     }
   }
-
-  /*
-   TODO: Perhaps make libraryish alternatives:
-   goTo(...)
-   clickOn(...)
-   switchTo(...)
-   addCookie(...)
-   deleteCookie(...)
-   deleteAllCookies()
-   captureTo(...)
-   setCaptureDir(...) // I think this should replace not augment capture set "dir name"
-  */
 
   case class IdQuery(queryString: String) extends Query { val by = By.id(queryString)}
   case class NameQuery(queryString: String) extends Query { val by = By.name(queryString) }
@@ -1631,9 +1654,9 @@ trait WebBrowser {
       }
     }
   
-  def findAll(query: Query)(implicit driver: WebDriver): Seq[Element] = query.findAllElements
+  def findAll(query: Query)(implicit driver: WebDriver): Iterable[Element] = query.findAllElements
   
-  def findAll(queryString: String)(implicit driver: WebDriver): Seq[Element] = {
+  def findAll(queryString: String)(implicit driver: WebDriver): Iterable[Element] = {
     val byIdSeq = new IdQuery(queryString).findAllElements
     if (byIdSeq.size > 0)
       byIdSeq
@@ -1641,77 +1664,51 @@ trait WebBrowser {
       new NameQuery(queryString).findAllElements
   }
   
+  private def tryQueries[T](queryString: String)(f: Query => T)(implicit driver: WebDriver): T = {
+    try {
+      f(IdQuery(queryString))
+    }
+    catch {
+      case _ => f(NameQuery(queryString))
+    }
+  }
+  
   def textField(query: Query)(implicit driver: WebDriver): TextField = new TextField(query.webElement)
   
   def textField(queryString: String)(implicit driver: WebDriver): TextField = 
-    try {
-      new TextField(new IdQuery(queryString).webElement)
-    }
-    catch {
-      case _ => new TextField(new NameQuery(queryString).webElement)
-    }
+    tryQueries(queryString)(q => new TextField(q.webElement))
   
   def textArea(query: Query)(implicit driver: WebDriver) = new TextArea(query.webElement)
   
   def textArea(queryString: String)(implicit driver: WebDriver): TextArea = 
-    try {
-      new TextArea(new IdQuery(queryString).webElement)
-    }
-    catch {
-      case _ => new TextArea(new NameQuery(queryString).webElement)
-    }
+    tryQueries(queryString)(q => new TextArea(q.webElement))
   
   def radioButtonGroup(groupName: String)(implicit driver: WebDriver) = new RadioButtonGroup(groupName, driver)
   
   def radioButton(query: Query)(implicit driver: WebDriver) = new RadioButton(query.webElement)
   
   def radioButton(queryString: String)(implicit driver: WebDriver): RadioButton = 
-    try {
-      new RadioButton(new IdQuery(queryString).webElement)
-    }
-    catch {
-      case _ => new RadioButton(new NameQuery(queryString).webElement)
-    }
+    tryQueries(queryString)(q => new RadioButton(q.webElement))
   
   def checkbox(query: Query)(implicit driver: WebDriver) = new Checkbox(query.webElement)
   
   def checkbox(queryString: String)(implicit driver: WebDriver): Checkbox = 
-    try {
-      new Checkbox(new IdQuery(queryString).webElement)
-    }
-    catch {
-      case _ => new Checkbox(new NameQuery(queryString).webElement)
-    }
+    tryQueries(queryString)(q => new Checkbox(q.webElement))
   
   def singleSel(query: Query)(implicit driver: WebDriver) = new SingleSel(query.webElement)
   
   def singleSel(queryString: String)(implicit driver: WebDriver): SingleSel = 
-    try {
-      new SingleSel(new IdQuery(queryString).webElement)
-    }
-    catch {
-      case _ => new SingleSel(new NameQuery(queryString).webElement)
-    }
+    tryQueries(queryString)(q => new SingleSel(q.webElement))
   
   def multiSel(query: Query)(implicit driver: WebDriver) = new MultiSel(query.webElement)
   
   def multiSel(queryString: String)(implicit driver: WebDriver): MultiSel = 
-    try {
-      new MultiSel(new IdQuery(queryString).webElement)
-    }
-    catch {
-      case _ => new MultiSel(new NameQuery(queryString).webElement)
-    }
+    tryQueries(queryString)(q => new MultiSel(q.webElement))
     
   def button(webElement: WebElement): WebElement = webElement  // enable syntax 'click on aButton', where aButton is a WebElement.
   
   def button(queryString: String)(implicit driver: WebDriver): WebElement = 
-    try {
-      new IdQuery(queryString).webElement
-    }
-    catch {
-      case _ => new NameQuery(queryString).webElement
-    }
+    tryQueries(queryString)(q => q.webElement)
   
   object click {
     def on(element: WebElement) {
@@ -1724,14 +1721,29 @@ trait WebBrowser {
   
     def on(queryString: String)(implicit driver: WebDriver) {
       // stack depth is not correct if just call the button("...") directly.
-      val target = try {
-        new IdQuery(queryString).webElement
-      }
-      catch {
-        case _ => new NameQuery(queryString).webElement
-      }
+      val target = tryQueries(queryString)(q => q.webElement)
       on(target)
     }
+    
+    def on(element: Element) {
+      element.underlying.click()
+    }
+  }
+  
+  def clickOn(element: WebElement) {
+    click on element
+  }
+  
+  def clickOn(query: Query)(implicit driver: WebDriver) {
+    click on query
+  }
+  
+  def clickOn(queryString: String)(implicit driver: WebDriver) {
+    click on queryString
+  }
+  
+  def clickOn(element: Element) {
+    click on element
   }
   
   def submit()(implicit driver: WebDriver) {
@@ -1769,8 +1781,11 @@ trait WebBrowser {
   def frame(index: Int) = new FrameIndexTarget(index)
   def frame(nameOrId: String) = new FrameNameOrIdTarget(nameOrId)
   def frame(element: WebElement) = new FrameWebElementTarget(element)
+  def frame(element: Element) = new FrameElementTarget(element)
   def frame(query: Query)(implicit driver: WebDriver) = new FrameWebElementTarget(query.webElement)
   def window(nameOrHandle: String) = new WindowTarget(nameOrHandle)
+  
+  def switchTo[T](target: SwitchTarget[T])(implicit driver: WebDriver): T = switch to target
   
   def goBack()(implicit driver: WebDriver) {
     driver.navigate.back()
@@ -1828,6 +1843,19 @@ trait WebBrowser {
       driver.manage.deleteAllCookies()
     }
   }
+
+  // TODO: Do we have tests for stack depth in these new, non-DSLish forms
+  def addCookie(name: String, value: String, path: String = "/", expiry: Date = null, domain: String = null, secure: Boolean = false)(implicit driver: WebDriver) {
+    add cookie (name, value, path, expiry, domain, secure)
+  }
+  
+  def deleteCookie(name: String)(implicit driver: WebDriver) {
+    delete cookie name
+  }
+  
+  def deleteAllCookies()(implicit driver: WebDriver) {
+    delete all cookies
+  }
   
   def isScreenshotSupported(implicit driver: WebDriver): Boolean = driver.isInstanceOf[TakesScreenshot]
   
@@ -1870,6 +1898,14 @@ trait WebBrowser {
           throw new UnsupportedOperationException("Screen capture is not support by " + driver.getClass.getName)
       }
     }
+  }
+  
+  def captureTo(fileName: String)(implicit driver: WebDriver) {
+    capture to fileName
+  }
+  
+  def setCaptureDir(targetDirPath: String) {
+    capture set targetDirPath  // TODO: Drop old form
   }
   
   def withScreenshot(fun: => Unit)(implicit driver: WebDriver) {

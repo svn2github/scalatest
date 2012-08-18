@@ -251,6 +251,16 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       click on partialLinkText("Click")
       click on tagName("a")
     }
+    it("should be able to click on Element") {
+      go to (host + "click.html")
+      val element = id("aLink").element
+      click on element
+    }
+    it("should be able to click on WebElement") {
+      go to (host + "click.html")
+      val webElement = id("aLink").webElement
+      click on webElement
+    }
   }
 
   describe("switch to") {
@@ -270,6 +280,11 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       switch to frame(id("frame1"))
       switch to window(win)
       switch to frame(id("frame2"))
+      
+      switch to window(win)
+      switch to frame(id("frame1").element)
+      switch to window(win)
+      switch to frame(id("frame2").element)
       
       switch to window(win)
       val caught1= intercept[TestFailedException] {
@@ -498,11 +513,11 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     }
     
     it("should go to web page by using Page and get its title correctly.") {
-      class IndexPage extends Page {
+      class RadioPage extends Page {
         val url = host + "radio.html"
       }
-      val indexPage = new IndexPage
-      go to indexPage
+      val radioPage = new RadioPage
+      go to radioPage
       title should be ("Radio Button")
     }
 
@@ -709,6 +724,34 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       }
     }
     
+    it("should create, read and delete cookie correctly using libraryish alternatives") {
+      goTo(host + "index.html")
+      
+      addCookie("name1", "value1")
+      cookie("name1").value should be ("value1")
+      
+      addCookie("name2", "value2")
+      cookie("name2").value should be ("value2")
+      
+      addCookie("name3", "value3")
+      cookie("name3").value should be ("value3")
+      
+      deleteCookie("name2")
+      intercept[TestFailedException] {
+        cookie("name2") should be (null)  // TODO: This should throw a TFE not return null
+      }
+      cookie("name1").value should be ("value1")
+      cookie("name3").value should be ("value3")
+      
+      deleteAllCookies()
+      intercept[TestFailedException] {
+        cookie("name1") should be (null)
+      }
+      intercept[TestFailedException] {
+        cookie("name3") should be (null)
+      }
+    }
+    
     it("should support implicitlyWait method") {
       implicitlyWait(Span(2, Seconds))
     }
@@ -718,6 +761,28 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       try {
         capture
         capture to ("MyScreenShot.png")
+        captureTo("MyScreenShot2.png")
+      }
+      catch {
+        case unsupported: UnsupportedOperationException => 
+          cancel(unsupported)
+      }
+    }
+    
+    it("should support setting capture target directory") {
+      go to "http://www.artima.com"
+      val tempDir = new File(System.getProperty("java.io.tmpdir"))
+      val targetDir1 = new File(tempDir, "scalatest-test-target1")
+      val targetDir2 = new File(tempDir, "scalatest-test-target2")
+      
+      try {
+        capture set targetDir1.getAbsolutePath // TODO: We should deprecate this syntax
+        capture to ("MyScreenShot.png")
+        new File(targetDir1, "MyScreenShot.png").exists should be (true)
+        
+        setCaptureDir(targetDir2.getAbsolutePath)
+        captureTo("MyScreenShot2.png")
+        new File(targetDir2, "MyScreenShot2.png").exists should be (true)
       }
       catch {
         case unsupported: UnsupportedOperationException => 
@@ -811,13 +876,26 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         
     // Some operation not supported in HtmlUnit driver, e.g. switch to alert.
     // Should be good enough to test the following dsl compiles.
-    ignore("should support switch") {
+    ignore("should support switch to") {
       switch to activeElement
       switch to alert
       switch to defaultContent
       switch to frame(0)
       switch to frame("name")
+      switch to frame(name("name"))
+      switch to frame(name("name").element)
       switch to window(windowHandle)
+    }
+    
+    ignore("should support switchTo") {
+      switchTo(activeElement)
+      switchTo(alert)
+      switchTo(defaultContent)
+      switchTo(frame(0))
+      switchTo(frame("name"))
+      switchTo(frame(name("name")))
+      switchTo(frame(name("name").element))
+      switchTo(window(windowHandle))
     }
   }
   
@@ -825,6 +903,115 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     it("should wrap null expiry in an option") {
       val cookie = new WrappedCookie(new Cookie("name", "value", "path", null))
       cookie.expiry should be (None)
+    }
+  }
+  
+  describe("goTo") {
+    it("should go to given url correctly") {
+      goTo(host + "index.html")
+      title should be ("Test Title")
+      goTo(host + "textfield.html")
+      title should be ("Text Field")
+    }
+    it("should go to given page correctly") {
+      class IndexPage extends Page {
+        val url = host + "index.html"
+      }
+      class TextFieldPage extends Page {
+        val url = host + "textfield.html"
+      }
+      val indexPage = new IndexPage
+      val textFieldPage = new TextFieldPage
+      goTo(indexPage)
+      title should be ("Test Title")
+      goTo(textFieldPage)
+      title should be ("Text Field")
+    }
+  }
+  
+  describe("clickOn") {
+    it("should throw TFE with valid stack depth if specified item not found") {
+      go to (host + "index.html")
+      val caught = intercept[TestFailedException] {
+        clickOn("unknown")
+      }
+      caught.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      caught.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+    }
+    it("should be able to clickOn element from all query methods") {
+      go to (host + "click.html")
+      clickOn(id("aLink"))
+      clickOn(name("aLinkName"))
+      clickOn(xpath("//html/body/a"))
+      clickOn(className("aClass"))
+      clickOn(cssSelector("a[id='aLink']"))
+      clickOn(linkText("Test Click"))
+      clickOn(partialLinkText("Click"))
+      clickOn(tagName("a"))
+    }
+    it("should be able to clickOn Element") {
+      go to (host + "click.html")
+      val element = id("aLink").element
+      clickOn(element)
+    }
+    it("should be able to click on WebElement") {
+      go to (host + "click.html")
+      val webElement = id("aLink").webElement
+      clickOn(webElement)
+    }
+  }
+  
+  describe("switchTo") {
+    it("should switch frame correctly and throw TFE with valid stack depth if specified frame not found") {
+      goTo(host + "frame.html")
+      val win = windowHandle
+      switchTo(frame("frame1"))
+      switchTo(window(win))
+      switchTo(frame("frame2"))
+      
+      switchTo(window(win))
+      switchTo(frame(0))
+      switchTo(window(win))
+      switchTo(frame(1))
+      
+      switchTo(window(win))
+      switchTo(frame(id("frame1")))
+      switchTo(window(win))
+      switchTo(frame(id("frame2")))
+      
+      switchTo(window(win))
+      switchTo(frame(id("frame1").element))
+      switchTo(window(win))
+      switchTo(frame(id("frame2").element))
+      
+      switchTo(window(win))
+      val caught1= intercept[TestFailedException] {
+        switchTo(frame("frame3"))
+      }
+      caught1.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      caught1.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      
+      val caught2 = intercept[TestFailedException] {
+        switch to frame(2)
+      }
+      caught2.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      caught2.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      
+      val caught3 = intercept[TestFailedException] {
+        switch to frame(id("text1"))
+      }
+      caught3.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      caught3.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+    }
+    it("should throw TFE with valid stack depth if specified window handle not found") {
+      goTo(host + "window.html")
+      val handle = windowHandle
+      switchTo(window(handle)) // should be ok
+      val caught = intercept[TestFailedException] {
+        switchTo(window("Something else"))
+      }
+      caught.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      caught.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
     }
   }
   
