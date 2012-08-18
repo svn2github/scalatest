@@ -694,6 +694,89 @@ import org.scalatest.ScreenshotCapturer
  * quit()
  * </pre>
  * 
+ * <a name="alternateForms"/>
+ * <h2>Alternate forms</h2>
+ * 
+ * <p>
+ * Although the operator notation form of statements such as &ldquo;<code>click on "q"</code>&rdquo; fits well with matcher statements
+ * like &ldquo;<code>title should be ("Cheese!")</code>&rdquo;, it is inconsistent
+ * the simple method call form of assertions. If you prefer, you can avoid operator notation
+ * and instead use alternatives that take the form of plain-old method calls. Here's an example:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * goTo("http://www.google.com")
+ * clickOn("q")
+ * textField("q").value = "Cheese!"
+ * submit()
+ * // Google's search is rendered dynamically with JavaScript.
+ * eventually(assert(title === "Cheese! - Google Search"))
+ * </pre>
+ * 
+ * <p>
+ * Here's a table showing the complete list of alternatives:
+ * </p>
+ *
+ * <table style="border-collapse: collapse; border: 1px solid black">
+ * <tr><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black"><strong>operator notation</strong></th><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black"><strong>method call</strong></th></tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>go to (host + "index.html")</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>goTo(host + "index.html")</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>click on "aButton"</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>clickOn("aButton")</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>switch to activeElement</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>switchTo(activeElement)</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>add cookie ("cookie_name", "cookie_value")</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>addCookie("cookie_name", "cookie_value")</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>delete cookie "cookie_name"</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>deleteCookie("cookie_name")</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>delete all cookies</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>deleteAllCookies()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>capture to "MyScreenShot"</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>captureTo("MyScreenShot")</code>
+ * </td>
+ * </tr>
+ * </table>
+ * 
  * @author Chua Chee Seng
  * @author Bill Venners
  */
