@@ -413,71 +413,85 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
   }
 
   describe("findAll") {
-    it("should return an empty IndexedSeq if specified item not found") {
+    it("should return an empty Iterator if specified item not found") {
       go to (host + "index.html")
-      findAll("something") should be (IndexedSeq.empty)
+      findAll("something").hasNext should be (false)
     }
-    it("should return a defined IndexedSeq[Element] containing an instance of TextField if specified item is found to be a text field") {
+    it("should return a defined Iterator[Element] containing an instance of TextField if specified item is found to be a text field") {
       go to (host + "find-textfield.html")
-      findAll("text1") match {
-        case IndexedSeq(textField: TextField) => 
+      val text1 = findAll("text1")
+      text1.hasNext should be (true)
+      text1.next match {
+        case textField: TextField => 
           textField.value should be ("value1")
         case other => 
-          fail("Expected IndexedSeq(element: TextField), but got: " + other)
+          fail("Expected TextField, but got: " + other)
       }
     }
-    it("should return a defined IndexedSeq[Element] containing an instance of TextArea if specified item is found to be a text area") {
+    it("should return a defined Iterator[Element] containing an instance of TextArea if specified item is found to be a text area") {
       go to (host + "find-textarea.html")
-      findAll("textarea1") match {
-        case IndexedSeq(textArea: TextArea) =>
+      val textarea1 = findAll("textarea1")
+      textarea1.hasNext should be (true)
+      textarea1.next match {
+        case textArea: TextArea =>
           textArea.text should be ("value1")
         case other =>
-          fail("Expected IndexedSeq(textArea: TextArea), but got: " + other)
+          fail("Expected TextArea, but got: " + other)
       }
     }
-    it("should return a defined IndexedSeq[Element] containing an instance of RadioButton if specified item is found to be a radio button") {
+    it("should return a defined Iterator[Element] containing an instance of RadioButton if specified item is found to be a radio button") {
       go to (host + "find-radio.html")
-      findAll("group1") match {
-        case IndexedSeq(radio: RadioButton) =>
+      val group1 = findAll("group1")
+      group1.hasNext should be (true)
+      group1.next match {
+        case radio: RadioButton =>
           radio.value should be ("value1")
         case other =>
-          fail("Expected IndexedSeq(radio: RadioButton), but got: " + other)
+          fail("Expected RadioButton, but got: " + other)
       }
     }
-    it("should return a defined IndexedSeq[Element] containing an instance of Checkbox if specified item is found to be a checkbox") {
+    it("should return a defined Iterator[Element] containing an instance of Checkbox if specified item is found to be a checkbox") {
       go to (host + "find-checkbox.html")
-      findAll("opt1") match {
-        case IndexedSeq(checkbox: Checkbox) =>
+      val opt1 = findAll("opt1")
+      opt1.hasNext should be (true)
+      opt1.next match {
+        case checkbox: Checkbox =>
           checkbox.value should be ("Option 1")
         case other =>
-          fail("Expected IndexedSeq(checkbox: Checkbox), but got: " + other)
+          fail("Expected Checkbox, but got: " + other)
       }
     }
-    it("should return a defined IndexedSeq[Element] containing an instance of SingleSel if specified item is found to be a single-selection list") {
+    it("should return a defined Iterator[Element] containing an instance of SingleSel if specified item is found to be a single-selection list") {
       go to (host + "find-select.html")
-      findAll("select1") match {
-        case IndexedSeq(singleSel: SingleSel) => 
+      val select1 = findAll("select1")
+      select1.hasNext should be (true)
+      select1.next match {
+        case singleSel: SingleSel => 
           singleSel.value should be ("option2")
         case other =>
-          fail("Expected IndexedSeq(singleSel: SingleSel), but got: " + other)
+          fail("Expected SingleSel, but got: " + other)
       }
     }
-    it("should return a defined IndexedSeq[Element] containing an instance of MultiSel if specified item is found to be a multiple-selection list") {
+    it("should return a defined Iterator[Element] containing an instance of MultiSel if specified item is found to be a multiple-selection list") {
       go to (host + "find-select.html")
-      findAll("select2") match {
-        case IndexedSeq(multiSel: MultiSel) => 
+      val select2 = findAll("select2")
+      select2.hasNext should be (true)
+      select2.next match {
+        case multiSel: MultiSel => 
           multiSel.values should be (IndexedSeq("option4", "option5"))
         case other =>
-          fail("Expected IndexedSeq(multiSel: MultiSel), but got: " + other)
+          fail("Expected MultiSel, but got: " + other)
       }
     }
-    it("should return a defined IndexedSeq[Element] containing an instance of Element if specified item is found but is not one of the items for which we have defined an Element subclass") {
+    it("should return a defined Iterator[Element] containing an instance of Element if specified item is found but is not one of the items for which we have defined an Element subclass") {
       go to (host + "image.html")
-      findAll("anImage") match {
-        case IndexedSeq(image: Element) =>
+      val anImage = findAll("anImage")
+      anImage.hasNext should be (true)
+      anImage.next match {
+        case image: Element =>
           image.tagName should be ("img")
         case other =>
-          fail("Expected IndexedSeq(image: Element), but got: " + other)  
+          fail("Expected Element, but got: " + other)  
       }
     }
   }
