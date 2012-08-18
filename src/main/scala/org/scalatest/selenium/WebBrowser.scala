@@ -698,9 +698,9 @@ import org.scalatest.ScreenshotCapturer
  * <h2>Alternate forms</h2>
  * 
  * <p>
- * Although the operator notation form of statements such as &ldquo;<code>click on "q"</code>&rdquo; fits well with matcher statements
- * like &ldquo;<code>title should be ("Cheese!")</code>&rdquo;, it is inconsistent
- * the simple method call form of assertions. If you prefer, you can avoid operator notation
+ * Although statements like &ldquo;<code>delete all cookies</code>&rdquo; fit well with matcher statements
+ * like &ldquo;<code>title should be ("Cheese!")</code>&rdquo;, they do not fit as well
+ * with the simple method call form of assertions. If you prefer, you can avoid operator notation
  * and instead use alternatives that take the form of plain-old method calls. Here's an example:
  * </p>
  *
