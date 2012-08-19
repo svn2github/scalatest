@@ -88,7 +88,7 @@ import _root_.java.util.concurrent.Callable
  * @author Josh Cough
  * @author Bill Venners
  */
-trait ConductorMethods extends AbstractStyle with Conductors { this: Suite =>
+trait ConductorMethods extends SuiteMixin with Conductors { this: Suite =>
 
   private val conductor = new AtomicReference[Conductor]()
 

@@ -17,7 +17,8 @@ package org.scalatest
 
 import Suite.getSimpleNameOfAnObjectsClass
 
-trait NewSuite { thisSuite =>
+// Scala version o fwhat I'm thinking JSuite might have in Java
+private[scalatest] trait JSuite { thisSuite =>
 
   /**
    * Runs this suite of tests.
@@ -28,7 +29,7 @@ trait NewSuite { thisSuite =>
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
-  def run(testName: Option[String], args: Args)
+  def runJSuite(testName: Option[String], args: Args) // Will be testName: nullable String, args: JArgs
 
   /**
   * A <code>Set</code> of test names. If this <code>Suite</code> contains no tests, this method returns an empty <code>Set</code>.
@@ -39,7 +40,7 @@ trait NewSuite { thisSuite =>
   * implement this method and return test names in either a defined or undefined order.
   * </p>
   */
-  def testNames: Set[String]
+  def getTestNames(): java.util.Set[String]
 
   /**
    * A <code>Map</code> whose keys are <code>String</code> tag names with which tests in this <code>Suite</code> are marked, and
@@ -52,19 +53,19 @@ trait NewSuite { thisSuite =>
    * returned <code>Map</code>.
    * </p>
    */
-  def tags: Map[String, Set[String]]
+  def getTags(): java.util.Map[String, java.util.Set[String]]
 
   /**
    * The total number of tests that are expected to run when this <code>Suite</code>'s <code>run</code> method is invoked.
    *
    * @param filter a <code>Filter</code> with which to filter tests to count based on their tags
    */
-  def expectedTestCount(filter: Filter): Int
+  def getExpectedTestCount(filter: Filter): Int // Will be JFilter
   
   /**
    * The fully qualified name of the class that can be used to rerun this suite.
    */
-  def rerunner: Option[String]
+  def getRerunner: Option[String] // Will return a nullable String
   
   /**
    * This suite's style name.
@@ -75,7 +76,8 @@ trait NewSuite { thisSuite =>
    * the project.
    * </p>
    */
-  val styleName: String
+  def getStyleName(): String // Actually, not sure we need this over in the JSuite area Maybe this will just not exist over there.
+  // But it might make it simpler to be consistent.
 
   /**
    * A user-friendly suite name for this <code>Suite</code>.
@@ -90,7 +92,7 @@ trait NewSuite { thisSuite =>
    *
    * @return this <code>Suite</code> object's suite name.
    */
-  def suiteName: String = getSimpleNameOfAnObjectsClass(thisSuite)
+  def getSuiteName(): String = getSimpleNameOfAnObjectsClass(thisSuite)
 
   /**
    * A string ID for this <code>Suite</code> that is intended to be unique among all suites reported during a run.
@@ -116,44 +118,6 @@ trait NewSuite { thisSuite =>
    *
    * @return this <code>Suite</code> object's ID.
    */
-  def suiteId = thisSuite.getClass.getName
-
-  /**
-   * <strong>This overloaded form of <code>run</code> has been deprecated and will be removed in a future
-   * version of ScalaTest. Please use the <code>run</code> method that takes two parameters instead.</strong>
-   *
-   * <p>
-   * This final implementation of this method constructs a <code>Args</code> instance from the passed
-   * <code>reporter</code>, <code>stopper</code>, <code>filter</code>, <code>configMap</code>, <code>distributor</code>,
-   * and <code>tracker</code>, and invokes the overloaded <code>run</code> method that takes two parameters,
-   * passing in the specified <code>testName</code> and the newly constructed <code>Args</code>. This method
-   * implementation enables existing code that called into the old <code>run</code> method to continue to work
-   * during the deprecation cycle. Subclasses and subtraits that overrode this method, however, will need to
-   * be changed to use the new two-parameter form instead.
-   * </p>
-   *
-   * @param testName an optional name of one test to execute. If <code>None</code>, all relevant tests should be executed.
-   *                 I.e., <code>None</code> acts like a wildcard that means execute all relevant tests in this <code>Suite</code>.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param filter a <code>Filter</code> with which to filter tests based on their tags
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by the executing <code>Suite</code> of tests.
-   * @param distributor an optional <code>Distributor</code>, into which to put nested <code>Suite</code>s to be executed
-   *              by another entity, such as concurrently by a pool of threads. If <code>None</code>, nested <code>Suite</code>s will be executed sequentially.
-   * @param tracker a <code>Tracker</code> tracking <code>Ordinal</code>s being fired by the current thread.
-   *
-   * @throws NullPointerException if any passed parameter is <code>null</code>.
-   */
-  final def run(
-    testName: Option[String],
-    reporter: Reporter,
-    stopper: Stopper,
-    filter: Filter,
-    configMap: Map[String, Any],
-    distributor: Option[Distributor],
-    tracker: Tracker
-  ) {  // TODO: test that this grabs chosenStyles out of config map
-    run(testName, Args(reporter, stopper, filter, configMap, distributor, tracker, Set.empty))
-  } 
+  def getSuiteId(): String = thisSuite.getClass.getName
 }
 

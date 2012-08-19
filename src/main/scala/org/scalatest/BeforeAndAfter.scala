@@ -113,7 +113,7 @@ import java.util.concurrent.atomic.AtomicReference
  *
  * @author Bill Venners
  */
-trait BeforeAndAfter extends AbstractStyle { this: Suite =>
+trait BeforeAndAfter extends SuiteMixin { this: Suite =>
 
   private val beforeFunctionAtomic = new AtomicReference[Option[() => Any]](None)
   private val afterFunctionAtomic = new AtomicReference[Option[() => Any]](None)

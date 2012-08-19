@@ -20,7 +20,7 @@ package org.scalatest
  * <code>runTests</code>, and <code>runTest</code>.
  *
  * <p>
- * The signatures of these methods, defined in trait <a href="AbstractStyle.html"><code>AbstractStyle</code></a>, are:
+ * The signatures of these methods, defined in trait <a href="Suite.html"><code>Suite</code></a>, are:
  * </p>
  *
  * <pre>

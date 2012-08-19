@@ -135,7 +135,7 @@ package org.scalatest
  *
  * @author Bill Venners
  */
-trait BeforeAndAfterEach extends AbstractStyle {
+trait BeforeAndAfterEach extends SuiteMixin {
 
   this: Suite =>
 

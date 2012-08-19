@@ -80,7 +80,7 @@ package org.scalatest
  * 
  * @author Bill Venners
  */
-trait OneInstancePerTest extends AbstractStyle {
+trait OneInstancePerTest extends SuiteMixin {
   
   this: Suite =>
 

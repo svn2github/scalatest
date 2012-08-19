@@ -355,7 +355,7 @@ class ConductorSuite extends FunSuite with ShouldMatchers with Conductors with S
 
   test("ConductorMethods is a stackable trait that delegates test function execution to withFixture(NoArgTest)") {
     var calledSuperWithFixtureNoArgTest = false
-    trait SuperTrait extends AbstractStyle { this: Suite =>
+    trait SuperTrait extends SuiteMixin { this: Suite =>
       abstract override def withFixture(test: NoArgTest) {
         calledSuperWithFixtureNoArgTest = true
         super.withFixture(test)

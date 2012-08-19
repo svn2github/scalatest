@@ -737,7 +737,7 @@ import Suite.autoTagClassAnnotations
  * Although the get-fixture method, fixture-context object, and <code>OneInstancePerTest</code> approaches take care of setting up a fixture at the beginning of each
  * test, they don't address the problem of cleaning up a fixture at the end of the test. If you just need to perform a side-effect at the beginning or end of
  * a test, and don't need to actually pass any fixture objects into the test, you can override <code>withFixture(NoArgTest)</code>, one of ScalaTest's
- * lifecycle methods defined in trait <a href="AbstractStyle.html"><code>AbstractStyle</code></a>.
+ * lifecycle methods defined in trait <a href="Suite.html"><code>Suite</code></a>.
  * </p>
  *
  * <p>
@@ -1097,7 +1097,7 @@ import Suite.autoTagClassAnnotations
  * import org.scalatest._
  * import collection.mutable.ListBuffer
  * 
- * trait Builder extends AbstractStyle { this: Suite =&gt;
+ * trait Builder extends SuiteMixin { this: Suite =&gt;
  * 
  *   val builder = new StringBuilder
  * 
@@ -1108,7 +1108,7 @@ import Suite.autoTagClassAnnotations
  *   }
  * }
  * 
- * trait Buffer extends AbstractStyle { this: Suite =&gt;
+ * trait Buffer extends SuiteMixin { this: Suite =&gt;
  * 
  *   val buffer = new ListBuffer[String]
  * 

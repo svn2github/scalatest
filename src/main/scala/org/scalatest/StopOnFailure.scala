@@ -15,7 +15,7 @@
  */
 package org.scalatest
 
-private[scalatest] trait StopOnFailure extends AbstractStyle { this: Suite =>
+private[scalatest] trait StopOnFailure extends SuiteMixin { this: Suite =>
 
  // Needs to override runTest, and need to change Stopper to give
  // it a requestStop() method.

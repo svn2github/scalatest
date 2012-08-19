@@ -20,10 +20,10 @@ package org.scalatest
  * be overridden in stackable modification traits.
  *
  * <p>
- * The main purpose of <code>AbstractStyle</code> is to differentiate core <code>Suite</code>
+ * The main purpose of <code>SuiteMixin</code> is to differentiate core <code>Suite</code>
  * traits, such as <code>Suite</code>, <code>FunSuite</code>, and <code>FunSpec</code> from stackable
  * modification traits for <code>Suite</code>s such as <code>BeforeAndAfterEach</code>, <code>OneInstancePerTest</code>,
- * and <code>SequentialNestedSuiteExecution</code>. Because these stackable traits extend <code>AbstractStyle</code>
+ * and <code>SequentialNestedSuiteExecution</code>. Because these stackable traits extend <code>SuiteMixin</code>
  * instead of <code>Suite</code>, you can't define a suite by simply extending one of the stackable traits:
  * </p>
  *
@@ -42,7 +42,7 @@ package org.scalatest
  *
  * @author Bill Venners
  */
-trait AbstractStyle { this: Suite =>
+trait SuiteMixin { this: Suite =>
 
   /**
    * Runs the passed test function with a fixture established by this method.
@@ -156,52 +156,5 @@ trait AbstractStyle { this: Suite =>
    * </p>
    */
   val styleName: String
-
-
-  /**
-   * <strong>This overloaded form of <code>run</code> has been deprecated and will be removed in a future
-   * version of ScalaTest. Please use the <code>run</code> method that takes two parameters instead.</strong>
-   *
-   * <p>
-   * This final implementation of this method constructs a <code>Args</code> instance from the passed
-   * <code>reporter</code>, <code>stopper</code>, <code>filter</code>, <code>configMap</code>, <code>distributor</code>,
-   * and <code>tracker</code>, and invokes the overloaded <code>run</code> method that takes two parameters,
-   * passing in the specified <code>testName</code> and the newly constructed <code>Args</code>. This method
-   * implementation enables existing code that called into the old <code>run</code> method to continue to work
-   * during the deprecation cycle. Subclasses and subtraits that overrode this method, however, will need to
-   * be changed to use the new two-parameter form instead.
-   * </p>
-   *
-   * @param testName an optional name of one test to execute. If <code>None</code>, all relevant tests should be executed.
-   *                 I.e., <code>None</code> acts like a wildcard that means execute all relevant tests in this <code>Suite</code>.
-   * @param reporter the <code>Reporter</code> to which results will be reported
-   * @param stopper the <code>Stopper</code> that will be consulted to determine whether to stop execution early.
-   * @param filter a <code>Filter</code> with which to filter tests based on their tags
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by the executing <code>Suite</code> of tests.
-   * @param distributor an optional <code>Distributor</code>, into which to put nested <code>Suite</code>s to be executed
-   *              by another entity, such as concurrently by a pool of threads. If <code>None</code>, nested <code>Suite</code>s will be executed sequentially.
-   * @param tracker a <code>Tracker</code> tracking <code>Ordinal</code>s being fired by the current thread.
-   *
-   * @throws NullPointerException if any passed parameter is <code>null</code>.
-   */
-  final def run(
-    testName: Option[String],
-    reporter: Reporter,
-    stopper: Stopper,
-    filter: Filter,
-    configMap: Map[String, Any],
-    distributor: Option[Distributor],
-    tracker: Tracker
-  ) {  // TODO: test that this grabs chosenStyles out of config map
-    run(testName, Args(reporter, stopper, filter, configMap, distributor, tracker, Set.empty))
-  } 
 }
-
-/**
- * <strong>AbstractSuite has been deprecated and will be removed in a future version of ScalaTest. Please change all occurances of
- * AbstractSuite to AbstractStyle. (This is just a name change.) Also, if you were defining a stackable trait with Suite as
- * the self-type, please change <code>this: Suite =&gt;</code> to <code>this: Style =&gt;</code>.</strong>
- */
-@deprecated("Please use AbstractStyle instead, and change any Suite self type to a Style self type. For more info, see Scaladoc for AbstractSuite.")
-trait AbstractSuite extends AbstractStyle { this: Suite => }
 
