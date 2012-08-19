@@ -2307,6 +2307,15 @@ trait Matchers extends Assertions { matchers =>
     }
 
   /**
+   * This implicit conversion method converts an object with a parameterless <code>length</code> method of type <code>Int</code> to a
+   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
+  implicit def convertLengthParameterlessMethodToIntLengthWrapper(o: { def length: Int }): LengthWrapper =
+    new LengthWrapper {
+      def length: Long = o.length
+    }
+   */
+
+  /**
    * This implicit conversion method converts an object with a <code>getLength</code> field of type <code>Int</code> to a
    * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
    */
@@ -2323,6 +2332,15 @@ trait Matchers extends Assertions { matchers =>
     new LengthWrapper {
       def length: Long = o.getLength()
     }
+
+  /**
+   * This implicit conversion method converts an object with a parameterless <code>getLength</code> method of type <code>Int</code> to a
+   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
+  implicit def convertGetLengthParameterlessMethodToIntLengthWrapper(o: { def getLength: Int }): LengthWrapper =
+    new LengthWrapper {
+      def length: Long = o.getLength
+    }
+   */
 
   /**
    * This implicit conversion method converts an object with a <code>length</code> field of type <code>Long</code> to a
@@ -2343,6 +2361,15 @@ trait Matchers extends Assertions { matchers =>
     }
 
   /**
+   * This implicit conversion method converts an object with a parameterless <code>length</code> method of type <code>Long</code> to a
+   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
+  implicit def convertLengthParameterlessMethodToLongLengthWrapper(o: { def length: Long }): LengthWrapper =
+    new LengthWrapper {
+      def length: Long = o.length
+    }
+   */
+
+  /**
    * This implicit conversion method converts an object with a <code>getLength</code> field of type <code>Long</code> to a
    * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
    */
@@ -2359,6 +2386,15 @@ trait Matchers extends Assertions { matchers =>
     new LengthWrapper {
       def length: Long = o.getLength()
     }
+
+  /**
+   * This implicit conversion method converts an object with a parameterless <code>getLength</code> method of type <code>Long</code> to a
+   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
+  implicit def convertGetLengthParameterlessMethodToLongLengthWrapper(o: { def getLength: Long }): LengthWrapper =
+    new LengthWrapper {
+      def length: Long = o.getLength
+    }
+   */
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -2390,7 +2426,7 @@ trait Matchers extends Assertions { matchers =>
 
   /**
    * This implicit conversion method converts an object with a <code>size</code> field of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
    */
   implicit def convertSizeFieldToIntSizeWrapper(o: { val size: Int }): SizeWrapper =
     new SizeWrapper {
@@ -2399,7 +2435,7 @@ trait Matchers extends Assertions { matchers =>
 
   /**
    * This implicit conversion method converts an object with a <code>size</code> method of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
    */
   implicit def convertSizeMethodToIntSizeWrapper(o: { def size(): Int }): SizeWrapper =
     new SizeWrapper {
@@ -2407,8 +2443,17 @@ trait Matchers extends Assertions { matchers =>
     }
 
   /**
+   * This implicit conversion method converts an object with a parameterless <code>size</code> method of type <code>Int</code> to a
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+  implicit def convertSizeParameterlessMethodToIntSizeWrapper(o: { def size: Int }): SizeWrapper =
+    new SizeWrapper {
+      def size: Long = o.size
+    }
+   */
+
+  /**
    * This implicit conversion method converts an object with a <code>getSize</code> field of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
    */
   implicit def convertGetSizeFieldToIntSizeWrapper(o: { val getSize: Int }): SizeWrapper =
     new SizeWrapper {
@@ -2417,7 +2462,7 @@ trait Matchers extends Assertions { matchers =>
 
   /**
    * This implicit conversion method converts an object with a <code>getSize</code> method of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
    */
   implicit def convertGetSizeMethodToIntSizeWrapper(o: { def getSize(): Int }): SizeWrapper =
     new SizeWrapper {
@@ -2425,8 +2470,17 @@ trait Matchers extends Assertions { matchers =>
     }
 
   /**
+   * This implicit conversion method converts an object with a parameterless <code>getSize</code> method of type <code>Int</code> to a
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+  implicit def convertGetSizeParameterlessMethodToIntSizeWrapper(o: { def getSize: Int }): SizeWrapper =
+    new SizeWrapper {
+      def size: Long = o.getSize
+    }
+   */
+
+  /**
    * This implicit conversion method converts an object with a <code>size</code> field of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
    */
   implicit def convertSizeFieldToLongSizeWrapper(o: { val size: Long }): SizeWrapper =
     new SizeWrapper {
@@ -2435,7 +2489,7 @@ trait Matchers extends Assertions { matchers =>
 
   /**
    * This implicit conversion method converts an object with a <code>size</code> method of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
    */
   implicit def convertSizeMethodToLongSizeWrapper(o: { def size(): Long }): SizeWrapper =
     new SizeWrapper {
@@ -2443,8 +2497,17 @@ trait Matchers extends Assertions { matchers =>
     }
 
   /**
+   * This implicit conversion method converts an object with a parameterless <code>size</code> method of type <code>Long</code> to a
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+  implicit def convertSizeParameterlessMethodToLongSizeWrapper(o: { def size: Long }): SizeWrapper =
+    new SizeWrapper {
+      def size: Long = o.size
+    }
+   */
+
+  /**
    * This implicit conversion method converts an object with a <code>getSize</code> field of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
    */
   implicit def convertGetSizeFieldToLongSizeWrapper(o: { val getSize: Long }): SizeWrapper =
     new SizeWrapper {
@@ -2453,12 +2516,21 @@ trait Matchers extends Assertions { matchers =>
 
   /**
    * This implicit conversion method converts an object with a <code>getSize</code> method of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
    */
   implicit def convertGetSizeMethodToLongSizeWrapper(o: { def getSize(): Long }): SizeWrapper =
     new SizeWrapper {
       def size: Long = o.getSize()
     }
+
+  /**
+   * This implicit conversion method converts an object with a parameterless <code>getSize</code> method of type <code>Long</code> to a
+   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
+  implicit def convertGetSizeParameterlessMethodToLongSizeWrapper(o: { def getSize: Long }): SizeWrapper =
+    new SizeWrapper {
+      def size: Long = o.getSize
+    }
+   */
  
   // This guy is generally done through an implicit conversion from a symbol. It takes that symbol, and 
   // then represents an object with an apply method. So it gives an apply method to symbols.

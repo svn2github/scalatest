@@ -466,7 +466,7 @@ private[scalatest] class DashboardReporter(directory: String,
         }
       }
       slowRecords =
-        slowRecords.sort((a, b) => a.percentSlower < b.percentSlower).take(20)
+        slowRecords.sortBy(r => r.percentSlower).take(20)
 
       toXml
     }

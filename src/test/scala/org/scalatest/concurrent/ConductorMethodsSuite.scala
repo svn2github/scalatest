@@ -240,7 +240,7 @@ class ConductorMethodsSuite extends FunSuite with ConductorMethods with ShouldMa
     thread {
       val t2 = thread { waitForBeat(2) }
       waitForBeat(1)
-      t2.getThreadGroup should be (currentThread.getThreadGroup) // Got: java.lang.ThreadGroup[name=Orchestra,maxpri=10] was not null
+      t2.getThreadGroup should be (Thread.currentThread.getThreadGroup) // Got: java.lang.ThreadGroup[name=Orchestra,maxpri=10] was not null
     }
   }
 

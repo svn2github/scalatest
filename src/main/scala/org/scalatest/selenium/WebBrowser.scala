@@ -1752,7 +1752,7 @@ trait WebBrowser {
       f(IdQuery(queryString))
     }
     catch {
-      case _ => f(NameQuery(queryString))
+      case _: Throwable => f(NameQuery(queryString))
     }
   }
   

@@ -274,7 +274,7 @@ trait Timeouts {
       result
     }
     catch {
-      case t => 
+      case t: Throwable => 
         timer.cancel() // Duplicate code could be factored out I think. Maybe into a finally? Oh, not that doesn't work. So a method.
         if(task.timedOut) {
           if (task.needToResetInterruptedStatus)

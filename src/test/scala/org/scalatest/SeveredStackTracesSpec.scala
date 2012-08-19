@@ -37,7 +37,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("fail() didn't produce a file name and line number string: " + e.failedCodeFileNameAndLineNumberString, e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("fail() didn't produce a TestFailedException", e)
       }
     }
@@ -55,7 +55,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("fail(\"some message\") didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("fail(\"some message\") didn't produce a TestFailedException", e)
       }
     }
@@ -73,7 +73,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("fail(throwable) didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("fail(throwable) didn't produce a TestFailedException", e)
       }
     }
@@ -91,7 +91,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("fail(\"some message\", throwable) didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("fail(\"some message\", throwable) didn't produce a TestFailedException", e)
       }
     }
@@ -109,7 +109,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("assert(false) didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("assert(false) didn't produce a TestFailedException", e)
       }
     }
@@ -127,7 +127,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("assert(false, \"some message\") didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("assert(false, \"some message\") didn't produce a TestFailedException", e)
       }
     }
@@ -145,7 +145,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("assert(1 === 2) didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("assert(1 === 2) didn't produce a TestFailedException", e)
       }
     }
@@ -163,7 +163,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("assert(1 === 2, \"some message\") didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("assert(1 === 2, \"some message\") didn't produce a TestFailedException", e)
       }
     }
@@ -181,7 +181,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("expectResult(1) { 2 } didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("expectResult(1) { 2 } didn't produce a TestFailedException", e)
       }
     }
@@ -199,7 +199,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("expectResult(1, \"some message\") { 2 } didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("expectResult(1, \"some message\") { 2 } didn't produce a TestFailedException", e)
       }
     }
@@ -217,7 +217,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("intercept[IllegalArgumentException] {} didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("intercept[IllegalArgumentException] {} didn't produce a TestFailedException", e)
       }
     }
@@ -235,7 +235,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("intercept[IllegalArgumentException] { throw new RuntimeException } didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("intercept[IllegalArgumentException] { throw new RuntimeException } didn't produce a TestFailedException", e)
       }
     }
@@ -255,7 +255,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("1 should be === 2 didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (4)
-        case e =>
+        case e: Throwable =>
           fail("1 should be === 2 didn't produce a TestFailedException", e)
       }
     }
@@ -275,7 +275,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("evaluating {} should produce [IllegalArgumentException] didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (3)
-        case e =>
+        case e: Throwable =>
           fail("evaluating {} should produce [IllegalArgumentException] didn't produce a TestFailedException", e)
       }
     }
@@ -293,7 +293,7 @@ class SeveredStackTracesSpec extends FunSpec with ShouldMatchers with SeveredSta
             case None => fail("evaluating { throw new RuntimeException } should produce [IllegalArgumentException] didn't produce a file name and line number string", e)
           }
           e.failedCodeStackDepth should equal (3)
-        case e =>
+        case e: Throwable =>
           fail("evaluating { throw new RuntimeException } should produce [IllegalArgumentException] didn't produce a TestFailedException", e)
       }
     }

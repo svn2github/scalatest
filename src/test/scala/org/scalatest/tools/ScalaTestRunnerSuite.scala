@@ -132,7 +132,7 @@ import org.scalatools.testing.{Event, EventHandler, Result, Logger, Runner => Te
     val framework = new ScalaTestFramework
 
     val runner: TestingRunner = {
-      framework.testRunner(currentThread.getContextClassLoader, Array(new TestLogger))
+      framework.testRunner(Thread.currentThread.getContextClassLoader, Array(new TestLogger))
     }
 
     val fingerprint = {

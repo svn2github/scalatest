@@ -45,7 +45,7 @@ class TableDrivenPropertyCheckFailedExceptionSpec extends FunSpec with ShouldMat
             case Some(s) => s should equal ("TableDrivenPropertyCheckFailedExceptionSpec.scala:" + (thisLineNumber - 5))
             case None => fail("A table-driven property check didn't produce a file name and line number string", e)
           }
-        case e =>
+        case e: Throwable =>
           fail("forAll (examples) { (a, b) => a should be < b } didn't produce a TableDrivenPropertyCheckFailedException", e)
       }
     }
@@ -69,7 +69,7 @@ class TableDrivenPropertyCheckFailedExceptionSpec extends FunSpec with ShouldMat
               case Some(s) => s should equal ("TableDrivenPropertyCheckFailedExceptionSpec.scala:" + (thisLineNumber - 5))
               case None => fail("A table-driven property check didn't produce a file name and line number string", e)
             }
-          case e =>
+          case e: Throwable =>
             fail("forAll (examples) { (a, b) => a should be < b } didn't produce a TableDrivenPropertyCheckFailedException", e)
         }
       }

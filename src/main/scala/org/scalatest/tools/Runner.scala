@@ -1323,7 +1323,7 @@ object Runner {
         case "-a" =>
           if (it.hasNext) {
             def isValidInt(text: String): Boolean = 
-              try { text.toInt; true } catch { case _ => false }
+              try { text.toInt; true } catch { case _: Throwable => false }
 
             val number = it.next
             if (!(isValidInt(number)))
@@ -1363,7 +1363,7 @@ object Runner {
                 it.next.toInt 
               } 
               catch { 
-                case _ => 
+                case _: Throwable => 
                   throw new IllegalArgumentException("port number must be an integer")
               }
             }

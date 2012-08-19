@@ -295,7 +295,7 @@ final class Conductor {
   private final val threadNames = new CopyOnWriteArrayList[String]()
 
   // the main test thread
-  private final val mainThread = currentThread
+  private final val mainThread = Thread.currentThread
 
   /**
    * Creates a new thread that will execute the specified function.
@@ -365,7 +365,7 @@ final class Conductor {
         // go
         f()
       } catch {
-        case t =>
+        case t: Throwable =>
           if (firstExceptionThrown.isEmpty) {
             // The mainThread is likely joined to some test thread, so it needs to be awakened. If it
             // is joined to this thread, it will wake up shortly because this thread is about to die
@@ -425,7 +425,7 @@ final class Conductor {
    */
   def whenFinished(fun: => Unit) {
 
-    if (currentThread != mainThread)
+    if (Thread.currentThread != mainThread)
       throw new NotAllowedException(Resources("whenFinishedCanOnlyBeCalledByMainThread"), getStackDepthFun("Conductor.scala", "whenFinished"))
 
     if (conductingHasBegun)

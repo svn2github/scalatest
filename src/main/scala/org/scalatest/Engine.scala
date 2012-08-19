@@ -268,7 +268,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                            else
                              Vector.empty)
         reportTestFailed(theSuite, report, e, testName, theTest.testText, None, recordEvents, theSuite.rerunner, tracker, durationToReport, getIndentedTextForTest(theTest.testText, theTest.indentationLevel, includeIcon),  Some(SeeStackDepthException))
-      case e => throw e
+      case e: Throwable => throw e
     }
     finally {
       /*messageRecorderForThisTest.fireRecordedMessages(testWasPending, testWasCanceled)

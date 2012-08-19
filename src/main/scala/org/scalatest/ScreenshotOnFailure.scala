@@ -56,7 +56,7 @@ private[scalatest] trait ScreenshotOnFailure extends SuiteMixin { this: Suite wi
       case e: exceptions.TestFailedException => 
         try captureScreenshot(screenshotDir)
         catch {
-          case innerE =>
+          case innerE: Throwable =>
             Console.err.println("Unable to capture screenshot to " + screenshotDir)
             innerE.printStackTrace(Console.err)
         }

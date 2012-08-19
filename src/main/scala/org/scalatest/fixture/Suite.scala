@@ -451,7 +451,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
-      case e => throw e
+      case e: Throwable => throw e
     }
   }
 

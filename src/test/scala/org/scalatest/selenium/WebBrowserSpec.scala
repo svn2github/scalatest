@@ -805,7 +805,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     }
     
     it("isScreenshotSupported should return false for HtmlUnitDriver") {
-      val driver = try new HtmlUnitDriver catch { case e => cancel(e) }
+      val driver = try new HtmlUnitDriver catch { case e: Throwable => cancel(e) }
       try isScreenshotSupported(driver) should be (false)
       finally close()(driver)
     }
@@ -814,7 +814,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       val driver = try {
         new FirefoxDriver(new FirefoxProfile())
       }
-      catch { case e => cancel(e) }
+      catch { case e: Throwable => cancel(e) }
       try isScreenshotSupported(driver) should be (true)
       finally close()(driver)
     }
@@ -830,19 +830,19 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
        [scalatest] Driver info: driver.version: SafariDriver (WebBrowserSpec.scala:732)
     */
     ignore("isScreenshotSupported should return true for SafariDriver") {
-      val driver = try new SafariDriver catch { case e => cancel(e) }
+      val driver = try new SafariDriver catch { case e: Throwable => cancel(e) }
       try isScreenshotSupported(driver) should be (true)
       finally close()(driver)
     }
   
     it("isScreenshotSupported should return true for ChromeDriver") {
-      val driver = try new ChromeDriver catch { case e => cancel(e) }
+      val driver = try new ChromeDriver catch { case e: Throwable => cancel(e) }
       try isScreenshotSupported(driver) should be (true)
       finally close()(driver)
     }
   
     it("isScreenshotSupported should return true for InternetExplorerDriver") {
-      val driver = try new InternetExplorerDriver catch { case e => cancel(e) }
+      val driver = try new InternetExplorerDriver catch { case e: Throwable => cancel(e) }
       try isScreenshotSupported(driver) should be (true)
       finally close()(driver)
     }

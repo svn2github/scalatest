@@ -1,4 +1,4 @@
-package org.scalatest.concurrent
+/*package org.scalatest.concurrent
 
 import akka.dispatch.{Future => FutureOfAkka}
 import org.scalatest.exceptions.TestFailedException
@@ -86,4 +86,4 @@ private[scalatest] trait AkkaFutures extends Futures {
         }
       }
     }
-}
+}*/

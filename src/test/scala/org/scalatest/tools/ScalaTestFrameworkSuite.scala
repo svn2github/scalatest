@@ -52,8 +52,8 @@ class ScalaTestFrameworkSuite extends FunSuite{
     import framework.ScalaTestRunner
 
     val loggers: Array[Logger] = Array(new TestLogger)
-    val runner = framework.testRunner(currentThread.getContextClassLoader, loggers).asInstanceOf[ScalaTestRunner]
-    assert(runner.testLoader == currentThread.getContextClassLoader)
+    val runner = framework.testRunner(Thread.currentThread.getContextClassLoader, loggers).asInstanceOf[ScalaTestRunner]
+    assert(runner.testLoader == Thread.currentThread.getContextClassLoader)
     assert(runner.loggers === loggers)
   }
 

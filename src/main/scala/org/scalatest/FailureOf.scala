@@ -66,7 +66,7 @@ trait FailureOf {
       None                                        
     }                                             
     catch {                                       
-      case e =>
+      case e: Throwable =>
         if (!Suite.anErrorThatShouldCauseAnAbort(e))
           Some(e)                           
         else
