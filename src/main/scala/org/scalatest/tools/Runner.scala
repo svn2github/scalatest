@@ -673,6 +673,7 @@ object Runner {
    * Runs a suite of tests, with optional GUI. See the main documentation for this singleton object for the details.
    */
   def main(args: Array[String]) {
+    // println("FOR DEBUGGING, THESE ARE THE ARGS PASSED TO main(): " + args.mkString(" "))
     val result = 
       if (args.contains("-v") || args.contains("--version")) {
         val version = Resources("AppVersion")
@@ -700,6 +701,7 @@ object Runner {
    * @return true if all tests were executed and passed.
    */
   def run(args: Array[String]): Boolean = {
+    // println("FOR DEBUGGING, THESE ARE THE ARGS PASSED TO run(): " + args.mkString(" "))
     runOptionallyWithPassFailReporter(args, true)
   }
   
@@ -1924,8 +1926,8 @@ object Runner {
             !isAccessibleSuite(className, loader) && !isRunnable(className, loader)
           }
           if (!unrunnableList.isEmpty) {
-            val names = for (className <- unrunnableList) yield " " + className
-            dispatch(RunAborted(tracker.nextOrdinal(), Resources("nonSuite") + names, None))
+            val names = for (suiteParam <- unrunnableList) yield " " + suiteParam.className
+            dispatch(RunAborted(tracker.nextOrdinal(), Resources("nonSuite") + names.mkString(", "), None))
             true
           }
           else {
@@ -1938,11 +1940,11 @@ object Runner {
             true
           }
         }
-  
+
       if (!loadProblemsExist) {
-        
+
         case class SuiteConfig(suite: Suite, dynaTags: DynaTags, requireSelectedTag: Boolean, excludeNestedSuites: Boolean)
-        
+
         try {
           val namedSuiteInstances: List[SuiteConfig] =
             for (suiteParam <- suitesList)
