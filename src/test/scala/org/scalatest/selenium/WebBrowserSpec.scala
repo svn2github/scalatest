@@ -541,16 +541,16 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
 
       textField("text1").value should be ("")                   
                                                                 // textField("text1") should have ('value(""), 'attribute(""))
-      textField("text1").attribute("value") should be ("")           // textField("text1").attribute("value") should be ("")    // ok as is
+      textField("text1").attribute("value") should be (Some(""))           // textField("text1").attribute("value") should be ("")    // ok as is
       textField("text1").value = "value 1"                          // set textField "text1" to "value 1"
       textField("text1").value should be ("value 1")              // textField("text1").text should be ("value 1")
-      textField("text1").attribute("value") should be ("value 1")    // textField("text1").attribute("value") should be ("value 1")
+      textField("text1").attribute("value") should be (Some("value 1"))    // textField("text1").attribute("value") should be ("value 1")
 
       textField("text2").value should be ("")
-      textField("text2").attribute("value") should be ("")
+      textField("text2").attribute("value") should be (Some(""))
       textField("text2").value = "value 2"
       textField("text2").value should be ("value 2")
-      textField("text2").attribute("value") should be ("value 2")
+      textField("text2").attribute("value") should be (Some("value 2"))
     }
     
     it("should get and set text area value correctly.") {
@@ -558,16 +558,16 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       title should be ("Text Area")
       
       textArea("area1").value should be ("")
-      textArea("area1").attribute("value") should be ("")
+      textArea("area1").attribute("value") should be (Some(""))
       textArea("area1").value = "area 1 - line 1\narea 1 - line 2"
       textArea("area1").value should be ("area 1 - line 1\narea 1 - line 2")
-      textArea("area1").attribute("value") should be ("area 1 - line 1\narea 1 - line 2")
+      textArea("area1").attribute("value") should be (Some("area 1 - line 1\narea 1 - line 2"))
       
       textArea("area2").value should be ("")
-      textArea("area2").attribute("value") should be ("")
+      textArea("area2").attribute("value") should be (Some(""))
       textArea("area2").value = "area 2 - line 1\narea 2 - line 2"
       textArea("area2").value should be ("area 2 - line 1\narea 2 - line 2")
-      textArea("area2").attribute("value") should be ("area 2 - line 1\narea 2 - line 2")
+      textArea("area2").attribute("value") should be (Some("area 2 - line 1\narea 2 - line 2"))
     }
     
     it("should get and set radio button group correctly.") {

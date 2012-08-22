@@ -800,7 +800,7 @@ trait WebBrowser {
    * You can access the wrapped <code>WebElement</code> via the <code>underlying</code> method.
    * </p>
    */
-  trait Element {
+  sealed trait Element {
 
     /**
      * The XY location of the top-left corner of this <code>Element</code>.
@@ -880,9 +880,17 @@ trait WebBrowser {
     val underlying: WebElement
     
     /**
-     * The attribute value of the given attribute name of this element.
+     * The attribute value of the given attribute name of this element, wrapped in a <code>Some</code>, or <code>None</code> if no
+     * such attribute exists on this <code>Element</code>.
+     *
+     * <p>
+     * This method invokes <code>getAttribute</code> on the underlying <code>WebElement</code>, passing in the
+     * specified <code>name</code>.
+     * </p>
+     *
+     * @return the attribute with the given name, wrapped in a <code>Some</code>, else <code>None</code>
      */
-    def attribute(name: String): String = underlying.getAttribute(name)
+    def attribute(name: String): Option[String] = Option(underlying.getAttribute(name))
     
     /**
      * Returns the result of invoking <code>equals</code> on the underlying <code>Element</code>, passing
