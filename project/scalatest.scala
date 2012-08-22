@@ -38,7 +38,7 @@ object ScalatestBuild extends Build {
    lazy val scalatest = Project("scalatest", file("."))
    .settings(
      organization := "org.scalatest",
-     version := "2.0-M3",
+     version := "2.0.M4-SNAPSHOT",
      scalaVersion := scalaVersionToUse,
      libraryDependencies ++= simpledependencies,
      resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public",
@@ -59,7 +59,7 @@ object ScalatestBuild extends Build {
    lazy val gentests = Project("gentests", file("gen"))
    .settings(
      organization := "org.scalatest",
-     version := "2.0-M3",
+     version := "2.0.M4-SNAPSHOT",
      scalaVersion := scalaVersionToUse,
      libraryDependencies ++= simpledependencies,
      resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public",
