@@ -91,5 +91,38 @@ class AssertionsSpec extends FunSpec with OptionValues {
         assert(caught.cause.value eq wrongException)
       }
     }
+    it("should catch subtypes of the given exception type") {
+      class MyException extends RuntimeException
+      class MyExceptionSubClass extends MyException
+      intercept[MyException] {
+        throw new MyException
+        new AnyRef // This is needed because right now Nothing doesn't overload as an Any
+      }
+      intercept[MyException] {
+        throw new MyExceptionSubClass
+        new AnyRef // This is needed because right now Nothing doesn't overload as an Any
+      }
+      // Try with a trait
+      trait MyTrait {
+        def someRandomMethod() {}
+      }
+      class AnotherException extends RuntimeException with MyTrait
+      val caught = intercept[MyTrait] {
+        throw new AnotherException
+        new AnyRef // This is needed because right now Nothing doesn't overload as an Any
+      }
+      // Make sure the result type is the type passed in, so I can 
+      // not cast and still invoke any method on it I want
+      caught.someRandomMethod()
+    }
+
+    it("should return the caught exception") {
+      val e = new RuntimeException
+      val result = intercept[RuntimeException] {
+        throw e
+        new AnyRef // This is needed because right now Nothing doesn't overload as an Any
+      }
+      assert(result eq e)
+    }
   }
 }
