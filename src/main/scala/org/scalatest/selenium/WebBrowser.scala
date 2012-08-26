@@ -1595,16 +1595,40 @@ trait WebBrowser {
      */
     def value: String = underlying.getAttribute("value")
   }
-  
+
   // XXX
 
-  class RichIndexedSeq(seq: Seq[String]) {
+  /**
+   * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * multiSel("select2").values += "option5"
+   *                            ^
+   * </pre>
+   */
+/*
+  class RichSeq(seq: Seq[String]) {
       def +(value: String): Seq[String] = seq :+ value
       def -(value: String): Seq[String] = seq.filter(_ != value)
   }
-  
-  implicit def vector2RichIndexedSeq(seq: Seq[String]): RichIndexedSeq = new RichIndexedSeq(seq)
-  
+
+
+  // TODO: A test tha sees what happens if you set something already set with +=
+  implicit def convertSeqToRichSeq(seq: Seq[String]): RichSeq = new RichSeq(seq)
+*/
+
+  class MultiSelOptionSeq(underlying: IndexedSeq[String]) extends IndexedSeq[String] {
+    def apply(idx: Int): String = underlying.apply(idx)
+    def length: Int = underlying.length
+    def +(value: String): Seq[String] = new MultiSelOptionSeq(underlying :+ value)
+    def -(value: String): Seq[String] = new MultiSelOptionSeq(underlying.filter(_ != value))
+  }
+
   // Should never return null.
 
   /**
@@ -1732,10 +1756,12 @@ trait WebBrowser {
      *
      * @return An <code>IndexedSeq</code> containing the currently selected values
      */
-    def values: IndexedSeq[String] = {
+    def values: MultiSelOptionSeq = {
       val elementSeq = Vector.empty ++ select.getAllSelectedOptions.asScala
-      elementSeq.map(_.getAttribute("value"))
+      new MultiSelOptionSeq(elementSeq.map(_.getAttribute("value")))
     }
+
+    // values = values + "hi"
 
     def values_=(values: Seq[String]) {
       try {
