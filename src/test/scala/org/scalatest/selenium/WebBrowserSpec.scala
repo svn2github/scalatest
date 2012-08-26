@@ -317,6 +317,25 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     }
   }
 
+  describe("A MultiSelOptionSeq") {
+    it("should allow a string element to be appended with +") {
+      val s = new MultiSelOptionSeq(Vector("1", "2", "3"))
+      s + "4" should be (new MultiSelOptionSeq(Vector("1", "2", "3", "4")))
+    }
+    it("should return the same MultiSelOptionSeq if an existing element is passed to +") {
+      val s = new MultiSelOptionSeq(Vector("1", "2", "3"))
+      s + "2" should be theSameInstanceAs (s)
+    }
+    it("should allow a string element to be removed with 0") {
+      val s = new MultiSelOptionSeq(Vector("1", "2", "3"))
+      s - "2" should be (new MultiSelOptionSeq(Vector("1", "3")))
+    }
+    it("should return the same MultiSelOptionSeq if a non-existing element is passed to 0") {
+      val s = new MultiSelOptionSeq(Vector("1", "2", "3"))
+      s - "4" should be theSameInstanceAs (s)
+    }
+  }
+
   describe("goBack") {
     it("should have no effect if already at oldest page") {
       for (i <- 0 to 1000)

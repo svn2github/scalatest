@@ -1610,23 +1610,103 @@ trait WebBrowser {
    * multiSel("select2").values += "option5"
    *                            ^
    * </pre>
+   *
+   * <p>
+   * Instances of this class are returned from the <code>values</code> method of <code>MultiSel</code>.
+   * <code>MultiSelOptionSeq</code> is an <code>IndexedSeq[String]</code> that wraps an underlying <code>IndexedSeq[String]</code> and adds two
+   * methods, <code>+</code> and <code>-</code>, to facilitate the <code>+=</code> syntax for setting additional options
+   * of the <code>MultiSel</code>. The Scala compiler will rewrite:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * multiSel("select2").values += "option5"
+   * </pre>
+   *
+   * <p>
+   * To:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * multiSel("select2").values = multiSel("select2").values + "option5"
+   * </pre>
+   *
+   * <p>
+   * Thus, first a new <code>MultiSelOptionSeq</code> is created by invoking the <code>+</code> method on the <code>MultiSelOptionSeq</code>
+   * returned by <code>values</code>, and that result is passed to the <code>values_=</code> method.
+   * </p>
+   *
+   * <p>
+   * For symmetry, this class also offers a <code>-</code> method, which can be used to deselect an option, like this:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * multiSel("select2").values -= "option5"
+   *                            ^
+   * </pre>
+   *
    */
-/*
-  class RichSeq(seq: Seq[String]) {
-      def +(value: String): Seq[String] = seq :+ value
-      def -(value: String): Seq[String] = seq.filter(_ != value)
-  }
-
-
-  // TODO: A test tha sees what happens if you set something already set with +=
-  implicit def convertSeqToRichSeq(seq: Seq[String]): RichSeq = new RichSeq(seq)
-*/
-
   class MultiSelOptionSeq(underlying: IndexedSeq[String]) extends IndexedSeq[String] {
+
+    /**
+     * Selects an element by its index in the sequence.
+     *
+     * <p>
+     * This method invokes <code>apply</code> on the underlying <code>IndexedSeq[String]</code>, passing in <code>idx</code>, and returns the result.
+     * </p>
+     *
+     * @param idx the index to select
+     * @return the element of this sequence at index <code>idx</code>, where 0 indicates the first element
+     */
     def apply(idx: Int): String = underlying.apply(idx)
+
+    /**
+     * The length of this sequence.
+     *
+     * <p>
+     * This method invokes <code>length</code> on the underlying <code>IndexedSeq[String]</code> and returns the result.
+     * </p>
+     *
+     * @return the number of elements in this sequence
+     */
     def length: Int = underlying.length
-    def +(value: String): Seq[String] = new MultiSelOptionSeq(underlying :+ value)
-    def -(value: String): Seq[String] = new MultiSelOptionSeq(underlying.filter(_ != value))
+
+    /**
+     * Appends a string element to this sequence, if it doesn't already exist in the sequence.
+     *
+     * <p>
+     * If the string element already exists in this sequence, this method returns itself. If not,
+     * this method returns a new <code>MultiSelOptionSeq</code> with the passed value appended to the
+     * end of the original <code>MultiSelOptionSeq</code>.
+     * </p>
+     *
+     * @param the string element to append to this sequence
+     * @return a <code>MultiSelOptionSeq</code> that contains the passed string value
+     */
+    def +(value: String): MultiSelOptionSeq = {
+      if (!underlying.contains(value))
+        new MultiSelOptionSeq(underlying :+ value)
+      else
+        this
+    }
+
+    /**
+     * Removes a string element to this sequence, if it already exists in the sequence.
+     *
+     * <p>
+     * If the string element does not already exist in this sequence, this method returns itself. If the element
+     * is contained in this sequence, this method returns a new <code>MultiSelOptionSeq</code> with the passed value
+     * removed from the the original <code>MultiSelOptionSeq</code>, leaving any other elements in the same order.
+     * </p>
+     *
+     * @param the string element to append to this sequence
+     * @return a <code>MultiSelOptionSeq</code> that contains the passed string value
+     */
+    def -(value: String): MultiSelOptionSeq = {
+      if (underlying.contains(value))
+        new MultiSelOptionSeq(underlying.filter(_ != value))
+      else
+        this
+    }
   }
 
   // Should never return null.
@@ -1734,18 +1814,6 @@ trait WebBrowser {
       select.deselectByValue(value)
     }
   
-    // I don't think we need this method?
-/*
-    def selections: Option[IndexedSeq[String]] = {
-      val elementSeq = select.getAllSelectedOptions.toIndexedSeq
-      val valueSeq = elementSeq.map(_.getAttribute("value"))
-      if (valueSeq.length > 0)
-        Some(valueSeq)
-      else
-        None
-    }
-*/
-
     /**
      * Gets all selected values of this multiple selection list.
      *
