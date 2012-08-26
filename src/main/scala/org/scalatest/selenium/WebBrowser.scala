@@ -30,7 +30,7 @@ import org.openqa.selenium.support.ui.Clock
 import org.openqa.selenium.support.ui.Sleeper
 import org.openqa.selenium.support.ui.ExpectedCondition
 import scala.collection.mutable.Buffer
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import org.openqa.selenium.Cookie
 import java.util.Date
 import org.scalatest.time.Span
@@ -1339,6 +1339,7 @@ trait WebBrowser {
    */
   final class TextField(val underlying: WebElement) extends Element {
     
+// Todo: Add a clear() to textField and textArea.
     if(!isTextField(underlying))
       throw new TestFailedException(
                      sde => Some("Element " + underlying + " is not text field."),
@@ -1346,14 +1347,26 @@ trait WebBrowser {
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
     
+    /**
+     * Gets this text field's value.
+     *
+     * <p>
+     * Invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
+     * </p>
+     *
+     * @return the text field's value
+     */
     def value: String = underlying.getAttribute("value")  
     def value_=(value: String) {
       underlying.clear()
       underlying.sendKeys(value)
     }
     def text: String = underlying.getText
+    def clear() { underlying.clear() }
   }
-  
+
+// TODO: deprecate then get rid of button forms
+
   /**
    * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
@@ -1374,6 +1387,15 @@ trait WebBrowser {
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
     
+    /**
+     * Gets this text area's value.
+     *
+     * <p>
+     * Invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
+     * </p>
+     *
+     * @return the text area's value
+     */
     def value: String = webElement.getAttribute("value")
     def value_=(value: String) {
       webElement.clear()
@@ -1381,6 +1403,7 @@ trait WebBrowser {
     }
     def text: String = webElement.getText
     val underlying: WebElement = webElement
+    def clear() { underlying.clear() }
   }
   
   /**
@@ -1402,7 +1425,17 @@ trait WebBrowser {
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
+    /**
+     * Gets this radio button's value.
+     *
+     * <p>
+     * Invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
+     * </p>
+     *
+     * @return the radio button's value
+     */
     def value: String = webElement.getAttribute("value")
+
     val underlying: WebElement = webElement
   }
 
@@ -1420,7 +1453,7 @@ trait WebBrowser {
    */
   final class RadioButtonGroup(groupName: String, driver: WebDriver) {
     
-    private def groupElements = driver.findElements(By.name(groupName)).toList.filter(isRadioButton(_))
+    private def groupElements = driver.findElements(By.name(groupName)).asScala.toList.filter(isRadioButton(_))
     
     if (groupElements.length == 0)
       throw new TestFailedException(
@@ -1428,7 +1461,17 @@ trait WebBrowser {
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
-    
+
+    /**
+     * Gets this radio button group's value.
+     *
+     * <p>
+     * This method invokes <code>selection</code> on itself. If the result is
+     * defined, this method returns the defined string. Otherwise it throws <code>TestFailedException</code>.
+     * </p>
+     *
+     * @return the radio button group's value
+     */
     def value: String = selection match {
       case Some(v) => v
       case None => 
@@ -1486,6 +1529,16 @@ trait WebBrowser {
       if (webElement.isSelected())
         webElement.click()
     }
+
+    /**
+     * Gets this checkbox's value.
+     *
+     * <p>
+     * Invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
+     * </p>
+     *
+     * @return the checkbox's value
+     */
     def value: String = webElement.getAttribute("value")
     val underlying: WebElement = webElement
   }
@@ -1534,6 +1587,16 @@ trait WebBrowser {
         Some(first.getAttribute("value"))
     }
     
+    /**
+     * Gets this single selection list's selected value.
+     *
+     * <p>
+     * This method invokes <code>selection</code> on itself. If the result is
+     * defined, this method returns the defined string. Otherwise it throws <code>TestFailedException</code>.
+     * </p>
+     *
+     * @return the single selection list's value
+     */
     def value: String = selection match {
       case Some(v) => v
       case None => 
@@ -1592,7 +1655,9 @@ trait WebBrowser {
       select.deselectByValue(value)
     }
   
-    def selections: Option[Seq[String]] = {
+    // I don't think we need this method?
+/*
+    def selections: Option[IndexedSeq[String]] = {
       val elementSeq = select.getAllSelectedOptions.toIndexedSeq
       val valueSeq = elementSeq.map(_.getAttribute("value"))
       if (valueSeq.length > 0)
@@ -1600,12 +1665,23 @@ trait WebBrowser {
       else
         None
     }
+*/
 
-    def values: Seq[String] = selections match {
-      case Some(v) => v
-      case None => IndexedSeq.empty
+    /**
+     * Gets all selected values of this multiple selection list.
+     *
+     * <p>
+     * If the multiple selection list has no selections, ths method will
+     * return an empty <code>IndexedSeq</code>.
+     * </p>
+     *
+     * @return An <code>IndexedSeq</code> containing the currently selected values
+     */
+    def values: IndexedSeq[String] = {
+      val elementSeq = Vector.empty ++ select.getAllSelectedOptions.asScala
+      elementSeq.map(_.getAttribute("value"))
     }
-    
+
     def values_=(values: Seq[String]) {
       try {
         clearAll()
@@ -1679,7 +1755,7 @@ trait WebBrowser {
         case e: org.openqa.selenium.NoSuchElementException => None
       }
     
-    def findAllElements(implicit driver: WebDriver): Iterator[Element] = driver.findElements(by).toIterator.map { e => createTypedElement(e) }
+    def findAllElements(implicit driver: WebDriver): Iterator[Element] = driver.findElements(by).asScala.toIterator.map { e => createTypedElement(e) }
     
     def webElement(implicit driver: WebDriver): WebElement = {
       try {
@@ -1859,7 +1935,7 @@ trait WebBrowser {
   }
   
   def windowHandle(implicit driver: WebDriver): String = driver.getWindowHandle
-  def windowHandles(implicit driver: WebDriver): Set[String] = driver.getWindowHandles.toSet
+  def windowHandles(implicit driver: WebDriver): Set[String] = driver.getWindowHandles.asScala.toSet
   
   object switch {
     def to[T](target: SwitchTarget[T])(implicit driver: WebDriver): T = {
@@ -1906,7 +1982,7 @@ trait WebBrowser {
   }
   
   private def getCookie(name: String)(implicit driver: WebDriver): WrappedCookie = {
-    driver.manage.getCookies.toList.find(_.getName == name) match {
+    driver.manage.getCookies.asScala.toList.find(_.getName == name) match {
       case Some(cookie) => 
         new WrappedCookie(cookie)
       case None =>
@@ -1954,6 +2030,7 @@ trait WebBrowser {
     
     private var targetDir = new File(System.getProperty("java.io.tmpdir"))
     
+    @deprecated("The 'capture set <dir name>' form will be removed in the next 2.0 milestone. Please use setCaptureDir(<dir name>) instead.")
     def set(targetDirPath: String) {
       targetDir = 
         if (targetDirPath.endsWith(File.separator))
@@ -1996,7 +2073,7 @@ trait WebBrowser {
   }
   
   def setCaptureDir(targetDirPath: String) {
-    capture set targetDirPath  // TODO: Drop old form
+    capture set targetDirPath
   }
   
   def withScreenshot(fun: => Unit)(implicit driver: WebDriver) {
@@ -2082,6 +2159,21 @@ trait WebBrowser {
       includeDepth
     
     depth + adjustment
+  }
+
+  // Clears the text field or area, then presses the passed keys
+  def enter(value: String)(implicit driver: WebDriver) {
+    val ae = switch to activeElement
+    ae match {
+      case tf: TextField => tf.value = value
+      case ta: TextArea => ta.value = value
+      case _ => throw new Exception("Currently selected element is neither a text field nor a text area") // TODO: Make a TFE
+    }
+  }
+
+  def pressKeys(value: String)(implicit driver: WebDriver) {
+    val ae: WebElement = driver.switchTo.activeElement
+    ae.sendKeys(value)
   }
 }
 
