@@ -943,6 +943,9 @@ trait WebBrowser {
    * </pre>
    */
   trait Page {
+    /**
+     * The URL of the page represented by this page object.
+     */
     val url: String
   }
 
@@ -1338,16 +1341,18 @@ trait WebBrowser {
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    *
    * <p>
-   * This field enables syntax such as the following:
+   * This class enables syntax such as the following:
    * </p>
    *
    * <pre class="stHighlight">
    * textField("q").value should be ("Cheese!")
    * </pre>
+   *
+   * @param underlying the <code>WebElement</code> representing a text field
+   * @throws TestFailedExeption if the passed <code>WebElement</code> does not represent a text field
    */
   final class TextField(val underlying: WebElement) extends Element {
     
-// Todo: Add a clear() to textField and textArea.
     if(!isTextField(underlying))
       throw new TestFailedException(
                      sde => Some("Element " + underlying + " is not text field."),
@@ -1359,7 +1364,7 @@ trait WebBrowser {
      * Gets this text field's value.
      *
      * <p>
-     * Invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
+     * This method invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
      * </p>
      *
      * @return the text field's value
@@ -1376,27 +1381,31 @@ trait WebBrowser {
       underlying.sendKeys(value)
     }
 
+    /**
+     * Clears this text field.
+     */
     def clear() { underlying.clear() }
   }
-
-// TODO: deprecate then get rid of button forms
 
   /**
    * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    *
    * <p>
-   * This field enables syntax such as the following:
+   * This class enables syntax such as the following:
    * </p>
    *
    * <pre class="stHighlight">
    * textArea("q").value should be ("Cheese!")
    * </pre>
+   *
+   * @param underlying the <code>WebElement</code> representing a text area
+   * @throws TestFailedExeption if the passed <code>WebElement</code> does not represent a text area
    */
-  final class TextArea(webElement: WebElement) extends Element {
-    if(!isTextArea(webElement))
+  final class TextArea(val underlying: WebElement) extends Element {
+    if(!isTextArea(underlying))
       throw new TestFailedException(
-                     sde => Some("Element " + webElement + " is not text area."),
+                     sde => Some("Element " + underlying + " is not text area."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
@@ -1405,17 +1414,26 @@ trait WebBrowser {
      * Gets this text area's value.
      *
      * <p>
-     * Invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
+     * This method invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
      * </p>
      *
      * @return the text area's value
      */
-    def value: String = webElement.getAttribute("value")
+    def value: String = underlying.getAttribute("value")
+
+    /**
+     * Sets this text area's value.
+     *
+     * @param value the new value
+     */
     def value_=(value: String) {
-      webElement.clear()
-      webElement.sendKeys(value)
+      underlying.clear()
+      underlying.sendKeys(value)
     }
-    val underlying: WebElement = webElement
+
+    /**
+     * Clears this text area.
+     */
     def clear() { underlying.clear() }
   }
   
@@ -1424,17 +1442,20 @@ trait WebBrowser {
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    *
    * <p>
-   * This field enables syntax such as the following:
+   * This class enables syntax such as the following:
    * </p>
    *
    * <pre class="stHighlight">
    * radioButton(id("opt1")).value should be ("Option 1!")
    * </pre>
+   *
+   * @param underlying the <code>WebElement</code> representing a text area
+   * @throws TestFailedExeption if the passed <code>WebElement</code> does not represent a text area
    */
-  final class RadioButton(webElement: WebElement) extends Element {
-    if(!isRadioButton(webElement))
+  final class RadioButton(val underlying: WebElement) extends Element {
+    if(!isRadioButton(underlying))
       throw new TestFailedException(
-                     sde => Some("Element " + webElement + " is not radio button."),
+                     sde => Some("Element " + underlying + " is not radio button."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
@@ -1447,9 +1468,7 @@ trait WebBrowser {
      *
      * @return the radio button's value
      */
-    def value: String = webElement.getAttribute("value")
-
-    val underlying: WebElement = webElement
+    def value: String = underlying.getAttribute("value")
   }
 
   /**
@@ -1457,44 +1476,50 @@ trait WebBrowser {
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    *
    * <p>
-   * This field enables syntax such as the following:
+   * This class enables syntax such as the following:
    * </p>
    *
    * <pre class="stHighlight">
    * radioButtonGroup("group1").value should be ("Option 2")
    * </pre>
+   *
+   * @throws TestFailedExeption if no radio button with the passed <code>groupName</code> are found
    */
   final class RadioButtonGroup(groupName: String, driver: WebDriver) {
-    
+
     private def groupElements = driver.findElements(By.name(groupName)).asScala.toList.filter(isRadioButton(_))
-    
+
     if (groupElements.length == 0)
       throw new TestFailedException(
-                     sde => Some("Radio Buttons with group name '" + groupName + "' not found."),
+                     sde => Some("No radio buttons with group name '" + groupName + "' was found."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
 
     /**
-     * Gets this radio button group's value.
+     * Returns the value of this group's selected radio button, or throws <code>TestFailedException</code> if no
+     * radio button in this group is selected.
      *
-     * <p>
-     * This method invokes <code>selection</code> on itself. If the result is
-     * defined, this method returns the defined string. Otherwise it throws <code>TestFailedException</code>.
-     * </p>
-     *
-     * @return the radio button group's value
+     * @return the value of this group's selected radio button
+     * @throws TestFailedExeption if no radio button in this group is selected
      */
     def value: String = selection match {
       case Some(v) => v
       case None => 
         throw new TestFailedException(
-                     sde => Some("The Option on which value was invoked was not defined."),
+                     sde => Some("The radio button group on which value was invoked contained no selected radio button."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "value", 1)
                    )
     }
 
+    /**
+     * Returns the value of this group's selected radio button, wrapped in a <code>Some</code>, or <code>None</code>, if no
+     * radio button in this group is selected.
+     *
+     * @return the value of this group's selected radio button
+     * @throws TestFailedExeption if the passed <code>WebElement</code> does not represent a text area
+     */
     def selection: Option[String] = {
       groupElements.find(_.isSelected) match {
         case Some(radio) => 
@@ -1503,12 +1528,18 @@ trait WebBrowser {
           None
       }
     }
-    
+
+    /**
+     * Selects the radio button with the passed value.
+     *
+     * @param the value of the radio button to select
+     * @throws TestFailedExeption if the passed string is not the value of any radio button in this group
+     */
     def value_=(value: String) {
       groupElements.find(_.getAttribute("value") == value) match {
         case Some(radio) => 
           radio.click()
-        case None =>
+        case None => // TODO: Change this to TestFailedException with a stack depth
           throw new org.openqa.selenium.NoSuchElementException("Radio button value '" + value + "' not found for group '" + groupName + "'.")
       }
     }
@@ -1519,43 +1550,54 @@ trait WebBrowser {
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    *
    * <p>
-   * This field enables syntax such as the following:
+   * This class enables syntax such as the following:
    * </p>
    *
    * <pre class="stHighlight">
    * checkbox("cbx1").select()
    * </pre>
+   *
+   * @param underlying the <code>WebElement</code> representing a checkbox
+   * @throws TestFailedExeption if the passed <code>WebElement</code> does not represent a checkbox
    */
-  final class Checkbox(webElement: WebElement) extends Element {
-    if(!isCheckBox(webElement))
+  final class Checkbox(val underlying: WebElement) extends Element {
+    if(!isCheckBox(underlying))
       throw new TestFailedException(
-                     sde => Some("Element " + webElement + " is not check box."),
+                     sde => Some("Element " + underlying + " is not check box."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
     
+    /**
+     * Selects this checkbox.
+     */
     def select() {
-      if (!webElement.isSelected)
-        webElement.click()
+      if (!underlying.isSelected)
+        underlying.click()
     }
+
+    /**
+     * Clears this checkbox
+     */
     def clear() {
-      if (webElement.isSelected())
-        webElement.click()
+      if (underlying.isSelected())
+        underlying.click()
     }
 
     /**
      * Gets this checkbox's value.
      *
      * <p>
-     * Invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
+     * This method invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
      * </p>
      *
      * @return the checkbox's value
      */
-    def value: String = webElement.getAttribute("value")
-    val underlying: WebElement = webElement
+    def value: String = underlying.getAttribute("value")
   }
   
+  // XXX
+
   class RichIndexedSeq(seq: Seq[String]) {
       def +(value: String): Seq[String] = seq :+ value
       def -(value: String): Seq[String] = seq.filter(_ != value)
