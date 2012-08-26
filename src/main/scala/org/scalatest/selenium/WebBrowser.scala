@@ -155,14 +155,14 @@ import org.scalatest.ScreenshotCapturer
  * <pre class="stHighlight">
  * go to "http://www.google.com"
  * click on "q"
- * textField("q").value = "Cheese!"
+ * enter("Cheese!")
  * submit()
  * // Google's search is rendered dynamically with JavaScript.
  * eventually { title should be ("Cheese! - Google Search") }
  * </pre>
  * 
  * <p>
- * In the above example, the <code>"q"</code> used in &ldquo;<code>click on "q"</code>&rdquo; and  &ldquo;<code>textField("q")</code>&rdquo;
+ * In the above example, the <code>"q"</code> used in &ldquo;<code>click on "q"</code>&rdquo; 
  * can be either the id or name of an element. ScalaTest's Selenium DSL will try to lookup by id first. If it cannot find 
  * any element with an id equal to <code>&quot;q&quot;</code>, it will then try lookup by name <code>&quot;q&quot;</code>.
  * </p>
@@ -239,6 +239,37 @@ import org.scalatest.ScreenshotCapturer
  * <pre class="stHighlight">
  * textArea("body").value = "I saw something cool today!"
  * textArea("body").value should be ("I saw something cool today!")
+ * </pre>
+ * 
+ * <p>
+ * An alternate way to enter data into a text field or text area is to use <code>enter</code> or <code>pressKeys</code>.
+ * Although both of these send characters to the active element, <code>pressKeys</code> can be used on any kind of
+ * element, whereas <code>enter</code> can only be used on text fields and text areas. Another difference is that <code>enter</code>
+ * will clear the text field or area before sending the characters, effectively replacing any currently existing text with the
+ * new text passed to <code>enter</code>. By contrast, <code>pressKeys</code> does not do any clearing&#8212;it just appends
+ * more characters to any existing text. You can backup with <code>pressKeys</code>, however, by sending explicit backspace
+ * characters, <code>"&#92;u0008"</code>.
+ * </p>
+ * 
+ * <p>
+ * To use these commands, you must first click on the text field or area you are interested in
+ * to give it the focus. Here's an example:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * click on "q"
+ * enter("Cheese!")
+ * </pre>
+ * 
+ * <p>
+ * Here's a (contrived) example of using <code>pressKeys</code> with backspace to fix a typo:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * click on "q"              // q is the name or id of a text field or text area
+ * enter("Cheesey!")         // Oops, meant to say Cheese!
+ * pressKeys("&#92;u0008&#92;u0008") // Send two backspaces; now the value is Cheese
+ * pressKeys("!")            // Send the missing exclamation point; now the value is Cheese!
  * </pre>
  * 
  * <h3>Radio buttons</h3>
@@ -551,13 +582,18 @@ import org.scalatest.ScreenshotCapturer
  * <h2>Implicit wait</h2>
  * 
  * <p>
- * To set the implicit wait, you can call implicitlyWait method:
+ * To set Selenium's implicit wait timeout, you can call the <code>implicitlyWait</code> method:
  * </p>
  * 
  * <pre class="stHighlight">
  * implicitlyWait(Span(10, Seconds))
  * </pre>
  * 
+ * <p>
+ * Invoking this method sets the amount of time the driver will wait when searching for an element that is not immediately present. For
+ * more information, see the documentation for method <code>implicitlyWait</code>.
+ * </p>
+ *
  * <h2>Page source and current URL</h2>
  * 
  * <p>
@@ -612,7 +648,7 @@ import org.scalatest.ScreenshotCapturer
  * </p>
  * 
  * <pre class="stHighlight">
- * capture set "/home/your_name/screenshots"
+ * setCaptureDir("/home/your_name/screenshots")
  * </pre>
  *
  * <h2>Using the page object pattern</h2>
@@ -894,10 +930,12 @@ trait WebBrowser {
 
     /**
      * Returns the visible (<em>i.e.</em>, not hidden by CSS) text of this element, including sub-elements, without any leading or trailing whitespace.
+     *
+     * @return the visible text enclosed by this element, or an empty string, if the element encloses no visible text
      */
     def text: String = {
       val txt = underlying.getText
-      if (txt != null) txt else ""
+      if (txt != null) txt else "" // Just in case, I'm not sure if Selenium would ever return null here
     }
 
     /**
@@ -1517,8 +1555,7 @@ trait WebBrowser {
      * Returns the value of this group's selected radio button, wrapped in a <code>Some</code>, or <code>None</code>, if no
      * radio button in this group is selected.
      *
-     * @return the value of this group's selected radio button
-     * @throws TestFailedExeption if the passed <code>WebElement</code> does not represent a text area
+     * @return the value of this group's selected radio button, wrapped in a <code>Some</code>, else <code>None</code>
      */
     def selection: Option[String] = {
       groupElements.find(_.isSelected) match {
@@ -1539,7 +1576,7 @@ trait WebBrowser {
       groupElements.find(_.getAttribute("value") == value) match {
         case Some(radio) => 
           radio.click()
-        case None => // TODO: Change this to TestFailedException with a stack depth
+        case None => // TODO: Chee Seng: Please change this to TestFailedException with a good stack depth and the NSEE as its cause
           throw new org.openqa.selenium.NoSuchElementException("Radio button value '" + value + "' not found for group '" + groupName + "'.")
       }
     }
@@ -1595,8 +1632,6 @@ trait WebBrowser {
      */
     def value: String = underlying.getAttribute("value")
   }
-
-  // XXX
 
   /**
    * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
@@ -1709,35 +1744,42 @@ trait WebBrowser {
     }
   }
 
-  // Should never return null.
-
   /**
    * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    *
    * <p>
-   * This field enables syntax such as the following:
+   * This class enables syntax such as the following:
    * </p>
    *
    * <pre class="stHighlight">
    * singleSel.clear()
    * </pre>
+   *
+   * @param underlying a <code>WebElement</code> representing a single selection list
+   * @throws TestFailedExeption if the passed <code>WebElement</code> does not represent a single selection list
    */
-  class SingleSel(webElement: WebElement) extends Element {
-    if(webElement.getTagName.toLowerCase != "select")
+  class SingleSel(val underlying: WebElement) extends Element {
+    if(underlying.getTagName.toLowerCase != "select")
       throw new TestFailedException(
-                     sde => Some("Element " + webElement + " is not select."),
+                     sde => Some("Element " + underlying + " is not select."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
-    private val select = new Select(webElement)
+    private val select = new Select(underlying)
     if (select.isMultiple)
       throw new TestFailedException(
-                     sde => Some("Element " + webElement + " is not a single-selection list."),
+                     sde => Some("Element " + underlying + " is not a single-selection list."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
     
+    /**
+     * Returns the value of this single selection list, wrapped in a <code>Some</code>, or <code>None</code>, if this single
+     * selection list has no currently selected value.
+     *
+     * @return the value of this single selection list, wrapped in a <code>Some</code>, else <code>None</code>
+     */
     def selection = {
       val first = select.getFirstSelectedOption
       if (first == null)
@@ -1747,31 +1789,33 @@ trait WebBrowser {
     }
     
     /**
-     * Gets this single selection list's selected value.
-     *
-     * <p>
-     * This method invokes <code>selection</code> on itself. If the result is
-     * defined, this method returns the defined string. Otherwise it throws <code>TestFailedException</code>.
-     * </p>
+     * Gets this single selection list's selected value, or throws <code>TestFailedException</code> if no value is currently selected.
      *
      * @return the single selection list's value
+     * @throws TestFailedException if the single selection list has no selected value
      */
     def value: String = selection match {
       case Some(v) => v
       case None => 
         throw new TestFailedException(
-                     sde => Some("The Option on which value was invoked was not defined."),
+                     sde => Some("The single selection list on which value was invoked had no selection."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "value", 1)
                    )
     }
     
+    /**
+     * Sets this single selection list's value to the passed value.
+     *
+     * @param value the new value
+     * @throws TestFailedException if the passed value does not match not one of the single selection list's values
+     */
     def value_=(value : String) {
       try {
         select.selectByValue(value)
       }
       catch {
-        case e: org.openqa.selenium.NoSuchElementException => 
+        case e: org.openqa.selenium.NoSuchElementException => // TODO: Chee Seng: Please include the thrown NSEE as the TFE's cause
           throw new TestFailedException(
                      sde => Some(e.getMessage),
                      None,
@@ -1779,37 +1823,45 @@ trait WebBrowser {
                    )
       }
     }
-    
-    val underlying: WebElement = webElement
   }
+
+  
 
   /**
    * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
    *
    * <p>
-   * This field enables syntax such as the following:
+   * This class enables syntax such as the following:
    * </p>
    *
    * <pre class="stHighlight">
    * multiSel("select2").clear("option5")
    * </pre>
+   *
+   * @param underlying a <code>WebElement</code> representing a multiple selection list
+   * @throws TestFailedExeption if the passed <code>WebElement</code> does not represent a multiple selection list
    */
-  class MultiSel(webElement: WebElement) extends Element {
-    if(webElement.getTagName.toLowerCase != "select")
+  class MultiSel(val underlying: WebElement) extends Element {
+    if(underlying.getTagName.toLowerCase != "select")
       throw new TestFailedException(
-                     sde => Some("Element " + webElement + " is not select."),
+                     sde => Some("Element " + underlying + " is not select."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
-    private val select = new Select(webElement)
+    private val select = new Select(underlying)
     if (!select.isMultiple)
       throw new TestFailedException(
-                     sde => Some("Element " + webElement + " is not a multi-selection list."),
+                     sde => Some("Element " + underlying + " is not a multi-selection list."),
                      None,
                      getStackDepthFun("WebBrowser.scala", "this", 1)
                    )
-    
+
+    /**
+     * Clears the passed value in this multiple selection list.
+     *
+     * @param value the value to clear
+     */
     def clear(value: String) {
       select.deselectByValue(value)
     }
@@ -1829,15 +1881,25 @@ trait WebBrowser {
       new MultiSelOptionSeq(elementSeq.map(_.getAttribute("value")))
     }
 
-    // values = values + "hi"
-
+    /**
+     * Clears any existing selections then sets all values contained in the passed <code>Seq[String]</code>.
+     *
+     * <p>
+     * In other words, the <code>values_=</code> method <em>replaces</em> the current selections, if any, with
+     * new selections defined by the passed <code>Seq[String]</code>.
+     * </p>
+     *
+     * @param values a <code>Seq</code> of string values to select
+     * @throws TestFailedException if a value contained in the passed <code>Seq[String]</code> is not
+     *         among this multiple selection list's values.
+     */
     def values_=(values: Seq[String]) {
       try {
         clearAll()
         values.foreach(select.selectByValue(_))
       }
       catch {
-        case e: org.openqa.selenium.NoSuchElementException => 
+        case e: org.openqa.selenium.NoSuchElementException =>  // TODO: Chee Seng: Please include the thrown NSEE as the TFE's cause
           throw new TestFailedException(
                      sde => Some(e.getMessage),
                      None,
@@ -1846,41 +1908,151 @@ trait WebBrowser {
       }
     }
     
+    /**
+     * Clears all selected values in this multiple selection list.
+     *
+     * @param value the value to clear
+     */
     def clearAll() {
       select.deselectAll()
     }
-    
-    val underlying: WebElement = webElement
   }
   
+  /**
+   * This object is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This object enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * go to "http://www.artima.com"
+   * ^
+   * </pre>
+   */
   object go {
+
+    /**
+     * Sends the browser to the passed URL.
+     *
+     * <p>
+     * This method enables syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * go to "http://www.artima.com"
+     *    ^
+     * </pre>
+     *
+     * @param url the URL to which to send the browser
+     * @param driver the <code>WebDriver</code> with which to drive the browser
+     */
     def to(url: String)(implicit driver: WebDriver) {
       driver.get(url)
     }
-    
+
+    /**
+     * Sends the browser to the URL contained in the passed <code>Page</code> object.
+     *
+     * <p>
+     * This method enables syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * go to homePage
+     *    ^
+     * </pre>
+     *
+     * @param page the <code>Page</code> object containing the URL to which to send the browser
+     * @param driver the <code>WebDriver</code> with which to drive the browser
+     */
     def to(page: Page)(implicit driver: WebDriver) {
       driver.get(page.url)
     }
   }
   
+  /**
+   * Sends the browser to the passed URL.
+   *
+   * <p>
+   * Here's an example:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * goTo("http://www.artima.com")
+   * </pre>
+   *
+   * @param url the URL to which to send the browser
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   */
   def goTo(url: String)(implicit driver: WebDriver) {
     go to url
   }
   
+  /**
+   * Sends the browser to the URL contained in the passed <code>Page</code> object.
+   *
+   * <p>
+   * Here's an example:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * goTo(homePage)
+   * </pre>
+   *
+   * @param page the <code>Page</code> object containing the URL to which to send the browser
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   */
   def goTo(page: Page)(implicit driver: WebDriver) {
     go to page
   }
   
+  /**
+   * Closes the current browser window, and exits the driver if the current window was the only one remaining.
+   *
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   */
   def close()(implicit driver: WebDriver) {
     driver.close()
   }
   
-  def title(implicit driver: WebDriver): String = driver.getTitle
+  /**
+   * Returns the title of the current page, or the empty string if the current page has no title.
+   *
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   * @returns the current page's title, or the empty string if the current page has no title
+   */
+  def title(implicit driver: WebDriver): String = {
+    val t = driver.getTitle
+    if (t != null) t else ""
+  }
   
+  /**
+   * Returns the source of the current page.
+   *
+   * <p>
+   * This method invokes <code>getPageSource</code> on the passed <code>WebDriver</code> and returns the result.
+   * </p>
+   *
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   * @returns the source of the current page
+   */
   def pageSource(implicit driver: WebDriver): String = driver.getPageSource
   
+  /**
+   * Returns the URL of the current page.
+   *
+   * <p>
+   * This method invokes <code>getCurrentUrl</code> on the passed <code>WebDriver</code> and returns the result.
+   * </p>
+   *
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   * @returns the URL of the current page
+   */
   def currentUrl(implicit driver: WebDriver): String = driver.getCurrentUrl
   
+// XXX
   sealed trait Query {
     val by: By
     val queryString: String
@@ -1911,7 +2083,7 @@ trait WebBrowser {
         driver.findElement(by)
       }
       catch {
-        case e: org.openqa.selenium.NoSuchElementException => 
+        case e: org.openqa.selenium.NoSuchElementException =>  // TODO: Chee Seng: Please include the thrown NSEE as the TFE's cause
           throw new TestFailedException(
                      sde => Some("Element '" + queryString + "' not found."),
                      None,
@@ -2068,6 +2240,27 @@ trait WebBrowser {
     (switch to activeElement).underlying.submit()
   }
   
+  /**
+   * Sets the amount of time the driver should wait when searching for an element that is not immediately present.
+   *
+   * <p>
+   * When searching for requested elements, Selenium will poll the page until the requested element (or at least one of multiple requested
+   * elements) is found or this "implicit wait" timeout has expired.
+   * If the timeout expires, Selenium will throw <code>NoSuchElementException</code>, which ScalaTest's Selenium DSL will wrap in a <code>TestFailedException</code>.
+   * </p>
+   *
+   * <p>
+   * You can alternatively set this timeout to zero and use ScalaTest's <code>eventually</code> construct.
+   * </p>
+   *
+   * <p>
+   * This method invokes <code>manage.timeouts.implicitlyWait</code> on the passed <code>WebDriver</code>. See the documentation of Selenium's
+   * <code>WebDriver#Timeouts</code> interface for more information.
+   * </p>
+   *
+   * @param timeout the time span to implicitly wait
+   * @param driver the <code>WebDriver</code> on which to set the implicit wait
+   */
   def implicitlyWait(timeout: Span)(implicit driver: WebDriver) {
     driver.manage.timeouts.implicitlyWait(timeout.totalNanos, TimeUnit.NANOSECONDS)
   }
@@ -2148,7 +2341,7 @@ trait WebBrowser {
   object delete {
     private def deleteCookie(name: String)(implicit driver: WebDriver) {
       val cookie = getCookie(name)
-      if (cookie == null)
+      if (cookie == null) // TODO: Chee Seng: Please change this to TestFailedException with a good stack depth and the NSEE as its cause
         throw new org.openqa.selenium.NoSuchElementException("Cookie '" + name + "' not found.")
       driver.manage.deleteCookie(cookie.underlying)
     }
@@ -2162,7 +2355,7 @@ trait WebBrowser {
     }
   }
 
-  // TODO: Do we have tests for stack depth in these new, non-DSLish forms
+  // TODO: Chee Seng: Do we have tests for stack depth in these new, non-DSLish forms. If not, please write them to make sure they are correct.
   def addCookie(name: String, value: String, path: String = "/", expiry: Date = null, domain: String = null, secure: Boolean = false)(implicit driver: WebDriver) {
     add cookie (name, value, path, expiry, domain, secure)
   }
@@ -2318,7 +2511,7 @@ trait WebBrowser {
     ae match {
       case tf: TextField => tf.value = value
       case ta: TextArea => ta.value = value
-      case _ => throw new Exception("Currently selected element is neither a text field nor a text area") // TODO: Make a TFE
+      case _ => throw new Exception("Currently selected element is neither a text field nor a text area") // TODO: Chee Seng, please make this throw a TFE with a proper stack depth (and a test, of course)
     }
   }
 
