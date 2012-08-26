@@ -891,7 +891,15 @@ trait WebBrowser {
      * @return the attribute with the given name, wrapped in a <code>Some</code>, else <code>None</code>
      */
     def attribute(name: String): Option[String] = Option(underlying.getAttribute(name))
-    
+
+    /**
+     * Returns the visible (<em>i.e.</em>, not hidden by CSS) text of this element, including sub-elements, without any leading or trailing whitespace.
+     */
+    def text: String = {
+      val txt = underlying.getText
+      if (txt != null) txt else ""
+    }
+
     /**
      * Returns the result of invoking <code>equals</code> on the underlying <code>Element</code>, passing
      * in the specified <code>other</code> object.
@@ -1357,11 +1365,17 @@ trait WebBrowser {
      * @return the text field's value
      */
     def value: String = underlying.getAttribute("value")  
+    
+    /**
+     * Sets this text field's value.
+     *
+     * @param value the new value
+     */
     def value_=(value: String) {
       underlying.clear()
       underlying.sendKeys(value)
     }
-    def text: String = underlying.getText
+
     def clear() { underlying.clear() }
   }
 
@@ -1401,7 +1415,6 @@ trait WebBrowser {
       webElement.clear()
       webElement.sendKeys(value)
     }
-    def text: String = webElement.getText
     val underlying: WebElement = webElement
     def clear() { underlying.clear() }
   }
@@ -1872,8 +1885,10 @@ trait WebBrowser {
   def multiSel(queryString: String)(implicit driver: WebDriver): MultiSel = 
     tryQueries(queryString)(q => new MultiSel(q.webElement))
     
+  @deprecated("The button methods will be removed in the next 2.0 milestone release.")
   def button(webElement: WebElement): WebElement = webElement  // enable syntax 'click on aButton', where aButton is a WebElement.
   
+  @deprecated("The button methods will be removed in the next 2.0 milestone release.")
   def button(queryString: String)(implicit driver: WebDriver): WebElement = 
     tryQueries(queryString)(q => q.webElement)
   
