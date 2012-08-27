@@ -41,7 +41,7 @@ class FilterReporterSpec extends FunSpec {
       val rep = new FilterReporter(rec, Set.empty)
       
       val spec = new ExampleSpec()
-      spec.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      spec.run(None, Args(rep))
       
       assert(rec.testSucceededEventsReceived.size === 1)
       val testSucceeded = rec.testSucceededEventsReceived(0)
@@ -81,7 +81,7 @@ class FilterReporterSpec extends FunSpec {
       val rep = new FilterReporter(rec, Set(FilterInfoProvided))
       
       val spec = new ExampleSpec()
-      spec.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      spec.run(None, Args(rep))
       
       assert(rec.testSucceededEventsReceived.size === 1)
       val testSucceeded = rec.testSucceededEventsReceived(0)
@@ -113,7 +113,7 @@ class FilterReporterSpec extends FunSpec {
       val rep = new FilterReporter(rec, Set(FilterMarkupProvided))
       
       val spec = new ExampleSpec()
-      spec.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      spec.run(None, Args(rep))
       
       assert(rec.testSucceededEventsReceived.size === 1)
       val testSucceeded = rec.testSucceededEventsReceived(0)
@@ -145,7 +145,7 @@ class FilterReporterSpec extends FunSpec {
       val rep = new FilterReporter(rec, Set(FilterInfoProvided, FilterMarkupProvided))
       
       val spec = new ExampleSpec()
-      spec.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      spec.run(None, Args(rep))
       
       assert(rec.testSucceededEventsReceived.size === 1)
       val testSucceeded = rec.testSucceededEventsReceived(0)

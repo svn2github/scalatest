@@ -205,7 +205,7 @@ class EasyMockSugarSpec extends FlatSpec with ShouldMatchers with SharedHelpers 
       }
     }
     val rep = new EventRecordingReporter
-    a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(rep))
     val tf = rep.testFailedEventsReceived
     tf.size should be === 4
     val ts = rep.testSucceededEventsReceived
@@ -409,7 +409,7 @@ class EasyMockSugarSpec extends FlatSpec with ShouldMatchers with SharedHelpers 
       }
     }
     val rep = new EventRecordingReporter
-    a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(rep))
     val tf = rep.testFailedEventsReceived
     tf.size should be === 4
     val ts = rep.testSucceededEventsReceived

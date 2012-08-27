@@ -95,7 +95,7 @@ package org.scalatest.junit {
 
       val happy = new HappySuite
       val repA = new MyReporter
-      happy.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      happy.run(None, Args(repA))
       assert(repA.testStartingEvent.isDefined)
       assert(repA.testStartingEvent.get.testName === "verifySomething")
       assert(repA.testStartingEvent.get.suiteName === "HappySuite")
@@ -106,7 +106,7 @@ package org.scalatest.junit {
 
       val happy = new HappySuite
       val repA = new MyReporter
-      happy.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      happy.run(None, Args(repA))
       assert(repA.testSucceededEvent.isDefined)
       assert(repA.testSucceededEvent.get.testName === "verifySomething")
       assert(repA.testSucceededEvent.get.suiteName === "HappySuite")
@@ -117,7 +117,7 @@ package org.scalatest.junit {
 
       val bitter = new BitterSuite
       val repA = new MyReporter
-      bitter.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      bitter.run(None, Args(repA))
       assert(repA.testFailedEvent.isDefined)
       assert(repA.testFailedEvent.get.testName === "verifySomething")
       assert(repA.testFailedEvent.get.suiteName === "BitterSuite")
@@ -129,7 +129,7 @@ package org.scalatest.junit {
 
       val ignored = new IgnoredSuite
       val repA = new MyReporter
-      ignored.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      ignored.run(None, Args(repA))
       assert(repA.testIgnoredEvent.isDefined)
       assert(repA.testIgnoredEvent.get.testName === "verifySomething")
       assert(repA.testIgnoredEvent.get.suiteName === "IgnoredSuite")
@@ -140,7 +140,7 @@ package org.scalatest.junit {
 
       val many = new ManySuite
       val repA = new MyReporter
-      many.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      many.run(None, Args(repA))
 
       assert(repA.testStartingEvent.isDefined)
       assert(repA.testStartingEvent.get.testName startsWith "verifySomething")
@@ -159,7 +159,7 @@ package org.scalatest.junit {
 
       val happy = new HappySuite
       val repA = new MyReporter
-      happy.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      happy.run(None, Args(repA))
       assert(repA.runStartingCount === 0)
     }
 
@@ -167,7 +167,7 @@ package org.scalatest.junit {
 
       val happy = new HappySuite
       val repA = new MyReporter
-      happy.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      happy.run(None, Args(repA))
       assert(repA.runCompletedCount === 0)
     }
   }

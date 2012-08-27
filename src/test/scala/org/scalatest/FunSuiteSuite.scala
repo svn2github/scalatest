@@ -107,7 +107,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     }
     val a = new MySuite
     val myRep = new EventRecordingReporter
-    a.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(myRep))
     val testSucceeded = myRep.testSucceededEventsReceived
     assert(testSucceeded.size === 1)
     val recordedEvents = testSucceeded(0).recordedEvents
@@ -137,7 +137,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     }
     val a = new MySuite
     val myRep = new MyReporter
-    a.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(myRep))
     assert(myRep.infoProvidedReceived)
     assert(myRep.lastEvent.message === msg)
   }
@@ -164,7 +164,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     }
     val a = new MySuite
     val myRep = new MyReporter
-    a.run(None,Args( myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None,Args( myRep))
     assert(infoProvidedReceivedBeforeTest)
   }
 
@@ -190,7 +190,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     }
     val a = new MySuite
     val myRep = new MyReporter
-    a.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(myRep))
     assert(infoProvidedReceivedAfterTest)
     assert(infoProvidedReceived)
   }
@@ -218,7 +218,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     }
 
     val a = new MySuite
-    a.run(None, Args(new MyReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(new MyReporter))
     assert(testFailedAsExpected)
   }
 
@@ -245,7 +245,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     }
 
     val a = new MySuite
-    a.run(None, Args(new MyReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(new MyReporter))
     assert(testFailedAsExpected)
   }
 
@@ -272,7 +272,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     }
 
     val a = new MySuite
-    a.run(None, Args(new MyReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(new MyReporter))
     assert(testFailedAsExpected)
   }
 
@@ -299,7 +299,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     }
 
     val a = new MySuite
-    a.run(None, Args(new MyReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(new MyReporter))
     assert(testFailedAsExpected)
   }
 

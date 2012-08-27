@@ -771,7 +771,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     }
     
     val simpleSuite = new SimpleSuite()
-    simpleSuite.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map.empty, None, new Tracker, Set.empty))
+    simpleSuite.run(None, Args(SilentReporter))
     simpleSuite.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker, Set.empty))
     val caught =
       intercept[NotAllowedException] {
@@ -812,7 +812,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     }
     val rep = new EventRecordingReporter
     val s1 = new TestSpec
-    s1.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    s1.run(None, Args(rep))
     assert(rep.testFailedEventsReceived.size === 1)
     assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "SuiteSuite.scala")
     assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 8)

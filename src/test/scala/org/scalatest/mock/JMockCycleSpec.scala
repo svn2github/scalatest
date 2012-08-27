@@ -92,7 +92,7 @@ class JMockCycleSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
       }
     }
     val rep = new EventRecordingReporter
-    a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(rep))
     val tf = rep.testFailedEventsReceived
     tf.size should be === 1
     val ts = rep.testSucceededEventsReceived
@@ -142,7 +142,7 @@ class JMockCycleSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
       }
     }
     val rep = new EventRecordingReporter
-    a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(rep))
     val ts = rep.testSucceededEventsReceived
     ts.size should be === 1
   }
@@ -190,7 +190,7 @@ class JMockCycleSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
       }
     }
     val rep = new EventRecordingReporter
-    a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    a.run(None, Args(rep))
     val ts = rep.testSucceededEventsReceived
     ts.size should be === 1
   }

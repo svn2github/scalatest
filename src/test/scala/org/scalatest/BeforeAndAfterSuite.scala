@@ -174,7 +174,7 @@ class BeforeAndAfterSuite extends FunSuite {
     }
     intercept[NumberFormatException] {
       val a = new MySuite
-      a.run(Some("july"), Args(StubReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(Some("july"), Args(StubReporter))
     }
   }
   
@@ -193,7 +193,7 @@ class BeforeAndAfterSuite extends FunSuite {
     }
     val a = new MySuite
     intercept[NumberFormatException] {
-      a.run(Some("july"), Args(StubReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(Some("july"), Args(StubReporter))
     }
     assert(a.afterEachCalled)
   }
@@ -214,7 +214,7 @@ class BeforeAndAfterSuite extends FunSuite {
     }
     val a = new MySuite
     intercept[NumberFormatException] {
-      a.run(Some("july"), Args(StubReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(Some("july"), Args(StubReporter))
     }
     assert(a.afterEachCalled)
   }
@@ -228,7 +228,7 @@ class BeforeAndAfterSuite extends FunSuite {
     }
     intercept[NumberFormatException] {
       val a = new MySuite
-      a.run(Some("testJuly"), Args(StubReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(Some("testJuly"), Args(StubReporter))
     }
   }
  
@@ -242,7 +242,7 @@ class BeforeAndAfterSuite extends FunSuite {
     }
     intercept[NumberFormatException] {
       val a = new MySuite
-      a.run(None, Args(StubReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(StubReporter))
     }
   }
  
@@ -261,7 +261,7 @@ class BeforeAndAfterSuite extends FunSuite {
     }
     val a = new MySuite
     intercept[NumberFormatException] {
-      a.run(None, Args(StubReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(StubReporter))
     }
     assert(a.afterAllCalled)
   }
@@ -282,7 +282,7 @@ class BeforeAndAfterSuite extends FunSuite {
     }
     val a = new MySuite
     intercept[NumberFormatException] {
-      a.run(None, Args(StubReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(StubReporter))
     }
     assert(a.afterAllCalled)
   }
@@ -296,7 +296,7 @@ class BeforeAndAfterSuite extends FunSuite {
     }
     intercept[NumberFormatException] {
       val a = new MySuite
-      a.run(None, Args(StubReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(StubReporter))
     }
   }
 }
@@ -367,7 +367,7 @@ class BeforeAndAfterInfoSuite extends FunSuite {
     
     val exampleSpec = new ExampleSpec()
     val rep = new EventRecordingReporter
-    exampleSpec.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+    exampleSpec.run(None, Args(rep))
   
     assert(rep.infoProvidedEventsReceived.size === 1)
     val infoProvided = rep.infoProvidedEventsReceived(0)
@@ -393,7 +393,7 @@ class BeforeAndAfterInfoSuite extends FunSuite {
     
     val exampleSpec = new ExampleSpec()
     val rep = new EventRecordingReporter
-    exampleSpec.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+    exampleSpec.run(None, Args(rep))
   
     assert(rep.infoProvidedEventsReceived.size === 1)
     val infoProvided = rep.infoProvidedEventsReceived(0)

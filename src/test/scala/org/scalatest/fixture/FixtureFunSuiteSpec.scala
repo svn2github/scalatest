@@ -118,7 +118,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       assert(!rep.eventsReceived.exists(_.isInstanceOf[TestFailed]))
     }
 
@@ -243,7 +243,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
     it("should execute all tests when run is called with testName None") {
 
       val b = new TestWasCalledSuite
-      b.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      b.run(None, Args(SilentReporter))
       assert(b.theTestThisCalled)
       assert(b.theTestThatCalled)
     }
@@ -251,7 +251,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
     it("should execute one test when run is called with a defined testName") {
 
       val a = new TestWasCalledSuite
-      a.run(Some("this"), Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(Some("this"), Args(SilentReporter))
       assert(a.theTestThisCalled)
       assert(!a.theTestThatCalled)
     }
@@ -268,7 +268,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
 
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(repA))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -283,7 +283,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
 
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, Args(repB, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      b.run(None, Args(repB))
       assert(repB.testIgnoredReceived)
       assert(repB.lastEvent.isDefined)
       assert(repB.lastEvent.get.testName endsWith "test this")
@@ -300,7 +300,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
 
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, Args(repC, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      c.run(None, Args(repC))
       assert(repC.testIgnoredReceived)
       assert(repC.lastEvent.isDefined)
       assert(repC.lastEvent.get.testName endsWith "test that", repC.lastEvent.get.testName)
@@ -319,7 +319,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
 
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, Args(repD, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      d.run(None, Args(repD))
       assert(repD.testIgnoredReceived)
       assert(repD.lastEvent.isDefined)
       assert(repD.lastEvent.get.testName endsWith "test that") // last because should be in order of appearance
@@ -340,7 +340,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
 
       val repE = new TestIgnoredTrackingReporter
-      e.run(Some("test this"), Args(repE, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      e.run(Some("test this"), Args(repE))
       assert(repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(!e.theTestThatCalled)
@@ -358,7 +358,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
         test("test that") { fixture => theTestThatCalled = true }
       }
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(repA))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -612,7 +612,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val tp = rep.testPendingEventsReceived
       assert(tp.size === 2)
     }
@@ -648,7 +648,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val tp = rep.testPendingEventsReceived
       assert(tp.size === 2)
       assert(a.theTestWithFixtureWasRun)
@@ -667,7 +667,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
         test("throws Throwable") { s => throw new Throwable }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val tf = rep.testFailedEventsReceived
       assert(tf.size === 3)
     }
@@ -682,7 +682,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
         test("throws AssertionError") { s => throw new OutOfMemoryError }
       }
       intercept[OutOfMemoryError] {
-        a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+        a.run(None, Args(SilentReporter))
       }
     }
     it("should allow both tests that take fixtures and tests that don't") {
@@ -700,7 +700,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
         test("takes a fixture") { s => takesAFixtureInvoked = true }
       }
 
-      a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(SilentReporter))
       assert(a.testNames.size === 2, a.testNames)
       assert(a.takesNoArgsInvoked)
       assert(a.takesAFixtureInvoked)
@@ -723,7 +723,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
 
       assert(!a.takesNoArgsInvoked)
       assert(!a.takesAFixtureInvoked)
-      a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(SilentReporter))
       assert(a.testNames.size === 2, a.testNames)
       assert(a.takesNoArgsInvoked)
       assert(a.takesAFixtureInvoked)
@@ -742,7 +742,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       assert(!a.theTestThisCalled)
       assert(!a.theTestThatCalled)
       val reporter = new EventRecordingReporter
-      a.run(None, Args(reporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(reporter))
       assert(reporter.testIgnoredEventsReceived.size === 2)
       assert(!a.theTestThisCalled)
       assert(!a.theTestThatCalled)
@@ -764,7 +764,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
 
       val s = new MySuite
-      s.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      s.run(None, Args(SilentReporter))
       assert(s.aNoArgTestWasPassed)
       assert(!s.aOneArgTestWasPassed)
     }
@@ -785,7 +785,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
 
       val s = new MySuite
-      s.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      s.run(None, Args(SilentReporter))
       assert(!s.aNoArgTestWasPassed)
       assert(s.aOneArgTestWasPassed)
     }
@@ -804,7 +804,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
 
       val s = new MySuite
-      s.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      s.run(None, Args(SilentReporter))
       assert(s.theNoArgTestWasInvoked)
     }
 
@@ -818,7 +818,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
         }
         test("something") { fixture => }
       }
-      a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(SilentReporter))
       assert(a.correctTestNameWasPassed)
     }
     it("should pass the correct config map in the OneArgTest passed to withFixture") {
@@ -910,7 +910,7 @@ class FixtureFunSuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester
       }
       val suite = new MySuite
       intercept[IllegalArgumentException] {
-        suite.run(Some("three"), Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+        suite.run(Some("three"), Args(SilentReporter))
       }
     }
   }

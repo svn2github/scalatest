@@ -55,7 +55,7 @@ class CancelAfterFailureSpec extends FlatSpec with SharedHelpers {
       }
     }
     val rep = new EventRecordingReporter
-    // (new MySuite).run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+    // (new MySuite).run(None, Args(rep))
     (new MySuite).run(None, Args(rep))
     assert(rep.testSucceededEventsReceived.size === 1)
     assert(rep.testFailedEventsReceived.size === 1)

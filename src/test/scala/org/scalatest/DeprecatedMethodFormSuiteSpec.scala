@@ -48,7 +48,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val testPending = rep.testPendingEventsReceived
       assert(testPending.size === 1)
       val recordedEvents = testPending(0).recordedEvents
@@ -70,7 +70,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val testSucceeded = rep.testSucceededEventsReceived
       assert(testSucceeded.size === 1)
       val recordedEvents = testSucceeded(0).recordedEvents
@@ -92,7 +92,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val testCanceled = rep.testCanceledEventsReceived
       assert(testCanceled.size === 1)
       val recordedEvents = testCanceled(0).recordedEvents
@@ -161,7 +161,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
     it("should execute all tests when run is called with testName None") {
 
       val b = new TestWasCalledSuite
-      b.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      b.run(None, Args(SilentReporter))
       assert(b.theTestThisCalled)
       assert(b.theTestThatCalled)
     }
@@ -169,7 +169,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
     it("should execute one test when run is called with a defined testName") {
 
       val a = new TestWasCalledSuite
-      a.run(Some("testThis"), Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(Some("testThis"), Args(SilentReporter))
       assert(a.theTestThisCalled)
       assert(!a.theTestThatCalled)
     }
@@ -190,7 +190,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
       }
 
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(repA))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -210,7 +210,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
       }
 
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, Args(repB, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      b.run(None, Args(repB))
       assert(repB.testIgnoredReceived)
       assert(repB.lastEvent.isDefined)
       assert(repB.lastEvent.get.testName endsWith "testThis")
@@ -232,7 +232,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
       }
 
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, Args(repC, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      c.run(None, Args(repC))
       assert(repC.testIgnoredReceived)
       assert(repC.lastEvent.isDefined)
       assert(repC.lastEvent.get.testName endsWith "testThat(Informer)", repC.lastEvent.get.testName)
@@ -255,7 +255,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
       }
 
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, Args(repD, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      d.run(None, Args(repD))
       assert(repD.testIgnoredReceived)
       assert(repD.lastEvent.isDefined)
       assert(repD.lastEvent.get.testName endsWith "testThis") // last because run alphabetically
@@ -280,7 +280,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
       }
 
       val repE = new TestIgnoredTrackingReporter
-      e.run(Some("testThis"), Args(repE, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      e.run(Some("testThis"), Args(repE))
       assert(repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(!e.theTestThatCalled)
@@ -325,7 +325,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
 
       intercept[IllegalArgumentException] {
         // Here, they forgot that the name is actually testThis(Fixture)
-        suite.run(Some("misspelled"), Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+        suite.run(Some("misspelled"), Args(SilentReporter))
       }
     }
 
@@ -346,7 +346,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(repA))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -699,7 +699,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val tp = rep.testPendingEventsReceived
       assert(tp.size === 2)
     }
@@ -720,7 +720,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val tp = rep.testCanceledEventsReceived
       assert(tp.size === 2)
     }
@@ -741,7 +741,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val tp = rep.testCanceledEventsReceived
       assert(tp.size === 2)
     }
@@ -761,7 +761,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val tf = rep.testFailedEventsReceived
       assert(tf.size === 3)
     }
@@ -773,7 +773,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       intercept[OutOfMemoryError] {
-        a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+        a.run(None, Args(SilentReporter))
       }
     }
     it("should invoke withFixture from runTest for no-arg test method") {
@@ -790,7 +790,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
           testWasInvoked = true
         }
       }
-      a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(SilentReporter))
       assert(a.withFixtureWasInvoked)
       assert(a.testWasInvoked)
     }
@@ -808,7 +808,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
           testWasInvoked = true
         }
       }
-      a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(SilentReporter))
       assert(a.withFixtureWasInvoked)
       assert(a.testWasInvoked)
     }
@@ -823,7 +823,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
 
         def testSomething(info: Informer) {}
       }
-      a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(SilentReporter))
       assert(a.correctTestNameWasPassed)
     }
     it("should pass the correct config map in the NoArgTest passed to withFixture") {
@@ -865,7 +865,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         }
       }
       val myRep = new EventRecordingReporter
-      new MySuite().run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      new MySuite().run(None, Args(myRep))
       val testStarting = myRep.testStartingEventsReceived
       assert(testStarting.size === 1)
       val testSucceeded = myRep.testSucceededEventsReceived
@@ -947,7 +947,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
       val g = new SuiteG
 
       val x = Suites(a, b, c, d, e, f, g)
-      x.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      x.run(None, Args(SilentReporter))
 
       assert(a.executed)
       assert(b.executed)
@@ -1018,7 +1018,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
       }
 
       val x = new MySuite
-      x.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      x.run(None, Args(SilentReporter))
       assert(x.testsExecutedCount === 7)
 
       class MyStopper extends Stopper {

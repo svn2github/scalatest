@@ -113,7 +113,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
           testWasInvoked = true
         }
       }
-      a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(SilentReporter))
       assert(a.withFixtureWasInvoked)
       assert(a.testWasInvoked)
     }
@@ -126,7 +126,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
         }
         it should "do something" in {}
       }
-      a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(SilentReporter))
       assert(a.correctTestNameWasPassed)
     }
     it("should pass the correct config map in the NoArgTest passed to withFixture") {
@@ -159,7 +159,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
           getIndexesForInformerEventOrderTests(spec, spec.testName, spec.msg)
         assert(testSucceededIndex < infoProvidedIndex)*/
         val myRep = new EventRecordingReporter
-        spec.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+        spec.run(None, Args(myRep))
         val testStarting = myRep.testStartingEventsReceived
         assert(1 === testStarting.size)
         val testSucceeded = myRep.testSucceededEventsReceived
@@ -207,7 +207,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
         }
         val spec = new MyFlatSpec
         val myRep = new EventRecordingReporter
-        spec.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+        spec.run(None, Args(myRep))
         intercept[IllegalStateException] {
           spec.callInfo()
         }
@@ -220,7 +220,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       it("should send an InfoProvided with an IndentedText formatter with level 1 when called within a test") {
         val spec = new InfoInsideTestFlatSpec
         val myRep = new EventRecordingReporter
-        spec.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+        spec.run(None, Args(myRep))
         val indentedText = getIndentedTextFromTestInfoProvided(spec)
         assert(indentedText === IndentedText("  + " + spec.msg, spec.msg, 1))
       }
@@ -341,7 +341,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       }
       val suite = new MyFlatSpec
       val reporter = new EventRecordingReporter
-      suite.run(None, Args(reporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      suite.run(None, Args(reporter))
 
       val indexedList = reporter.eventsReceived
 
@@ -360,7 +360,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       }
       val suite = new MyFlatSpec
       val reporter = new EventRecordingReporter
-      suite.run(None, Args(reporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      suite.run(None, Args(reporter))
 
       val indexedList = reporter.eventsReceived
 
@@ -585,7 +585,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
     it("should execute all tests when run is called with testName None") {
 
       val b = new TestWasCalledSuite
-      b.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      b.run(None, Args(SilentReporter))
       assert(b.theTestThisCalled)
       assert(b.theTestThatCalled)
     }
@@ -593,7 +593,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
     it("should execute one test when run is called with a defined testName") {
 
       val a = new TestWasCalledSuite
-      a.run(Some("should run this"), Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(Some("should run this"), Args(SilentReporter))
       assert(a.theTestThisCalled)
       assert(!a.theTestThatCalled)
     }
@@ -608,7 +608,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       }
 
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(repA))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -621,7 +621,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       }
 
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, Args(repB, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      b.run(None, Args(repB))
       assert(repB.testIgnoredReceived)
       assert(repB.lastEvent.isDefined)
       assert(repB.lastEvent.get.testName endsWith "test this")
@@ -636,7 +636,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       }
 
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, Args(repC, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      c.run(None, Args(repC))
       assert(repC.testIgnoredReceived)
       assert(repC.lastEvent.isDefined)
       assert(repC.lastEvent.get.testName endsWith "test that", repC.lastEvent.get.testName)
@@ -653,7 +653,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       }
 
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, Args(repD, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      d.run(None, Args(repD))
       assert(repD.testIgnoredReceived)
       assert(repD.lastEvent.isDefined)
       assert(repD.lastEvent.get.testName endsWith "test that") // last because should be in order of appearance
@@ -672,7 +672,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       }
 
       val repE = new TestIgnoredTrackingReporter
-      e.run(Some("must test this"), Args(repE, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      e.run(Some("must test this"), Args(repE))
       assert(repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(!e.theTestThatCalled)
@@ -688,7 +688,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
         it should "test that" in { theTestThatCalled = true }
       }
       val repA = new TestIgnoredTrackingReporter
-      a.run(None, Args(repA, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(repA))
       assert(!repA.testIgnoredReceived)
       assert(a.theTestThisCalled)
       assert(a.theTestThatCalled)
@@ -909,7 +909,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val tp = rep.testPendingEventsReceived
       assert(tp.size === 2)
     }
@@ -921,7 +921,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
         it should "throw Throwable" in { throw new Throwable }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val tf = rep.testFailedEventsReceived
       assert(tf.size === 3)
     }
@@ -931,7 +931,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
         it should "throws AssertionError" in { throw new OutOfMemoryError }
       }
       intercept[OutOfMemoryError] {
-        a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+        a.run(None, Args(SilentReporter))
       }
     }
 /*
@@ -946,7 +946,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val testPending = rep.testPendingEventsReceived
       assert(1 === testPending.size)
       val recordedEvents = testPending(0).recordedEvents
@@ -967,7 +967,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
         }
       }
       val rep = new EventRecordingReporter
-      a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+      a.run(None, Args(rep))
       val testSucceeded = rep.testSucceededEventsReceived
       assert(1 === testSucceeded.size)
       val recordedEvents = testSucceeded(0).recordedEvents
@@ -1001,7 +1001,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
         }
         val a = new ApplicationSpec
         val rep = new EventRecordingReporter
-        a.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker(), Set.empty))
+        a.run(None, Args(rep))
         assert(a.registrationClosedThrown == true)
         val testFailedEvents = rep.testFailedEventsReceived
         expectResult(1)(testFailedEvents.size)
@@ -1026,7 +1026,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       }
       val rep = new EventRecordingReporter
       val s1 = new TestSpec
-      s1.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      s1.run(None, Args(rep))
       assert(rep.testFailedEventsReceived.size === 2)
       assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "FlatSpecSpec.scala")
       assert(rep.testFailedEventsReceived(0).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 12)
@@ -1056,7 +1056,7 @@ class FlatSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen with Sh
       }
       val rep = new EventRecordingReporter
       val s = new TestSpec
-      s.run(None, Args(rep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      s.run(None, Args(rep))
       assert(s.registrationClosedThrown == true)
       val testFailedEvents = rep.testFailedEventsReceived
       assert(testFailedEvents.size === 1)

@@ -168,7 +168,7 @@ trait SharedHelpers extends Assertions {
   
   def getIndexesForTestInformerEventOrderTests(suite: Suite, testName: String, infoMsg: String): (Int, Int) = {
     val myRep = new EventRecordingReporter
-    suite.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    suite.run(None, Args(myRep))
 
     val indexedList = myRep.eventsReceived.zipWithIndex
 
@@ -198,7 +198,7 @@ trait SharedHelpers extends Assertions {
   def getIndexesForInformerEventOrderTests(suite: Suite, testName: String, infoMsg: String): (Int, Int, Int) = {
 
     val myRep = new EventRecordingReporter
-    suite.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    suite.run(None, Args(myRep))
 
     val indexedList = myRep.eventsReceived.zipWithIndex
 
@@ -231,7 +231,7 @@ trait SharedHelpers extends Assertions {
   def getIndentedTextFromInfoProvided(suite: Suite): IndentedText = {
 
     val myRep = new EventRecordingReporter
-    suite.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    suite.run(None, Args(myRep))
 
     val infoProvidedOption = myRep.eventsReceived.find(_.isInstanceOf[InfoProvided])
 
@@ -247,7 +247,7 @@ trait SharedHelpers extends Assertions {
   
   def getIndentedTextFromTestInfoProvided(suite: Suite): IndentedText = {
     val myRep = new EventRecordingReporter
-    suite.run(None, Args(myRep, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    suite.run(None, Args(myRep))
     val recordedEvents: Seq[Event] = myRep.eventsReceived.find { e => 
       e match {
         case testSucceeded: TestSucceeded => 
@@ -290,7 +290,7 @@ trait SharedHelpers extends Assertions {
 
   def ensureTestFailedEventReceived(suite: Suite, testName: String) {
     val reporter = new EventRecordingReporter
-    suite.run(None, Args(reporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+    suite.run(None, Args(reporter))
     val testFailedEvent = reporter.eventsReceived.find(_.isInstanceOf[TestFailed])
     assert(testFailedEvent.isDefined)
     assert(testFailedEvent.get.asInstanceOf[TestFailed].testName === testName)
