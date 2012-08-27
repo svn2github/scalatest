@@ -36,6 +36,7 @@ import org.openqa.selenium.safari.SafariDriver
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.ie.InternetExplorerDriver
 import org.openqa.selenium.Cookie
+import org.openqa.selenium.WebElement
 
 class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with WebBrowser with HtmlUnit {
 
@@ -182,7 +183,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       val select3 = singleSel("select3")
       select3.value should be ("option3")
     }
-    it("should throw TFE with valid stack depth if invalid option is set") {
+    it("should throw TFE with valid stack depth and cause if invalid option is set") {
       go to (host + "find-select.html")
       val select1 = singleSel("select1")
       val caught = intercept[TestFailedException] {
@@ -190,6 +191,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       }
       caught.failedCodeLineNumber should be (Some(thisLineNumber - 2))
       caught.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      caught.getCause.getClass should be (classOf[org.openqa.selenium.NoSuchElementException])
     }
   }
 
@@ -220,7 +222,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       val select4 = multiSel("select4")
       select4.values should be (IndexedSeq("option1", "option3"))
     }
-    it("should throw TFE with valid stack depth if invalid option is set") {
+    it("should throw TFE with valid stack depth and cause if invalid option is set") {
       go to (host + "find-select.html")
       val select2 = multiSel("select2")
       val caught = intercept[TestFailedException] {
@@ -228,6 +230,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       }
       caught.failedCodeLineNumber should be (Some(thisLineNumber - 2))
       caught.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      caught.getCause.getClass should be (classOf[org.openqa.selenium.NoSuchElementException])
     }
   }
 
@@ -594,6 +597,16 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       pressKeys(" third post!")
       textField("text1").value should be ("first post! second post! third post!")                   
     }
+    
+    it("should throw TestFailedException with correct stack depth when enter is called currently selected element is neither text field or text area.") {
+      go to (host + "checkbox.html")
+      click on ("opt1")
+      val e = intercept[TestFailedException] {
+        enter("Some text")
+      }
+      e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+    }
 
     it("should clear a text field.") {
       go to (host + "textfield.html")
@@ -676,10 +689,15 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       
       radioButtonGroup("group1").value = "Option 3"
       radioButtonGroup("group1").value should be ("Option 3")
-      
-      intercept[org.openqa.selenium.NoSuchElementException] {
+    }
+    
+    it("should fail with TestFailedException with correct stack depth and cause when invalid value is set") {
+      go to (host + "radio.html")
+      val e = intercept[org.scalatest.exceptions.TestFailedException] {
         radioButtonGroup("group1").value = "Invalid value"
       }
+      e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
     }
     
     it("should read, select and clear check box correctly.") {
@@ -812,19 +830,32 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       cookie("name3").value should be ("value3")
       
       delete cookie "name2"
-      intercept[TestFailedException] {
+      val e1 = intercept[TestFailedException] {
         cookie("name2") should be (null)
       }
+      e1.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      e1.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
       cookie("name1").value should be ("value1")
       cookie("name3").value should be ("value3")
       
       delete all cookies
-      intercept[TestFailedException] {
+      val e2 = intercept[TestFailedException] {
         cookie("name1") should be (null)
       }
-      intercept[TestFailedException] {
+      e2.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      e2.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      
+      val e3 = intercept[TestFailedException] {
         cookie("name3") should be (null)
       }
+      e3.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      e3.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      
+      val e4 = intercept[TestFailedException] {
+        delete cookie ("name1")
+      }
+      e4.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      e4.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
     }
     
     it("should create, read and delete cookie correctly using libraryish alternatives") {
@@ -840,19 +871,32 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       cookie("name3").value should be ("value3")
       
       deleteCookie("name2")
-      intercept[TestFailedException] {
+      val e1 = intercept[TestFailedException] {
         cookie("name2") should be (null)  // TODO: This should throw a TFE not return null
       }
+      e1.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      e1.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
       cookie("name1").value should be ("value1")
       cookie("name3").value should be ("value3")
       
       deleteAllCookies()
-      intercept[TestFailedException] {
+      val e2 = intercept[TestFailedException] {
         cookie("name1") should be (null)
       }
-      intercept[TestFailedException] {
+      e2.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      e2.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      
+      val e3 = intercept[TestFailedException] {
         cookie("name3") should be (null)
       }
+      e3.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      e3.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      
+      val e4 = intercept[TestFailedException] {
+        deleteCookie("name1")
+      }
+      e4.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      e4.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
     }
     
     it("should support implicitlyWait method") {
@@ -1061,6 +1105,424 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       go to (host + "click.html")
       val webElement = id("aLink").webElement
       clickOn(webElement)
+    }
+  }
+  
+  describe("Query") {
+    describe("id") {
+      it("should return Element correctly when element method is called with valid id") {
+        go to (host + "click.html")
+        id("aLink").element.isInstanceOf[Element] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid id") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          id("aInvalidLink").element
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return Some(Element) when findElement method is called with valid id") {
+        go to (host + "click.html")
+        id("aLink").findElement match {
+          case Some(element: Element) => // ok
+          case other => fail("Expected Some(element: Element), but got: " + other)
+        }
+      }
+      it("should return None when findElement method is called with invalid id") {
+        go to (host + "click.html")
+        id("aInvalidLink").findElement should be (None)
+      }
+      it("should return WebElement correctly when webElement method is called with valid id") {
+        go to (host + "click.html")
+        id("aLink").webElement.isInstanceOf[WebElement] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid id") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          id("aInvalidLink").webElement
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return list Iterator[Element] with size of 1 when findAllElements is called with valid id") {
+        go to (host + "click.html")
+        val itr = id("aLink").findAllElements
+        itr.hasNext should be (true)
+        itr.next.isInstanceOf[Element] should be (true)
+        itr.hasNext should be (false)
+      }
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid id") {
+        go to (host + "click.html")
+        val itr = id("aInvalidLink").findAllElements
+        itr.hasNext should be (false)
+      }
+    }
+    
+    describe("name") {
+      it("should return Element correctly when element method is called with valid name") {
+        go to (host + "click.html")
+        name("aLinkName").element.isInstanceOf[Element] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid name") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          name("aInvalidLinkName").element
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return Some(Element) when findElement method is called with valid name") {
+        go to (host + "click.html")
+        name("aLinkName").findElement match {
+          case Some(element: Element) => // ok
+          case other => fail("Expected Some(element: Element), but got: " + other)
+        }
+      }
+      it("should return None when findElement method is called with invalid name") {
+        go to (host + "click.html")
+        name("aInvalidLinkName").findElement should be (None)
+      }
+      it("should return WebElement correctly when webElement method is called with valid name") {
+        go to (host + "click.html")
+        name("aLinkName").webElement.isInstanceOf[WebElement] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid name") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          name("aInvalidLinkName").webElement
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return list Iterator[Element] with size of 1 when findAllElements is called with valid name") {
+        go to (host + "click.html")
+        val itr = name("aLinkName").findAllElements
+        itr.hasNext should be (true)
+        itr.next.isInstanceOf[Element] should be (true)
+        itr.hasNext should be (false)
+      }
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid name") {
+        go to (host + "click.html")
+        val itr = name("aInvalidLinkName").findAllElements
+        itr.hasNext should be (false)
+      }
+    }
+    
+    describe("xpath") {
+      it("should return Element correctly when element method is called with valid xpath") {
+        go to (host + "click.html")
+        xpath("//html/body/a").element.isInstanceOf[Element] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid xpath") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          xpath("//html/body/div/a").element
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return Some(Element) when findElement method is called with valid xpath") {
+        go to (host + "click.html")
+        xpath("//html/body/a").findElement match {
+          case Some(element: Element) => // ok
+          case other => fail("Expected Some(element: Element), but got: " + other)
+        }
+      }
+      it("should return None when findElement method is called with invalid xpath") {
+        go to (host + "click.html")
+        xpath("//html/body/div/a").findElement should be (None)
+      }
+      it("should return WebElement correctly when webElement method is called with valid xpath") {
+        go to (host + "click.html")
+        xpath("//html/body/a").webElement.isInstanceOf[WebElement] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid xpath") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          xpath("//html/body/div/a").webElement
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return list Iterator[Element] with size of 1 when findAllElements is called with valid xpath") {
+        go to (host + "click.html")
+        val itr = xpath("//html/body/a").findAllElements
+        itr.hasNext should be (true)
+        itr.next.isInstanceOf[Element] should be (true)
+        itr.hasNext should be (false)
+      }
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid xpath") {
+        go to (host + "click.html")
+        val itr = xpath("//html/body/div/a").findAllElements
+        itr.hasNext should be (false)
+      }
+    }
+    
+    describe("className") {
+      it("should return Element correctly when element method is called with valid className") {
+        go to (host + "click.html")
+        className("aClass").element.isInstanceOf[Element] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid className") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          className("aInvalidClass").element
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return Some(Element) when findElement method is called with valid className") {
+        go to (host + "click.html")
+        className("aClass").findElement match {
+          case Some(element: Element) => // ok
+          case other => fail("Expected Some(element: Element), but got: " + other)
+        }
+      }
+      it("should return None when findElement method is called with invalid className") {
+        go to (host + "click.html")
+        className("aInvalidClass").findElement should be (None)
+      }
+      it("should return WebElement correctly when webElement method is called with valid className") {
+        go to (host + "click.html")
+        className("aClass").webElement.isInstanceOf[WebElement] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid className") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          className("aInvalidClass").webElement
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return list Iterator[Element] with size of 1 when findAllElements is called with valid className") {
+        go to (host + "click.html")
+        val itr = className("aClass").findAllElements
+        itr.hasNext should be (true)
+        itr.next.isInstanceOf[Element] should be (true)
+        itr.hasNext should be (false)
+      }
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid className") {
+        go to (host + "click.html")
+        val itr = className("aInvalidClass").findAllElements
+        itr.hasNext should be (false)
+      }
+    }
+    
+    describe("cssSelector") {
+      it("should return Element correctly when element method is called with valid cssSelector") {
+        go to (host + "click.html")
+        cssSelector("a[id='aLink']").element.isInstanceOf[Element] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid cssSelector") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          cssSelector("a[id='aInvalidLink']").element
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return Some(Element) when findElement method is called with valid cssSelector") {
+        go to (host + "click.html")
+        cssSelector("a[id='aLink']").findElement match {
+          case Some(element: Element) => // ok
+          case other => fail("Expected Some(element: Element), but got: " + other)
+        }
+      }
+      it("should return None when findElement method is called with invalid cssSelector") {
+        go to (host + "click.html")
+        cssSelector("a[id='aInvalidLink']").findElement should be (None)
+      }
+      it("should return WebElement correctly when webElement method is called with valid cssSelector") {
+        go to (host + "click.html")
+        cssSelector("a[id='aLink']").webElement.isInstanceOf[WebElement] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid cssSelector") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          cssSelector("a[id='aInvalidLink']").webElement
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return list Iterator[Element] with size of 1 when findAllElements is called with valid cssSelector") {
+        go to (host + "click.html")
+        val itr = cssSelector("a[id='aLink']").findAllElements
+        itr.hasNext should be (true)
+        itr.next.isInstanceOf[Element] should be (true)
+        itr.hasNext should be (false)
+      }
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid cssSelector") {
+        go to (host + "click.html")
+        val itr = cssSelector("a[id='aInvalidLink']").findAllElements
+        itr.hasNext should be (false)
+      }
+    }
+    
+    describe("linkText") {
+      it("should return Element correctly when element method is called with valid linkText") {
+        go to (host + "click.html")
+        linkText("Test Click").element.isInstanceOf[Element] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid linkText") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          linkText("Test Invalid Click").element
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return Some(Element) when findElement method is called with valid linkText") {
+        go to (host + "click.html")
+        linkText("Test Click").findElement match {
+          case Some(element: Element) => // ok
+          case other => fail("Expected Some(element: Element), but got: " + other)
+        }
+      }
+      it("should return None when findElement method is called with invalid linkText") {
+        go to (host + "click.html")
+        linkText("Test Invalid Click").findElement should be (None)
+      }
+      it("should return WebElement correctly when webElement method is called with valid linkText") {
+        go to (host + "click.html")
+        linkText("Test Click").webElement.isInstanceOf[WebElement] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid linkText") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          linkText("Test Invalid Click").webElement
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return list Iterator[Element] with size of 1 when findAllElements is called with valid linkText") {
+        go to (host + "click.html")
+        val itr = linkText("Test Click").findAllElements
+        itr.hasNext should be (true)
+        itr.next.isInstanceOf[Element] should be (true)
+        itr.hasNext should be (false)
+      }
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid linkText") {
+        go to (host + "click.html")
+        val itr = linkText("Test Invalid Click").findAllElements
+        itr.hasNext should be (false)
+      }
+    }
+    
+    describe("partialLinkText") {
+      it("should return Element correctly when element method is called with valid partialLinkText") {
+        go to (host + "click.html")
+        partialLinkText("Click").element.isInstanceOf[Element] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid partialLinkText") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          partialLinkText("Click Invalid").element
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return Some(Element) when findElement method is called with valid partialLinkText") {
+        go to (host + "click.html")
+        partialLinkText("Click").findElement match {
+          case Some(element: Element) => // ok
+          case other => fail("Expected Some(element: Element), but got: " + other)
+        }
+      }
+      it("should return None when findElement method is called with invalid partialLinkText") {
+        go to (host + "click.html")
+        partialLinkText("Click Invalid").findElement should be (None)
+      }
+      it("should return WebElement correctly when webElement method is called with valid partialLinkText") {
+        go to (host + "click.html")
+        partialLinkText("Click").webElement.isInstanceOf[WebElement] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid partialLinkText") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          partialLinkText("Click Invalid").webElement
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return list Iterator[Element] with size of 1 when findAllElements is called with valid partialLinkText") {
+        go to (host + "click.html")
+        val itr = partialLinkText("Click").findAllElements
+        itr.hasNext should be (true)
+        itr.next.isInstanceOf[Element] should be (true)
+        itr.hasNext should be (false)
+      }
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid partialLinkText") {
+        go to (host + "click.html")
+        val itr = partialLinkText("Click Invalid").findAllElements
+        itr.hasNext should be (false)
+      }
+    }
+    
+    describe("tagname") {
+      it("should return Element correctly when element method is called with valid tagname") {
+        go to (host + "click.html")
+        tagName("a").element.isInstanceOf[Element] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid tagname") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          tagName("img").element
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return Some(Element) when findElement method is called with valid tagname") {
+        go to (host + "click.html")
+        tagName("a").findElement match {
+          case Some(element: Element) => // ok
+          case other => fail("Expected Some(element: Element), but got: " + other)
+        }
+      }
+      it("should return None when findElement method is called with invalid tagname") {
+        go to (host + "click.html")
+        tagName("img").findElement should be (None)
+      }
+      it("should return WebElement correctly when webElement method is called with valid tagname") {
+        go to (host + "click.html")
+        tagName("a").webElement.isInstanceOf[WebElement] should be (true)
+      }
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid tagname") {
+        go to (host + "click.html")
+        val e = intercept[TestFailedException] {
+          tagName("img").webElement
+        }
+        e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        e.getCause.isInstanceOf[org.openqa.selenium.NoSuchElementException] should be (true)
+      }
+      it("should return list Iterator[Element] with size of 1 when findAllElements is called with valid tagname") {
+        go to (host + "click.html")
+        val itr = tagName("a").findAllElements
+        itr.hasNext should be (true)
+        itr.next.isInstanceOf[Element] should be (true)
+        itr.hasNext should be (false)
+      }
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid tagname") {
+        go to (host + "click.html")
+        val itr = tagName("img").findAllElements
+        itr.hasNext should be (false)
+      }
     }
   }
   

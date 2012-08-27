@@ -1576,8 +1576,12 @@ trait WebBrowser {
       groupElements.find(_.getAttribute("value") == value) match {
         case Some(radio) => 
           radio.click()
-        case None => // TODO: Chee Seng: Please change this to TestFailedException with a good stack depth and the NSEE as its cause
-          throw new org.openqa.selenium.NoSuchElementException("Radio button value '" + value + "' not found for group '" + groupName + "'.")
+        case None => 
+          throw new TestFailedException(
+                     sde => Some("Radio button value '" + value + "' not found for group '" + groupName + "'."),
+                     None,
+                     getStackDepthFun("WebBrowser.scala", "value_=", 1)
+                   )
       }
     }
   }
@@ -1815,10 +1819,10 @@ trait WebBrowser {
         select.selectByValue(value)
       }
       catch {
-        case e: org.openqa.selenium.NoSuchElementException => // TODO: Chee Seng: Please include the thrown NSEE as the TFE's cause
+        case e: org.openqa.selenium.NoSuchElementException => 
           throw new TestFailedException(
                      sde => Some(e.getMessage),
-                     None,
+                     Some(e),
                      getStackDepthFun("WebBrowser.scala", "value_=", 1)
                    )
       }
@@ -1899,10 +1903,10 @@ trait WebBrowser {
         values.foreach(select.selectByValue(_))
       }
       catch {
-        case e: org.openqa.selenium.NoSuchElementException =>  // TODO: Chee Seng: Please include the thrown NSEE as the TFE's cause
+        case e: org.openqa.selenium.NoSuchElementException => 
           throw new TestFailedException(
                      sde => Some(e.getMessage),
-                     None,
+                     Some(e),
                      getStackDepthFun("WebBrowser.scala", "value_=", 1)
                    )
       }
@@ -2057,12 +2061,14 @@ trait WebBrowser {
     val by: By
     val queryString: String
     def element(implicit driver: WebDriver): Element = {
-      findElement(driver) match {
-        case Some(element) => element
-        case None => 
+      try {
+        createTypedElement(driver.findElement(by))
+      }
+      catch {
+        case e: org.openqa.selenium.NoSuchElementException => 
           throw new TestFailedException(
                      sde => Some("Element '" + queryString + "' not found."),
-                     None,
+                     Some(e),
                      getStackDepthFun("WebBrowser.scala", "name", 1)
                    )
       }
@@ -2083,10 +2089,10 @@ trait WebBrowser {
         driver.findElement(by)
       }
       catch {
-        case e: org.openqa.selenium.NoSuchElementException =>  // TODO: Chee Seng: Please include the thrown NSEE as the TFE's cause
+        case e: org.openqa.selenium.NoSuchElementException => 
           throw new TestFailedException(
-                     sde => Some("Element '" + queryString + "' not found."),
-                     None,
+                     sde => Some("WebElement '" + queryString + "' not found."),
+                     Some(e),
                      getStackDepthFun("WebBrowser.scala", "name", 1)
                    )
       }
@@ -2341,8 +2347,12 @@ trait WebBrowser {
   object delete {
     private def deleteCookie(name: String)(implicit driver: WebDriver) {
       val cookie = getCookie(name)
-      if (cookie == null) // TODO: Chee Seng: Please change this to TestFailedException with a good stack depth and the NSEE as its cause
-        throw new org.openqa.selenium.NoSuchElementException("Cookie '" + name + "' not found.")
+      if (cookie == null) 
+        throw new TestFailedException(
+                     sde => Some("Cookie '" + name + "' not found."),
+                     None,
+                     getStackDepthFun("WebBrowser.scala", "deleteCookie", 1)
+                   )
       driver.manage.deleteCookie(cookie.underlying)
     }
     
@@ -2355,7 +2365,6 @@ trait WebBrowser {
     }
   }
 
-  // TODO: Chee Seng: Do we have tests for stack depth in these new, non-DSLish forms. If not, please write them to make sure they are correct.
   def addCookie(name: String, value: String, path: String = "/", expiry: Date = null, domain: String = null, secure: Boolean = false)(implicit driver: WebDriver) {
     add cookie (name, value, path, expiry, domain, secure)
   }
@@ -2511,7 +2520,12 @@ trait WebBrowser {
     ae match {
       case tf: TextField => tf.value = value
       case ta: TextArea => ta.value = value
-      case _ => throw new Exception("Currently selected element is neither a text field nor a text area") // TODO: Chee Seng, please make this throw a TFE with a proper stack depth (and a test, of course)
+      case _ => 
+        throw new TestFailedException(
+                     sde => Some("Currently selected element is neither a text field nor a text area"),
+                     None,
+                     getStackDepthFun("WebBrowser.scala", "switch", 1)
+                   )
     }
   }
 
