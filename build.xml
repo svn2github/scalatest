@@ -142,8 +142,8 @@
           </mapper>
         </uptodate>
 
-        <uptodate property="genmustmatchers.uptodate"
-                  srcfile="project/GenMustMatchers.scala">
+        <uptodate property="genmatchers.uptodate"
+                  srcfile="project/GenMatchers.scala">
           <mapper type="merge" to=
             "${build}/scala-${scala.version}/src_managed/main/scala/org/scalatest/junit/MustMatchersForJUnit.scala">
           </mapper>
@@ -174,7 +174,8 @@
         	<include name="GenDeprecatedShouldMatchersTests.scala" />
         	<include name="GenFunSuiteN.scala" />
         	<include name="GenGen.scala" />
-        	<include name="GenMustMatchers.scala" />
+        	<!--<include name="GenMustMatchers.scala" />-->
+            <include name="GenMatchers.scala" />
         	<include name="GenTable.scala" />
         	<include name="GenTheyWord.scala" />
         </scalac>
@@ -185,14 +186,16 @@
         <java classname="GenTable" classpathref="run.generators.class.path"
               fork="false">
         	<arg value="${build}/scala-${scala.version}/src_managed" />
+            <arg value="${scala.version}" />
         </java>
     </target>
 
-    <target name="genmustmatchers" depends="init, compile-codegenerators"
-            unless="genmustmatchers.uptodate">
-        <java classname="GenMustMatchers"
+    <target name="genmatchers" depends="init, compile-codegenerators"
+            unless="genmatchers.uptodate">
+        <java classname="GenMatchers"
               classpathref="run.generators.class.path" fork="false">
         	<arg value="${build}/scala-${scala.version}/src_managed" />
+            <arg value="${scala.version}" />
         </java>
     </target>
 
@@ -200,6 +203,7 @@
             unless="gengen.uptodate">
         <java classname="GenGen" classpathref="run.generators.class.path" fork="false">
         	<arg value="${build}/scala-${scala.version}/src_managed" />
+            <arg value="${scala.version}" />
         </java>
     </target>
 
@@ -207,22 +211,25 @@
         <!-- Then, run it. -->
         <java classname="GenDeprecatedShouldMatchersTests" classpathref="run.generators.class.path" fork="false">
         	<arg value="${build}/scala-${scala.version}/src_managed" />
+            <arg value="${scala.version}" />
         </java>
     </target>
 
     <target name="gencode" depends="init, compile-codegenerators">
-        <java classname="GenMustMatchersTests" classpathref="run.generators.class.path" fork="false">
+        <java classname="GenMatchers" classpathref="run.generators.class.path" fork="false">
         	<arg value="${build}/scala-${scala.version}/src_managed" />
+            <arg value="${scala.version}" />
         </java>
     	<java classname="GenTheyWord" classpathref="run.generators.class.path" fork="false">
     		<arg value="${build}/scala-${scala.version}/src_managed" />
+            <arg value="${scala.version}" />
     	</java>
     </target>
 
     <target name="compile" depends="compile-main, compile-tests, compile-examples"/>
 
     <!--<target name="compile-main" depends="init">-->
-    <target name="compile-main" depends="init, gentables, genmustmatchers, gengen">
+    <target name="compile-main" depends="init, gentables, genmatchers, gengen">
         <!--<fail message="Wrong JVM [${ant.java.version}]. Include 'java6' target to use java 6."
               unless="jvm.ok"/>-->
 

@@ -2637,20 +2637,21 @@ $okayExpressions$
   
   def main(args: Array[String]) {
     val targetDir = args(0)
+    val scalaVersion = args(1)
     val mainDir = new File(targetDir + "/main/scala/org/scalatest/prop")
     mainDir.mkdirs()
-    genMain(mainDir)
+    genMain(mainDir, scalaVersion)
     
     val testDir = new File("gen/" + targetDir + "/test/scala/org/scalatest/prop")
     testDir.mkdirs()
-    genTest(testDir)
+    genTest(testDir, scalaVersion)
   }
   
-  def genMain(dir: File) {
+  def genMain(dir: File, scalaVersion: String) {
     genPropertyChecks(dir)
   }
   
-  def genTest(dir: File) {
+  def genTest(dir: File, scalaVersion: String) {
     genGeneratorDrivenSuite(dir, true, false, false)
     genGeneratorDrivenSuite(dir, false, false, false)
     genGeneratorDrivenSuite(dir, true, true, false)

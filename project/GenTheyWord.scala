@@ -49,7 +49,7 @@ object GenTheyWord {
                  "FunSpecSpecUsingThey")
   }
   
-  def genTest(dir: File) {
+  def genTest(dir: File, scalaVersion: String) {
     generateFile("src/test/scala/org/scalatest", 
                  "FunSpecSuite", 
                  dir.getAbsolutePath, 

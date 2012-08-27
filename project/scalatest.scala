@@ -3,7 +3,7 @@ import Keys._
 
 object ScalatestBuild extends Build {
 
-   val scalaVersionToUse = "2.9.0"
+   val scalaVersionToUse = "2.10.0-M7"
   
    val includeTestPackageSet = Set("org.scalatest", 
                                    "org.scalatest.fixture", 
@@ -52,7 +52,7 @@ object ScalatestBuild extends Build {
      sourceGenerators in Compile <+= 
          (baseDirectory, sourceManaged in Compile) map genFiles("gentables", "GenTable.scala")(GenTable.genMain),
      sourceGenerators in Compile <+=
-         (baseDirectory, sourceManaged in Compile) map genFiles("mustmatchers", "GenMustMatchers.scala")(GenMustMatchers.genMain),  
+           (baseDirectory, sourceManaged in Compile) map genFiles("matchers", "MustMatchers.scala")(GenMatchers.genMain),
      testOptions in Test := Seq(Tests.Filter(className => isIncludedTest(className)))
    ).aggregate("gentests")
    
@@ -66,9 +66,9 @@ object ScalatestBuild extends Build {
      sourceGenerators in Test <+= 
          (baseDirectory, sourceManaged in Test) map genFiles("gen", "GenGen.scala")(GenGen.genTest),
      sourceGenerators in Test <+= 
-         (baseDirectory, sourceManaged in Test) map genFiles("gentables", "GenTable.scala")(GenTable.genTest), 
-     sourceGenerators in Test <+= 
-         (baseDirectory, sourceManaged in Test) map genFiles("mustmatchers", "GenMustMatchers.scala")(GenMustMatchers.genTest),
+         (baseDirectory, sourceManaged in Test) map genFiles("gentables", "GenTable.scala")(GenTable.genTest),
+     sourceGenerators in Test <+=
+           (baseDirectory, sourceManaged in Test) map genFiles("matchers", "GenMatchers.scala")(GenMatchers.genTest),
      sourceGenerators in Test <+= 
          (baseDirectory, sourceManaged in Test) map genFiles("genthey", "GenTheyWord.scala")(GenTheyWord.genTest),
      testOptions in Test := Seq(Tests.Filter(className => isIncludedTest(className)))
@@ -88,7 +88,7 @@ object ScalatestBuild extends Build {
 
    def simpledependencies = Seq(
      "org.scala-tools.testing" % "test-interface" % "0.5",  // TODO optional
-     "org.scalacheck" %% "scalacheck" % "1.10.0",   // TODO optional
+     "org.scalacheck" % ("scalacheck_" + scalaVersionToUse) % "1.10.0",   // TODO optional
      "org.easymock" % "easymockclassextension" % "3.1",   // TODO optional
      "org.jmock" % "jmock-legacy" % "2.5.1", // TODO optional
      "org.mockito" % "mockito-all" % "1.9.0", // TODO optional
@@ -104,44 +104,44 @@ object ScalatestBuild extends Build {
      "org.eclipse.jetty" % "jetty-webapp" % "8.0.1.v20110908" % "test"
   )
 
-  def genFiles(name: String, generatorSource: String)(gen: File => Unit)(basedir: File, outDir: File): Seq[File] = {
+  def genFiles(name: String, generatorSource: String)(gen: (File, String) => Unit)(basedir: File, outDir: File): Seq[File] = {
     val tdir = outDir / "scala" / name
     val genSource = basedir / "project" / generatorSource
     def results = (tdir ** "*.scala").get
     if (results.isEmpty || results.exists(_.lastModified < genSource.lastModified)) {
       tdir.mkdirs()
-      gen(tdir)
+      gen(tdir, scalaVersionToUse)
     }
     results
   }
   
   val genMustMatchers = TaskKey[Unit]("genmustmatchers", "Generate Must Matchers")
   val genMustMatchersTask = genMustMatchers <<= (sourceManaged in Compile, sourceManaged in Test) map { (mainTargetDir: File, testTargetDir: File) =>
-    GenMustMatchers.genMain(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/main/mustmachers"))
-    GenMustMatchers.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/mustmachers"))
+    GenMatchers.genMain(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/main/matchers"), scalaVersionToUse)
+    GenMatchers.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/matchers"), scalaVersionToUse)
   }
   
   val genGen = TaskKey[Unit]("gengen", "Generate Property Checks")
   val genGenTask = genGen <<= (sourceManaged in Compile, sourceManaged in Test) map { (mainTargetDir: File, testTargetDir: File) =>
-    GenGen.genMain(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/main/gen"))
-    GenGen.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/gen"))
+    GenGen.genMain(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/main/gen"), scalaVersionToUse)
+    GenGen.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/gen"), scalaVersionToUse)
   }
   
   val genTables = TaskKey[Unit]("gentables", "Generate Tables")
   val genTablesTask = genTables <<= (sourceManaged in Compile, sourceManaged in Test) map { (mainTargetDir: File, testTargetDir: File) =>
-    GenTable.genMain(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/main/gentables"))
-    GenTable.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/gentables"))
+    GenTable.genMain(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/main/gentables"), scalaVersionToUse)
+    GenTable.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/gentables"), scalaVersionToUse)
   }
   
   val genTheyWord = TaskKey[Unit]("genthey", "Generate They Word tests")
   val genTheyWordTask = genTheyWord <<= (sourceManaged in Compile, sourceManaged in Test) map { (mainTargetDir: File, testTargetDir: File) =>
-    GenTheyWord.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/genthey"))
+    GenTheyWord.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/genthey"), scalaVersionToUse)
   }
 
   val genCode = TaskKey[Unit]("gencode", "Generate Code, includes Must Matchers and They Word tests.")
   val genCodeTask = genCode <<= (sourceManaged in Compile, sourceManaged in Test) map { (mainTargetDir: File, testTargetDir: File) =>
-    GenMustMatchers.genMain(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/main/mustmachers"))
-    GenMustMatchers.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/mustmachers"))
-    GenTheyWord.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/genthey"))
+    GenMatchers.genMain(new File("target/scala-" + scalaVersionToUse + "/src_managed/main/matchers"), scalaVersionToUse)
+    GenMatchers.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/matchers"), scalaVersionToUse)
+    GenTheyWord.genTest(new File("gen/target/scala-" + scalaVersionToUse + "/src_managed/test/genthey"), scalaVersionToUse)
   }
 }
