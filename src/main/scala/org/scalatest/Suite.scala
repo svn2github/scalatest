@@ -2838,7 +2838,7 @@ private[scalatest] object Suite {
   private[scalatest] def formatterForSuiteAborted(suite: Suite, message: String): Option[Formatter] =
       Some(IndentedText(message, message, 0))
 
-  private def simpleNameForTest(testName: String) =
+  private[scalatest] def simpleNameForTest(testName: String) =
     if (testName.endsWith(InformerInParens))
       testName.substring(0, testName.length - InformerInParens.length)
     else

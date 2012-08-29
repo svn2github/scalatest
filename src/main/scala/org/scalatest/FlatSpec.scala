@@ -1539,7 +1539,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToRun(specText: String, methodName: String, testTags: List[Tag], testFun: () => Unit) {
-    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "FlatSpec.scala", methodName, 4, -3, None, None, testTags: _*)
+    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "FlatSpec.scala", methodName, 4, -3, None, None, None, testTags: _*)
   }
 
   /**
@@ -3019,7 +3019,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToIgnore(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
-    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FlatSpec.scala", methodName, 4, -3, testTags: _*)
+    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FlatSpec.scala", methodName, 4, -3, None, testTags: _*)
   }
 
   /**

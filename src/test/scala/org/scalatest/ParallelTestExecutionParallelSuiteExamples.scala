@@ -15,6 +15,7 @@ trait ParallelTestExecutionParallelSuiteExamples extends Tables {
     Table(
       "pair", 
       new ExampleParallelTestExecutionParallelSuitePair, 
+      new ExampleParallelTestExecutionParallelSpecPair, 
       new ExampleParallelTestExecutionParallelFunSuitePair, 
       new ExampleParallelTestExecutionParallelFunSpecPair, 
       new ExampleParallelTestExecutionParallelFeatureSpecPair,
@@ -48,6 +49,33 @@ class ExampleParallelTestExecutionParallelSuitePair extends ParallelSuites {
     checkTestSucceeded(events(12), "testFixtureMethod2")
     checkTestStarting(events(13), "testFixtureMethod3")
     checkTestSucceeded(events(14), "testFixtureMethod3")
+    checkSuiteCompleted(events(15), suite2.suiteId)
+  }
+}
+
+class ExampleParallelTestExecutionParallelSpecPair extends ParallelSuites {
+  def suite1 = new ExampleParallelTestExecutionOrderSpec
+  def suite2 = new ExampleParallelTestExecutionOrderSuite
+  
+  def assertParallelSuites(events: List[Event]) {
+    assert(events.size === 16)
+    
+    checkSuiteStarting(events(0), suite1.suiteId)
+    checkTestStarting(events(1), "test 1")
+    checkTestSucceeded(events(2), "test 1")
+    checkTestStarting(events(3), "test 2")
+    checkTestSucceeded(events(4), "test 2")
+    checkTestStarting(events(5), "test 3")
+    checkTestSucceeded(events(6), "test 3")
+    checkSuiteCompleted(events(7), suite1.suiteId)
+    
+    checkSuiteStarting(events(8), suite2.suiteId)
+    checkTestStarting(events(9), "testMethod1")
+    checkTestSucceeded(events(10), "testMethod1")
+    checkTestStarting(events(11), "testMethod2")
+    checkTestSucceeded(events(12), "testMethod2")
+    checkTestStarting(events(13), "testMethod3")
+    checkTestSucceeded(events(14), "testMethod3")
     checkSuiteCompleted(events(15), suite2.suiteId)
   }
 }

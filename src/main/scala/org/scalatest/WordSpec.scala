@@ -1721,7 +1721,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToRun(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
-    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "WordSpec.scala", methodName, 4, -3, None, None, testTags: _*)
+    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "WordSpec.scala", methodName, 4, -3, None, None, None, testTags: _*)
   }
 
   /**
@@ -1744,11 +1744,11 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToIgnore(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
-    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "WordSpec.scala", methodName, 4, -3, testTags: _*)
+    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "WordSpec.scala", methodName, 4, -3, None, testTags: _*)
   }
 
   private def registerBranch(description: String, childPrefix: Option[String], methodName:String, stackDepth: Int, adjustment: Int, fun: () => Unit) {
-    registerNestedBranch(description, childPrefix, fun(), "describeCannotAppearInsideAnIt", "WordSpec.scala", methodName, stackDepth, adjustment)
+    registerNestedBranch(description, childPrefix, fun(), "describeCannotAppearInsideAnIt", "WordSpec.scala", methodName, stackDepth, adjustment, None)
   }
 
   /**

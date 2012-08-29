@@ -236,6 +236,7 @@ import org.scalatest.exceptions.NotAllowedException
  *
  * @author Bill Venners
  */
+@Finders(Array("org.scalatest.finders.FeatureSpecFinder"))
 trait FeatureSpec extends Suite { thisSuite =>
 
   private final val engine = new FixtureEngine[FixtureParam]("concurrentFeatureSpecMod", "FixtureFeatureSpec")
@@ -272,7 +273,7 @@ trait FeatureSpec extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   protected def scenario(specText: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerTest(Resources("scenario", specText), testFun, "scenarioCannotAppearInsideAnotherScenario", sourceFileName, "scenario", 4, -2, None, None, testTags: _*)
+    registerTest(Resources("scenario", specText), testFun, "scenarioCannotAppearInsideAnotherScenario", sourceFileName, "scenario", 4, -2, None, None, None, testTags: _*)
   }
 
   /**
@@ -294,7 +295,7 @@ trait FeatureSpec extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   protected def ignore(specText: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerIgnoredTest(Resources("scenario", specText), testFun , "ignoreCannotAppearInsideAScenario", sourceFileName, "ignore", 4, -2, testTags: _*)
+    registerIgnoredTest(Resources("scenario", specText), testFun , "ignoreCannotAppearInsideAScenario", sourceFileName, "ignore", 4, -2, None, testTags: _*)
   }
 
   /**
@@ -308,7 +309,7 @@ trait FeatureSpec extends Suite { thisSuite =>
     if (!currentBranchIsTrunk)
       throw new NotAllowedException(Resources("cantNestFeatureClauses"), getStackDepthFun(sourceFileName, "feature"))
 
-    registerNestedBranch(Resources("feature", description), None, fun, "featureCannotAppearInsideAScenario", sourceFileName, "feature", 4, -2)
+    registerNestedBranch(Resources("feature", description), None, fun, "featureCannotAppearInsideAScenario", sourceFileName, "feature", 4, -2, None)
   }
 
   /**

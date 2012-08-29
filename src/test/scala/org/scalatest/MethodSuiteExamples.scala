@@ -10,6 +10,7 @@ trait MethodSuiteExamples extends Tables {
   
   def suite: Suite with FixtureServices
   def fixtureSuite: fixture.Suite with FixtureServices
+  def spec: Spec with FixtureServices
   def junit3Suite: JUnit3Suite with FixtureServices
   def junitSuite: JUnitSuite with FixtureServices
   def testngSuite: TestNGSuite with FixtureServices
@@ -19,6 +20,7 @@ trait MethodSuiteExamples extends Tables {
       "suite",
       suite,
       fixtureSuite,
+      spec,
       junit3Suite, 
       junitSuite,
       testngSuite

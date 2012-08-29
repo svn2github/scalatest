@@ -68,6 +68,32 @@ class LocationMethodSuiteProp extends MethodSuiteProp {
     }
   }
   
+  def spec = new TestLocationSpec
+  class TestLocationSpec extends Spec with FixtureServices {
+    val suiteTypeName = "org.scalatest.events.LocationMethodSuiteProp$TestLocationSpec"
+    val expectedStartingList = List(TestStartingPair("test succeed", "test$u0020succeed"), 
+                                TestStartingPair("test pending", "test$u0020pending"), 
+                                TestStartingPair("test cancel", "test$u0020cancel"))
+    val expectedResultList = List(TestResultPair(classOf[TestSucceeded], "test$u0020succeed"), 
+                              TestResultPair(classOf[TestPending], "test$u0020pending"),
+                              TestResultPair(classOf[TestCanceled], "test$u0020cancel"),
+                              TestResultPair(classOf[TestIgnored], "test$u0020ignore"))
+    
+    def `test succeed` {
+      
+    }
+    def `test pending` {
+      pending
+    }
+    def `test cancel` {
+      cancel
+    }
+    @Ignore
+    def `test ignore` {
+      
+    }
+  }
+  
   def junit3Suite = new TestLocationMethodJUnit3Suite
   
   def junitSuite = new TestLocationMethodJUnitSuite

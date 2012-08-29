@@ -1066,7 +1066,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
     assert(testSucceededReportHadCorrectSpecText, lastSpecText match { case Some(s) => s; case None => "No report"})
   }
 
-  test("Should get infoProvided with description if one and only one describe clause") {
+  test("Should get ScopeOpened with description if one and only one describe clause") {
 
     val expectedSpecText = "A Stack"
 
@@ -1341,7 +1341,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
 
   // End of Share stuff
   ignore("should be able to send info to the reporter") { // Can't do this yet, no info in Spec yet
-
+                                                          // UPDATE 27 August Chee Seng: Probably need to use recordedEvents now.
     val expectedMessage = "this is the expected message"
 
     class MyReporter extends Reporter {

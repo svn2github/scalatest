@@ -11,6 +11,7 @@ trait ParallelTestExecutionInfoExamples extends Tables {
 
   def infoSuite = new ExampleParallelTestExecutionInfoSuite()
   def infoFixtureSuite = new ExampleParallelTestExecutionInfoFixtureSuite()
+  def infoSpec = new ExampleParallelTestExecutionInfoSpec()
   def infoFunSuite = new ExampleParallelTestExecutionInfoFunSuite()
   def infoFixtureFunSuite = new ExampleParallelTestExecutionInfoFixtureFunSuite()
   def infoFunSpec = new ExampleParallelTestExecutionInfoFunSpec()
@@ -31,6 +32,7 @@ trait ParallelTestExecutionInfoExamples extends Tables {
       "suite1",
       infoSuite, 
       infoFixtureSuite, 
+      infoSpec, 
       infoFunSuite, 
       infoFixtureFunSuite, 
       infoFunSpec, 
@@ -83,6 +85,25 @@ class ExampleParallelTestExecutionInfoFixtureSuite extends fixture.Suite with In
     checkTestSucceeded(events(3), "testMethod2")
     checkTestStarting(events(4), "testMethod3")
     checkTestSucceeded(events(5), "testMethod3")
+  }
+}
+
+@DoNotDiscover
+class ExampleParallelTestExecutionInfoSpec extends Spec with InfoExpectedResults with BeforeAndAfter with ParallelTestExecution {
+  before {}  // how to fire info here?
+  def `test 1` {}
+  def `test 2` {}
+  def `test 3` {}
+  after {} // how to fire info here?
+  
+  def assertBeforeAfterInfo(events: List[Event]) {
+    assert(events.size === 6)
+    checkTestStarting(events(0), "test 1")
+    checkTestSucceeded(events(1), "test 1")
+    checkTestStarting(events(2), "test 2")
+    checkTestSucceeded(events(3), "test 2")
+    checkTestStarting(events(4), "test 3")
+    checkTestSucceeded(events(5), "test 3")
   }
 }
 

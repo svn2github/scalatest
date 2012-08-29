@@ -239,6 +239,7 @@ import org.scalatest.Suite.autoTagClassAnnotations
  *
  * @author Bill Venners
  */
+@Finders(Array("org.scalatest.finders.FreeSpecFinder"))
 trait FreeSpec extends Suite { thisSuite =>
 
   private final val engine = new FixtureEngine[FixtureParam]("concurrentFixtureFreeSpecMod", "FixtureFreeSpec")
@@ -276,7 +277,7 @@ trait FreeSpec extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToRun(specText: String, testTags: List[Tag], methodName: String, testFun: FixtureParam => Any) {
-    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", sourceFileName, methodName, 4, -3, None, None, testTags: _*)
+    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", sourceFileName, methodName, 4, -3, None, None, None, testTags: _*)
   }
 
   /**
@@ -299,7 +300,7 @@ trait FreeSpec extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToIgnore(specText: String, testTags: List[Tag], methodName: String, testFun: FixtureParam => Any) {
-    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", sourceFileName, methodName, 4, -3, testTags: _*)
+    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", sourceFileName, methodName, 4, -3, None, testTags: _*)
   }
    /*
   private def registerBranch(description: String, childPrefix: Option[String], fun: () => Unit) {
@@ -440,7 +441,7 @@ trait FreeSpec extends Suite { thisSuite =>
 
     // TODO: Fill in Scaladoc
     def - (fun: => Unit) {
-      registerNestedBranch(string, None, fun, "describeCannotAppearInsideAnIt", sourceFileName, "-", 3, -2)
+      registerNestedBranch(string, None, fun, "describeCannotAppearInsideAnIt", sourceFileName, "-", 3, -2, None)
     }
 
     /**

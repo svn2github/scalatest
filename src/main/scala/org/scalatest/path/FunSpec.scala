@@ -744,7 +744,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(testText: String, testTags: Tag*)(testFun: => Unit) {
-      handleTest(thisSuite, testText, testFun _, "itCannotAppearInsideAnotherIt", "FunSpec.scala", "apply", 3, -2, testTags: _*)
+      handleTest(thisSuite, testText, testFun _, "itCannotAppearInsideAnotherIt", "FunSpec.scala", "apply", 3, -2, None, testTags: _*)
     }
     
     /**
@@ -856,7 +856,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(testText: String, testTags: Tag*)(testFun: => Unit) {
-      handleTest(thisSuite, testText, testFun _, "theyCannotAppearInsideAnotherThey", "FunSpec.scala", "apply", 3, -2, testTags: _*)
+      handleTest(thisSuite, testText, testFun _, "theyCannotAppearInsideAnotherThey", "FunSpec.scala", "apply", 3, -2, None, testTags: _*)
     }
  
     /**
@@ -942,7 +942,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
    */
   protected def ignore(testText: String, testTags: Tag*)(testFun: => Unit) {
     // Might not actually register it. Only will register it if it is its turn.
-    handleIgnoredTest(testText, testFun _, "ignoreCannotAppearInsideAnIt", "FunSpec.scala", "ignore", 4, -2, testTags: _*)
+    handleIgnoredTest(testText, testFun _, "ignoreCannotAppearInsideAnIt", "FunSpec.scala", "ignore", 4, -2, None, testTags: _*)
   }
   
   /**
@@ -959,7 +959,7 @@ trait FunSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =>
    * </p>
    */
   protected def describe(description: String)(fun: => Unit) {
-    handleNestedBranch(description, None, fun, "describeCannotAppearInsideAnIt", "FunSpec.scala", "describe", 4, -2)
+    handleNestedBranch(description, None, fun, "describeCannotAppearInsideAnIt", "FunSpec.scala", "describe", 4, -2, None)
   }
   
   /**

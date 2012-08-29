@@ -228,6 +228,7 @@ import exceptions.{TestCanceledException, TestPendingException}
  *
  * @author Bill Venners
  */
+@Finders(Array("org.scalatest.finders.MethodFinder"))
 trait Suite extends org.scalatest.Suite { thisSuite =>
 
   /**
@@ -496,15 +497,15 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
   override val styleName: String = "org.scalatest.fixture.Suite"
 }
 
-private object Suite {
+private[scalatest] object Suite {
 
   val FixtureAndInformerInParens = "(FixtureParam, Informer)"
   val FixtureInParens = "(FixtureParam)"
 
   private def testMethodTakesAFixtureAndInformer(testName: String) = testName.endsWith(FixtureAndInformerInParens)
-  private def testMethodTakesAFixture(testName: String) = testName.endsWith(FixtureInParens)
+  private[scalatest] def testMethodTakesAFixture(testName: String) = testName.endsWith(FixtureInParens)
 
-  private def simpleNameForTest(testName: String) =
+  private[scalatest] def simpleNameForTest(testName: String) =
     if (testName.endsWith(FixtureAndInformerInParens))
       testName.substring(0, testName.length - FixtureAndInformerInParens.length)
     else if (testName.endsWith(FixtureInParens))

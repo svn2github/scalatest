@@ -1438,7 +1438,7 @@ import Suite.autoTagClassAnnotations
 @Finders(Array("org.scalatest.finders.FunSpecFinder"))
 trait FunSpec extends Suite { thisSuite =>
 
-  private final val engine = new Engine("concurrentSpecMod", "Spec")
+  private final val engine = new Engine("concurrentSpecMod", "FunSpec")
   import engine._
 
   // TODO: Probably make this private final val sourceFileName in a singleton object so it gets compiled in rather than carried around in each instance
@@ -1511,7 +1511,7 @@ trait FunSpec extends Suite { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(specText: String, testTags: Tag*)(testFun: => Unit) {
-      registerTest(specText, testFun _, "itCannotAppearInsideAnotherIt", sourceFileName, "apply", 3, -2, None, None, testTags: _*)
+      registerTest(specText, testFun _, "itCannotAppearInsideAnotherIt", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
     }
 
     /**
@@ -1623,7 +1623,7 @@ trait FunSpec extends Suite { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(specText: String, testTags: Tag*)(testFun: => Unit) {
-      registerTest(specText, testFun _, "theyCannotAppearInsideAnotherThey", sourceFileName, "apply", 3, -2, None, None, testTags: _*)
+      registerTest(specText, testFun _, "theyCannotAppearInsideAnotherThey", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
     }
 
     /**
@@ -1707,7 +1707,7 @@ trait FunSpec extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   protected def ignore(testText: String, testTags: Tag*)(testFun: => Unit) {
-    registerIgnoredTest(testText, testFun _, "ignoreCannotAppearInsideAnIt", sourceFileName, "ignore", 4, -2, testTags: _*)
+    registerIgnoredTest(testText, testFun _, "ignoreCannotAppearInsideAnIt", sourceFileName, "ignore", 4, -2, None, testTags: _*)
   }
 
   /**
@@ -1717,7 +1717,7 @@ trait FunSpec extends Suite { thisSuite =>
    * description string and immediately invoke the passed function.
    */
   protected def describe(description: String)(fun: => Unit) {
-    registerNestedBranch(description, None, fun, "describeCannotAppearInsideAnIt", sourceFileName, "describe", 4, -2)
+    registerNestedBranch(description, None, fun, "describeCannotAppearInsideAnIt", sourceFileName, "describe", 4, -2, None)
   }
 
   /**

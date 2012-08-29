@@ -245,6 +245,7 @@ import org.scalatest.Suite.autoTagClassAnnotations
  *
  * @author Bill Venners
  */
+@Finders(Array("org.scalatest.finders.PropSpecFinder"))
 trait PropSpec extends Suite { thisSuite =>
 
   private final val engine = new FixtureEngine[FixtureParam]("concurrentFixturePropSpecMod", "FixturePropSpec")
@@ -277,7 +278,7 @@ trait PropSpec extends Suite { thisSuite =>
    * @throws NullPointerException if <code>testName</code> or any passed test tag is <code>null</code>
    */
   protected def property(testName: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerTest(testName, testFun, "testCannotAppearInsideAnotherTest", sourceFileName, "property", 4, -2, None, None, testTags: _*)
+    registerTest(testName, testFun, "testCannotAppearInsideAnotherTest", sourceFileName, "property", 4, -2, None, None, None, testTags: _*)
   }
 
   /**
@@ -296,7 +297,7 @@ trait PropSpec extends Suite { thisSuite =>
    * @throws NotAllowedException if <code>testName</code> had been registered previously
    */
   protected def ignore(testName: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerIgnoredTest(testName, testFun, "ignoreCannotAppearInsideATest", sourceFileName, "ignore", 4, 2, testTags: _*)
+    registerIgnoredTest(testName, testFun, "ignoreCannotAppearInsideATest", sourceFileName, "ignore", 4, 2, None, testTags: _*)
   }
 
   /**

@@ -226,6 +226,7 @@ import org.scalatest.Suite.autoTagClassAnnotations
  *
  * @author Bill Venners
  */
+@Finders(Array("org.scalatest.finders.FunSuiteFinder"))
 trait FunSuite extends Suite { thisSuite =>
 
   private final val engine = new FixtureEngine[FixtureParam]("concurrentFixtureFunSuiteMod", "FixtureFunSuite")
@@ -258,7 +259,7 @@ trait FunSuite extends Suite { thisSuite =>
    * @throws NullPointerException if <code>testName</code> or any passed test tag is <code>null</code>
    */
   protected def test(testName: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerTest(testName, testFun, "testCannotAppearInsideAnotherTest", sourceFileName, "test", 4, -2, None, None, testTags: _*)
+    registerTest(testName, testFun, "testCannotAppearInsideAnotherTest", sourceFileName, "test", 4, -2, None, None, None, testTags: _*)
   }
 
   /**
@@ -277,7 +278,7 @@ trait FunSuite extends Suite { thisSuite =>
    * @throws NotAllowedException if <code>testName</code> had been registered previously
    */
   protected def ignore(testName: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerIgnoredTest(testName, testFun, "ignoreCannotAppearInsideATest", sourceFileName, "ignore", 4, -2, testTags: _*)
+    registerIgnoredTest(testName, testFun, "ignoreCannotAppearInsideATest", sourceFileName, "ignore", 4, -2, None, testTags: _*)
   }
 
   /**

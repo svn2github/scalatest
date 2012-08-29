@@ -1408,7 +1408,7 @@ trait FunSuite extends Suite { thisSuite =>
    * @throws NullPointerException if <code>testName</code> or any passed test tag is <code>null</code>
    */
   protected def test(testName: String, testTags: Tag*)(testFun: => Unit) {
-    registerTest(testName, testFun _, "testCannotAppearInsideAnotherTest", "FunSuite.scala", "test", 4, -2, None, None, testTags: _*)
+    registerTest(testName, testFun _, "testCannotAppearInsideAnotherTest", "FunSuite.scala", "test", 4, -2, None, None, None, testTags: _*)
   }
 
   /**
@@ -1427,7 +1427,7 @@ trait FunSuite extends Suite { thisSuite =>
    * @throws NotAllowedException if <code>testName</code> had been registered previously
    */
   protected def ignore(testName: String, testTags: Tag*)(testFun: => Unit) {
-    registerIgnoredTest(testName, testFun _, "ignoreCannotAppearInsideATest", "FunSuite.scala", "ignore", 4, -2, testTags: _*)
+    registerIgnoredTest(testName, testFun _, "ignoreCannotAppearInsideATest", "FunSuite.scala", "ignore", 4, -2, None, testTags: _*)
   }
 
   /**

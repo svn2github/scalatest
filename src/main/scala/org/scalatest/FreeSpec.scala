@@ -29,7 +29,6 @@ import Suite.autoTagClassAnnotations
 /**
  * Trait that facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
  * are nested inside text clauses denoted with the dash operator (<code>-</code>).
- * </p>
  *
  * <p>
  * Trait <code>FreeSpec</code> is so named because unlike traits such as <code>WordSpec</code>, <code>FlatSpec</code>, and <code>FunSpec</code>,
@@ -1600,7 +1599,7 @@ trait FreeSpec extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToRun(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
-    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "FreeSpec.scala", methodName, 4, -3, None, None, testTags: _*)
+    registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", "FreeSpec.scala", methodName, 4, -3, None, None, None, testTags: _*)
   }
 
   /**
@@ -1623,7 +1622,7 @@ trait FreeSpec extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToIgnore(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
-    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FreeSpec.scala", methodName, 4, -3, testTags: _*)
+    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FreeSpec.scala", methodName, 4, -3, None, testTags: _*)
   }
 
   /**
@@ -1715,7 +1714,7 @@ trait FreeSpec extends Suite { thisSuite =>
      * text (passed to the contructor of <code>FreeSpecStringWrapper</code> and immediately invoke the passed function.
      */
     def - (fun: => Unit) {
-      registerNestedBranch(string, None, fun, "describeCannotAppearInsideAnIt", "FreeSpec.scala", "-", 3, -2)
+      registerNestedBranch(string, None, fun, "describeCannotAppearInsideAnIt", "FreeSpec.scala", "-", 3, -2, None)
     }
 
     /**
