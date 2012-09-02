@@ -15,6 +15,9 @@
  */
 package org.scalatest
 
+/**
+ *
+ */
 trait TimesOnInt {
   class Repeater(num: Int) {
     require(num >= 0, "The integer on which times was invoked was less than zero: " + num)

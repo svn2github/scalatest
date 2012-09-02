@@ -159,7 +159,7 @@ import Suite.autoTagClassAnnotations
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
  * good intention of resurrecting the test at a later time, <code>FunSpec</code> provides registration
  * methods that start with <code>ignore</code> instead of <code>it</code> or <code>they</code>. For example, to temporarily
- * disable the test with the name <code>"should pop values in last-in-first-out order"</code>, just change &#8220;<code>it</code>&#8221; into &#8220;<code>ignore</code>,&#8221; like this:
+ * disable the test with the text <code>"should have size 0"</code>, just change &#8220;<code>it</code>&#8221; into &#8220;<code>ignore</code>,&#8221; like this:
  * </p>
  *
  * <pre class="stHighlight">

@@ -24,7 +24,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
 
 /**
  * Trait that facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
- * are methods, possibly nested inside singleton objects defining textual scopes.
+ * are methods, optionally nested inside singleton objects defining textual scopes.
  *
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
@@ -61,34 +61,55 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * </pre>
  *
  * <p>
- * A <code>Spec</code> contains <em>describe clauses</em> and tests. You define a describe clause
- * with <code>describe</code>, and a test with either <code>it</code> or <code>they</code>. 
- * <code>describe</code>,  <code>it</code>, and and <code>they</code> are methods, defined in
- * <code>Spec</code>, which will be invoked
- * by the primary constructor of <code>SetSpec</code>. 
- * A describe clause names, or gives more information about, the <em>subject</em> (class or other entity) you are specifying
- * and testing. In the previous example, <code>"A Set"</code>
- * is the subject under specification and test. With each test you provide a string (the <em>spec text</em>) that specifies
- * one bit of behavior of the subject, and a block of code that tests that behavior.
- * You place the spec text between the parentheses, followed by the test code between curly
- * braces.  The test code will be wrapped up as a function passed as a by-name parameter to
- * <code>it</code> (or <code>they</code>), which will register the test for later execution.
+ * A <code>Spec</code> can contain <em>scopes</em> and tests. You define a scope
+ * with a nested singleton object, and a test with a method. The names of both <em>scope objects</em> and <em>test methods</em>
+ * must be expressed in back ticks and contain at least one space character.
+ * <p>
+ *
+ * <p>
+ * A space placed in backticks is encoded by the Scala compiler as <code>$u0020</code>, as
+ * illustrated here:
+ * </p>
+ *
+ * <pre class="stREPL">
+ * scala&gt; def &#96;an example&#96; = ()
+ * an$u0020example: Unit
+ * </pre>
+ * 
+ * <p>
+ * <code>Spec</code> uses reflection to discover scope objects and test methods.
+ * Rather than performing this discovery during construction, when instance variables used by scope objects may as yet be uninitialized,
+ * <code>Spec</code> performs discovery lazily, the first time a method needing the results of discovery is invoked.
+ * For example, methods <code>run</code>, <code>runTests</code>, <code>tags</code>, <code>expectedTestCount</code>,
+ * <code>runTest</code>, and <code>testNames</code> all ensure that scopes and tests have already been discovered prior to doing anything
+ * else. Discovery is performed, and the results recorded, only once for each <code>Spec</code> instance.
  * </p>
  *
  * <p>
- * A <code>Spec</code>'s lifecycle has two phases: the <em>registration</em> phase and the
- * <em>ready</em> phase. It starts in registration phase and enters ready phase the first time
- * <code>run</code> is called on it. It then remains in ready phase for the remainder of its lifetime.
+ * During discovery, <code>Spec</code> will consider any nested singleton object whose name
+ * includes <code>$u0020</code> a scope object, and any method whose name includes <code>$u0020</code> a test method.
+ * It will ignore any singleton objects or methods that do not include a <code>$u0020</code> character. Thus, <code>Spec</code> would
+ * not consider the following singleton object a scope object:
  * </p>
  *
+ * <pre class="stHighlight">
+ * object &#96;Set&#96; { // Not discovered, because no space character
+ * }
+ * </pre>
+ *
  * <p>
- * Tests can only be registered with the <code>it</code> or <code>they</code> methods while the <code>Spec</code> is
- * in its registration phase. Any attempt to register a test after the <code>Spec</code> has
- * entered its ready phase, <em>i.e.</em>, after <code>run</code> has been invoked on the <code>Spec</code>,
- * will be met with a thrown <code>TestRegistrationClosedException</code>. The recommended style
- * of using <code>Spec</code> is to register tests during object construction as is done in all
- * the examples shown here. If you keep to the recommended style, you should never see a
- * <code>TestRegistrationClosedException</code>.
+ * You can make such a scope discoverable by placing a space at the end, like this:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * object &#96;Set &#96; { // Discovered, because of the trailing space character
+ * }
+ * </pre>
+ *
+ * A scope names, or gives more information about, the <em>subject</em> (class or other entity) you are specifying
+ * and testing. In the previous example, <code>&#96;A Set&#96;</code>
+ * is the subject under specification and test. With each test name you provide a string (the <em>test text</em>) that specifies
+ * one bit of behavior of the subject, and a block of code (the body of the test method) that verifies that behavior.
  * </p>
  *
  * <p>
@@ -128,7 +149,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <p>
  * You can also pass to <code>execute</code> a <a href="#configMapSection"><em>config map</em></a> of key-value
  * pairs, which will be passed down into suites and tests, as well as other parameters that configure the run itself.
- * For more information on running in the Scala interpreter, see the documentation for <code>execute</code> (below) and the
+ * For more information on running in the Scala interpreter, see the documentation for <a href="../Suite.html"><code>Suite</code>'s <code>execute</code> method</a> and the
  * <a href="Shell.html">ScalaTest shell</a>.
  * </p>
  *
@@ -147,9 +168,9 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *
  * <p>
  * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
- * good intention of resurrecting the test at a later time, <code>Spec</code> provides registration
- * methods that start with <code>ignore</code> instead of <code>it</code> or <code>they</code>. For example, to temporarily
- * disable the test with the name <code>"should pop values in last-in-first-out order"</code>, just change &#8220;<code>it</code>&#8221; into &#8220;<code>ignore</code>,&#8221; like this:
+ * good intention of resurrecting the test at a later time in a <code>Spec</code>, you can annotate the test method with <code>@Ignore</code>.
+ * For example, to temporarily disable the test method with the name <code>&#96;should have size zero"</code>, just annotate
+ * it with <code>@Ignore</code>, like this:
  * </p>
  *
  * <pre class="stHighlight">
@@ -241,7 +262,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <p>
  * Note that marking a test class as ignored won't prevent it from being discovered by ScalaTest. Ignored classes
  * will be discovered and run, and all their tests will be reported as ignored. This is intended to keep the ignored
- * class somewhat visible, to encourage the developers to eventually fix and un-ignore it. If you want to
+ * class somewhat visible, to encourage the developers to eventually fix and &#8220;un-ignore&#8221; it. If you want to
  * prevent a class from being discovered at all, use the <a href="DoNotDiscover.html"><code>DoNotDiscover</code></a> annotation instead.
  * </p>
  *
@@ -249,7 +270,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <a name="informers"></a><h2>Informers</h2></a>
  *
  * <p>
- * One of the parameters to <code>Spec</code>'s <code>run</code> method is a <code>Reporter</code>, which
+ * One of the objects to <code>Spec</code>'s <code>run</code> method is a <code>Reporter</code>, which
  * will collect and report information about the running suite of tests.
  * Information about suites and tests that were run, whether tests succeeded or failed, 
  * and tests that were ignored will be passed to the <code>Reporter</code> as the suite runs.
@@ -329,8 +350,8 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * </p>
  *
  * <p>
- * You can mark a test as pending in <code>Spec</code> by placing "<code>{ pending }</code>" after the 
- * test name, like this:
+ * You can mark a test as pending in <code>Spec</code> by using "<code>{ pending }</code>" as the body of the test method,
+ * like this:
  * </p>
  *
  * <pre class="stHighlight">
@@ -342,7 +363,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * 
  *   object &#96;A Set&#96; {
  *     object &#96;when empty&#96; {
- *       def &#96;should have size 0` { pending }
+ *       def &#96;should have size 0&#96; { pending }
  *       
  *       def &#96;should produce NoSuchElementException when head is invoked&#96; {
  *         intercept[NoSuchElementException] {
@@ -365,7 +386,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * </pre>
  *
  * <p>
- * It will run both tests, but report that the test named "<code>should have size 0</code>" is pending. You'll see:
+ * It will run both tests, but report that test "<code>should have size 0</code>" is pending. You'll see:
  * </p>
  *
  * <pre class="stREPL">
@@ -418,11 +439,14 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * 
  *   object &#96;A Set&#96; {
  *     object &#96;when empty&#96; {
- *       @SlowTest def &#96;should have size 0` {
+
+ *       @SlowTest
+ *       def &#96;should have size 0` {
  *         assert(Set.empty.size === 0)
  *       }
  *       
- *       @SlowTest @DbTest def &#96;should produce NoSuchElementException when head is invoked` {
+ *       @SlowTest @DbTest
+ *       def &#96;should produce NoSuchElementException when head is invoked` {
  *         intercept[NoSuchElementException] {
  *           Set.empty.head
  *         }
@@ -436,9 +460,9 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * The <code>run</code> method takes a <code>Filter</code>, whose constructor takes an optional
  * <code>Set[String]</code> called <code>tagsToInclude</code> and a <code>Set[String]</code> called
  * <code>tagsToExclude</code>. If <code>tagsToInclude</code> is <code>None</code>, all tests will be run
- * except those those belonging to tags listed in the
+ * except those those with tags listed in the
  * <code>tagsToExclude</code> <code>Set</code>. If <code>tagsToInclude</code> is defined, only tests
- * belonging to tags mentioned in the <code>tagsToInclude</code> set, and not mentioned in <code>tagsToExclude</code>,
+ * with tags mentioned in the <code>tagsToInclude</code> set, and not mentioned in <code>tagsToExclude</code>,
  * will be run.
  * </p>
  *
@@ -1356,10 +1380,12 @@ trait Spec extends Suite { thisSuite =>
     runTestImpl(thisSuite, testName, args, true, invokeWithFixture)
   }
   
+
   final override def expectedTestCount(filter: Filter): Int = {
     ensureScopesAndTestsRegistered()
     super.expectedTestCount(filter)
   }
+
 
   /**
    * A <code>Map</code> whose keys are <code>String</code> tag names to which tests in this <code>Spec</code> belong, and values
