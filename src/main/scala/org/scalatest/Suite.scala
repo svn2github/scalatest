@@ -208,19 +208,9 @@ import exceptions._
  * </p>
  *
  * <p>
- * The <code>execute</code> method invokes a <code>run</code> method takes two
+ * The <code>execute</code> method invokes a <code>run</code> method that takes two
  * parameters. This <code>run</code> method, which actually executes the suite, will usually be invoked by a test runner, such
  * as <a href="run$.html"><code>run</code></a>, <a href="tools/Runner$.html"><code>tools.Runner</code></a>, a build tool, or an IDE.
- * </p>
- *
- * <p>
- * The test methods shown in this example are parameterless. This is recommended even for test methods with obvious side effects. In production code
- * you would normally declare no-arg, side-effecting methods as <em>empty-paren</em> methods, and call them with
- * empty parentheses, to make it more obvious to readers of the code that they have a side effect. Whether or not a test method has
- * a side effect, however, is a less important distinction than it is for methods in production code. Moreover, test methods are not
- * normally invoked directly by client code, but rather through reflection by running the <code>Suite</code> that contains them, so a
- * lack of parentheses on an invocation of a side-effecting test method would not normally appear in any client code. Given the empty
- * parentheses do not add much value in the test methods case, the recommended style is to simply always leave them off.
  * </p>
  *
  * <p>
@@ -570,7 +560,7 @@ import exceptions._
  * <a name="ignoredTests"></a><h2>Ignored tests</h2></a>
  *
  * <p>
- * Another common use case is that tests must be &#8220;temporarily&#8221; disabled, with the
+ * Another common use case is that tests must be temporarily disabled, with the
  * good intention of resurrecting the test at a later time. ScalaTest provides an <code>Ignore</code>
  * annotation for this purpose. You use it like this:
  * </p>
@@ -661,7 +651,7 @@ import exceptions._
  * <p>
  * Note that marking a test class as ignored won't prevent it from being discovered by ScalaTest. Ignored classes
  * will be discovered and run, and all their tests will be reported as ignored. This is intended to keep the ignored
- * class somewhat visible, to encourage the developers to eventually fix and un-ignore it. If you want to
+ * class visible, to encourage the developers to eventually fix and &ldquo;un-ignore&rdquo; it. If you want to
  * prevent a class from being discovered at all, use the <a href="DoNotDiscover.html"><code>DoNotDiscover</code></a> annotation instead.
  * </p>
  *
@@ -899,15 +889,15 @@ import exceptions._
  * <h4>Instantiating fixture-context objects </h4>
  *
  * <p>
- * A alternate technique that is especially useful when different tests need different combinations of fixture objects is to define the fixture objects as instance variables
- * of <em>fixture-context objects</em> whose instantiation forms the body of tests. Like get-fixture methods, fixture-context objects are anly
+ * An alternate technique that is especially useful when different tests need different combinations of fixture objects is to define the fixture objects as instance variables
+ * of <em>fixture-context objects</em> whose instantiation forms the body of tests. Like get-fixture methods, fixture-context objects are only
  * appropriate if you don't need to clean up the fixtures after using them.
  * </p>
  *
  * To use this technique, you define instance variables intialized with fixture objects in traits and/or classes, then in each test instantiate an object that
- * contains just the fixture objects needed by the test. Keep in mind that traits allow you to mix together just the fixture objects needed by each test, whereas classes
+ * contains just the fixture objects needed by the test. Traits allow you to mix together just the fixture objects needed by each test, whereas classes
  * allow you to pass data in via a constructor to configure the fixture objects. Here's an example in which fixture objects are partitioned into two traits
- * and each test just gets mixes together the traits it needs:
+ * and each test just mixes together the traits it needs:
  * </p>
  *
  * <pre class="stHighlight">
@@ -1105,7 +1095,7 @@ import exceptions._
  * <h4>Calling loan-fixture methods</h4>
  *
  * <p>
- * If you need to both pass a fixture object into a test <em>and</em> and perform cleanup at the end of the test, you'll need to use the <em>loan pattern</em>.
+ * If you need to both pass a fixture object into a test <em>and</em> perform cleanup at the end of the test, you'll need to use the <em>loan pattern</em>.
  * If different tests need different fixtures that require cleanup, you can implement the loan pattern directly by writing <em>loan-fixture</em> methods.
  * A loan-fixture method takes a function whose body forms part or all of a test's code. It creates a fixture, passes it to the test code by invoking the
  * function, then cleans up the fixture after the function returns.
@@ -1404,7 +1394,7 @@ import exceptions._
  * <p>
  * By mixing in both the <code>Builder</code> and <code>Buffer</code> traits, <code>ExampleSuite</code> gets both fixtures, which will be
  * initialized before each test and cleaned up after. The order the traits are mixed together determines the order of execution.
- * In this case, <code>Builder</code> is "super" to </code>Buffer</code>. If you wanted <code>Buffer</code> to be "super"
+ * In this case, <code>Builder</code> is &ldquo;super&rdquo; to <code>Buffer</code>. If you wanted <code>Buffer</code> to be &ldquo;super&rdquo;
  * to <code>Builder</code>, you need only switch the order you mix them together, like this: 
  * </p>
  *
@@ -1493,7 +1483,7 @@ import exceptions._
  * that setup and cleanup code happens before and after the test in <code>BeforeAndAfterEach</code>, but at the beginning and
  * end of the test in <code>withFixture</code>. Thus if a <code>withFixture</code> method completes abruptly with an exception, it is
  * considered a failed test. By contrast, if any of the <code>beforeEach</code> or <code>afterEach</code> methods of <code>BeforeAndAfterEach</code> 
- * complete abruptly, it is considered a failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
+ * complete abruptly, it is considered an aborted suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
  * <a name="errorHandling"></a>

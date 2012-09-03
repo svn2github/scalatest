@@ -222,7 +222,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *
  * <p>
  * If a test doesn't need the fixture, you can indicate that by leaving off the fixture parameter, as is done in the
- * third test in the previous example, &ldquo;<code>test: test code should be clear</code>&rdquo;. For such methods, <code>runTest</code>
+ * third test in the previous example, &ldquo;<code>Test code should be clear</code>&rdquo;. For such methods, <code>runTest</code>
  * will not invoke <code>withFixture(OneArgTest)</code>. It will instead directly invoke <code>withFixture(NoArgTest)</code>.
  * </p>
  *
@@ -237,7 +237,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  */
 @Finders(Array("org.scalatest.finders.SpecFinder"))
 trait Spec extends Suite  { thisSuite => 
-  
+
   private final val engine = new FixtureEngine[FixtureParam]("concurrentSpecMod", "Spec")
   import engine._
   // Sychronized on thisSuite, only accessed from ensureScopesAndTestsRegistered

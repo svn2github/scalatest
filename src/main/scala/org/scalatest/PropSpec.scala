@@ -100,7 +100,7 @@ import Suite.autoTagClassAnnotations
  * </p>
  *
  * <p>
- * The <code>execute</code> method invokes a <code>run</code> method takes two
+ * The <code>execute</code> method invokes a <code>run</code> method that takes two
  * parameters. This <code>run</code> method, which actually executes the suite, will usually be invoked by a test runner, such
  * as <a href="run$.html"><code>run</code></a>, <a href="tools/Runner$.html"><code>tools.Runner</code></a>, a build tool, or an IDE.
  * </p>
@@ -132,7 +132,7 @@ import Suite.autoTagClassAnnotations
  * <h2>Ignored tests</h2>
  *
  * <p>
- * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
+ * To support the common use case of temporarily disabling a test, with the
  * good intention of resurrecting the test at a later time, <code>PropSpec</code> provides registration
  * methods that start with <code>ignore</code> instead of <code>property</code>. Here's an example:
  * </p>

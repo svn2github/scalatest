@@ -78,14 +78,6 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * 
  * <p>
  * <code>Spec</code> uses reflection to discover scope objects and test methods.
- * Rather than performing this discovery during construction, when instance variables used by scope objects may as yet be uninitialized,
- * <code>Spec</code> performs discovery lazily, the first time a method needing the results of discovery is invoked.
- * For example, methods <code>run</code>, <code>runTests</code>, <code>tags</code>, <code>expectedTestCount</code>,
- * <code>runTest</code>, and <code>testNames</code> all ensure that scopes and tests have already been discovered prior to doing anything
- * else. Discovery is performed, and the results recorded, only once for each <code>Spec</code> instance.
- * </p>
- *
- * <p>
  * During discovery, <code>Spec</code> will consider any nested singleton object whose name
  * includes <code>$u0020</code> a scope object, and any method whose name includes <code>$u0020</code> a test method.
  * It will ignore any singleton objects or methods that do not include a <code>$u0020</code> character. Thus, <code>Spec</code> would
@@ -106,6 +98,15 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * }
  * </pre>
  *
+ * <p>
+ * Rather than performing this discovery during construction, when instance variables used by scope objects may as yet be uninitialized,
+ * <code>Spec</code> performs discovery lazily, the first time a method needing the results of discovery is invoked.
+ * For example, methods <code>run</code>, <code>runTests</code>, <code>tags</code>, <code>expectedTestCount</code>,
+ * <code>runTest</code>, and <code>testNames</code> all ensure that scopes and tests have already been discovered prior to doing anything
+ * else. Discovery is performed, and the results recorded, only once for each <code>Spec</code> instance.
+ * </p>
+ *
+ * <p>
  * A scope names, or gives more information about, the <em>subject</em> (class or other entity) you are specifying
  * and testing. In the previous example, <code>&#96;A Set&#96;</code>
  * is the subject under specification and test. With each test name you provide a string (the <em>test text</em>) that specifies
@@ -135,7 +136,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * </pre>
  *
  * <p>
- * Or, to run just the &ldquo;<code>A Set when empty should have size 0</code>&rdquo; test, you could pass that test's name, or any unique substring of the
+ * Or, to run just the test named <code>A Set when empty should have size 0</code>, you could pass that test's name, or any unique substring of the
  * name, such as <code>"size 0"</code> or even just <code>"0"</code>. Here's an example:
  * </p>
  *
@@ -154,9 +155,19 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * </p>
  *
  * <p>
- * The <code>execute</code> method invokes a <code>run</code> method takes two
+ * The <code>execute</code> method invokes a <code>run</code> method that takes two
  * parameters. This <code>run</code> method, which actually executes the suite, will usually be invoked by a test runner, such
  * as <a href="run$.html"><code>run</code></a>, <a href="tools/Runner$.html"><code>tools.Runner</code></a>, a build tool, or an IDE.
+ * </p>
+ *
+ * <p>
+ * The test methods shown in this example are parameterless. This is recommended even for test methods with obvious side effects. In production code
+ * you would normally declare no-arg, side-effecting methods as <em>empty-paren</em> methods, and call them with
+ * empty parentheses, to make it more obvious to readers of the code that they have a side effect. Whether or not a test method has
+ * a side effect, however, is a less important distinction than it is for methods in production code. Moreover, test methods are not
+ * normally invoked directly by client code, but rather through reflection by running the <code>Suite</code> that contains them, so a
+ * lack of parentheses on an invocation of a side-effecting test method would not normally appear in any client code. Given the empty
+ * parentheses do not add much value in the test methods case, the recommended style is to simply always leave them off.
  * </p>
  *
  * <p>
@@ -167,8 +178,8 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <a name="ignoredTests"></a><h2>Ignored tests</h2></a>
  *
  * <p>
- * To support the common use case of &#8220;temporarily&#8221; disabling a test, with the
- * good intention of resurrecting the test at a later time in a <code>Spec</code>, you can annotate the test method with <code>@Ignore</code>.
+ * To support the common use case of temporarily disabling a test in a <code>Spec</code>, with the
+ * good intention of resurrecting the test at a later time, you can annotate the test method with <code>@Ignore</code>.
  * For example, to temporarily disable the test method with the name <code>&#96;should have size zero"</code>, just annotate
  * it with <code>@Ignore</code>, like this:
  * </p>
@@ -262,7 +273,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <p>
  * Note that marking a test class as ignored won't prevent it from being discovered by ScalaTest. Ignored classes
  * will be discovered and run, and all their tests will be reported as ignored. This is intended to keep the ignored
- * class somewhat visible, to encourage the developers to eventually fix and &#8220;un-ignore&#8221; it. If you want to
+ * class visible, to encourage the developers to eventually fix and &#8220;un-ignore&#8221; it. If you want to
  * prevent a class from being discovered at all, use the <a href="DoNotDiscover.html"><code>DoNotDiscover</code></a> annotation instead.
  * </p>
  *
@@ -280,7 +291,8 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * is provided via the <code>info</code> parameterless method.
  * You can pass the extra information to the <code>Informer</code> via one of its <code>apply</code> methods.
  * The <code>Informer</code> will then pass the information to the <code>Reporter</code> via an <code>InfoProvided</code> event.
- * Here's an example:
+ * Here's an example in which the <code>Informer</code> returned by <code>info</code> is used implicitly by the
+ * <code>given</code>, <code>when</code>, and <code>then</code> methods of trait <code>GivenWhenThen</code>:
  * </p>
  *
  * <pre class="stHighlight">
@@ -376,7 +388,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * </pre>
  *
  * <p>
- * (Note: "<code>(pending)</code>" is the body of the test. Thus the test contains just one statement, an invocation
+ * (Note: &ldquo;<code>pending</code>&rdquo; is the body of the test. Thus the test contains just one statement, an invocation
  * of the <code>pending</code> method, which throws <code>TestPendingException</code>.)
  * If you run this version of <code>SetSpec</code> with:
  * </p>
@@ -406,7 +418,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * the <code>org.scalatest.TagAnnotation</code> annotation.
  * (Currently, for annotations to be
  * visible in Scala programs via Java reflection, the annotations themselves must be written in Java.) For example,
- * to create tags named <code>SlowTest</code> and <code>DbTest</code>, to use to mark slow tests, you would
+ * to create tags named <code>SlowTest</code> and <code>DbTest</code>, you would
  * write in Java:
  * </p>
  *
@@ -562,15 +574,15 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <h4>Instantiating fixture-context objects </h4>
  *
  * <p>
- * A alternate technique that is especially useful when different tests need different combinations of fixture objects is to define the fixture objects as instance variables
- * of <em>fixture-context objects</em> whose instantiation forms the body of tests. Like get-fixture methods, fixture-context objects are anly
+ * An alternate technique that is especially useful when different tests need different combinations of fixture objects is to define the fixture objects as instance variables
+ * of <em>fixture-context objects</em> whose instantiation forms the body of tests. Like get-fixture methods, fixture-context objects are only
  * appropriate if you don't need to clean up the fixtures after using them.
  * </p>
  *
  * To use this technique, you define instance variables intialized with fixture objects in traits and/or classes, then in each test instantiate an object that
- * contains just the fixture objects needed by the test. Keep in mind that traits allow you to mix together just the fixture objects needed by each test, whereas classes
+ * contains just the fixture objects needed by the test. Traits allow you to mix together just the fixture objects needed by each test, whereas classes
  * allow you to pass data in via a constructor to configure the fixture objects. Here's an example in which fixture objects are partitioned into two traits
- * and each test just gets mixes together the traits it needs:
+ * and each test just mixes together the traits it needs:
  * </p>
  *
  * <pre class="stHighlight">
@@ -777,7 +789,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <h4>Calling loan-fixture methods</h4>
  *
  * <p>
- * If you need to both pass a fixture object into a test <em>and</em> and perform cleanup at the end of the test, you'll need to use the <em>loan pattern</em>.
+ * If you need to both pass a fixture object into a test <em>and</em> perform cleanup at the end of the test, you'll need to use the <em>loan pattern</em>.
  * If different tests need different fixtures that require cleanup, you can implement the loan pattern directly by writing <em>loan-fixture</em> methods.
  * A loan-fixture method takes a function whose body forms part or all of a test's code. It creates a fixture, passes it to the test code by invoking the
  * function, then cleans up the fixture after the function returns.
@@ -1084,14 +1096,14 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * </pre>
  *
  * <p>
- * By mixing in both the <code>Builder</code> and <code>Buffer</code> traits, <code>ExampleSuite</code> gets both fixtures, which will be
+ * By mixing in both the <code>Builder</code> and <code>Buffer</code> traits, <code>ExampleSpec</code> gets both fixtures, which will be
  * initialized before each test and cleaned up after. The order the traits are mixed together determines the order of execution.
- * In this case, <code>Builder</code> is "super" to </code>Buffer</code>. If you wanted <code>Buffer</code> to be "super"
+ * In this case, <code>Builder</code> is &ldquo;super&rdquo; to <code>Buffer</code>. If you wanted <code>Buffer</code> to be &ldquo;super&rdquo;
  * to <code>Builder</code>, you need only switch the order you mix them together, like this: 
  * </p>
  *
  * <pre class="stHighlight">
- * class Example2Suite extends Suite with Buffer with Builder
+ * class Example2Spec extends Spec with Buffer with Builder
  * </pre>
  *
  * <p>
@@ -1099,7 +1111,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * </p>
  *
  * <pre class="stHighlight">
- * class Example3Suite extends Suite with Builder
+ * class Example3Spec extends Spec with Builder
  * </pre>
  *
  * <p>
@@ -1177,7 +1189,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * that setup and cleanup code happens before and after the test in <code>BeforeAndAfterEach</code>, but at the beginning and
  * end of the test in <code>withFixture</code>. Thus if a <code>withFixture</code> method completes abruptly with an exception, it is
  * considered a failed test. By contrast, if any of the <code>beforeEach</code> or <code>afterEach</code> methods of <code>BeforeAndAfterEach</code> 
- * complete abruptly, it is considered a failed suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
+ * complete abruptly, it is considered an aborted suite, which will result in a <a href="events/SuiteAborted.html"><code>SuiteAborted</code></a> event.
  * </p>
  * 
  * <a name="sharedTests"></a><h2>Shared tests</h2>
@@ -1185,7 +1197,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <p>
  * Because <code>Spec</code> represents tests as methods, you cannot share or otherwise dynamically generate tests. Instead, use static code generation
  * if you want to generate tests in a <code>Spec</code>. In other words, write a program that statically generates the entire source file of
- * a<code>Spec</code> subclass.
+ * a <code>Spec</code> subclass.
  * </p>
  *
  * @author Bill Venners
