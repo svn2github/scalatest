@@ -2130,9 +2130,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     if (args == null)
       throw new NullPointerException("args was null")
 
-    if (!testName.startsWith("test$colon$u0020"))
-      println("The name \"" + NameTransformer.decode(testName) + "\" has been deprecated. Please use the `test: ...` form instead.")
-
     import args._
 
     val (stopRequested, report, method, testStartTime) =
@@ -2285,7 +2282,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       throw new NullPointerException("args was null")
     
     if (!this.isInstanceOf[Spec])
-      println("Unfortunately Suite has been deprecated as a style trait. Please extend trait Spec instead. (This is just a name change.)")
+      println("Unfortunately Suite has been deprecated as a style trait. Please use trait Spec instead.")
 
     import args._
 

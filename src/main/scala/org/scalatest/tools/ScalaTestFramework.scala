@@ -272,6 +272,7 @@ Tags to include and exclude: -n "CheckinTests FunctionalTests" -l "SlowTests Net
           case t: TestFailed => fireEvent(t.testName, Result.Failure, t.throwable)
           case t: TestSucceeded => fireEvent(t.testName, Result.Success, None)
           case t: TestIgnored => fireEvent(t.testName, Result.Skipped, None)
+          case t: TestCanceled => fireEvent(t.testName, Result.Skipped, None)
           case t: SuiteAborted => fireEvent("!!! Suite Aborted !!!", Result.Failure, t.throwable)
           case _ => 
         }
