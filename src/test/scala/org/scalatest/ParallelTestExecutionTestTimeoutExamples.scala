@@ -14,6 +14,7 @@ trait ParallelTestExecutionTestTimeoutExamples extends Tables {
   def testTimeoutSuite = new ExampleParallelTestExecutionTestTimeoutSuite()
   def testTimeoutFixtureSuite = new ExampleParallelTestExecutionTestTimeoutFixtureSuite()
   def testTimeoutSpec = new ExampleParallelTestExecutionTestTimeoutSpec()
+  def testTimeoutFixtureSpec = new ExampleParallelTestExecutionTestTimeoutFixtureSpec()
   def testTimeoutFunSuite = new ExampleParallelTestExecutionTestTimeoutFunSuite()
   def testTimeoutFixtureFunSuite = new ExampleParallelTestExecutionTestTimeoutFixtureFunSuite()
   def testTimeoutFunSpec = new ExampleParallelTestExecutionTestTimeoutFunSpec()
@@ -35,6 +36,7 @@ trait ParallelTestExecutionTestTimeoutExamples extends Tables {
       testTimeoutSuite, 
       testTimeoutFixtureSuite, 
       testTimeoutSpec, 
+      testTimeoutFixtureSpec, 
       testTimeoutFunSuite, 
       testTimeoutFixtureFunSuite, 
       testTimeoutFunSpec, 
@@ -109,6 +111,26 @@ class ExampleParallelTestExecutionTestTimeoutSpec extends Spec with TestTimeoutE
     checkTestSucceeded(events(4), "test 3")
     // The missing one
     checkTestSucceeded(events(5), "test 2")
+  }
+}
+
+@DoNotDiscover
+class ExampleParallelTestExecutionTestTimeoutFixtureSpec extends fixture.Spec with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+  def `test 1`(fixture: String) {}
+  def `test 2`(fixture: String) { Thread.sleep(600) }
+  def `test 3`(fixture: String) {}
+  
+  override protected def sortingTimeout: Span = Span(300, Millis)
+  
+  def assertTestTimeoutTest(events: List[Event]) {
+    assert(events.size === 6)
+    checkTestStarting(events(0), "test 1(FixtureParam)")
+    checkTestSucceeded(events(1), "test 1(FixtureParam)")
+    checkTestStarting(events(2), "test 2(FixtureParam)")
+    checkTestStarting(events(3), "test 3(FixtureParam)")
+    checkTestSucceeded(events(4), "test 3(FixtureParam)")
+    // The missing one
+    checkTestSucceeded(events(5), "test 2(FixtureParam)")
   }
 }
 

@@ -12,6 +12,7 @@ trait ParallelTestExecutionOrderExamples extends Tables {
   def orderSuite = new ExampleParallelTestExecutionOrderSuite
   def orderFixtureSuite = new ExampleParallelTestExecutionOrderFixtureSuite
   def orderSpec = new ExampleParallelTestExecutionOrderSpec
+  def orderFixtureSpec = new ExampleParallelTestExecutionOrderFixtureSpec
   def orderFunSuite = new ExampleParallelTestExecutionOrderFunSuite
   def orderFixtureFunSuite = new ExampleParallelTestExecutionOrderFixtureFunSuite
   def orderFunSpec = new ExampleParallelTestExecutionOrderFunSpec
@@ -33,6 +34,7 @@ trait ParallelTestExecutionOrderExamples extends Tables {
       orderSuite, 
       orderFixtureSuite, 
       orderSpec,
+      orderFixtureSpec,
       orderFunSuite, 
       orderFixtureFunSuite, 
       orderFunSpec, 
@@ -98,6 +100,23 @@ class ExampleParallelTestExecutionOrderSpec extends Spec with OrderExpectedResul
     checkTestSucceeded(events(3), "test 2")
     checkTestStarting(events(4), "test 3")
     checkTestSucceeded(events(5), "test 3")
+  }
+}
+
+@DoNotDiscover
+class ExampleParallelTestExecutionOrderFixtureSpec extends fixture.Spec with OrderExpectedResults with ParallelTestExecution with StringFixture {
+  def `test 1`(fixture: String) {}
+  def `test 2`(fixture: String) {}
+  def `test 3`(fixture: String) {}
+  
+  def assertOrderTest(events: List[Event]) {
+    assert(events.size === 6)
+    checkTestStarting(events(0), "test 1(FixtureParam)")
+    checkTestSucceeded(events(1), "test 1(FixtureParam)")
+    checkTestStarting(events(2), "test 2(FixtureParam)")
+    checkTestSucceeded(events(3), "test 2(FixtureParam)")
+    checkTestStarting(events(4), "test 3(FixtureParam)")
+    checkTestSucceeded(events(5), "test 3(FixtureParam)")
   }
 }
 

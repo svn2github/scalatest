@@ -55,7 +55,7 @@ class ExampleParallelTestExecutionParallelSuitePair extends ParallelSuites {
 
 class ExampleParallelTestExecutionParallelSpecPair extends ParallelSuites {
   def suite1 = new ExampleParallelTestExecutionOrderSpec
-  def suite2 = new ExampleParallelTestExecutionOrderSuite
+  def suite2 = new ExampleParallelTestExecutionOrderFixtureSpec
   
   def assertParallelSuites(events: List[Event]) {
     assert(events.size === 16)
@@ -70,12 +70,12 @@ class ExampleParallelTestExecutionParallelSpecPair extends ParallelSuites {
     checkSuiteCompleted(events(7), suite1.suiteId)
     
     checkSuiteStarting(events(8), suite2.suiteId)
-    checkTestStarting(events(9), "testMethod1")
-    checkTestSucceeded(events(10), "testMethod1")
-    checkTestStarting(events(11), "testMethod2")
-    checkTestSucceeded(events(12), "testMethod2")
-    checkTestStarting(events(13), "testMethod3")
-    checkTestSucceeded(events(14), "testMethod3")
+    checkTestStarting(events(9), "test 1(FixtureParam)")
+    checkTestSucceeded(events(10), "test 1(FixtureParam)")
+    checkTestStarting(events(11), "test 2(FixtureParam)")
+    checkTestSucceeded(events(12), "test 2(FixtureParam)")
+    checkTestStarting(events(13), "test 3(FixtureParam)")
+    checkTestSucceeded(events(14), "test 3(FixtureParam)")
     checkSuiteCompleted(events(15), suite2.suiteId)
   }
 }

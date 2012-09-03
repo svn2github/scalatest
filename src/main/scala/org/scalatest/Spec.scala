@@ -1228,15 +1228,18 @@ trait Spec extends Suite { thisSuite =>
             annotationClass = a.annotationType
             if annotationClass.isAnnotationPresent(classOf[TagAnnotation])
           } yield annotationClass.getName
+        
+        def getScopeClassName(o: AnyRef): String = {
+          val className = o.getClass.getName
+          if (className.endsWith("$"))
+            className 
+          else
+            className + "$"
+        }
           
         def isScopeMethod(o: AnyRef, m: Method): Boolean = {
-          val className = o.getClass.getName
-          val scopeClassName = 
-            if (className.endsWith("$"))
-              className + m.getName + "$"
-            else
-              className + "$" + m.getName + "$"
-          scopeClassName == m.getReturnType.getName
+          val scopeMethodName = getScopeClassName(o)+ m.getName + "$"
+          scopeMethodName == m.getReturnType.getName
         }
         
         def getScopeDesc(m: Method): String = {
@@ -1263,7 +1266,7 @@ trait Spec extends Suite { thisSuite =>
                 val scopeObj = m.invoke(o)
                 register(scopeObj)
               }
-              val scopeLocation = TopOfClass(o.getClass.getName)
+              val scopeLocation = TopOfClass(m.getReturnType.getName)
               registerNestedBranch(scopeDesc, None, scopeFun, "registrationAlreadyClosed", sourceFileName, "discoveryAndRegisterTests", 2, 0, Some(scopeLocation))
             }
             else {
@@ -1279,7 +1282,7 @@ trait Spec extends Suite { thisSuite =>
                 }
               }
           
-              val testLocation = TopOfMethod(o.getClass.getName, m.toGenericString)
+              val testLocation = TopOfMethod(getScopeClassName(o), m.toGenericString)
               val isIgnore = testTags.get(methodName) match {
                 case Some(tagSet) => tagSet.contains(Suite.IgnoreAnnotation) || methodTags.contains(Suite.IgnoreAnnotation)
                 case None => methodTags.contains(Suite.IgnoreAnnotation)

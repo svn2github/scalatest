@@ -12,6 +12,7 @@ trait ParallelTestExecutionInfoExamples extends Tables {
   def infoSuite = new ExampleParallelTestExecutionInfoSuite()
   def infoFixtureSuite = new ExampleParallelTestExecutionInfoFixtureSuite()
   def infoSpec = new ExampleParallelTestExecutionInfoSpec()
+  def infoFixtureSpec = new ExampleParallelTestExecutionInfoFixtureSpec()
   def infoFunSuite = new ExampleParallelTestExecutionInfoFunSuite()
   def infoFixtureFunSuite = new ExampleParallelTestExecutionInfoFixtureFunSuite()
   def infoFunSpec = new ExampleParallelTestExecutionInfoFunSpec()
@@ -33,6 +34,7 @@ trait ParallelTestExecutionInfoExamples extends Tables {
       infoSuite, 
       infoFixtureSuite, 
       infoSpec, 
+      infoFixtureSpec, 
       infoFunSuite, 
       infoFixtureFunSuite, 
       infoFunSpec, 
@@ -104,6 +106,25 @@ class ExampleParallelTestExecutionInfoSpec extends Spec with InfoExpectedResults
     checkTestSucceeded(events(3), "test 2")
     checkTestStarting(events(4), "test 3")
     checkTestSucceeded(events(5), "test 3")
+  }
+}
+
+@DoNotDiscover
+class ExampleParallelTestExecutionInfoFixtureSpec extends fixture.Spec with InfoExpectedResults with BeforeAndAfter with ParallelTestExecution with StringFixture {
+  before {}  // how to fire info here?
+  def `test 1`(fixture: String) {}
+  def `test 2`(fixture: String) {}
+  def `test 3`(fixture: String) {}
+  after {} // how to fire info here?
+  
+  def assertBeforeAfterInfo(events: List[Event]) {
+    assert(events.size === 6)
+    checkTestStarting(events(0), "test 1(FixtureParam)")
+    checkTestSucceeded(events(1), "test 1(FixtureParam)")
+    checkTestStarting(events(2), "test 2(FixtureParam)")
+    checkTestSucceeded(events(3), "test 2(FixtureParam)")
+    checkTestStarting(events(4), "test 3(FixtureParam)")
+    checkTestSucceeded(events(5), "test 3(FixtureParam)")
   }
 }
 

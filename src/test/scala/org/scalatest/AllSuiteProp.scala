@@ -8,6 +8,7 @@ trait AllSuiteProp extends MethodSuiteProp with FunctionSuiteProp {
       suite,
       fixtureSuite,
       spec,
+      fixtureSpec, 
       junit3Suite, 
       junitSuite,
       testngSuite, 

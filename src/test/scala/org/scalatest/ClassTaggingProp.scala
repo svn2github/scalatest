@@ -11,6 +11,7 @@ class ClassTaggingProp extends AllSuiteProp {
   def suite = new ExampleClassTaggingSuite
   def fixtureSuite = new ExampleClassTaggingFixtureSuite
   def spec = new ExampleClassTaggingSpec
+  def fixtureSpec = new ExampleClassTaggingFixtureSpec
   def junit3Suite = new ExampleClassTaggingJUnit3Suite
   def junitSuite = new ExampleClassTaggingJUnitSuite
   def testngSuite = new ExampleClassTaggingTestNGSuite
@@ -73,6 +74,14 @@ class ExampleClassTaggingSpec extends Spec with ClassTaggingFixtureServices {
   def `test 1` {}
   def `test 2` {}
   def `test 3` {}
+}
+
+@DoNotDiscover
+@Ignore
+class ExampleClassTaggingFixtureSpec extends fixture.Spec with ClassTaggingFixtureServices with StringFixture {
+  def `test 1`(fixture: String) {}
+  def `test 2`(fixture: String) {}
+  def `test 3`(fixture: String) {}
 }
 
 @DoNotDiscover
