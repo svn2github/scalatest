@@ -16,9 +16,10 @@
 package org.scalatest
 
 /**
- * <strong><code>AbstractSuite</code> has been deprecated and will be removed in a future version of ScalaTest. Please change all occurances of
- * AbstractSuite to SuiteMixin.  This is just a name change for stackable traits extending <code>AbstractSuite</code>. If <code>AbstractSuite</code> was
- * being used in any other way, change <code>AbstractSuite</code> to <code>Suite</code>.
+ * <strong><code>AbstractSuite</code> has been deprecated and will be removed in a future version of ScalaTest. Please change occurances of
+ * <code>AbstractSuite</code> where serving as a base class for stackable traits to <a href="SuiteMixin.html"><code>SuiteMixin</code></a>.  This
+ * is just a name change for stackable traits extending <code>AbstractSuite</code>. If <code>AbstractSuite</code> was
+ * being used in any other way, change <code>AbstractSuite</code> to <a href="Suite.html"><code>Suite</code></a>.</strong>
  *
  * <p>
  * The main change will be to change stackable traits defined like this:
@@ -28,7 +29,7 @@ package org.scalatest
  * import org.scalatest._
  * import concurrent.Eventually._
  * 
- * trait RetriedTests extends AbstractSuite { Suite =>
+ * trait RetriedTests extends AbstractSuite { Suite =&gt;
  *   abstract override def withFixture(test: NoArgTest) {
  *     eventually { super.withFixture(test) }
  *   }
@@ -36,14 +37,14 @@ package org.scalatest
  * </pre>
  * 
  * <p>
- * The main change will be to change stackable traits defined like this:
+ * Instead of extending <code>AbstractSuite</code>, extend <code>SuiteMixin</code> instead:
  * </p>
  *
  * <pre class="stHighlight">
  * import org.scalatest._
  * import concurrent.Eventually._
  * 
- * trait RetriedTests extends SuiteMixin { Suite =>
+ * trait RetriedTests extends SuiteMixin { Suite =&gt;
  *   abstract override def withFixture(test: NoArgTest) {
  *     eventually { super.withFixture(test) }
  *   }
