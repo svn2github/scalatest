@@ -250,18 +250,10 @@ trait Spec extends Suite  { thisSuite =>
         scopesRegistered = true
         def getMethod(o: AnyRef, testName: String) = { 
           val methodName = encode(simpleNameForTest(testName))
-          if (testMethodTakesAFixture(testName)) {
-            val candidateMethods = o.getClass.getMethods.filter(_.getName == methodName)
-            candidateMethods.find{ candidateMethod => 
-                val paramTypes = candidateMethod.getParameterTypes
-                paramTypes.length == 1
-            } match {
-              case Some(method) => method
-              case None => throw new IllegalArgumentException(Resources("testNotFound", testName))
-            }
-          }
-          else
-            o.getClass.getMethod(methodName, new Array[Class[_]](0): _*)
+          val candidateMethods = o.getClass.getMethods.filter(_.getName == methodName)
+          if (candidateMethods.size == 0)
+            throw new IllegalArgumentException(Resources("testNotFound", testName))
+          candidateMethods(0)
         }
         
         def getMethodTags(o: AnyRef, methodName: String) =
@@ -315,10 +307,10 @@ trait Spec extends Suite  { thisSuite =>
             else {
               val methodName = m.getName
               val testName = 
-                if (m.getParameterTypes.length == 0)
+                // if (m.getParameterTypes.length == 0)
                   decode(methodName)
-                else
-                  decode(methodName) + FixtureInParens
+                // else
+                  // decode(methodName) + FixtureInParens
               val methodTags = getMethodTags(o, testName)
               val testFun: FixtureParam => Unit = (fixture: FixtureParam) => { 
                 val anyRefFixture: AnyRef = fixture.asInstanceOf[AnyRef] // TODO zap this cast

@@ -105,7 +105,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         def `it should do that`(fixture: String) {}
       }
 
-      expectResult(List("it should do that(FixtureParam)", "it should do this(FixtureParam)")) {
+      expectResult(List("it should do that", "it should do this")) {
         a.testNames.iterator.toList
       }
 
@@ -122,7 +122,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         def `test: this`(fixture: String) {}
       }
 
-      expectResult(List("test: that(FixtureParam)", "test: this(FixtureParam)")) {
+      expectResult(List("test: that", "test: this")) {
         c.testNames.iterator.toList
       }
     }
@@ -137,7 +137,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         }
       }
 
-      expectResult(List("A Tester should test that(FixtureParam)", "A Tester should test this(FixtureParam)")) {
+      expectResult(List("A Tester should test that", "A Tester should test this")) {
         a.testNames.iterator.toList
       }
 
@@ -156,7 +156,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         }
       }
 
-      expectResult(List("A Tester must be able to test that(FixtureParam)", "A Tester must be able to test this(FixtureParam)", "A Tester should be able to test that(FixtureParam)", "A Tester should be able to test this(FixtureParam)")) {
+      expectResult(List("A Tester must be able to test that", "A Tester must be able to test this", "A Tester should be able to test that", "A Tester should be able to test this")) {
         b.testNames.iterator.toList
       }
     }
@@ -176,8 +176,8 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       }
       val a = new MySpec
       assert(a.testNames.size === 2)
-      assert(a.testNames.iterator.toList(0) === "A Stack (when not empty) must allow me to pop(FixtureParam)")
-      assert(a.testNames.iterator.toList(1) === "A Stack (when not full) must allow me to push(FixtureParam)")
+      assert(a.testNames.iterator.toList(0) === "A Stack (when not empty) must allow me to pop")
+      assert(a.testNames.iterator.toList(1) === "A Stack (when not full) must allow me to push")
     }
     
     it("should be able to mix in BeforeAndAfterEach with BeforeAndAfterAll without any problems") {
@@ -269,7 +269,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     it("should execute one test when run is called with a defined testName") {
 
       val a = new TestWasCalledSpec
-      a.run(Some("test: this(FixtureParam)"), Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      a.run(Some("test: this"), Args(SilentReporter, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(a.theTestThisCalled)
       assert(!a.theTestThatCalled)
     }
@@ -301,7 +301,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       b.run(None, Args(repB, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repB.testIgnoredReceived)
       assert(repB.lastEvent.isDefined)
-      assert(repB.lastEvent.get.testName endsWith "test: this(FixtureParam)")
+      assert(repB.lastEvent.get.testName endsWith "test: this")
       assert(!b.theTestThisCalled)
       assert(b.theTestThatCalled)
 
@@ -317,7 +317,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       c.run(None, Args(repC, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repC.testIgnoredReceived)
       assert(repC.lastEvent.isDefined)
-      assert(repC.lastEvent.get.testName endsWith "test: that(FixtureParam)", repC.lastEvent.get.testName)
+      assert(repC.lastEvent.get.testName endsWith "test: that", repC.lastEvent.get.testName)
       assert(c.theTestThisCalled)
       assert(!c.theTestThatCalled)
 
@@ -334,7 +334,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       d.run(None, Args(repD, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repD.testIgnoredReceived)
       assert(repD.lastEvent.isDefined)
-      assert(repD.lastEvent.get.testName === "test: this(FixtureParam)") // last because run alphabetically
+      assert(repD.lastEvent.get.testName === "test: this") // last because run alphabetically
       assert(!d.theTestThisCalled)
       assert(!d.theTestThatCalled)
     }
@@ -350,7 +350,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       }
 
       val repE = new TestIgnoredTrackingReporter
-      e.run(Some("test: this(FixtureParam)"), Args(repE, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
+      e.run(Some("test: this"), Args(repE, new Stopper {}, Filter(), Map(), None, new Tracker, Set.empty))
       assert(repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(!e.theTestThatCalled)
@@ -367,7 +367,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       }
 
       val repE = new TestIgnoredTrackingReporter
-      e.run(Some("test: this(FixtureParam)"), Args(repE, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
+      e.run(Some("test: this"), Args(repE, new Stopper {}, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
       assert(!repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(!e.theTestThatCalled)
@@ -587,7 +587,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) { pending }
         }
       }
-      expectResult(Map("This Spec should test this(FixtureParam)" -> Set("org.scalatest.Ignore"))) {
+      expectResult(Map("This Spec should test this" -> Set("org.scalatest.Ignore"))) {
         a.tags
       }
 
@@ -598,7 +598,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test that(FixtureParam)" -> Set("org.scalatest.Ignore"))) {
+      expectResult(Map("This Spec should test that" -> Set("org.scalatest.Ignore"))) {
         b.tags
       }
 
@@ -610,7 +610,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test this(FixtureParam)" -> Set("org.scalatest.Ignore"), "This Spec should test that(FixtureParam)" -> Set("org.scalatest.Ignore"))) {
+      expectResult(Map("This Spec should test this" -> Set("org.scalatest.Ignore"), "This Spec should test that" -> Set("org.scalatest.Ignore"))) {
         c.tags
       }
 
@@ -623,7 +623,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test this(FixtureParam)" -> Set("org.scalatest.SlowAsMolasses"), "This Spec should test that(FixtureParam)" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
+      expectResult(Map("This Spec should test this" -> Set("org.scalatest.SlowAsMolasses"), "This Spec should test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
         d.tags
       }
 
@@ -646,7 +646,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test this(FixtureParam)" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "This Spec should test that(FixtureParam)" -> Set("org.scalatest.SlowAsMolasses"))) {
+      expectResult(Map("This Spec should test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "This Spec should test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         f.tags
       }
 
@@ -659,7 +659,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test this(FixtureParam)" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "This Spec should test that(FixtureParam)" -> Set("org.scalatest.SlowAsMolasses"))) {
+      expectResult(Map("This Spec should test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "This Spec should test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         g.tags
       }
     }
@@ -852,7 +852,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       val a = new Spec with StringFixture {
         var correctTestNameWasPassed = false
         override def withFixture(test: OneArgTest) {
-          correctTestNameWasPassed = test.name == "test: something(FixtureParam)"
+          correctTestNameWasPassed = test.name == "test: something"
           super.withFixture(test)
         }
         def `test: something`(fixture: String) {}
@@ -902,13 +902,13 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         def apply(event: Event) {
           event match {
             case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
-              if (testName.indexOf("must start with proper words(FixtureParam)") != -1)
+              if (testName.indexOf("must start with proper words") != -1)
                 reportHadCorrectTestName = true
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "must start with proper words(FixtureParam)")
+                  if (rawText == "must start with proper words")
                     reportHadCorrectSpecText = true
-                  if (formattedText == "- must start with proper words(FixtureParam)")
+                  if (formattedText == "- must start with proper words")
                     reportHadCorrectFormattedSpecText = true
                 case _ =>
               }
@@ -934,13 +934,13 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         def apply(event: Event) {
           event match {
             case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
-              if (testName.indexOf("must start with proper words(FixtureParam)") != -1)
+              if (testName.indexOf("must start with proper words") != -1)
                 reportHadCorrectTestName = true
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "must start with proper words(FixtureParam)")
+                  if (rawText == "must start with proper words")
                     reportHadCorrectSpecText = true
-                  if (formattedText == "- must start with proper words(FixtureParam)")
+                  if (formattedText == "- must start with proper words")
                     reportHadCorrectFormattedSpecText = true
                 case _ =>
               }
@@ -966,13 +966,13 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         def apply(event: Event) {
           event match {
             case event: TestFailed =>
-              if (event.testName.indexOf("must start with proper words(FixtureParam)") != -1)
+              if (event.testName.indexOf("must start with proper words") != -1)
                 reportHadCorrectTestName = true
               event.formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "must start with proper words(FixtureParam)")
+                  if (rawText == "must start with proper words")
                     reportHadCorrectSpecText = true
-                  if (formattedText == "- must start with proper words(FixtureParam)")
+                  if (formattedText == "- must start with proper words")
                     reportHadCorrectFormattedSpecText = true
                 case _ =>
               }
@@ -1021,13 +1021,13 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvoked)
               theOtherMethodHasBeenInvoked = true
-              if (testName.indexOf("My Spec must start with proper words(FixtureParam)") != -1)
+              if (testName.indexOf("My Spec must start with proper words") != -1)
                 reportHadCorrectTestName = true
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "must start with proper words(FixtureParam)")
+                  if (rawText == "must start with proper words")
                     reportHadCorrectSpecText = true
-                  if (formattedText == "- must start with proper words(FixtureParam)")
+                  if (formattedText == "- must start with proper words")
                     reportHadCorrectFormattedSpecText = true
                 case _ =>
               }
@@ -1080,13 +1080,13 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvoked)
               theOtherMethodHasBeenInvoked = true
-              if (testName.indexOf("My Spec must start with proper words(FixtureParam)") != -1)
+              if (testName.indexOf("My Spec must start with proper words") != -1)
                 reportHadCorrectTestName = true
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "must start with proper words(FixtureParam)")
+                  if (rawText == "must start with proper words")
                     reportHadCorrectSpecText = true
-                  if (formattedText == "- must start with proper words(FixtureParam)")
+                  if (formattedText == "- must start with proper words")
                     reportHadCorrectFormattedSpecText = true
                 case _ =>
               }
@@ -1139,13 +1139,13 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvoked)
               theOtherMethodHasBeenInvoked = true
-              if (event.testName.indexOf("My Spec must start with proper words(FixtureParam)") != -1)
+              if (event.testName.indexOf("My Spec must start with proper words") != -1)
                 reportHadCorrectTestName = true
               event.formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "must start with proper words(FixtureParam)")
+                  if (rawText == "must start with proper words")
                     reportHadCorrectSpecText = true
-                  if (formattedText == "- must start with proper words(FixtureParam)")
+                  if (formattedText == "- must start with proper words")
                     reportHadCorrectFormattedSpecText = true
                 case _ =>
               }
@@ -1215,13 +1215,13 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvokedTwice)
               theOtherMethodHasBeenInvoked = true
-              if (testName.indexOf("My Spec must start with proper words(FixtureParam)") != -1)
+              if (testName.indexOf("My Spec must start with proper words") != -1)
                 reportHadCorrectTestName = true
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "with proper words(FixtureParam)")
+                  if (rawText == "with proper words")
                     reportHadCorrectSpecText = true
-                  if (formattedText == "  - with proper words(FixtureParam)")
+                  if (formattedText == "  - with proper words")
                     reportHadCorrectFormattedSpecText = true
                 case _ =>
               }
@@ -1292,13 +1292,13 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvokedTwice)
               theOtherMethodHasBeenInvoked = true
-              if (event.testName.indexOf("My Spec must start with proper words(FixtureParam)") != -1)
+              if (event.testName.indexOf("My Spec must start with proper words") != -1)
                 reportHadCorrectTestName = true
               event.formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "with proper words(FixtureParam)")
+                  if (rawText == "with proper words")
                     reportHadCorrectSpecText = true
-                  if (formattedText == "  - with proper words(FixtureParam)")
+                  if (formattedText == "  - with proper words")
                     reportHadCorrectFormattedSpecText = true
                 case _ =>
               }
@@ -1372,7 +1372,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         def apply(event: Event) {
           event match {
             case TestStarting(_, _, _, _, _, testName, _, _, _, _, _, _, _, _) =>
-              if (testName == "A Stack needs to push and pop properly(FixtureParam)") {
+              if (testName == "A Stack needs to push and pop properly") {
                 testSucceededReportHadCorrectTestName = true
               }
             case _ => 
@@ -1441,7 +1441,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
             case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "My spec text must have the proper words(FixtureParam)")
+                  if (rawText == "My spec text must have the proper words")
                     testSucceededReportHadCorrectSpecText = true
                   else
                     lastSpecText = Some(rawText)
@@ -1468,7 +1468,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
             case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "My short name must have the proper words(FixtureParam)")
+                  if (rawText == "My short name must have the proper words")
                     testSucceededReportHadCorrectSpecText = true
                   else
                     lastSpecText = Some(rawText)
@@ -1497,7 +1497,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
             case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
-                  if (rawText == "My short name must have the proper words(FixtureParam)")
+                  if (rawText == "My short name must have the proper words")
                     testSucceededReportHadCorrectSpecText = true
                   else
                     lastSpecText = Some(rawText)
@@ -1565,7 +1565,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
 
         def apply(event: Event) {
           event match {
-            case testSucceeded: TestSucceeded if testSucceeded.testName == "A Stack (when not empty) should allow me to pop(FixtureParam)" => 
+            case testSucceeded: TestSucceeded if testSucceeded.testName == "A Stack (when not empty) should allow me to pop" => 
               val recordedEvents = testSucceeded.recordedEvents
               recordedEvents(0) match {
                 case event: InfoProvided =>
@@ -1832,7 +1832,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       }
       class InfoBeforeTestSpec extends Spec with StringFixture {
         val msg = "hi there, dude"
-        val testName = "test name(FixtureParam)"
+        val testName = "test name"
         info(msg)
         def `test name`(fixture: String) {}
       }
@@ -2030,9 +2030,9 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     override def withFixture(test: OneArgTest) {
       if (test.configMap.size > 0)
         test.name match {
-          case "test this(FixtureParam)" => theTestThisConfigMapWasEmpty = false
-          case "test that(FixtureParam)" => theTestThatConfigMapWasEmpty = false
-          case "test the other(FixtureParam)" => theTestTheOtherConfigMapWasEmpty = false
+          case "test this" => theTestThisConfigMapWasEmpty = false
+          case "test that" => theTestThatConfigMapWasEmpty = false
+          case "test the other" => theTestTheOtherConfigMapWasEmpty = false
           case _ => throw new Exception("Should never happen")
         }
       test("hi")
@@ -2057,7 +2057,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
 
     it("should run just the specified test, passing an empty config map, if a full test name is passed") {
       val s2 = new TestWasCalledSpec
-      s2.execute("test this(FixtureParam)")
+      s2.execute("test this")
       assert(s2.theTestThisCalled)
       assert(!s2.theTestThatCalled)
       assert(!s2.theTestTheOtherCalled)
@@ -2079,7 +2079,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
 
     it("should pass a non-empty config map into just the specified test if a full test name and a config map is specified") {
       val s4 = new TestWasCalledSpec
-      s4.execute("test this(FixtureParam)", Map("s" -> "s"))
+      s4.execute("test this", Map("s" -> "s"))
       assert(s4.theTestThisCalled)
       assert(!s4.theTestThatCalled)
       assert(!s4.theTestTheOtherCalled)
@@ -2090,7 +2090,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
 
     it("should run just the specified test, passing an empty config map, if a full test name is passed via a named parameter") {
       val s5 = new TestWasCalledSpec
-      s5.execute(testName = "test this(FixtureParam)")
+      s5.execute(testName = "test this")
       assert(s5.theTestThisCalled)
       assert(!s5.theTestThatCalled)
       assert(!s5.theTestTheOtherCalled)
@@ -2101,7 +2101,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
 
     it("should pass a non-empty config map into just the specified test if a full test name and a config map is specified via named parameters") {
       val s6 = new TestWasCalledSpec
-      s6.execute(testName = "test this(FixtureParam)", configMap = Map("s" -> "s"))
+      s6.execute(testName = "test this", configMap = Map("s" -> "s"))
       assert(s6.theTestThisCalled)
       assert(!s6.theTestThatCalled)
       assert(!s6.theTestTheOtherCalled)
@@ -2223,8 +2223,8 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
 
     val a = new ASpec
     val expectedTestNames = List("" +
-      "test: the + operator should add(FixtureParam)",
-      "test: the - operator should subtract(FixtureParam)"
+      "test: the + operator should add",
+      "test: the - operator should subtract"
     )
     assert(a.testNames.iterator.toList === expectedTestNames)
   }
@@ -2281,16 +2281,16 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           }
           expectResult(None) { testStarting.decodedSuiteName }
         case testSucceed:TestSucceeded => 
-          expectResult("test Succeed(FixtureParam)") { testSucceed.testName }
+          expectResult("test Succeed") { testSucceed.testName }
           expectResult(None) { testSucceed.decodedTestName }
         case testFail:TestFailed =>
-          expectResult("test Fail(FixtureParam)") { testFail.testName }
+          expectResult("test Fail") { testFail.testName }
           expectResult(None) { testFail.decodedTestName }
         case testPending:TestPending =>
-          expectResult("test Pending(FixtureParam)") { testPending.testName }
+          expectResult("test Pending") { testPending.testName }
           expectResult(None) { testPending.decodedTestName }
         case testIgnore:TestIgnored => 
-          expectResult("test Ignore(FixtureParam)") { testIgnore.testName }
+          expectResult("test Ignore") { testIgnore.testName }
           expectResult(None) { testIgnore.decodedTestName }
         case _ =>
       }

@@ -105,9 +105,9 @@ class LocationMethodSuiteProp extends MethodSuiteProp {
   def fixtureSpec = new TestLocationFixtureSpec
   class TestLocationFixtureSpec extends fixture.Spec with FixtureServices with StringFixture {
     val suiteTypeName = "org.scalatest.events.LocationMethodSuiteProp$TestLocationSpec"
-    val expectedStartingList = List(TestStartingPair("A Spec test succeed(FixtureParam)", "org.scalatest.events.LocationMethodSuiteProp$TestLocationFixtureSpec$A$u0020Spec$", "test$u0020succeed(java.lang.String)"), 
-                                TestStartingPair("A Spec test pending(FixtureParam)", "org.scalatest.events.LocationMethodSuiteProp$TestLocationFixtureSpec$A$u0020Spec$", "test$u0020pending(java.lang.String)"), 
-                                TestStartingPair("A Spec test cancel(FixtureParam)", "org.scalatest.events.LocationMethodSuiteProp$TestLocationFixtureSpec$A$u0020Spec$", "test$u0020cancel(java.lang.String)"))
+    val expectedStartingList = List(TestStartingPair("A Spec test succeed", "org.scalatest.events.LocationMethodSuiteProp$TestLocationFixtureSpec$A$u0020Spec$", "test$u0020succeed(java.lang.String)"), 
+                                TestStartingPair("A Spec test pending", "org.scalatest.events.LocationMethodSuiteProp$TestLocationFixtureSpec$A$u0020Spec$", "test$u0020pending(java.lang.String)"), 
+                                TestStartingPair("A Spec test cancel", "org.scalatest.events.LocationMethodSuiteProp$TestLocationFixtureSpec$A$u0020Spec$", "test$u0020cancel(java.lang.String)"))
     val expectedResultList = List(TestResultPair(classOf[TestSucceeded], "org.scalatest.events.LocationMethodSuiteProp$TestLocationFixtureSpec$A$u0020Spec$", "test$u0020succeed(java.lang.String)"), 
                               TestResultPair(classOf[TestPending], "org.scalatest.events.LocationMethodSuiteProp$TestLocationFixtureSpec$A$u0020Spec$", "test$u0020pending(java.lang.String)"),
                               TestResultPair(classOf[TestCanceled], "org.scalatest.events.LocationMethodSuiteProp$TestLocationFixtureSpec$A$u0020Spec$", "test$u0020cancel(java.lang.String)"),

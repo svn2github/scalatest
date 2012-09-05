@@ -124,13 +124,13 @@ class ExampleParallelTestExecutionTestTimeoutFixtureSpec extends fixture.Spec wi
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 6)
-    checkTestStarting(events(0), "test 1(FixtureParam)")
-    checkTestSucceeded(events(1), "test 1(FixtureParam)")
-    checkTestStarting(events(2), "test 2(FixtureParam)")
-    checkTestStarting(events(3), "test 3(FixtureParam)")
-    checkTestSucceeded(events(4), "test 3(FixtureParam)")
+    checkTestStarting(events(0), "test 1")
+    checkTestSucceeded(events(1), "test 1")
+    checkTestStarting(events(2), "test 2")
+    checkTestStarting(events(3), "test 3")
+    checkTestSucceeded(events(4), "test 3")
     // The missing one
-    checkTestSucceeded(events(5), "test 2(FixtureParam)")
+    checkTestSucceeded(events(5), "test 2")
   }
 }
 

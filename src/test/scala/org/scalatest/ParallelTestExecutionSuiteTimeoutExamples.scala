@@ -69,12 +69,12 @@ class ExampleParallelTestExecutionSuiteTimeoutSpecPair extends SuiteTimeoutSuite
     checkSuiteCompleted(events(5), suite1.suiteId)
     
     checkSuiteStarting(events(6), suite2.suiteId)
-    checkTestStarting(events(7), "test 1(FixtureParam)")
-    checkTestSucceeded(events(8), "test 1(FixtureParam)")
-    checkTestStarting(events(9), "test 2(FixtureParam)")
-    checkTestSucceeded(events(10), "test 2(FixtureParam)")
-    checkTestStarting(events(11), "test 3(FixtureParam)")
-    checkTestSucceeded(events(12), "test 3(FixtureParam)")
+    checkTestStarting(events(7), "test 1")
+    checkTestSucceeded(events(8), "test 1")
+    checkTestStarting(events(9), "test 2")
+    checkTestSucceeded(events(10), "test 2")
+    checkTestStarting(events(11), "test 3")
+    checkTestSucceeded(events(12), "test 3")
     checkSuiteCompleted(events(13), suite2.suiteId)
     
     checkTestStarting(events(14), "test 3")
