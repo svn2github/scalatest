@@ -1266,7 +1266,7 @@ trait Spec extends Suite { thisSuite =>
                 register(scopeObj)
               }
               val scopeLocation = TopOfClass(m.getReturnType.getName)
-              registerNestedBranch(scopeDesc, None, scopeFun, "registrationAlreadyClosed", sourceFileName, "discoveryAndRegisterTests", 2, 0, Some(scopeLocation))
+              registerNestedBranch(scopeDesc, None, scopeFun, "registrationAlreadyClosed", sourceFileName, "ensureScopesAndTestsRegistered", 2, 0, Some(scopeLocation))
             }
             else {
               val methodName = m.getName
@@ -1287,9 +1287,9 @@ trait Spec extends Suite { thisSuite =>
                 case None => methodTags.contains(Suite.IgnoreAnnotation)
               }
               if (isIgnore)
-                registerIgnoredTest(testName, testFun, "registrationAlreadyClosed", sourceFileName, "discoveryAndRegisterTests", 3, 0, Some(testLocation), methodTags.map(new Tag(_)): _*)
+                registerIgnoredTest(testName, testFun, "registrationAlreadyClosed", sourceFileName, "ensureScopesAndTestsRegistered", 3, 0, Some(testLocation), methodTags.map(new Tag(_)): _*)
               else
-                registerTest(testName, testFun, "registrationAlreadyClosed", sourceFileName, "discoveryAndRegisterTests", 2, 0, None, Some(testLocation), None, methodTags.map(new Tag(_)): _*)
+                registerTest(testName, testFun, "registrationAlreadyClosed", sourceFileName, "ensureScopesAndTestsRegistered", 2, 1, None, Some(testLocation), None, methodTags.map(new Tag(_)): _*)
             }
           }
         }

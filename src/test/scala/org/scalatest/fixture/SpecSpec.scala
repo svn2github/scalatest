@@ -2492,6 +2492,34 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       assert(rep.testFailedEventsReceived(1).throwable.get.asInstanceOf[TestFailedException].failedCodeFileName.get === "SpecSpec.scala")
       assert(rep.testFailedEventsReceived(1).throwable.get.asInstanceOf[TestFailedException].failedCodeLineNumber.get === thisLineNumber - 16)
     }
+    
+    it("should throw DuplicateTestNameException when overload test method with and without fixture is defined") {
+      class TestSpec extends Spec with StringFixture {
+        def `test 1` { }
+        def `test 1`(fixture: String) { }
+      }
+      val s1 = new TestSpec
+      val e = intercept[DuplicateTestNameException] {
+        s1.run(None, Args(reporter = SilentReporter))
+      }
+      assert(e.failedCodeLineNumber === (Some(thisLineNumber - 2)))
+      assert(e.failedCodeFileName === Some("SpecSpec.scala"))
+    }
+    
+    it("should throw DuplicateTestNameException when overload test method with and without fixture is defined in scope") {
+      class TestSpec extends Spec with StringFixture {
+        object `scope 1` {
+          def `test 1` { }
+          def `test 1`(fixture: String) { }
+        }
+      }
+      val s1 = new TestSpec
+      val e = intercept[DuplicateTestNameException] {
+        s1.run(None, Args(reporter = SilentReporter))
+      }
+      assert(e.failedCodeLineNumber === (Some(thisLineNumber - 2)))
+      assert(e.failedCodeFileName === Some("SpecSpec.scala"))
+    }
   }
 }
 
