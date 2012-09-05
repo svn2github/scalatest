@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" output="target/jar_contents" path="src/generators/scala"/>
+	<classpathentry kind="src" path="examples/src/main/java"/>
+	<classpathentry kind="src" path="target/scala-2.9.0/src_managed/main/scala"/>
 	<classpathentry kind="src" output="target/examples" path="examples/src/main/scala"/>
-	<classpathentry kind="src" path="target/generated/src/main/scala"/>
 	<classpathentry kind="src" path="src/us"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" output="target/jar_contents" path="src/main/scala"/>

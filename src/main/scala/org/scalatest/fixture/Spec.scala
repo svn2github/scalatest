@@ -112,7 +112,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *     finally writer.close() // clean up the fixture
  *   }
  * 
- *   object &#96;Testing&#96; {
+ *   object &#96;Testing &#96; {
  *     def &#96;should be easy&#96; (f: F) {
  *       f.writer.write("easy!")
  *       f.writer.flush()
@@ -144,7 +144,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.fixture.funspec.sharing
+ * package org.scalatest.examples.fixture.spec.sharing
  * 
  * import java.util.concurrent.ConcurrentHashMap
  * import org.scalatest.fixture
@@ -183,13 +183,13 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *   }
  * }
  * 
- * class ExampleSpec extends fixture.FunSpec with DbFixture {
+ * class ExampleSpec extends fixture.Spec with DbFixture {
  * 
  *   override def populateDb(db: Db) { // setup the fixture
  *     db.append("ScalaTest is ")
  *   }
  * 
- *   object &#96;Testing&#96; {
+ *   object &#96;Testing &#96; {
  *     def &#96;should be easy&#96; (db: Db) {
  *       db.append("easy!")
  *       assert(db.toString === "ScalaTest is easy!")
@@ -300,6 +300,7 @@ trait Spec extends Suite  { thisSuite =>
         def register(o: AnyRef) {
           val testMethods = o.getClass.getMethods.filter(isTestMethod(_)).sorted(MethodNameEncodedOrdering)
           
+// TODO: Detect duplicate test names, one with fixture param and one without.
           testMethods.foreach { m =>
             val scope = isScopeMethod(o, m)
             if (scope) {
@@ -580,9 +581,11 @@ private[scalatest] object Spec {
 
     // name must have at least one encoded space: "$u0220"
     val includesEncodedSpace = m.getName.indexOf("$u0020") >= 0
+    
+    val isOuterMethod = m.getName.endsWith("$$outer")
 
     // def maybe(b: Boolean) = if (b) "" else "!"
     // println("m.getName: " + m.getName + ": " + maybe(isInstanceMethod) + "isInstanceMethod, " + maybe(hasNoParams) + "hasNoParams, " + maybe(includesEncodedSpace) + "includesEncodedSpace")
-    isInstanceMethod && hasNoParamOrFixtureParam && includesEncodedSpace
+    isInstanceMethod && hasNoParamOrFixtureParam && includesEncodedSpace && !isOuterMethod
   }
 }

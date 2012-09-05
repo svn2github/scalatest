@@ -187,7 +187,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <pre class="stHighlight">
  * package org.scalatest.examples.spec.ignore
  * 
- * import org.scalatest.Spec
+ * import org.scalatest._
  * 
  * class SetSpec extends Spec {
  *   
@@ -233,8 +233,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <pre class="stHighlight">
  * package org.scalatest.examples.spec.ignoreall
  * 
- * import org.scalatest.Spec
- * import org.scalatest.Ignore
+ * import org.scalatest._
  *
  * @Ignore
  * class SetSpec extends Spec {
@@ -425,7 +424,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * <pre>
  * package org.scalatest.examples.spec.tagging;
  * import java.lang.annotation.*; 
- * import org.scalatest.TagAnnotation
+ * import org.scalatest.TagAnnotation;
  * 
  * @TagAnnotation
  * @Retention(RetentionPolicy.RUNTIME)
@@ -453,12 +452,12 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *     object &#96;when empty&#96; {
 
  *       @SlowTest
- *       def &#96;should have size 0` {
+ *       def &#96;should have size 0&#96; {
  *         assert(Set.empty.size === 0)
  *       }
  *       
  *       @SlowTest @DbTest
- *       def &#96;should produce NoSuchElementException when head is invoked` {
+ *       def &#96;should produce NoSuchElementException when head is invoked&#96; {
  *         intercept[NoSuchElementException] {
  *           Set.empty.head
  *         }
@@ -541,7 +540,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *       val buffer = new ListBuffer[String]
  *     }
  *   
- *   object &#96;Testing&#96; {
+ *   object &#96;Testing &#96; {
  *     def &#96;should be easy&#96; {
  *       val f = fixture
  *       f.builder.append("easy!")
@@ -601,7 +600,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *     val buffer = ListBuffer("ScalaTest", "is")
  *   }
  * 
- *   object &#96;Testing&#96; {
+ *   object &#96;Testing &#96; {
  *     // This test needs the StringBuilder fixture
  *     def &#96;should be productive&#96; {
  *       new Builder {
@@ -649,12 +648,12 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * import org.scalatest._
  * import collection.mutable.ListBuffer
  * 
- * class ExampleSuite extends Spec with OneInstancePerTest {
+ * class ExampleSpec extends Spec with OneInstancePerTest {
  * 
  *   val builder = new StringBuilder("ScalaTest is ")
  *   val buffer = new ListBuffer[String]
  * 
- *   object &#96;Testing&#96; {
+ *   object &#96;Testing &#96; {
  *     def &#96;should be easy&#96; {
  *       builder.append("easy!")
  *       assert(builder.toString === "ScalaTest is easy!")
@@ -772,10 +771,10 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
  * This test
- * - should succeed
  * <span class="stRed">- should fail *** FAILED ***
  *   2 did not equal 3 (<console>:33)
  *   + Dir snapshot: hello.txt, world.txt </span>
+ * - should succeed
  * </pre>
  *
  * <p>
@@ -845,7 +844,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *     finally writer.close() // clean up the fixture
  *   }
  * 
- *   object &#96;Testing&#96; {
+ *   object &#96;Testing &#96; {
  *     // This test needs the file fixture
  *     def &#96;should be productive&#96; {
  *       withFile { (file, writer) =&gt;
@@ -948,14 +947,14 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *     finally writer.close() // clean up the fixture
  *   }
  *
- *   object &#96;Testing&#96; {
- *     def &#96;should be easy&#96; { f =&gt;
+ *   object &#96;Testing &#96; {
+ *     def &#96;should be easy&#96; { f&#58; F =&gt;
  *       f.writer.write("easy!")
  *       f.writer.flush()
  *       assert(f.file.length === 18)
  *     }
  * 
- *     def &#96;should be fun&#96; { f =&gt;
+ *     def &#96;should be fun&#96; { f&#58; F =&gt;
  *       f.writer.write("fun!")
  *       f.writer.flush()
  *       assert(f.file.length === 17)
@@ -1003,7 +1002,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *     buffer.clear()
  *   }
  * 
- *   object &#96;Testing&#96; {
+ *   object &#96;Testing &#96; {
  *     def &#96;should be easy&#96; {
  *       builder.append("easy!")
  *       assert(builder.toString === "ScalaTest is easy!")
@@ -1077,7 +1076,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * 
  * class ExampleSpec extends Spec with Builder with Buffer {
  * 
- *   object &#96;Testing&#96; {
+ *   object &#96;Testing &#96; {
  *     def &#96;should be easy&#96; {
  *       builder.append("easy!")
  *       assert(builder.toString === "ScalaTest is easy!")
@@ -1158,7 +1157,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * 
  * class ExampleSpec extends Spec with Builder with Buffer {
  * 
- *   object &#96;Testing&#96; {
+ *   object &#96;Testing &#96; {
  *     def &#96;should be easy&#96; {
  *       builder.append("easy!")
  *       assert(builder.toString === "ScalaTest is easy!")
@@ -1458,10 +1457,13 @@ private[scalatest] object Spec {
 
     // name must have at least one encoded space: "$u0220"
     val includesEncodedSpace = m.getName.indexOf("$u0020") >= 0
+    
+    val isOuterMethod = m.getName.endsWith("$$outer")
 
+    //val isOuterMethod = m.getName.endsWith("$$$outer")
     // def maybe(b: Boolean) = if (b) "" else "!"
     // println("m.getName: " + m.getName + ": " + maybe(isInstanceMethod) + "isInstanceMethod, " + maybe(hasNoParams) + "hasNoParams, " + maybe(includesEncodedSpace) + "includesEncodedSpace")
-    isInstanceMethod && hasNoParams && includesEncodedSpace
+    isInstanceMethod && hasNoParams && includesEncodedSpace && !isOuterMethod
   }
 }
 
