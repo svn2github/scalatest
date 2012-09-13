@@ -437,11 +437,15 @@ trait Spec extends Suite  { thisSuite =>
 
     def invokeWithFixture(theTest: TestLeaf) {
       val theConfigMap = args.configMap
+      val testData = testDataFor(testName, theConfigMap)
       withFixture(
         new OneArgTest {
-          def name = testName
+          val name = testData.name
           def apply(fixture: FixtureParam) { theTest.testFun(fixture) }
-          def configMap = theConfigMap
+          val configMap = testData.configMap
+          val scopes = testData.scopes
+          val text = testData.text
+          val tags = testData.tags
         }
         //new TestFunAndConfigMap(testName, theTest.testFun, theConfigMap)
       )
@@ -560,6 +564,7 @@ trait Spec extends Suite  { thisSuite =>
    */
   final override val styleName: String = "org.scalatest.fixture.Spec"
 
+  override def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = createTestDataFor(testName, theConfigMap, this)
 }
 
 private[scalatest] object Spec {

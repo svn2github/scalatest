@@ -907,13 +907,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    */
   def tags: Map[String, Set[String]] = {
-    def getTags(testName: String) =
-      for {
-        a <- getMethodForTestName(testName).getDeclaredAnnotations
-        annotationClass = a.annotationType
-        if annotationClass.isAnnotationPresent(classOf[TagAnnotation])
-      } yield annotationClass.getName
-
     val testNameSet = testNames
       
     val testTags = Map() ++ 
@@ -922,6 +915,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
     autoTagClassAnnotations(testTags, this)
   }
+  
+  private def getTags(testName: String) =
+    for {
+      a <- getMethodForTestName(testName).getDeclaredAnnotations
+      annotationClass = a.annotationType
+      if annotationClass.isAnnotationPresent(classOf[TagAnnotation])
+    } yield annotationClass.getName
 
   /**
   * A <code>Set</code> of test names. If this <code>Suite</code> contains no tests, this method returns an empty <code>Set</code>.
@@ -971,9 +971,9 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     def isTestMethod(m: Method) = {
 
       // Factored out to share code with fixture.Suite.testNames
-      val (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags) = isTestMethodGoodies(m)
+      val (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags, isTestDataFor) = isTestMethodGoodies(m)
 
-      isInstanceMethod && (firstFour == "test") && ((hasNoParams && !isTestNames && !isTestTags) || takesInformer(m) || takesCommunicator(m))
+      isInstanceMethod && (firstFour == "test") && !isTestDataFor && ((hasNoParams && !isTestNames && !isTestTags) || takesInformer(m) || takesCommunicator(m))
     }
 
     val testNameArray =
@@ -1131,11 +1131,15 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
     try {
       val theConfigMap = configMap
+      val testData = testDataFor(testName, theConfigMap)
       withFixture(
         new NoArgTest {
-          def name = testName
+          val name = testData.name
           def apply() { method.invoke(thisSuite, argsArray: _*) }
-          def configMap = theConfigMap
+          val configMap = testData.configMap
+          val scopes = testData.scopes
+          val text = testData.text
+          val tags = testData.tags
         }
       )
       val duration = System.currentTimeMillis - testStartTime
@@ -1666,6 +1670,28 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * Suite style name.
    */
   val styleName: String = "org.scalatest.Suite"
+  
+  def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = {
+    val suiteTags = for { 
+      a <- this.getClass.getDeclaredAnnotations
+      annotationClass = a.annotationType
+      if annotationClass.isAnnotationPresent(classOf[TagAnnotation])
+    } yield annotationClass.getName
+    val testTags: Set[String] = 
+      try {
+        getTags(testName).toSet
+      }
+      catch {
+        case e: IllegalArgumentException => Set.empty[String]
+      }
+    new TestData {
+      val configMap = theConfigMap 
+      val name = testName
+      val scopes = IndexedSeq.empty
+      val text = testName
+      val tags = Set.empty ++ suiteTags ++ testTags
+    }
+  }
 }
 
 private[scalatest] object Suite {
@@ -1831,8 +1857,10 @@ private[scalatest] object Suite {
     // actually wrote a testNames(Informer) method and it was silently ignored.
     val isTestNames = simpleName == "testNames"
     val isTestTags = simpleName == "testTags"
+    val isTestDataFor = (simpleName == "testDataFor" && paramTypes.length == 2 && classOf[String].isAssignableFrom(paramTypes(0)) && classOf[Map[String, Any]].isAssignableFrom(paramTypes(1))) || 
+                        (simpleName == "testDataFor$default$2" && paramTypes.length == 0)
 
-    (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags)
+    (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags, isTestDataFor)
   }
 
   def testMethodTakesAnInformer(testName: String): Boolean = testName.endsWith(InformerInParens)

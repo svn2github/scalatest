@@ -263,10 +263,7 @@ trait BeforeAndAfterEach extends SuiteMixin {
 
     var thrownException: Option[Throwable] = None
 
-    beforeEach(new TestData { 
-                      val name = testName
-                      val configMap = args.configMap 
-                   })
+    beforeEach(testDataFor(testName, args.configMap))
     try {
       super.runTest(testName, args)
     }
@@ -275,10 +272,7 @@ trait BeforeAndAfterEach extends SuiteMixin {
     }
     finally {
       try {
-        afterEach(new TestData { 
-                        val name = testName
-                        val configMap = args.configMap 
-                      }) // Make sure that afterEach is called even if runTest completes abruptly.
+        afterEach(testDataFor(testName, args.configMap)) // Make sure that afterEach is called even if runTest completes abruptly.
         thrownException match {
           case Some(e) => throw e
           case None =>

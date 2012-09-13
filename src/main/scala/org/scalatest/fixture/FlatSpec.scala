@@ -2193,4 +2193,6 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * Suite style name.
    */
   final override val styleName: String = "org.scalatest.fixture.FlatSpec"
+    
+  override def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = createTestDataFor(testName, theConfigMap, this)
 }

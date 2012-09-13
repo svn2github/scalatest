@@ -99,11 +99,14 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
      * }
      * </pre>
      */
-    def toNoArgTest(fixture: FixtureParam) =
+    def toNoArgTest(fixture: FixtureParam) = 
       new NoArgTest {
         val name = thisOneArgTest.name
-        def configMap = thisOneArgTest.configMap
+        val configMap = thisOneArgTest.configMap
         def apply() { thisOneArgTest(fixture) }
+        val scopes = thisOneArgTest.scopes
+        val text = thisOneArgTest.text
+        val tags = thisOneArgTest.tags
       }
   }
 
@@ -127,12 +130,20 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
     def apply(fixture: FixtureParam) {
       test(fixture)
     }
+    private val testData = testDataFor(name, configMap)
+    val scopes = testData.scopes
+    val text = testData.text
+    val tags = testData.tags
   }
 
   private[fixture] class FixturelessTestFunAndConfigMap(override val name: String, test: () => Any, override val configMap: Map[String, Any])
     extends NoArgTest {
 
     def apply() { test() }
+    private val testData = testDataFor(name, configMap)
+    val scopes = testData.scopes
+    val text = testData.text
+    val tags = testData.tags
   }
 
   // TODO: add documentation here, so people know they can pass an Informer as the second arg.
@@ -149,12 +160,12 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
     def isTestMethod(m: Method) = {
 
       // Factored out to share code with Suite.testNames
-      val (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags) = isTestMethodGoodies(m)
+      val (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags, isTestDataFor) = isTestMethodGoodies(m)
 
       // Also, will discover both
       // testNames(Object) and testNames(Object, Informer). Reason is if I didn't discover these
       // it would likely just be silently ignored, and that might waste users' time
-      isInstanceMethod && (firstFour == "test") && ((hasNoParams && !isTestNames && !isTestTags) ||
+      isInstanceMethod && (firstFour == "test") && !isTestDataFor && ((hasNoParams && !isTestNames && !isTestTags) ||
           takesInformer(m) || takesOneParamOfAnyType(m) || takesTwoParamsOfTypesAnyAndInformer(m))
     }
 

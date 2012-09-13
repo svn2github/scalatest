@@ -605,6 +605,58 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
         idx :: currentPath
     }
   }
+  
+  private[scalatest] def createTestDataFor(testName: String, theConfigMap: Map[String, Any], theSuite: Suite) = 
+    new TestData {
+      val configMap = theConfigMap 
+      val name = testName
+      val scopes = testScopes(testName)
+      val text = testText(testName)
+      val tags = testTags(testName, theSuite)
+    }
+  
+  private[scalatest] def testTags(testName: String, theSuite: Suite): Set[String] = {
+    val suiteTags = for { 
+      a <- theSuite.getClass.getDeclaredAnnotations
+      annotationClass = a.annotationType
+      if annotationClass.isAnnotationPresent(classOf[TagAnnotation])
+    } yield annotationClass.getName
+    val testTagSet = atomic.get.tagsMap.getOrElse(testName, Set.empty)
+    Set.empty ++ suiteTags ++ testTagSet
+  }
+  
+  private[scalatest] def testScopes(testName: String): IndexedSeq[String] = {
+    @tailrec
+    def testScopesAcc(branch: Branch, acc: IndexedSeq[String]): IndexedSeq[String] = {
+      branch match {
+        case Trunk => acc.reverse
+        case DescriptionBranch(parent, descriptionText, childPrefix, lineInFile) =>
+          val optionalChildPrefixAndDescriptionText =
+          childPrefix match {
+            case Some(cp) => Resources("prefixSuffix", descriptionText.trim, cp.trim)
+            case _ => descriptionText
+          }
+          testScopesAcc(parent, acc :+ optionalChildPrefixAndDescriptionText.trim)
+      }
+    }
+    val theTestOpt = atomic.get.testsMap.get(testName)
+    theTestOpt match {
+      case Some(theTest) =>
+        testScopesAcc(theTest.parent, IndexedSeq.empty)
+      case None => 
+        throw new IllegalArgumentException("Test name '" + testName + "' not found.")
+    }
+  }
+  
+  private[scalatest] def testText(testName: String): String = {
+    val theTestOpt = atomic.get.testsMap.get(testName)
+    theTestOpt match {
+      case Some(theTest) =>
+        theTest.testText
+      case None => 
+        throw new IllegalArgumentException("Test name '" + testName + "' not found.")
+    }
+  }
 }
 
 private[scalatest] class Engine(concurrentBundleModResourceName: String, simpleClassName: String)

@@ -314,6 +314,15 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
    * Suite style name.
    */
   final override val styleName: String = "JUnit3Suite"
+    
+  final override def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = 
+    new TestData {
+      val configMap = theConfigMap 
+      val name = testName
+      val scopes = IndexedSeq.empty
+      val text = testName
+      val tags = Set.empty[String]
+    }
 }
 
 private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker) extends TestListener {

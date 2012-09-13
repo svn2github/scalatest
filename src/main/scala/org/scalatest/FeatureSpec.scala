@@ -1763,11 +1763,15 @@ trait FeatureSpec extends Suite { thisSuite =>
 
     def invokeWithFixture(theTest: TestLeaf) {
       val theConfigMap = args.configMap
+      val testData = testDataFor(testName, theConfigMap)
       withFixture(
         new NoArgTest {
-          def name = testName
+          val name = testData.name
           def apply() { theTest.testFun() }
-          def configMap = theConfigMap
+          val configMap = testData.configMap
+          val scopes = testData.scopes
+          val text = testData.text
+          val tags = testData.tags
         }
       )
     }
@@ -1900,4 +1904,6 @@ trait FeatureSpec extends Suite { thisSuite =>
    * Suite style name.
    */
   final override val styleName: String = "org.scalatest.FeatureSpec"
+    
+  override def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = createTestDataFor(testName, theConfigMap, this)
 }
