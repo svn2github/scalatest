@@ -572,11 +572,11 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
             case Some(cp) => Resources("prefixSuffix", descriptionText, cp)
             case _ => descriptionText
           }
-        Resources("prefixSuffix", getTestNamePrefix(parent), optionalChildPrefixAndDescriptionText).trim
+        Resources("prefixSuffix", getTestNamePrefix(parent), optionalChildPrefixAndDescriptionText.trim).trim
     }
 
   private[scalatest] def getTestName(testText: String, parent: Branch): String =
-    Resources("prefixSuffix", getTestNamePrefix(parent), testText).trim
+    Resources("prefixSuffix", getTestNamePrefix(parent), testText.trim).trim
 
   private def checkRegisterTestParamsForNull(testText: String, testTags: Tag*) {
     if (testText == null)

@@ -221,5 +221,5 @@ trait ShouldVerb {
    * Implicitly converts an object of type <code>String</code> to a <code>StringShouldWrapperForVerb</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToStringShouldWrapper(o: String): StringShouldWrapperForVerb = new StringShouldWrapperForVerb(o)
+  implicit def convertToStringShouldWrapper(o: String): StringShouldWrapperForVerb = new StringShouldWrapperForVerb(o.trim)
 }

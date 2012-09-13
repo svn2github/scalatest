@@ -607,7 +607,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      */
     @deprecated("Please use \"which\" instead of \"that\".")
     def that(f: => Unit) {
-      registerBranch(string + " that", None, "that", 4, -2, f _)
+      registerBranch(string.trim + " that", None, "that", 4, -2, f _)
     }
     
     /**
@@ -627,7 +627,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def which(f: => Unit) {
-      registerBranch(string + " which", None, "which", 4, -2, f _)
+      registerBranch(string.trim + " which", None, "which", 4, -2, f _)
     }
 
     /**
@@ -636,7 +636,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      */
     @deprecated("Please use \"which\" instead of \"that\".")
     def that(resultOfAfterWordApplication: ResultOfAfterWordApplication) {
-      registerBranch(string + " that " + resultOfAfterWordApplication.text, None, "that", 4, -2, resultOfAfterWordApplication.f)
+      registerBranch(string.trim + " that " + resultOfAfterWordApplication.text.trim, None, "that", 4, -2, resultOfAfterWordApplication.f)
     }
     
     /**
@@ -656,7 +656,7 @@ trait WordSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def which(resultOfAfterWordApplication: ResultOfAfterWordApplication) {
-      registerBranch(string + " which " + resultOfAfterWordApplication.text, None, "which", 4, -2, resultOfAfterWordApplication.f)
+      registerBranch(string.trim + " which " + resultOfAfterWordApplication.text.trim, None, "which", 4, -2, resultOfAfterWordApplication.f)
     }
   }
 

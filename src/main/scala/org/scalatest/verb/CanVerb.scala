@@ -197,5 +197,5 @@ trait CanVerb {
    * Implicitly converts an object of type <code>String</code> to a <code>StringCanWrapper</code>,
    * to enable <code>can</code> methods to be invokable on that object.
    */
-  implicit def convertToStringCanWrapper(o: String): StringCanWrapperForVerb = new StringCanWrapperForVerb(o)
+  implicit def convertToStringCanWrapper(o: String): StringCanWrapperForVerb = new StringCanWrapperForVerb(o.trim)
 }

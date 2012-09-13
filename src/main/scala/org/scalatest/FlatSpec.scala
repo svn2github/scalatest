@@ -1662,7 +1662,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToRun(verb + " " + name, "in", tags, testFun _)
+      registerTestToRun(verb.trim + " " + name.trim, "in", tags, testFun _)
     }
 
     /**
@@ -1684,7 +1684,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def is(testFun: => PendingNothing) {
-      registerTestToRun(verb + " " + name, "is", tags, testFun _)
+      registerTestToRun(verb.trim + " " + name.trim, "is", tags, testFun _)
     }
 
     /**
@@ -1706,7 +1706,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, tags, "ignore", testFun _)
+      registerTestToIgnore(verb.trim + " " + name.trim, tags, "ignore", testFun _)
     }
   }
 
@@ -1774,7 +1774,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToRun(verb + " " + name, "in", List(), testFun _)
+      registerTestToRun(verb.trim + " " + name.trim, "in", List(), testFun _)
     }
 
     /**
@@ -1795,7 +1795,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def is(testFun: => PendingNothing) {
-      registerTestToRun(verb + " " + name, "is", List(), testFun _)
+      registerTestToRun(verb.trim + " " + name.trim, "is", List(), testFun _)
     }
 
     /**
@@ -1816,7 +1816,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, List(), "ignore", testFun _)
+      registerTestToIgnore(verb.trim + " " + name.trim, List(), "ignore", testFun _)
     }
 
     /**
@@ -2068,7 +2068,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, tags, "in", testFun _)
+      registerTestToIgnore(verb.trim + " " + name.trim, tags, "in", testFun _)
     }
 
     /**
@@ -2098,7 +2098,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def is(testFun: => PendingNothing) {
-      registerTestToIgnore(verb + " " + name, tags, "is", testFun _)
+      registerTestToIgnore(verb.trim + " " + name.trim, tags, "is", testFun _)
     }
     // Note: no def ignore here, so you can't put two ignores in the same line
   }
@@ -2165,7 +2165,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, List(), "in", testFun _)
+      registerTestToIgnore(verb.trim + " " + name.trim, List(), "in", testFun _)
     }
 
     /**
@@ -2194,7 +2194,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def is(testFun: => PendingNothing) {
-      registerTestToIgnore(verb + " " + name, List(), "is", testFun _)
+      registerTestToIgnore(verb.trim + " " + name.trim, List(), "is", testFun _)
     }
 
     /**
@@ -2377,7 +2377,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToRun(verb + " " + name, "in", tags, testFun _)
+      registerTestToRun(verb.trim + " " + name.trim, "in", tags, testFun _)
     }
 
     /**
@@ -2399,7 +2399,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def is(testFun: => PendingNothing) {
-      registerTestToRun(verb + " " + name, "is", tags, testFun _)
+      registerTestToRun(verb.trim + " " + name.trim, "is", tags, testFun _)
     }
 
     /**
@@ -2421,7 +2421,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, tags, "ignore", testFun _)
+      registerTestToIgnore(verb.trim + " " + name.trim, tags, "ignore", testFun _)
     }
   }
 
@@ -2489,7 +2489,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToRun(verb + " " + name, "in", List(), testFun _)
+      registerTestToRun(verb.trim + " " + name.trim, "in", List(), testFun _)
     }
 
     /**
@@ -2510,7 +2510,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def is(testFun: => PendingNothing) {
-      registerTestToRun(verb + " " + name, "is", List(), testFun _)
+      registerTestToRun(verb.trim + " " + name.trim, "is", List(), testFun _)
     }
 
     /**
@@ -2531,7 +2531,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + name, List(), "ignore", testFun _)
+      registerTestToIgnore(verb.trim + " " + name.trim, List(), "ignore", testFun _)
     }
 
     /**
@@ -2790,7 +2790,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToRun(verb + " " + rest, "in", List(), testFun _)
+      registerTestToRun(verb.trim + " " + rest.trim, "in", List(), testFun _)
     }
     
     /**
@@ -2811,7 +2811,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + rest, List(), "ignore", testFun _)
+      registerTestToIgnore(verb.trim + " " + rest.trim, List(), "ignore", testFun _)
     }
   }
 
@@ -2886,7 +2886,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def in(testFun: => Unit) {
-      registerTestToRun(verb + " " + rest, "in", tagsList, testFun _)
+      registerTestToRun(verb.trim + " " + rest.trim, "in", tagsList, testFun _)
     }
 
     /**
@@ -2909,7 +2909,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
      * </p>
      */
     def ignore(testFun: => Unit) {
-      registerTestToIgnore(verb + " " + rest, tagsList, "ignore", testFun _)
+      registerTestToIgnore(verb.trim + " " + rest.trim, tagsList, "ignore", testFun _)
     }
   }
 
@@ -2949,7 +2949,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
       new ResultOfStringPassedToVerb(verb, rest) {
 
         def is(testFun: => PendingNothing) {
-          registerTestToRun(verb + " " + rest, "is", List(), testFun _)
+          registerTestToRun(verb.trim + " " + rest.trim, "is", List(), testFun _)
         }
         // Note, won't have an is method that takes fixture => PendingNothing one, because don't want
         // to say is (fixture => pending), rather just say is (pending)
@@ -2959,7 +2959,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
             // "A Stack" should "bla bla" taggedAs(SlowTest) is (pending)
             //                                               ^
             def is(testFun: => PendingNothing) {
-              registerTestToRun(verb + " " + rest, "is", tags, testFun _)
+              registerTestToRun(verb.trim + " " + rest.trim, "is", tags, testFun _)
             }
           }
         }

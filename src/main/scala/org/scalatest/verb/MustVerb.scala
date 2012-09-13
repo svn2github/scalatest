@@ -219,5 +219,5 @@ trait MustVerb {
    * Implicitly converts an object of type <code>String</code> to a <code>StringMustWrapper</code>,
    * to enable <code>must</code> methods to be invokable on that object.
    */
-  implicit def convertToStringMustWrapper(o: String): StringMustWrapperForVerb = new StringMustWrapperForVerb(o)
+  implicit def convertToStringMustWrapper(o: String): StringMustWrapperForVerb = new StringMustWrapperForVerb(o.trim)
 }
