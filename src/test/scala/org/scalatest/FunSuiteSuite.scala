@@ -312,7 +312,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
 
     val myFunSuite = new MyFunSuite
     val myReporter = new TestDurationReporter
-    myFunSuite.run(None, Args(myReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    myFunSuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.testSucceededWasFiredAndHadADuration)
     assert(myReporter.testFailedWasFiredAndHadADuration)
   }
@@ -325,7 +325,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
 
     val myFunSuite = new MyFunSuite
     val myReporter = new SuiteDurationReporter
-    myFunSuite.run(None, Args(myReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    myFunSuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.suiteCompletedWasFiredAndHadADuration)
   }
 
@@ -343,7 +343,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
 
     val myFunSuite = new MyFunSuite
     val myReporter = new SuiteDurationReporter
-    myFunSuite.run(None, Args(myReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    myFunSuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.suiteAbortedWasFiredAndHadADuration)
   }
 
@@ -355,7 +355,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
 
     val mySuite = new MyFunSuite
     val myReporter = new PendingReporter
-    mySuite.run(None, Args(myReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.testPendingWasFired)
   }
   
@@ -374,7 +374,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     
     val decodedSuite = new DecodedFunSuite
     val decodedReporter = new EventRecordingReporter
-    decodedSuite.run(None, Args(decodedReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    decodedSuite.run(None, Args(decodedReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     val decodedEventList:List[Event] = decodedReporter.eventsReceived
     expectResult(7) { decodedEventList.size }
     decodedEventList.foreach {event =>

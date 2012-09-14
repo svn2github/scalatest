@@ -90,7 +90,7 @@ trait TestNGSuite extends Suite { thisSuite =>
    */
   override def run(testName: Option[String], args: Args) {
     import args._
-    runTestNG(testName, reporter, filter, tracker)
+    runTestNG(testName, wrapReporterIfNecessary(reporter), filter, tracker)
   }
 
   /**

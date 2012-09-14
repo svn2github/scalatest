@@ -33,7 +33,7 @@ class CatchReporterSuite extends Suite {
     }
 
     // Pass in a PrintStream so you don't get an ugly msg to the standard error stream
-    val catchReporter = new CatchReporter(buggyReporter, new PrintStream(new ByteArrayOutputStream))
+    val catchReporter = new WrapperCatchReporter(buggyReporter, new PrintStream(new ByteArrayOutputStream))
 
     intercept[RuntimeException] {
       buggyReporter(RunStarting(new Ordinal(99), 1, Map()))
@@ -98,6 +98,6 @@ class CatchReporterSuite extends Suite {
     intercept[RuntimeException] {
       buggyReporter.dispose()
     }
-    catchReporter.catchDispose()
+    catchReporter.dispose()
   }
 }

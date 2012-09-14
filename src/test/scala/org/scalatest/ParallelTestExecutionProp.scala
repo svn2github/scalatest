@@ -15,6 +15,8 @@ import org.scalatest.time.Seconds
 import org.scalatest.events.SuiteStarting
 import org.scalatest.events.SuiteCompleted
 import org.scalatest.time.Millis
+import java.io.PrintStream
+import java.io.ByteArrayOutputStream
 
 class ParallelTestExecutionProp extends FunSuite 
   with TableDrivenPropertyChecks with SharedHelpers  
@@ -97,7 +99,7 @@ class ParallelTestExecutionProp extends FunSuite
   def withConcurrentDistributor(suite1: Suite, suite2: Suite, timeout: Span, fun: ControlledOrderConcurrentDistributor => Unit) = {
     val recordingReporter = new EventRecordingReporter
     val outOfOrderConcurrentDistributor = new ControlledOrderConcurrentDistributor(2)
-    val suiteSortingReporter = new SuiteSortingReporter(recordingReporter, timeout)
+    val suiteSortingReporter = new SuiteSortingReporter(recordingReporter, timeout, new PrintStream(new ByteArrayOutputStream))
     
     val tracker = new Tracker()
     suiteSortingReporter(SuiteStarting(tracker.nextOrdinal, suite1.suiteName, suite1.suiteId, Some(suite1.getClass.getName), None))

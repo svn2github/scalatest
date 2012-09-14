@@ -298,7 +298,7 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
 
     if (!filter.tagsToInclude.isDefined) {
       val testResult = new TestResult
-      testResult.addListener(new MyTestListener(reporter, tracker))
+      testResult.addListener(new MyTestListener(wrapReporterIfNecessary(reporter), tracker))
       testName match {
         case None => new TestSuite(this.getClass).run(testResult)
         case Some(tn) =>

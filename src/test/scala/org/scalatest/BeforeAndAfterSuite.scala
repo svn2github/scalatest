@@ -103,65 +103,65 @@ class BeforeAndAfterSuite extends FunSuite {
 
   test("super's runTest must be called") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.runTestWasCalled)
   }
   
   test("super's run must be called") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.runWasCalled)
   }
 
   test("beforeEach gets called before runTest") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.beforeEachCalledBeforeRunTest)
     assert(a.beforeEachConfigCalledBeforeRunTest)
   }
   
   test("afterEach gets called after runTest") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.afterEachCalledAfterRunTest)
     assert(a.afterEachConfigCalledAfterRunTest)
   }
 
   test("beforeAll gets called before run") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.beforeAllCalledBeforeExecute)
     assert(a.beforeAllConfigCalledBeforeExecute)
   }
   
   test("afterAll gets called after run") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.afterAllCalledAfterExecute)
     assert(a.afterAllConfigCalledAfterExecute)
   }
   
   test("beforeEach(config) gets the config passed to run") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.beforeEachConfigGotTheGreeting)
   }
 
   test("afterEach(config) gets the config passed to run") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.afterEachConfigGotTheGreeting)
   }
 
   test("beforeAll(config) gets the config passed to run") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.beforeAllConfigGotTheGreeting)
   }
 
   test("afterAll(config) gets the config passed to run") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.afterAllConfigGotTheGreeting)
   }
 

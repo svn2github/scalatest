@@ -805,7 +805,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
       it("it should find my goodie") {}
     }
     val a = new MySpec
-    a.run(None, Args(StubReporter, new Stopper {}, Filter(), Map("my goodie" -> "hi"), None, new Tracker, Set.empty))
+    a.run(None, Args(StubReporter, Stopper.default, Filter(), Map("my goodie" -> "hi"), None, new Tracker, Set.empty))
     assert(foundMyGoodie)  
   }
   
@@ -1402,7 +1402,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
 
     val mySpec = new MySpec
     val myReporter = new TestDurationReporter
-    mySpec.run(None, Args(myReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    mySpec.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.testSucceededWasFiredAndHadADuration)
     assert(myReporter.testFailedWasFiredAndHadADuration)
   }
@@ -1415,7 +1415,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
 
     val mySuite = new MySpec
     val myReporter = new SuiteDurationReporter
-    mySuite.run(None, Args(myReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.suiteCompletedWasFiredAndHadADuration)
   }
 
@@ -1433,7 +1433,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
 
     val mySuite = new MySpec
     val myReporter = new SuiteDurationReporter
-    mySuite.run(None, Args(myReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.suiteAbortedWasFiredAndHadADuration)
   }
 
@@ -1445,7 +1445,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
 
     val mySuite = new MySpec
     val myReporter = new PendingReporter
-    mySuite.run(None, Args(myReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.testPendingWasFired)
   }
 }

@@ -265,7 +265,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
 
     if (!filter.tagsToInclude.isDefined) {
       val jUnitCore = new JUnitCore
-      jUnitCore.addListener(new MyRunListener(reporter, configMap, tracker))
+      jUnitCore.addListener(new MyRunListener(wrapReporterIfNecessary(reporter), configMap, tracker))
       val myClass = this.getClass
       testName match {
         case None => jUnitCore.run(myClass)

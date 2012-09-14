@@ -8,8 +8,10 @@ import org.scalatest.time.Span
 import java.util.Timer
 import java.util.TimerTask
 import java.util.UUID
+import scala.annotation.tailrec
+import java.io.PrintStream
 
-private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter, sortingTimeout: Span, testCount: Int, suiteSorter: Option[DistributedSuiteSorter]) extends ResourcefulReporter with DistributedTestSorter {
+private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter, sortingTimeout: Span, testCount: Int, suiteSorter: Option[DistributedSuiteSorter], val out: PrintStream) extends CatchReporter with DistributedTestSorter {
 
   suiteSorter match {
     case Some(suiteSorter) => 
@@ -98,7 +100,7 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
     }
   }
 
-  override def apply(event: Event) {
+  def doApply(event: Event) {
     synchronized {
       event match {
         case testStarting: TestStarting => 
@@ -177,35 +179,56 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
         dispatch(event)
     }
   }
+  
+  @tailrec
+  private def fireSlotEvents(slot: Slot) {
+    if (slot.eventList.length > 1) {
+      val head = slot.eventList.head
+      slot.eventList.remove(0)
+      dispatch(head)
+      fireSlotEvents(slot)
+    }
+    else if (slot.eventList.length == 1) {
+      val head = slot.eventList.head
+      slot.eventList.remove(0)
+      dispatch(head)
+    }
+  }
 
   // I see that slots are appended to the waitingBuffer, so first come first served here.
   // By the way, this must be called within synchronized only
-  private def fireReadyEvents() { // Isn't there a better method than takeWhile?
-    val (ready, pending) = {
-      val ready = waitingBuffer.takeWhile(slot => slot.ready)
-      (ready, waitingBuffer.drop(ready.size))
-    }
-
+  @tailrec
+  private def fireReadyEvents() {
     // Again, dispatching inside a synchronized.
-    ready.foreach { slot => slot.eventList.foreach(dispatch(_)) }
-    waitingBuffer.clear() // Seems better to drop ready.size?
-    waitingBuffer ++= pending
-    if (waitingBuffer.size > 0) 
-      scheduleTimeoutTask()
-    else {
-      timeoutTask match { // Waiting buffer is zero, so no timeout needed
-        case Some(task) => 
-          task.cancel()
-          timeoutTask = None
-        case None =>
+    if (waitingBuffer.size > 1) {
+      val head = waitingBuffer.head
+      if (head.ready) {
+        fireSlotEvents(head)
+        println("###before drop: " + waitingBuffer.length)
+        waitingBuffer.remove(0)
+        println("###after drop: " + waitingBuffer.length)
+        cancelTimeoutTask()
+        val newHead = waitingBuffer.head
+        if (newHead.ready)
+          fireReadyEvents()
+        else
+          scheduleTimeoutTask
       }
     }
-    if (completedTestCount == testCount)
+    else if (waitingBuffer.size == 1) {
+      val head = waitingBuffer.head
+      if (head.ready) {
+        fireSlotEvents(head)
+        waitingBuffer.remove(0)
+        cancelTimeoutTask()
+      }
+      if (completedTestCount == testCount)
       suiteSorter match {
         case Some(suiteSorter) => 
           suiteSorter.completedTests(suiteId)
         case None =>
       }
+    }
   }
 
   // Also happening inside synchronized block
@@ -224,6 +247,16 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
       }
   }
   
+  // Also happening inside synchronized block
+  private def cancelTimeoutTask() {
+    timeoutTask match { // Waiting buffer is zero, so no timeout needed
+      case Some(task) => 
+        task.cancel()
+        timeoutTask = None
+      case None =>
+    }
+  }
+  
   private def timeout() {
     synchronized {
       if (waitingBuffer.size > 0) {
@@ -237,7 +270,7 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
     }
   }
   
-  override def dispose() = {
+  def doDispose() = {
     fireReadyEvents()
     propagateDispose(dispatch)
   }

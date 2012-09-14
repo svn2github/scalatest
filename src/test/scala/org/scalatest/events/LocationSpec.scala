@@ -27,7 +27,7 @@ class LocationSpec extends FunSpec with Checkers {
     it("should have LineInFile and SeeStackDepthException location with correct line number and source file name") {
       val testLocationSuite = new TestLocationFunSuite
       val testLocationReporter = new EventRecordingReporter
-      testLocationSuite.run(None, Args(testLocationReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+      testLocationSuite.run(None, Args(testLocationReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
       val testLocationEventList = testLocationReporter.eventsReceived
       testLocationEventList.foreach {event => 
         event match {
@@ -71,7 +71,7 @@ class LocationSpec extends FunSpec with Checkers {
     it("should have TopOfMethod and SeeStackDepthException location with correct line number and source file name") {
       val testLocationSuite = new TestLocationSuite
       val testLocationReporter = new EventRecordingReporter
-      testLocationSuite.run(None, Args(testLocationReporter, new Stopper {}, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+      testLocationSuite.run(None, Args(testLocationReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
       val testLocationEventList = testLocationReporter.eventsReceived
       testLocationEventList.foreach {event => 
         event match {

@@ -142,8 +142,19 @@ private[scalatest] class RunnerJFrame(
 
   private val graphicRunReporter: Reporter = new GraphicRunReporter
   private val graphicRerunReporter: Reporter = new GraphicRerunReporter
+  
+  class ResettableStopper extends Stopper {
+    @volatile private var stopWasRequested = false
+    def stopRequested: Boolean = stopWasRequested
+    def requestStop() {
+      stopWasRequested = true
+    }
+    def reset() {
+      stopWasRequested = false
+    }
+  }
 
-  private val stopper = new SimpleStopper
+  private val stopper = new ResettableStopper
 
   private val exitSemaphore = new Semaphore(1)
 

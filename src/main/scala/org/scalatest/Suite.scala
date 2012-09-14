@@ -819,14 +819,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       run(
         None,
         Args(dispatch,
-        new Stopper {},
+        Stopper.default,
         filter,
         configMap,
         None,
         tracker,
         Set.empty)
       )
-    // TODO: Go through and change all "new Stopper {}" with new JustCantStop or something to save class files
       val suiteCompletedFormatter = formatterForSuiteCompleted(thisSuite)
       val duration = System.currentTimeMillis - suiteStartTime
       dispatch(SuiteCompleted(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, Some(duration), suiteCompletedFormatter, Some(getTopOfClass)))
@@ -1642,10 +1641,11 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   // so that exceptions are caught and transformed
   // into error messages on the standard error stream.
   private[scalatest] def wrapReporterIfNecessary(reporter: Reporter) = reporter match {
-    case dr: DispatchReporter => dr
     case cr: CatchReporter => cr
-    case _ => new CatchReporter(reporter)
+    case _ => createCatchReporter(reporter)
   }
+  
+  protected[scalatest] def createCatchReporter(reporter: Reporter) = new WrapperCatchReporter(reporter)
   
   /**
    * The fully qualified class name of the rerunner to rerun this suite.  This implementation will look at this.getClass and see if it is

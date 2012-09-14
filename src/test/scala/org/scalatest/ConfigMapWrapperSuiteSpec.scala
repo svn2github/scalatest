@@ -7,7 +7,7 @@ class ConfigMapWrapperSuiteSpec extends FunSuite with SharedHelpers with Severed
     SavesConfigMapSuite.resetConfigMap()
     val wrapped = new ConfigMapWrapperSuite(classOf[SavesConfigMapSuite])
     val configMap = Map("salt" -> "pepper", "eggs" -> "bacon")
-    wrapped.run(None, Args(SilentReporter, new Stopper {}, Filter(), configMap, None, new Tracker, Set.empty))
+    wrapped.run(None, Args(SilentReporter, Stopper.default, Filter(), configMap, None, new Tracker, Set.empty))
     assert(SavesConfigMapSuite.savedConfigMap === Some(configMap))
   }
   

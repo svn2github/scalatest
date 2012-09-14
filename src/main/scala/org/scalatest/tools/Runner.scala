@@ -850,7 +850,7 @@ object Runner {
               dispatchReporter,
               suitesList,
               junitsList,
-              new Stopper {},
+              Stopper.default,
               tagsToInclude,
               tagsToExclude,
               configMap,
@@ -2093,7 +2093,7 @@ object Runner {
 
             val distributedSuiteSorter = 
               if (concurrentConfig.enableSuiteSortingReporter)
-                Some(new SuiteSortingReporter(dispatch, Span(testSortingReporterTimeout.millisPart + 1000, Millis)))
+                Some(new SuiteSortingReporter(dispatch, Span(testSortingReporterTimeout.millisPart + 1000, Millis), System.err))
               else
                 None
               

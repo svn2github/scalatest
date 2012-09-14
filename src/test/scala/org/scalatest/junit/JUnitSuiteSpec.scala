@@ -144,7 +144,7 @@ class JUnitSuiteSpec extends FunSpec with SharedHelpers {
       TestWasCalledSuite.reinitialize()
 
       val a = new TestWasCalledSuite
-      a.run(None, Args(SilentReporter, new Stopper {}, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
+      a.run(None, Args(SilentReporter, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
       assert(!TestWasCalledSuite.theDoThisCalled)
       assert(!TestWasCalledSuite.theDoThatCalled)
     }

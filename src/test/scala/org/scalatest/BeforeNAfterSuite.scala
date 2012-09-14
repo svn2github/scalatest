@@ -53,25 +53,25 @@ class BeforeNAfterSuite extends FunSuite {
 
   test("super's runTest must be called") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.runTestWasCalled)
   }
 
   test("super's run must be called") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.runWasCalled)
   }
 
   test("before gets called before runTest") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.beforeCalledBeforeRunTest)
   }
 
   test("after gets called after runTest") {
     val a = new MySuite
-    a.run(None, Args(SilentReporter, new Stopper {}, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
+    a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> "there"), None, new Tracker, Set.empty))
     assert(a.afterCalledAfterRunTest)
   }
 

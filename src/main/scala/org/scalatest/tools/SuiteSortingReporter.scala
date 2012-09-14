@@ -8,8 +8,9 @@ import scala.annotation.tailrec
 import org.scalatest.time.Span
 import java.util.Timer
 import java.util.TimerTask
+import java.io.PrintStream
 
-private[scalatest] class SuiteSortingReporter(dispatch: Reporter, sortingTimeout: Span) extends ResourcefulReporter with DistributedSuiteSorter {
+private[scalatest] class SuiteSortingReporter(dispatch: Reporter, sortingTimeout: Span, val out: PrintStream) extends CatchReporter with DistributedSuiteSorter {
 
   case class Slot(suiteId: String, doneEvent: Option[Event], includesDistributedTests: Boolean, testsCompleted: Boolean, ready: Boolean)
 
@@ -28,71 +29,63 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter, sortingTimeout
   private val timer = new Timer
   private var timeoutTask: Option[TimeoutTask] = None
 
-  override def apply(event: Event) {
-    try {
-      synchronized {
-        event match {
-          case suiteStarting: SuiteStarting =>
-            // if distributingTests is called (in case of the suite is ParallelTestExecution), the slot is already exists
-            val slot = slotMap.get(suiteStarting.suiteId) match {
-              case Some(s) => s
-              case None => 
-                val newSlot = Slot(suiteStarting.suiteId, None, false, false, false)
-                slotMap.put(suiteStarting.suiteId, newSlot)
-                newSlot
-            }
-            slotListBuf += slot
-            // if it is the head, we should start the timer, because it is possible that this slot has no event coming later and it keeps blocking 
-            // without the timer.
-            if (slotListBuf.size == 1) 
-              scheduleTimeoutTask()
-            handleTestEvents(suiteStarting.suiteId, suiteStarting)
+  def doApply(event: Event) {
+    synchronized {
+      event match {
+        case suiteStarting: SuiteStarting =>
+          // if distributingTests is called (in case of the suite is ParallelTestExecution), the slot is already exists
+          val slot = slotMap.get(suiteStarting.suiteId) match {
+            case Some(s) => s
+            case None => 
+              val newSlot = Slot(suiteStarting.suiteId, None, false, false, false)
+              slotMap.put(suiteStarting.suiteId, newSlot)
+              newSlot
+          }
+          slotListBuf += slot
+          // if it is the head, we should start the timer, because it is possible that this slot has no event coming later and it keeps blocking 
+          // without the timer.
+          if (slotListBuf.size == 1) 
+            scheduleTimeoutTask()
+          handleTestEvents(suiteStarting.suiteId, suiteStarting)
 
-          case suiteCompleted: SuiteCompleted =>
-            handleSuiteEvents(suiteCompleted.suiteId, suiteCompleted)
-          case suiteAborted: SuiteAborted =>
-            handleSuiteEvents(suiteAborted.suiteId, suiteAborted)
-          case testStarting: TestStarting =>
-            handleTestEvents(testStarting.suiteId, testStarting)
-          case testIgnored: TestIgnored =>
-            handleTestEvents(testIgnored.suiteId, testIgnored)
-          case testSucceeded: TestSucceeded =>
-            handleTestEvents(testSucceeded.suiteId, testSucceeded)
-          case testFailed: TestFailed =>
-            handleTestEvents(testFailed.suiteId, testFailed)
-          case testPending: TestPending =>
-            handleTestEvents(testPending.suiteId, testPending)
-          case testCanceled: TestCanceled =>
-            handleTestEvents(testCanceled.suiteId, testCanceled)
-          case infoProvided: InfoProvided =>
-            infoProvided.nameInfo match {
-              case Some(nameInfo) =>
-                handleTestEvents(nameInfo.suiteID, infoProvided)
-              case None => // Under what condition will reach here?
-                dispatch(infoProvided)
-            }
-          case markupProvided: MarkupProvided =>
-            markupProvided.nameInfo match {
-              case Some(nameInfo) =>
-                handleTestEvents(nameInfo.suiteID, markupProvided)
-              case None => // Under what condition will reach here?
-                dispatch(markupProvided)
-            }
-          case scopeOpened: ScopeOpened =>
-            handleTestEvents(scopeOpened.nameInfo.suiteID, scopeOpened)
-          case scopeClosed: ScopeClosed =>
-            handleTestEvents(scopeClosed.nameInfo.suiteID, scopeClosed)
-          case _ =>
-            dispatch(event)  // Just dispatch it if got unexpected event.
-        }
-        fireReadyEvents()
+        case suiteCompleted: SuiteCompleted =>
+          handleSuiteEvents(suiteCompleted.suiteId, suiteCompleted)
+        case suiteAborted: SuiteAborted =>
+          handleSuiteEvents(suiteAborted.suiteId, suiteAborted)
+        case testStarting: TestStarting =>
+          handleTestEvents(testStarting.suiteId, testStarting)
+        case testIgnored: TestIgnored =>
+          handleTestEvents(testIgnored.suiteId, testIgnored)
+        case testSucceeded: TestSucceeded =>
+          handleTestEvents(testSucceeded.suiteId, testSucceeded)
+        case testFailed: TestFailed =>
+          handleTestEvents(testFailed.suiteId, testFailed)
+        case testPending: TestPending =>
+          handleTestEvents(testPending.suiteId, testPending)
+        case testCanceled: TestCanceled =>
+          handleTestEvents(testCanceled.suiteId, testCanceled)
+        case infoProvided: InfoProvided =>
+          infoProvided.nameInfo match {
+            case Some(nameInfo) =>
+              handleTestEvents(nameInfo.suiteID, infoProvided)
+            case None => // Under what condition will reach here?
+              dispatch(infoProvided)
+          }
+        case markupProvided: MarkupProvided =>
+          markupProvided.nameInfo match {
+            case Some(nameInfo) =>
+              handleTestEvents(nameInfo.suiteID, markupProvided)
+            case None => // Under what condition will reach here?
+              dispatch(markupProvided)
+          }
+        case scopeOpened: ScopeOpened =>
+          handleTestEvents(scopeOpened.nameInfo.suiteID, scopeOpened)
+        case scopeClosed: ScopeClosed =>
+          handleTestEvents(scopeClosed.nameInfo.suiteID, scopeClosed)
+        case _ =>
+          dispatch(event)  // Just dispatch it if got unexpected event.
       }
-    }
-    catch {
-      case e: Exception =>
-        val stringToPrint = Resources("reporterThrew", event)
-        System.err.println(stringToPrint)
-        e.printStackTrace(System.err)
+      fireReadyEvents()
     }
   }
 
@@ -141,11 +134,22 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter, sortingTimeout
   }
 
   // suiteId must exist in the suiteEventMap
+  @tailrec
   private def fireSuiteEvents(suiteId: String) {
+    // Fire all of them and empty it out. The done event is stored elsewhere
     suiteEventMap.get(suiteId) match {
       case Some(eventList) =>
-        eventList.foreach(dispatch(_)) // Fire all of them and empty it out. The done event is stored elsewhere
-        suiteEventMap.put(suiteId, Vector.empty[Event]) // Just fire in order they appear. (Could sort them here.)
+        if (eventList.length > 1) {
+          val head = eventList.head
+          suiteEventMap.put(suiteId, eventList.tail)
+          dispatch(head)
+          fireSuiteEvents(suiteId)
+        }
+        else if (eventList.length == 1) {
+          val head = eventList.head
+          suiteEventMap.put(suiteId, Vector.empty[Event])
+          dispatch(head)
+        }
       case None =>
       // Unable to get event vector from map, shouldn't happen
     }
@@ -192,16 +196,8 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter, sortingTimeout
     }
   }
 
-  override def dispose() = {
-    try {
-      fireReadyEvents()
-    }
-    catch {
-      case e: Exception =>
-        val stringToPrint = Resources("reporterDisposeThrew")
-        System.err.println(stringToPrint)
-        e.printStackTrace(System.err)
-    }
+  override def doDispose() = {
+    fireReadyEvents()
   }
   
   // Also happening inside synchronized block

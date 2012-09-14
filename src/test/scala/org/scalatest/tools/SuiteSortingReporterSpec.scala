@@ -10,6 +10,8 @@ import org.scalatest.Args
 import org.scalatest.time.Span
 import org.scalatest.time.Second
 import org.scalatest.time.Seconds
+import java.io.PrintStream
+import java.io.ByteArrayOutputStream
 
 class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHelpers {
 
@@ -188,7 +190,7 @@ class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHel
 
       val recordingReporter = new EventRecordingReporter()
 
-      val ssr = new SuiteSortingReporter(recordingReporter, Span(5, Seconds))
+      val ssr = new SuiteSortingReporter(recordingReporter, Span(5, Seconds), new PrintStream(new ByteArrayOutputStream))
 
       runSuites(ssr, Some(ssr))
 
@@ -312,7 +314,7 @@ class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHel
     
     it("should fire blocking suite's events when timeout, and just fire the missing event directly without waiting when received later.") {
       val recordingReporter = new EventRecordingReporter()
-      val dispatch = new SuiteSortingReporter(recordingReporter, Span(1, Second))
+      val dispatch = new SuiteSortingReporter(recordingReporter, Span(1, Second), new PrintStream(new ByteArrayOutputStream))
       
       val tracker = new Tracker()
       

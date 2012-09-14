@@ -95,7 +95,7 @@ final class JUnitRunner(suiteClass: java.lang.Class[_ <: Suite]) extends org.jun
     try {
       // TODO: What should this Tracker be?
       suiteToRun.run(None, Args(new RunNotifierReporter(notifier),
-                                new Stopper {}, Filter(), Map(), None,
+                                Stopper.default, Filter(), Map(), None,
                                 new Tracker, Set.empty))
     }
     catch {

@@ -14,6 +14,8 @@ import java.util.concurrent.LinkedBlockingQueue
 import org.scalatest.time.Span
 import org.scalatest.time.Second
 import org.scalatest.time.Seconds
+import java.io.PrintStream
+import java.io.ByteArrayOutputStream
 
 class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHelpers {
   /*
@@ -202,7 +204,7 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHe
       def withDistributor(fun: ControlledOrderConcurrentDistributor => Unit) = {
         val recordingReporter = new EventRecordingReporter
         val outOfOrderConcurrentDistributor = new ControlledOrderConcurrentDistributor(2)
-        val suiteSortingReporter = new SuiteSortingReporter(recordingReporter, Span(5, Seconds))
+        val suiteSortingReporter = new SuiteSortingReporter(recordingReporter, Span(5, Seconds), new PrintStream(new ByteArrayOutputStream))
         val spec1 = new ExampleParallelSpec()
         val spec2 = new ExampleBeforeAfterParallelSpec()
         
@@ -341,7 +343,7 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHe
       val recordingReporter = new EventRecordingReporter
       val args = Args(recordingReporter)
       val outOfOrderConcurrentDistributor = new ControlledOrderConcurrentDistributor(2)
-      val suiteSortingReporter = new SuiteSortingReporter(recordingReporter, Span(1, Second))
+      val suiteSortingReporter = new SuiteSortingReporter(recordingReporter, Span(1, Second), new PrintStream(new ByteArrayOutputStream))
       val spec1 = new ExampleSuiteTimeoutSpec()
       val spec2 = new ExampleSuiteTimeoutSpec2()
         
