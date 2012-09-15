@@ -2056,10 +2056,50 @@ trait WebBrowser {
    */
   def currentUrl(implicit driver: WebDriver): String = driver.getCurrentUrl
   
-// XXX
+  /**
+   * This trait is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * Subclasses of this trait define different ways of querying for elements, enabling
+   * syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on id("q")
+   *          ^
+   * </pre>
+   */
   sealed trait Query {
+
+    /**
+     * The Selenium <code>By</code> for this query.
+     */
     val by: By
+
+    /**
+     * The query string for this query.
+     *
+     * <p>
+     * For example, the query string for <code>id("q")</code> is <code>"q"</code>.
+     * </p>
+     */
     val queryString: String
+
+    /**
+     * Returns the first <code>Element</code> selected by this query, or throws <code>TestFailedException</code>
+     * if no <code>Element</code> is selected.
+     *
+     * <p>
+     * The class of the <code>Element</code> returned will be a subtype of <code>Element</code> if appropriate.
+     * For example, if this query selects a text field, the class of the returned <code>Element</code> will
+     * be <code>TextField</code>.
+     * </p>
+     *
+     * @param driver the <code>WebDriver</code> with which to drive the browser
+     * @returns the <code>Element</code> selected by this query
+     * @throws TestFailedException if nothing is selected by this query
+     */
     def element(implicit driver: WebDriver): Element = {
       try {
         createTypedElement(driver.findElement(by))
@@ -2074,6 +2114,20 @@ trait WebBrowser {
       }
     }
     
+    /**
+     * Returns the first <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code>
+     * if no <code>Element</code> is selected.
+     *
+     * <p>
+     * The class of the <code>Element</code> returned will be a subtype of <code>Element</code> if appropriate.
+     * For example, if this query selects a text field, the class of the returned <code>Element</code> will
+     * be <code>TextField</code>.
+     * </p>
+     *
+     * @param driver the <code>WebDriver</code> with which to drive the browser
+     * @returns the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
+     *   no <code>Element</code> is selected
+     */
     def findElement(implicit driver: WebDriver): Option[Element] = 
       try {
         Some(createTypedElement(driver.findElement(by)))
@@ -2081,9 +2135,35 @@ trait WebBrowser {
       catch {
         case e: org.openqa.selenium.NoSuchElementException => None
       }
-    
+
+    /**
+     * Returns an <code>Iterator</code> over all <code>Element</code>s selected by this query.
+     *
+     * <p>
+     * The class of the <code>Element</code>s produced by the returned <code>Iterator</code> will be a
+     * subtypes of <code>Element</code> if appropriate.  For example, if an <code>Element</code>representing
+     * a text field is returned by the <code>Iterator</code>, the class of the returned <code>Element</code> will
+     * be <code>TextField</code>.
+     * </p>
+     *
+     * <p>
+     * If no <code>Elements</code> are selected by this query, this method will return an empty <code>Iterator</code> will be returned.
+     * <p>
+     *
+     * @param driver the <code>WebDriver</code> with which to drive the browser
+     * @returns the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
+     *   no <code>Element</code> is selected
+     */
     def findAllElements(implicit driver: WebDriver): Iterator[Element] = driver.findElements(by).asScala.toIterator.map { e => createTypedElement(e) }
     
+    /**
+     * Returns the first <code>WebElement</code> selected by this query, or throws <code>TestFailedException</code>
+     * if no <code>WebElement</code> is selected.
+     *
+     * @param driver the <code>WebDriver</code> with which to drive the browser
+     * @returns the <code>WebElement</code> selected by this query
+     * @throws TestFailedException if nothing is selected by this query
+     */
     def webElement(implicit driver: WebDriver): WebElement = {
       try {
         driver.findElement(by)
@@ -2099,24 +2179,263 @@ trait WebBrowser {
     }
   }
 
+  /**
+   * An ID query.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on id("q")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   case class IdQuery(queryString: String) extends Query { val by = By.id(queryString)}
+
+  /**
+   * A name query.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on name("q")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   case class NameQuery(queryString: String) extends Query { val by = By.name(queryString) }
+
+  /**
+   * An XPath query.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on xpath("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   case class XPathQuery(queryString: String) extends Query { val by = By.xpath(queryString) }
+
+// TODO: Are these case classes just to get at the val?
+  /**
+   * A class name query.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on className("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   case class ClassNameQuery(queryString: String) extends Query { val by = By.className(queryString) }
+
+  /**
+   * A CSS selector query.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on cssSelector("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   case class CssSelectorQuery(queryString: String) extends Query { val by = By.cssSelector(queryString) }
+
+  /**
+   * A link text query.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on linkText("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   case class LinkTextQuery(queryString: String) extends Query { val by = By.linkText(queryString) }
+
+  /**
+   * A partial link text query.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on partialLinkText("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   case class PartialLinkTextQuery(queryString: String) extends Query { val by = By.partialLinkText(queryString) }
+
+  /**
+   * A tag name query.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on tagName("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   case class TagNameQuery(queryString: String) extends Query { val by = By.tagName(queryString) }
   
+  /**
+   * Returns an ID query.
+   *
+   * <p>
+   * This method enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on id("q")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   def id(elementId: String): IdQuery = new IdQuery(elementId)
+
+  /**
+   * Returns a name query.
+   *
+   * <p>
+   * This method enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on name("q")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   def name(elementName: String): NameQuery = new NameQuery(elementName)
+
+  /**
+   * Returns an XPath query.
+   *
+   * <p>
+   * This method enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on xpath("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   def xpath(xpath: String): XPathQuery = new XPathQuery(xpath)
+
+  /**
+   * Returns a class name query.
+   *
+   * <p>
+   * This method enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on className("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   def className(className: String): ClassNameQuery = new ClassNameQuery(className)
+
+  /**
+   * Returns a CSS selector query.
+   *
+   * <p>
+   * This method enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on cssSelector("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   def cssSelector(cssSelector: String): CssSelectorQuery = new CssSelectorQuery(cssSelector)
+
+  /**
+   * Returns a link text query.
+   *
+   * <p>
+   * This method enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on linkText("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   def linkText(linkText: String): LinkTextQuery = new LinkTextQuery(linkText)
+
+  /**
+   * Returns a partial link text query.
+   *
+   * <p>
+   * This method enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on partialLinkText("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   def partialLinkText(partialLinkText: String): PartialLinkTextQuery = new PartialLinkTextQuery(partialLinkText)
+
+  /**
+   * Returns a tag name query.
+   *
+   * <p>
+   * This method enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * click on tagName("???")
+   *          ^
+   * </pre>
+   *
+   * @param queryString the query string for this query.
+   */
   def tagName(tagName: String): TagNameQuery = new TagNameQuery(tagName)
-    
+
   private def createTypedElement(element: WebElement): Element = {
     if (isTextField(element))
       new TextField(element)
@@ -2137,8 +2456,44 @@ trait WebBrowser {
       new Element() { val underlying = element }
   }
   
+// XXX
+  /**
+   * Finds and returns the first element selected by the specified <code>Query</code>, wrapped
+   * in a <code>Some</code>, or <code>None</code> if no element is selected.
+   *
+   * <p>
+   * The class of the <code>Element</code> returned will be a subtype of <code>Element</code> if appropriate.
+   * For example, if the query selects a text field, the class of the returned <code>Element</code> will
+   * be <code>TextField</code>.
+   * </p>
+   *
+   * @param query the <code>Query</code> with which to search
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   * @returns the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
+   *   no <code>Element</code> is selected
+   */
   def find(query: Query)(implicit driver: WebDriver): Option[Element] = query.findElement
-  
+
+  /**
+   * Finds and returns the first element selected by the specified string ID or name, wrapped
+   * in a <code>Some</code>, or <code>None</code> if no element is selected. YYY
+   *
+   * <p>
+   * This method will try to lookup by id first. If it cannot find 
+   * any element with an id equal to the specified <code>queryString</code>, it will then try lookup by name.
+   * </p>
+   *
+   * <p>
+   * The class of the <code>Element</code> returned will be a subtype of <code>Element</code> if appropriate.
+   * For example, if the query selects a text field, the class of the returned <code>Element</code> will
+   * be <code>TextField</code>.
+   * </p>
+   *
+   * @param queryString the string with which to search, first by ID then by name
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   * @returns the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
+   *   no <code>Element</code> is selected
+   */
   def find(queryString: String)(implicit driver: WebDriver): Option[Element] = 
     new IdQuery(queryString).findElement match {
       case Some(element) => Some(element)
@@ -2147,9 +2502,9 @@ trait WebBrowser {
         case None => None
       }
     }
-  
+
   def findAll(query: Query)(implicit driver: WebDriver): Iterator[Element] = query.findAllElements
-  
+
   def findAll(queryString: String)(implicit driver: WebDriver): Iterator[Element] = {
     val byIdItr = new IdQuery(queryString).findAllElements
     if (byIdItr.hasNext)

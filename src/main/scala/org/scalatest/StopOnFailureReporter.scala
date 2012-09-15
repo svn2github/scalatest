@@ -5,7 +5,7 @@ import org.scalatest.events.TestFailed
 import java.io.PrintStream
 import DispatchReporter.propagateDispose
 
-class StopOnFailureReporter(dispatch: Reporter, stopper: Stopper, val out: PrintStream) extends CatchReporter {
+private[scalatest] class StopOnFailureReporter(dispatch: Reporter, stopper: Stopper, val out: PrintStream) extends CatchReporter {
     
   def doApply(event: Event) {
     event match {

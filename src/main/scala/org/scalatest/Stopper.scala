@@ -50,6 +50,16 @@ trait Stopper {
    */
   def stopRequested: Boolean
 
+  /**
+   * Request that the current run stop.
+   *
+   * <p>
+   * Invoking this method is like pulling the stop-request chord in a streetcar. It requests a stop, but in no
+   * way forces a stop. The running suite of tests decides when and how (and if) to respond to a stop request.
+   * ScalaTest's style traits periodically check the <code>stopRequested</code> method of the passed <code>Stopper</code>,
+   * and if a stop has been requested, terminates gracefully.
+   * </p>
+   */
   def requestStop()
 }
 

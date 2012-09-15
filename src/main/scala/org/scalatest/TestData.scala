@@ -12,9 +12,9 @@ package org.scalatest
  * </p>
  *
  * <p>
- * In ScalaTest's event model, a test may be surrounded by &ldquo;scopes&rdquo;. Each test and scope is associated with string of text.
+ * In ScalaTest's event model, a test may be surrounded by &ldquo;scopes.&rdquo; Each test and scope is associated with string of text.
  * A test's name is concatenation of the text of any surrounding scopes followed by the text provided with the test
- * itself, with one space between each component. Here's an example:
+ * itself, after each text element has been trimmed and one space inserted between each component. Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
@@ -41,7 +41,7 @@ package org.scalatest
  * </pre>
  *
  * <p>
- * The above <code>FreeSpec<code> contains two tests, both nested inside the same two scopes. The outermost scope names
+ * The above <code>FreeSpec</code> contains two tests, both nested inside the same two scopes. The outermost scope names
  * the subject, <code>A Set</code>. The nested scope qualifies the subject with <code>when empty</code>. Inside that
  * scope are the two tests. The text of the tests are:
  * <p>
@@ -67,7 +67,7 @@ package org.scalatest
  * <ul>
  * <li><code>name</code>: <code>"A Stack when empty should have size 0"</code></li>
  * <li><code>scopes</code>: <code>IndexedSeq("A Stack", "when empty")</code></li>
- * <li><code>text</code>: <code>"should dhave size 0"</code></li>
+ * <li><code>text</code>: <code>"should have size 0"</code></li>
  * </ul>
  *
  * @author Bill Venners
