@@ -27,7 +27,6 @@ import java.util.Collections
 import java.util.HashSet
 import java.util.regex.Pattern
 import Suite.getIndentedTextForTest
-import Suite.getDecodedName
 import org.scalatest.events.TopOfMethod
 import exceptions._
 
@@ -63,7 +62,7 @@ import exceptions._
           case _ => 
             None
         }
-      report(TestFailed(theTracker.nextOrdinal(), message, testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), Vector.empty, throwable, None, Some(formatter), Some(SeeStackDepthException), None, payload))
+      report(TestFailed(theTracker.nextOrdinal(), message, testClassName, testClass, Some(testClass), testName, testName, Vector.empty, throwable, None, Some(formatter), Some(SeeStackDepthException), None, payload))
       // TODO: can I add a duration?
     }
 
@@ -72,7 +71,7 @@ import exceptions._
         val (testName, testClass, testClassName) =
           parseTestDescription(description)
         val formatter = getIndentedTextForTest(testName, 1, true)
-        report(TestSucceeded(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), Vector.empty, None, Some(formatter), getTopOfMethod(testClass, testName)))
+        report(TestSucceeded(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), testName, testName, Vector.empty, None, Some(formatter), getTopOfMethod(testClass, testName)))
         // TODO: can I add a duration?
       }
     }
@@ -81,7 +80,7 @@ import exceptions._
       val (testName, testClass, testClassName) =
         parseTestDescription(description)
       val formatter = getIndentedTextForTest(testName, 1, true)
-      report(TestIgnored(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), Some(formatter), getTopOfMethod(testClass, testName)))
+      report(TestIgnored(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), testName, testName, Some(formatter), getTopOfMethod(testClass, testName)))
     }
 
     override def testRunFinished(result: Result) {
@@ -95,7 +94,7 @@ import exceptions._
     override def testStarted(description: Description) {
       val (testName, testClass, testClassName) =
         parseTestDescription(description)
-      report(TestStarting(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), getDecodedName(testClassName), testName, testName, getDecodedName(testName), Some(MotionToSuppress), getTopOfMethod(testClass, testName)))
+      report(TestStarting(theTracker.nextOrdinal(), testClassName, testClass, Some(testClass), testName, testName, Some(MotionToSuppress), getTopOfMethod(testClass, testName)))
     }
 
     //

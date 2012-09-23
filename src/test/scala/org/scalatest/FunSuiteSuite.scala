@@ -358,46 +358,6 @@ class FunSuiteSuite extends Suite with SharedHelpers {
     mySuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.testPendingWasFired)
   }
-  
-  def testDecodedSuiteName() {
-    expectResult("My Fun Suite") { new My$u0020Fun$u0020Suite().decodedSuiteName.get }
-    expectResult(None) { new FunSuiteSuite().decodedSuiteName }
-  }
-  
-  def testDecodedTestName() {
-    class DecodedFunSuite extends FunSuite {
-      test("test Succeed") {}
-      test("test Fail") { fail }
-      test("test Pending") { pending }
-      ignore("test Ignore") {}
-    }
-    
-    val decodedSuite = new DecodedFunSuite
-    val decodedReporter = new EventRecordingReporter
-    decodedSuite.run(None, Args(decodedReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
-    val decodedEventList:List[Event] = decodedReporter.eventsReceived
-    expectResult(7) { decodedEventList.size }
-    decodedEventList.foreach {event =>
-      event match {
-        case testStarting:TestStarting => 
-          expectResult(None) { testStarting.decodedTestName }
-          expectResult(None) { testStarting.decodedSuiteName }
-        case testSucceed:TestSucceeded => 
-          expectResult("test Succeed") { testSucceed.testName }
-          expectResult(None) { testSucceed.decodedTestName }
-        case testFail:TestFailed =>
-          expectResult("test Fail") { testFail.testName }
-          expectResult(None) { testFail.decodedTestName }
-        case testPending:TestPending =>
-          expectResult("test Pending") { testPending.testName }
-          expectResult(None) { testPending.decodedTestName }
-        case testIgnore:TestIgnored => 
-          expectResult("test Ignore") { testIgnore.testName }
-          expectResult(None) { testIgnore.decodedTestName }
-        case _ =>
-      }
-    }
-  }
 }
 
 class `My Fun Suite` extends Suite {}

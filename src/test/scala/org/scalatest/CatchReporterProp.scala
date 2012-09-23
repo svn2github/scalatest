@@ -168,14 +168,14 @@ class CatchReporterProp extends AllSuiteProp {
   
   test("WrapAwareReporter's isWrapped should return false when it is not wrapped in another reporter") {
     val rep = new WrapAwareReporter
-    rep(TestStarting(new Ordinal(99), "suite name", "suite ID", Some("suite.className"), None, "test name", "test name", None))
+    rep(TestStarting(new Ordinal(99), "suite name", "suite ID", Some("suite.className"), "test name", "test name"))
     assert(!rep.isWrapped, "WrapAwareReporter should return false when it is not wrapped, but it returns true.")
   }
   
   test("WrapAwareReporter's isWrapped should return true when it is wrapped in another reporter") {
     val rep = new WrapAwareReporter
     val wrapper = new WrapperReporter(rep)
-    wrapper(TestStarting(new Ordinal(99), "suite name", "suite ID", Some("suite.className"), None, "test name", "test name", None))
+    wrapper(TestStarting(new Ordinal(99), "suite name", "suite ID", Some("suite.className"), "test name", "test name"))
     assert(rep.isWrapped, "WrapAwareReporter should return true when it is wrapped, but it returns false.")
   }
   

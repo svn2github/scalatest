@@ -318,13 +318,13 @@ class SuiteSortingReporterSpec extends FunSpec with ShouldMatchers with EventHel
       
       val tracker = new Tracker()
       
-      dispatch(SuiteStarting(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), None))
-      dispatch(SuiteStarting(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), None))
-      dispatch(TestStarting(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), None, "Suite 2 Test", "Suite 2 Test", None))
-      dispatch(SuiteCompleted(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), None))
-      dispatch(TestStarting(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), None, "Suite 1 Test", "Suite 1 Test", None))
-      dispatch(TestSucceeded(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), None, "Suite 1 Test", "Suite 1 Test", None, Vector.empty))
-      dispatch(TestSucceeded(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), None, "Suite 2 Test", "Suite 2 Test", None, Vector.empty))
+      dispatch(SuiteStarting(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name")))
+      dispatch(SuiteStarting(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name")))
+      dispatch(TestStarting(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), "Suite 2 Test", "Suite 2 Test"))
+      dispatch(SuiteCompleted(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name")))
+      dispatch(TestStarting(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), "Suite 1 Test", "Suite 1 Test"))
+      dispatch(TestSucceeded(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), "Suite 1 Test", "Suite 1 Test", Vector.empty))
+      dispatch(TestSucceeded(tracker.nextOrdinal, "suite2", "suite2", Some("suite2 class name"), "Suite 2 Test", "Suite 2 Test", Vector.empty))
       
       Thread.sleep(1500) // Wait for the SuiteSortingReporter timeout, which is 1 second (set above)
       dispatch(SuiteCompleted(tracker.nextOrdinal, "suite1", "suite1", Some("suite1 class name"), None))

@@ -358,7 +358,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
         val lines = stringsToPrintOnError("abortedNote", "runAborted", message, throwable, formatter, None, None, duration)
         for (line <- lines) printPossiblyInColor(line, ansiRed)
 
-      case SuiteStarting(ordinal, suiteName, suiteId, suiteClassName, decodedSuiteName, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+      case SuiteStarting(ordinal, suiteName, suiteId, suiteClassName, formatter, location, rerunnable, payload, threadName, timeStamp) =>
 
         val stringToPrint = stringToPrintWhenNoError("suiteStarting", formatter, suiteName, None, None)
 
@@ -367,7 +367,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
           case None =>
         }
 
-      case SuiteCompleted(ordinal, suiteName, suiteId, suiteClassName, decodedSuiteName, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
+      case SuiteCompleted(ordinal, suiteName, suiteId, suiteClassName, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
 
         val stringToPrint = stringToPrintWhenNoError("suiteCompleted", formatter, suiteName, None, duration, None)
 
@@ -376,12 +376,12 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
           case None =>
         }
 
-      case SuiteAborted(ordinal, message, suiteName, suiteId, suiteClassName, decodedSuiteName, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
+      case SuiteAborted(ordinal, message, suiteName, suiteId, suiteClassName, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
 
         val lines = stringsToPrintOnError("abortedNote", "suiteAborted", message, throwable, formatter, Some(suiteName), None, duration)
         for (line <- lines) printPossiblyInColor(line, ansiRed)
 
-      case TestStarting(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+      case TestStarting(ordinal, suiteName, suiteID, suiteClassName, testName, testText, formatter, location, rerunnable, payload, threadName, timeStamp) =>
 
         val stringToPrint = stringToPrintWhenNoError("testStarting", formatter, suiteName, Some(testName), None)
 
@@ -390,7 +390,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
           case None =>
         }
 
-      case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+      case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, recordedEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
 
         val stringToPrint = stringToPrintWhenNoError("testSucceeded", formatter, suiteName, Some(testName), duration, None)
 
@@ -401,7 +401,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
         
         handleRecordedEvents(recordedEvents)
     
-      case TestIgnored(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, formatter, location, payload, threadName, timeStamp) => 
+      case TestIgnored(ordinal, suiteName, suiteID, suiteClassName, testName, testText, formatter, location, payload, threadName, timeStamp) => 
 
         val stringToPrint =
           if (presentUnformatted)
@@ -418,14 +418,14 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
           case None =>
         }
 
-      case TestFailed(ordinal, message, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+      case TestFailed(ordinal, message, suiteName, suiteID, suiteClassName, testName, testText, recordedEvents, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
 
         val lines = stringsToPrintOnError("failedNote", "testFailed", message, throwable, formatter, Some(suiteName), Some(testName), duration)
         for (line <- lines) printPossiblyInColor(line, ansiRed)
 
         handleRecordedEvents(recordedEvents, ansiRed)
         
-      case TestCanceled(ordinal, message, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, throwable, duration, formatter, location, payload, threadName, timeStamp) =>
+      case TestCanceled(ordinal, message, suiteName, suiteID, suiteClassName, testName, testText, recordedEvents, throwable, duration, formatter, location, payload, threadName, timeStamp) =>
 
         val lines = stringsToPrintOnError("canceledNote", "testCanceled", message, throwable, formatter, Some(suiteName), Some(testName), duration)
         for (line <- lines) printPossiblyInColor(line, ansiYellow)
@@ -438,11 +438,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
       case ScopeOpened(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
 
         val testNameInfo = nameInfo.testName
-        val stringToPrint = stringToPrintWhenNoError("scopeOpened", formatter, nameInfo.suiteName, 
-                                                     testNameInfo match {
-                                                       case Some(tnInfo) => Some(tnInfo.testName)
-                                                       case None => None
-                                                     }, Some(message))
+        val stringToPrint = stringToPrintWhenNoError("scopeOpened", formatter, nameInfo.suiteName, nameInfo.testName, Some(message))
         stringToPrint match {
           case Some(string) => printPossiblyInColor(string, ansiGreen)
           case None =>
@@ -452,11 +448,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
       case ScopeClosed(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
 
         val testNameInfo = nameInfo.testName
-        val stringToPrint = stringToPrintWhenNoError("scopeClosed", formatter, nameInfo.suiteName, 
-                            testNameInfo match {
-                              case Some(tnInfo) => Some(tnInfo.testName)
-                              case None => None
-                            }, Some(message)) // TODO: I htink I want ot say Scope Closed - + message
+        val stringToPrint = stringToPrintWhenNoError("scopeClosed", formatter, nameInfo.suiteName, nameInfo.testName, Some(message)) // TODO: I htink I want ot say Scope Closed - + message
         stringToPrint match {
           case Some(string) => printPossiblyInColor(string, ansiGreen)
           case None =>
@@ -465,7 +457,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
       case mpEvent: MarkupProvided =>
         handleMarkupProvided(mpEvent, ansiGreen)
 
-      case TestPending(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, recordedEvents, duration, formatter, location, payload, threadName, timeStamp) =>
+      case TestPending(ordinal, suiteName, suiteID, suiteClassName, testName, testText, recordedEvents, duration, formatter, location, payload, threadName, timeStamp) =>
 
         val stringToPrint =
           if (presentUnformatted)
@@ -491,11 +483,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
   private def handleInfoProvided(event: InfoProvided, ansiColor: String) {
     val (suiteName, testName) =
       event.nameInfo match {
-        case Some(NameInfo(suiteName, _, _, _, testNameInfo)) => (Some(suiteName), 
-                                                                  testNameInfo match {
-                                                                    case Some(tnInfo) => Some(tnInfo.testName)
-                                                                    case None => None  
-                                                                  })
+        case Some(NameInfo(suiteName, _, _, testName)) => (Some(suiteName), testName)
         case None => (None, None)
       }
     val lines = stringsToPrintOnError("infoProvidedNote", "infoProvided", event.message, event.throwable, event.formatter, suiteName, testName, None)
@@ -534,12 +522,8 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
   private def handleMarkupProvided(event: MarkupProvided, ansiColor: String) {
     val (suiteName, testName) =
       event.nameInfo match {
-        case Some(NameInfo(suiteName, _, _, _, testNameInfo)) =>
-          (Some(suiteName),
-           testNameInfo match {
-            case Some(tnInfo) => Some(tnInfo.testName)
-            case None => None
-          })
+        case Some(NameInfo(suiteName, _, _, testName)) =>
+          (Some(suiteName), testName)
         case None => (None, None)
       }
 

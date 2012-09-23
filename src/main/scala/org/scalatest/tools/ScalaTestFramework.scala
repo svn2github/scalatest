@@ -211,7 +211,7 @@ Tags to include and exclude: -n "CheckinTests FunctionalTests" -l "SlowTests Net
 
         val formatter = formatterForSuiteStarting(suite)
 
-        report(SuiteStarting(tracker.nextOrdinal(), suite.suiteName, suite.suiteId, Some(suiteClass.getName), suite.decodedSuiteName, formatter, Some(TopOfClass(suiteClass.getName))))
+        report(SuiteStarting(tracker.nextOrdinal(), suite.suiteName, suite.suiteId, Some(suiteClass.getName), formatter, Some(TopOfClass(suiteClass.getName))))
 
         try {  // TODO: I had to pass Set.empty for chosen styles now. Fix this later.
           suite.run(None, Args(report, Stopper.default, filter, configMap, None, tracker, Set.empty))
@@ -220,7 +220,7 @@ Tags to include and exclude: -n "CheckinTests FunctionalTests" -l "SlowTests Net
 
           val duration = System.currentTimeMillis - suiteStartTime
 
-          report(SuiteCompleted(tracker.nextOrdinal(), suite.suiteName, suite.suiteId, Some(suiteClass.getName), suite.decodedSuiteName, Some(duration), formatter, Some(TopOfClass(suiteClass.getName))))
+          report(SuiteCompleted(tracker.nextOrdinal(), suite.suiteName, suite.suiteId, Some(suiteClass.getName), Some(duration), formatter, Some(TopOfClass(suiteClass.getName))))
 
         }
         catch {       
@@ -234,7 +234,7 @@ Tags to include and exclude: -n "CheckinTests FunctionalTests" -l "SlowTests Net
             val formatter = formatterForSuiteAborted(suite, rawString)
 
             val duration = System.currentTimeMillis - suiteStartTime
-            report(SuiteAborted(tracker.nextOrdinal(), rawString, suite.suiteName, suite.suiteId, Some(suiteClass.getName), suite.decodedSuiteName, Some(e), Some(duration), formatter, Some(SeeStackDepthException)))
+            report(SuiteAborted(tracker.nextOrdinal(), rawString, suite.suiteName, suite.suiteId, Some(suiteClass.getName), Some(e), Some(duration), formatter, Some(SeeStackDepthException)))
           }
         }
         finally {

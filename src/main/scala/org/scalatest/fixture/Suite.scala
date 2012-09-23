@@ -194,7 +194,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
     val (stopRequested, report, method, testStartTime) =
       getSuiteRunTestGoodies(stopper, reporter, testName)
 
-    reportTestStarting(thisSuite, report, tracker, testName, testName, getDecodedName(testName), thisSuite.rerunner, Some(getTopOfMethod(testName)))
+    reportTestStarting(thisSuite, report, tracker, testName, testName, thisSuite.rerunner, Some(getTopOfMethod(testName)))
 
     val formatter = getEscapedIndentedTextForTest(testName, 1, true)
 
@@ -248,7 +248,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
       }
 
       val duration = System.currentTimeMillis - testStartTime
-      reportTestSucceeded(thisSuite, report, tracker, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, thisSuite.rerunner, Some(getTopOfMethod(method)))
+      reportTestSucceeded(thisSuite, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, thisSuite.rerunner, Some(getTopOfMethod(method)))
     }
     catch { 
       case ite: InvocationTargetException =>
@@ -257,13 +257,13 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
           case _: TestPendingException =>
             val duration = System.currentTimeMillis - testStartTime
             // testWasPending = true so info's printed out in the finally clause show up yellow
-            reportTestPending(thisSuite, report, tracker, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(method)))
+            reportTestPending(thisSuite, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(method)))
           case e: TestCanceledException =>
             val duration = System.currentTimeMillis - testStartTime
             val message = getMessageForException(e)
             val formatter = getEscapedIndentedTextForTest(testName, 1, true)
             // testWasCanceled = true so info's printed out in the finally clause show up yellow
-            report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), thisSuite.decodedSuiteName, testName, testName, getDecodedName(testName), messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), thisSuite.rerunner))
+            report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), testName, testName, messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), thisSuite.rerunner))
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
             handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)

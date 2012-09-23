@@ -881,7 +881,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               if (testName.indexOf("must start with proper words") != -1)
                 reportHadCorrectTestName = true
               formatter match {
@@ -913,7 +913,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               if (testName.indexOf("must start with proper words") != -1)
                 reportHadCorrectTestName = true
               formatter match {
@@ -997,7 +997,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
                     infoReportHadCorrectFormattedSpecText = true
                 case _ =>
               }
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvoked)
               theOtherMethodHasBeenInvoked = true
@@ -1056,7 +1056,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
                     infoReportHadCorrectFormattedSpecText = true
                 case _ =>
               }
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvoked)
               theOtherMethodHasBeenInvoked = true
@@ -1191,7 +1191,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
                   case _ =>
                 }
               }
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvokedTwice)
               theOtherMethodHasBeenInvoked = true
@@ -1309,7 +1309,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               if (testName.indexOf("this thing must start with proper words") != -1) {
                 testSucceededReportHadCorrectTestName = true
               }  
@@ -1351,7 +1351,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestStarting(_, _, _, _, _, testName, _, _, _, _, _, _, _, _) =>
+            case TestStarting(_, _, _, _, testName, _, _, _, _, _, _, _) =>
               if (testName == "A Stack needs to push and pop properly") {
                 testSucceededReportHadCorrectTestName = true
               }
@@ -1418,7 +1418,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
                   if (rawText == "My spec text must have the proper words")
@@ -1445,7 +1445,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
                   if (rawText == "My short name must have the proper words")
@@ -1474,7 +1474,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, decodedSuiteName, testName, testText, decodedTestName, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
                   if (rawText == "My short name must have the proper words")
@@ -2199,74 +2199,6 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       "test: the - operator should subtract"
     )
     assert(a.testNames.iterator.toList === expectedTestNames)
-  }
-
-  it("should send a defined decoded suite name for a class whose name is given in backticks") {
-    expectResult("My Spec") { (new My$u0020Spec).decodedSuiteName.get }
-    expectResult(None) { (new NormalSpec).decodedSuiteName }
-  }
-
-  it("should send None decoded test names") {
-    
-    class DecodedSpec extends Spec {
-      def `test Succeed`() {}
-      def `test Fail`() = { fail }
-      def `test Pending`() = { pending }
-      @Ignore
-      def `test Ignore`() = {}
-    }
-    
-    val decodedSpec = new DecodedSpec
-    val decodedReporter = new EventRecordingReporter
-    decodedSpec.run(None, Args(decodedReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
-    val decodedEventList:List[Event] = decodedReporter.eventsReceived
-    expectResult(7) { decodedEventList.size }
-    /*decodedEventList.foreach {event =>
-      event match {
-        case testStarting:TestStarting => 
-          testStarting.decodedTestName match {
-            case Some(name) => assert(name.length() > 0, "decodedTestName should not be empty.")
-            case None => fail("decodedTestName should not be empty.")
-          }
-          expectResult(None) { testStarting.decodedSuiteName }
-        case testSucceed:TestSucceeded => 
-          expectResult("test$u0020Succeed") { testSucceed.testName }
-          expectResult(Some("test Succeed")) { testSucceed.decodedTestName }
-        case testFail:TestFailed =>
-          expectResult("test$u0020Fail") { testFail.testName }
-          expectResult(Some("test Fail")) { testFail.decodedTestName }
-        case testPending:TestPending =>
-          expectResult("test$u0020Pending") { testPending.testName }
-          expectResult(Some("test Pending")) { testPending.decodedTestName }
-        case testIgnore:TestIgnored => 
-          expectResult("test$u0020Ignore") { testIgnore.testName }
-          expectResult(Some("test Ignore")) { testIgnore.decodedTestName }
-        case _ =>
-      }
-    }*/
-    decodedEventList.foreach {event =>
-      event match {
-        case testStarting:TestStarting => 
-          testStarting.decodedTestName match {
-            case Some(name) => fail("decodedTestName should be None.")
-            case None => 
-          }
-          expectResult(None) { testStarting.decodedSuiteName }
-        case testSucceed:TestSucceeded => 
-          expectResult("test Succeed") { testSucceed.testName }
-          expectResult(None) { testSucceed.decodedTestName }
-        case testFail:TestFailed =>
-          expectResult("test Fail") { testFail.testName }
-          expectResult(None) { testFail.decodedTestName }
-        case testPending:TestPending =>
-          expectResult("test Pending") { testPending.testName }
-          expectResult(None) { testPending.decodedTestName }
-        case testIgnore:TestIgnored => 
-          expectResult("test Ignore") { testIgnore.testName }
-          expectResult(None) { testIgnore.decodedTestName }
-        case _ =>
-      }
-    }
   }
 
   def testTestTags() {

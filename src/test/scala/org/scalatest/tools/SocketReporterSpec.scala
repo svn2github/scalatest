@@ -20,7 +20,6 @@ import org.scalatest.events.RunStopped
 import org.scalatest.events.RunAborted
 import org.scalatest.events.InfoProvided
 import org.scalatest.events.NameInfo
-import org.scalatest.events.TestNameInfo
 import org.scalatest.events.LineInFile
 import org.scalatest.events.MarkupProvided
 import org.scalatest.concurrent.Eventually
@@ -163,119 +162,103 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
     }
   }
   
-  def checkScopeEvents(scopeOpened: Elem, message: String, suiteName: String, suiteId: String, suiteClassName: Option[String], 
-                     decodedSuiteName:Option[String], fileName: String, lineNumber: Int) {
+  def checkScopeEvents(scopeOpened: Elem, message: String, suiteName: String, suiteId: String, suiteClassName: Option[String], fileName: String, lineNumber: Int) {
     assert((scopeOpened \ "message").text === message )
     assert((scopeOpened \ "nameInfo" \ "suiteName").text === suiteName )
     assert((scopeOpened \ "nameInfo" \ "suiteId").text === suiteId)
     checkStringOption((scopeOpened \ "nameInfo" \ "suiteClassName").text, suiteClassName)
-    checkStringOption((scopeOpened \ "decodedSuiteName" \ "decodedSuiteName").text, decodedSuiteName)
     assert((scopeOpened \ "location" \ "LineInFile" \ "fileName").text === fileName)
     assert((scopeOpened \ "location" \ "LineInFile" \ "lineNumber").text === lineNumber.toString)
   }
   
-  def checkTestStarting(testStarting:Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], decodedSuiteName: Option[String],
-                        testName: String, testText: String, decodedTestName: Option[String], fileName: String, lineNumber: Int, 
+  def checkTestStarting(testStarting:Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], 
+                        testName: String, testText: String, fileName: String, lineNumber: Int, 
                         rerunner: Option[String]) {
     assert((testStarting \ "suiteName").text === suiteName)
     assert((testStarting \ "suiteId").text === suiteId)
     checkStringOption((testStarting \ "suiteClassName").text, suiteClassName)
-    checkStringOption((testStarting \ "decodedSuiteName").text, decodedSuiteName)
     assert((testStarting \ "testName").text === testName)
     assert((testStarting \ "testText").text === testText)
-    checkStringOption((testStarting \ "decodedTestName").text, decodedTestName)
     assert((testStarting \ "location" \ "LineInFile" \ "fileName").text === fileName)
     assert((testStarting \ "location" \ "LineInFile" \ "lineNumber").text === lineNumber.toString)
     checkStringOption((testStarting \ "rerunner").text, rerunner)
   }
   
-  def checkTestSucceeded(testSucceeded: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], decodedSuiteName: Option[String], 
-                         testName: String, testText: String, decodedTestName: Option[String], fileName: String, lineNumber: Int, rerunner: Option[String] = None) {
+  def checkTestSucceeded(testSucceeded: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], 
+                         testName: String, testText: String, fileName: String, lineNumber: Int, rerunner: Option[String] = None) {
     assert((testSucceeded \ "suiteName").text === suiteName)
     assert((testSucceeded \ "suiteId").text === suiteId)
     checkStringOption((testSucceeded \ "suiteClassName").text, suiteClassName)
-    checkStringOption((testSucceeded \ "decodedSuiteName").text, decodedSuiteName)
     assert((testSucceeded \ "testName").text === testName)
     assert((testSucceeded \ "testText").text === testText)
-    checkStringOption((testSucceeded \ "decodedTestName").text, decodedTestName)
     assert((testSucceeded \ "location" \ "LineInFile" \ "fileName").text === fileName)
     assert((testSucceeded \ "location" \ "LineInFile" \ "lineNumber").text === lineNumber.toString)
     checkStringOption((testSucceeded \ "rerunner").text, rerunner)
   }
   
-  def checkTestFailed(testFailed: Elem, message: String, suiteName: String, suiteId: String, suiteClassName: Option[String], decodedSuiteName: Option[String],
-                      testName: String, testText: String, decodedTestName: Option[String], rerunner: Option[String]) {
+  def checkTestFailed(testFailed: Elem, message: String, suiteName: String, suiteId: String, suiteClassName: Option[String], 
+                      testName: String, testText: String, rerunner: Option[String]) {
     assert((testFailed \ "message").text === message)
     assert((testFailed \ "suiteName").text === suiteName)
     assert((testFailed \ "suiteId").text === suiteId)
     checkStringOption((testFailed \ "suiteClassName").text, suiteClassName)
-    checkStringOption((testFailed \ "decodedSuiteName").text, decodedSuiteName)
     assert((testFailed \ "testName").text === testName)
     assert((testFailed \ "testText").text === testText)
-    checkStringOption((testFailed \ "decodedTestName").text, decodedTestName)
     checkStringOption((testFailed \ "rerunner").text, rerunner)
   }
   
-  def checkTestPending(testPending: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], decodedSuiteName: Option[String], 
-                       testName: String, testText: String, decodedTestName: Option[String], fileName: String, lineNumber: Int, 
+  def checkTestPending(testPending: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], 
+                       testName: String, testText: String, fileName: String, lineNumber: Int, 
                        rerunner: Option[String]) {
     assert((testPending \ "suiteName").text === suiteName)
     assert((testPending \ "suiteId").text === suiteId)
     checkStringOption((testPending \ "suiteClassName").text, suiteClassName)
-    checkStringOption((testPending \ "decodedSuiteName").text, decodedSuiteName)
     assert((testPending \ "testName").text === testName)
     assert((testPending \ "testText").text === testText)
-    checkStringOption((testPending \ "decodedTestName").text, decodedTestName)
     assert((testPending \ "location" \ "LineInFile" \ "fileName").text === fileName)
     assert((testPending \ "location" \ "LineInFile" \ "lineNumber").text === lineNumber.toString)
     checkStringOption((testPending \ "rerunner").text, rerunner)
   }
   
-  def checkTestIgnored(testIgnored: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], decodedSuiteName: Option[String],
-                       testName: String, testText: String, decodedTestName: Option[String], fileName: String, lineNumber: Int) {
+  def checkTestIgnored(testIgnored: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], 
+                       testName: String, testText: String, fileName: String, lineNumber: Int) {
     assert((testIgnored \ "suiteName").text === suiteName)
     assert((testIgnored \ "suiteId").text === suiteId)
     checkStringOption((testIgnored \ "suiteClassName").text, suiteClassName)
-    checkStringOption((testIgnored \ "decodedSuiteName").text, decodedSuiteName)
     assert((testIgnored \ "testName").text === testName)
     assert((testIgnored \ "testText").text === testText)
-    checkStringOption((testIgnored \ "decodedTestName").text, decodedTestName)
     assert((testIgnored \ "location" \ "LineInFile" \ "fileName").text === fileName)
     assert((testIgnored \ "location" \ "LineInFile" \ "lineNumber").text === lineNumber.toString)
   }
   
-  def checkTestCanceled(testCanceled: Elem, message: String, suiteName: String, suiteId: String, suiteClassName: Option[String], decodedSuiteName: Option[String],
-                        testName: String, testText: String, decodedTestName: Option[String], fileName: String, lineNumber: Int) {
+  def checkTestCanceled(testCanceled: Elem, message: String, suiteName: String, suiteId: String, suiteClassName: Option[String], 
+                        testName: String, testText: String, fileName: String, lineNumber: Int) {
     assert((testCanceled \ "message").text === message)
     assert((testCanceled \ "suiteName").text === suiteName)
     assert((testCanceled \ "suiteId").text === suiteId)
     checkStringOption((testCanceled \ "suiteClassName").text, suiteClassName)
-    checkStringOption((testCanceled \ "decodedSuiteName").text, decodedSuiteName)
     assert((testCanceled \ "testName").text === testName)
     assert((testCanceled \ "testText").text === testText)
-    checkStringOption((testCanceled \ "decodedTestName").text, decodedTestName)
     assert((testCanceled \ "location" \ "LineInFile" \ "fileName").text === fileName)
     assert((testCanceled \ "location" \ "LineInFile" \ "lineNumber").text === lineNumber.toString)
   }
   
-  def checkSuiteStarting(suiteStarting: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], decodedSuiteName: Option[String],
+  def checkSuiteStarting(suiteStarting: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], 
                          topOfClassName: String, rerunner: Option[String] = None, threadName: String, timeStamp: Long) {
     assert((suiteStarting \ "suiteName").text === suiteName)
     assert((suiteStarting \ "suiteId").text === suiteId)
     checkStringOption((suiteStarting \ "suiteClassName").text, suiteClassName)
-    checkStringOption((suiteStarting \ "decodedSuiteName").text, decodedSuiteName)
     assert((suiteStarting \ "location" \ "TopOfClass" \ "className").text === topOfClassName)
     checkStringOption((suiteStarting \ "rerunner").text, rerunner)
     assert((suiteStarting \ "threadName").text === threadName)
     assert((suiteStarting \ "timeStamp").text === timeStamp.toString)
   }
   
-  def checkSuiteCompleted(suiteCompleted: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], decodedSuiteName: Option[String],
+  def checkSuiteCompleted(suiteCompleted: Elem, suiteName: String, suiteId: String, suiteClassName: Option[String], 
                           duration: Option[Long], topOfClassName: String, rerunner: Option[String], threadName: String, timeStamp: Long) {
     assert((suiteCompleted \ "suiteName").text === suiteName)
     assert((suiteCompleted \ "suiteId").text === suiteId)
     checkStringOption((suiteCompleted \ "suiteClassName").text, suiteClassName)
-    checkStringOption((suiteCompleted \ "decodedSuiteName").text, decodedSuiteName)
     checkLongOption((suiteCompleted \ "duration").text.toLong, duration)
     assert((suiteCompleted \ "location" \ "TopOfClass" \ "className").text === topOfClassName)
     checkStringOption((suiteCompleted \ "rerunner").text, rerunner)
@@ -283,13 +266,12 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
     assert((suiteCompleted \ "timeStamp").text === timeStamp.toString)
   }
   
-  def checkSuiteAborted(suiteAborted: Elem, message: String, suiteName: String, suiteId: String, suiteClassName: Option[String], decodedSuiteName: Option[String], 
+  def checkSuiteAborted(suiteAborted: Elem, message: String, suiteName: String, suiteId: String, suiteClassName: Option[String],  
                         duration: Option[Long], topOfClassName: String, rerunner: Option[String], threadName: String, timeStamp: Long) {
     assert((suiteAborted \ "message").text === message)
     assert((suiteAborted \ "suiteName").text === suiteName)
     assert((suiteAborted \ "suiteId").text === suiteId)
     checkStringOption((suiteAborted \ "suiteClassName").text, suiteClassName)
-    checkStringOption((suiteAborted \ "decodedSuiteName").text, decodedSuiteName)
     checkLongOption((suiteAborted \ "duration").text.toLong, duration)
     assert((suiteAborted \ "location" \ "TopOfClass" \ "className").text === topOfClassName)
     checkStringOption((suiteAborted \ "rerunner").text, rerunner)
@@ -327,44 +309,44 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
         
       assert(eventRecorder.scopeOpenedEvents.length === 1)
       checkScopeEvents(eventRecorder.scopeOpenedEvents(0), "A Feature", spec.suiteName, spec.suiteId, 
-                     Some(spec.getClass.getName), None, "SocketReporterSpec.scala", thisLineNumber - 23)
+                     Some(spec.getClass.getName), "SocketReporterSpec.scala", thisLineNumber - 23)
       assert(eventRecorder.scopeClosedEvents.length === 1)
       checkScopeEvents(eventRecorder.scopeClosedEvents(0), "A Feature", spec.suiteName, spec.suiteId, 
-                     Some(spec.getClass.getName), None, "SocketReporterSpec.scala", thisLineNumber - 26)
+                     Some(spec.getClass.getName), "SocketReporterSpec.scala", thisLineNumber - 26)
                      
       assert(eventRecorder.testStartingEvents.length === 4)
-      checkTestStarting(eventRecorder.testStartingEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), None,
-                        "A Feature should succeed", "should succeed", None, "SocketReporterSpec.scala", thisLineNumber - 29, 
+      checkTestStarting(eventRecorder.testStartingEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
+                        "A Feature should succeed", "should succeed", "SocketReporterSpec.scala", thisLineNumber - 29, 
                         None) // rerunner should be none, as the suite is an inner class.
-      checkTestStarting(eventRecorder.testStartingEvents(1), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), None,
-                        "A Feature should failed", "should failed", None, "SocketReporterSpec.scala", thisLineNumber - 31, 
+      checkTestStarting(eventRecorder.testStartingEvents(1), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
+                        "A Feature should failed", "should failed", "SocketReporterSpec.scala", thisLineNumber - 31, 
                         None)
-      checkTestStarting(eventRecorder.testStartingEvents(2), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), None,
-                        "A Feature should pending", "should pending", None, "SocketReporterSpec.scala", thisLineNumber - 32, 
+      checkTestStarting(eventRecorder.testStartingEvents(2), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
+                        "A Feature should pending", "should pending", "SocketReporterSpec.scala", thisLineNumber - 32, 
                         None)
-      checkTestStarting(eventRecorder.testStartingEvents(3), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), None,
-                        "A Feature should canceled", "should canceled", None, "SocketReporterSpec.scala", thisLineNumber - 34, 
+      checkTestStarting(eventRecorder.testStartingEvents(3), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
+                        "A Feature should canceled", "should canceled", "SocketReporterSpec.scala", thisLineNumber - 34, 
                         None)
       
       assert(eventRecorder.testSucceededEvents.length === 1)
-      checkTestSucceeded(eventRecorder.testSucceededEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), None, 
-                         "A Feature should succeed", "should succeed", None, "SocketReporterSpec.scala", thisLineNumber - 43, None)
+      checkTestSucceeded(eventRecorder.testSucceededEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
+                         "A Feature should succeed", "should succeed", "SocketReporterSpec.scala", thisLineNumber - 43, None)
       
       assert(eventRecorder.testFailedEvents.length === 1)
-      checkTestFailed(eventRecorder.testFailedEvents(0), "1 did not equal 2", spec.suiteName, spec.suiteId, Some(spec.getClass.getName), None,
-                      "A Feature should failed", "should failed", None, None)
+      checkTestFailed(eventRecorder.testFailedEvents(0), "1 did not equal 2", spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
+                      "A Feature should failed", "should failed", None)
 
       assert(eventRecorder.testPendingEvents.length === 1)
-      checkTestPending(eventRecorder.testPendingEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), None, 
-                       "A Feature should pending", "should pending", None, "SocketReporterSpec.scala", thisLineNumber - 48, None)
+      checkTestPending(eventRecorder.testPendingEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
+                       "A Feature should pending", "should pending", "SocketReporterSpec.scala", thisLineNumber - 48, None)
 
       assert(eventRecorder.testIgnoredEvents.length === 1)
-      checkTestIgnored(eventRecorder.testIgnoredEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), None, 
-                       "A Feature should ignored", "should ignored", None, "SocketReporterSpec.scala", thisLineNumber - 53)
+      checkTestIgnored(eventRecorder.testIgnoredEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
+                       "A Feature should ignored", "should ignored", "SocketReporterSpec.scala", thisLineNumber - 53)
       
       assert(eventRecorder.testCanceledEvents.length === 1)
-      checkTestCanceled(eventRecorder.testCanceledEvents(0), "cancel on purpose", spec.suiteName, spec.suiteId, Some(spec.getClass.getName), None, 
-                        "A Feature should canceled", "should canceled", None, "SocketReporterSpec.scala", thisLineNumber - 55)        
+      checkTestCanceled(eventRecorder.testCanceledEvents(0), "cancel on purpose", spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
+                        "A Feature should canceled", "should canceled", "SocketReporterSpec.scala", thisLineNumber - 55)        
     }
     
     it("should send SuiteStarting, SuiteCompleted, SuiteAborted event using socket") {
@@ -376,13 +358,13 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       val timeStamp = (new Date).getTime
       
       val rep = new SocketReporter("localhost", socket.getLocalPort)
-      rep(SuiteStarting(new Ordinal(0), "a suite name", "a suite Id", Some("a class name"), None, None, Some(TopOfClass("a class name")), Some("a rerunner"),
+      rep(SuiteStarting(new Ordinal(0), "a suite name", "a suite Id", Some("a class name"), None, Some(TopOfClass("a class name")), Some("a rerunner"),
                         None, Thread.currentThread.getName, timeStamp))
-      rep(SuiteCompleted(new Ordinal(0), "a suite name", "a suite Id", Some("a class name"), None, Some(1000L), None, Some(TopOfClass("a class name")),
+      rep(SuiteCompleted(new Ordinal(0), "a suite name", "a suite Id", Some("a class name"), Some(1000L), None, Some(TopOfClass("a class name")),
                          Some("a rerunner"), None, Thread.currentThread.getName, timeStamp))
-      rep(SuiteStarting(new Ordinal(0), "another suite name", "another suite Id", Some("another class name"), None, None, Some(TopOfClass("another class name")), Some("another rerunner"),
+      rep(SuiteStarting(new Ordinal(0), "another suite name", "another suite Id", Some("another class name"), None, Some(TopOfClass("another class name")), Some("another rerunner"),
                         None, Thread.currentThread.getName, timeStamp))
-      rep(SuiteAborted(new Ordinal(0), "error message", "another suite name", "another suite Id", Some("another class name"), None, Some(new Throwable("purposely error")),
+      rep(SuiteAborted(new Ordinal(0), "error message", "another suite name", "another suite Id", Some("another class name"), Some(new Throwable("purposely error")),
                        Some(1000L), None, Some(TopOfClass("another class name")), Some("another rerunner"), None, Thread.currentThread.getName, timeStamp))
       rep.dispose()
       eventRecorder.stopped = true
@@ -390,14 +372,14 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       
       
       assert(eventRecorder.suiteStartingEvents.length === 2)
-      checkSuiteStarting(eventRecorder.suiteStartingEvents(0), "a suite name", "a suite Id", Some("a class name"), None, "a class name", Some("a rerunner"), Thread.currentThread.getName, timeStamp)
-      checkSuiteStarting(eventRecorder.suiteStartingEvents(1), "another suite name", "another suite Id", Some("another class name"), None, "another class name", Some("another rerunner"), Thread.currentThread.getName, timeStamp)
+      checkSuiteStarting(eventRecorder.suiteStartingEvents(0), "a suite name", "a suite Id", Some("a class name"), "a class name", Some("a rerunner"), Thread.currentThread.getName, timeStamp)
+      checkSuiteStarting(eventRecorder.suiteStartingEvents(1), "another suite name", "another suite Id", Some("another class name"), "another class name", Some("another rerunner"), Thread.currentThread.getName, timeStamp)
       
       assert(eventRecorder.suiteCompletedEvents.length === 1)
-      checkSuiteCompleted(eventRecorder.suiteCompletedEvents(0), "a suite name", "a suite Id", Some("a class name"), None, Some(1000L), "a class name", Some("a rerunner"), Thread.currentThread.getName, timeStamp)
+      checkSuiteCompleted(eventRecorder.suiteCompletedEvents(0), "a suite name", "a suite Id", Some("a class name"), Some(1000L), "a class name", Some("a rerunner"), Thread.currentThread.getName, timeStamp)
       
       assert(eventRecorder.suiteAbortedEvents.length === 1)
-      checkSuiteAborted(eventRecorder.suiteAbortedEvents(0), "error message", "another suite name", "another suite Id", Some("another class name"), None, Some(1000L), "another class name", Some("another rerunner"), 
+      checkSuiteAborted(eventRecorder.suiteAbortedEvents(0), "error message", "another suite name", "another suite Id", Some("another class name"), Some(1000L), "another class name", Some("another rerunner"), 
                         Thread.currentThread.getName, timeStamp)
     }
     
@@ -474,9 +456,9 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       val timeStamp = (new Date).getTime
       
       val rep = new SocketReporter("localhost", socket.getLocalPort)
-      rep(InfoProvided(new Ordinal(0), "some info", Some(NameInfo("a suite name", "a suite Id", Some("a suite class"), None,  Some(TestNameInfo("a test name", None)))),
+      rep(InfoProvided(new Ordinal(0), "some info", Some(NameInfo("a suite name", "a suite Id", Some("a suite class"), Some("a test name"))),
           None, None, Some(LineInFile(168, "SocketReporterSpec.scala")), None, Thread.currentThread.getName, timeStamp))
-      rep(MarkupProvided(new Ordinal(0), "some markup", Some(NameInfo("another suite name", "another suite Id", Some("another suite class"), None,  Some(TestNameInfo("another test name", None)))),
+      rep(MarkupProvided(new Ordinal(0), "some markup", Some(NameInfo("another suite name", "another suite Id", Some("another suite class"), Some("another test name"))),
           None, Some(LineInFile(188, "SocketReporterSpec.scala")), None, Thread.currentThread.getName, timeStamp))
       rep.dispose()
       eventRecorder.stopped = true
@@ -488,9 +470,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "suiteName").text === "a suite name")
       assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "suiteId").text === "a suite Id")
       assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "suiteClassName").text === "a suite class")
-      assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "decodedSuiteName").text === "")
-      assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "testName" \ "testName").text === "a test name")
-      assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "testName" \ "decodedTestName").text === "")
+      assert((eventRecorder.infoProvidedEvents(0) \ "nameInfo" \ "testName").text === "a test name")
       assert((eventRecorder.infoProvidedEvents(0) \ "location" \ "LineInFile" \ "lineNumber").text.toInt === 168)
       assert((eventRecorder.infoProvidedEvents(0) \ "location" \ "LineInFile" \ "fileName").text === "SocketReporterSpec.scala")
       assert((eventRecorder.infoProvidedEvents(0) \ "threadName").text === Thread.currentThread.getName)
@@ -501,9 +481,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "suiteName").text === "another suite name")
       assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "suiteId").text === "another suite Id")
       assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "suiteClassName").text === "another suite class")
-      assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "decodedSuiteName").text === "")
-      assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "testName" \ "testName").text === "another test name")
-      assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "testName" \ "decodedTestName").text === "")
+      assert((eventRecorder.markupProvidedEvents(0) \ "nameInfo" \ "testName").text === "another test name")
       assert((eventRecorder.markupProvidedEvents(0) \ "location" \ "LineInFile" \ "lineNumber").text.toInt === 188)
       assert((eventRecorder.markupProvidedEvents(0) \ "location" \ "LineInFile" \ "fileName").text === "SocketReporterSpec.scala")
       assert((eventRecorder.markupProvidedEvents(0) \ "threadName").text === Thread.currentThread.getName)

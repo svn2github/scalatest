@@ -41,7 +41,6 @@ class JUnitXmlReporterSuite extends FunSuite {
       None,
       None,
       None,
-      None,
       "thread1",
       123123)
 
@@ -50,7 +49,6 @@ class JUnitXmlReporterSuite extends FunSuite {
       ord1b,
       "suite2",
       "suite id",
-      None,
       None,
       None,
       None,
@@ -77,7 +75,6 @@ class JUnitXmlReporterSuite extends FunSuite {
       ord1d,
       "suite1",
       "suite id",
-      None,
       None,
       None,
       None,
