@@ -87,26 +87,32 @@ trait TestNGSuite extends Suite { thisSuite =>
    *                 I.e., <code>None</code> acts like a wildcard that means execute all relevant tests in this <code>TestNGSuite</code>.
    * @param args the <code>Args</code> for this run
    */
-  override def run(testName: Option[String], args: Args) {
+  override def run(testName: Option[String], args: Args): Status = {
     import args._
-    runTestNG(testName, wrapReporterIfNecessary(reporter), filter, tracker)
+    val status = new ScalaTestStatefulStatus
+    runTestNG(testName, wrapReporterIfNecessary(reporter), filter, tracker, status)
+    
+    status.completes()
+    status
   }
 
   /**
    * Runs TestNG with no test name, no groups. All tests in the class will be executed.
    * @param   reporter   the reporter to be notified of test events (success, failure, etc)
+   * @param   status   Status of run.
    */
-  private[testng] def runTestNG(reporter: Reporter, tracker: Tracker) {
-    runTestNG(None, reporter, Filter(), tracker)
+  private[testng] def runTestNG(reporter: Reporter, tracker: Tracker, status: ScalaTestStatefulStatus) {
+    runTestNG(None, reporter, Filter(), tracker, status)
   }
 
   /**
    * Runs TestNG, running only the test method with the given name. 
    * @param   testName   the name of the method to run
    * @param   reporter   the reporter to be notified of test events (success, failure, etc)
+   * @param   status   Status of run.
    */
-  private[testng] def runTestNG(testName: String, reporter: Reporter, tracker: Tracker) {
-    runTestNG(Some(testName), reporter, Filter(), tracker)
+  private[testng] def runTestNG(testName: String, reporter: Reporter, tracker: Tracker, status: ScalaTestStatefulStatus) {
+    runTestNG(Some(testName), reporter, Filter(), tracker, status)
   }
   
   /**
@@ -116,9 +122,10 @@ trait TestNGSuite extends Suite { thisSuite =>
    * @param   reporter   the reporter to be notified of test events (success, failure, etc)
    * @param   groupsToInclude    contains the names of groups to run. only tests in these groups will be executed
    * @param   groupsToExclude    tests in groups in this Set will not be executed
+   * @param   status   Status of run.
    */  
   private[testng] def runTestNG(testName: Option[String], reporter: Reporter,
-      filter: Filter, tracker: Tracker) {
+      filter: Filter, tracker: Tracker, status: ScalaTestStatefulStatus) {
     
     val tagsToInclude =
       filter.tagsToInclude match {
@@ -138,16 +145,16 @@ trait TestNGSuite extends Suite { thisSuite =>
       case None => handleGroups(tagsToInclude, tagsToExclude, testng)
     }
 
-    this.run(testng, reporter, tracker)
+    this.run(testng, reporter, tracker, status)
   }
   
   /**
    * Runs the TestNG object which calls back to the given Reporter.
    */
-  private[testng] def run(testng: TestNG, reporter: Reporter, tracker: Tracker) {
+  private[testng] def run(testng: TestNG, reporter: Reporter, tracker: Tracker, status: ScalaTestStatefulStatus) {
     
     // setup the callback mechanism
-    val tla = new MyTestListenerAdapter(reporter, tracker)
+    val tla = new MyTestListenerAdapter(reporter, tracker, status)
     testng.addListener(tla)
     
     // finally, run TestNG
@@ -201,7 +208,7 @@ trait TestNGSuite extends Suite { thisSuite =>
    * (12:02:27 AM) bvenners: onTestFailedButWithinSuccessPercentage(ITestResult tr) 
    * (12:02:34 AM) bvenners: maybe a TestSucceeded with some extra info in the report
    */
-  private[testng] class MyTestListenerAdapter(reporter: Reporter, tracker: Tracker) extends TestListenerAdapter {
+  private[testng] class MyTestListenerAdapter(reporter: Reporter, tracker: Tracker, status: ScalaTestStatefulStatus) extends TestListenerAdapter {
     
     // TODO: Put the tracker in an atomic, because TestNG can go multithreaded?
 
@@ -282,6 +289,7 @@ trait TestNGSuite extends Suite { thisSuite =>
           None
       }
       report(TestFailed(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.getClass.getName, Some(thisSuite.getClass.getName), testName, testName, Vector.empty, throwable, None, Some(formatter), Some(SeeStackDepthException), Some(className), payload)) // Can I add a duration?
+      status.fails()
     }
 
     /**
@@ -296,6 +304,7 @@ trait TestNGSuite extends Suite { thisSuite =>
       val message = if (throwableOrNull != null && throwableOrNull.getMessage != null) throwableOrNull.getMessage else Resources("testNGConfigFailed")
       val formatter = formatterForSuiteAborted(thisSuite, message)
       report(SuiteAborted(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.getClass.getName, Some(thisSuite.getClass.getName), throwable, None, formatter, Some(SeeStackDepthException)))
+      status.fails()
     }
 
     /**
@@ -358,7 +367,7 @@ trait TestNGSuite extends Suite { thisSuite =>
    *
    * @throws UnsupportedOperationException always.
    */
-  override final protected def runNestedSuites(args: Args) {
+  override final protected def runNestedSuites(args: Args): Status = {
 
     throw new UnsupportedOperationException
   }
@@ -381,7 +390,7 @@ trait TestNGSuite extends Suite { thisSuite =>
    *
    * @throws UnsupportedOperationException always.
    */
-  override protected final def runTests(testName: Option[String], args: Args) {
+  override protected final def runTests(testName: Option[String], args: Args): Status = {
     throw new UnsupportedOperationException
   }
 
@@ -402,7 +411,7 @@ trait TestNGSuite extends Suite { thisSuite =>
    *
    * @throws UnsupportedOperationException always.
    */
-  override protected final def runTest(testName: String, args: Args) {
+  override protected final def runTest(testName: String, args: Args): Status = {
     throw new UnsupportedOperationException
   }
 

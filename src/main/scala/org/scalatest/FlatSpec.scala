@@ -3050,7 +3050,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  protected override def runTest(testName: String, args: Args) {
+  protected override def runTest(testName: String, args: Args): Status = {
 
     def invokeWithFixture(theTest: TestLeaf) {
       val theConfigMap = args.configMap
@@ -3123,7 +3123,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>tagsToInclude</code>,
    *     <code>tagsToExclude</code>, or <code>configMap</code> is <code>null</code>.
    */
-  protected override def runTests(testName: Option[String], args: Args) {
+  protected override def runTests(testName: Option[String], args: Args): Status = {
     runTestsImpl(thisSuite, testName, args, info, true, runTest)
   }
 
@@ -3168,7 +3168,7 @@ trait FlatSpec extends Suite with ShouldVerb with MustVerb with CanVerb { thisSu
     ListSet(atomic.get.testNamesList.toArray: _*)
   }
 
-  override def run(testName: Option[String], args: Args) {
+  override def run(testName: Option[String], args: Args): Status = {
 
     runImpl(thisSuite, testName, args, super.run)
   }

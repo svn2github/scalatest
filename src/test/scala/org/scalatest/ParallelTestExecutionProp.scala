@@ -27,18 +27,26 @@ class ParallelTestExecutionProp extends FunSuite
   with ParallelTestExecutionSuiteTimeoutExamples {
   
   class ControlledOrderDistributor extends Distributor {
-    val buf = ListBuffer.empty[(Suite, Args)]
-    def apply(suite: Suite, args: Args) {
-      buf += ((suite, args))
+    val buf = ListBuffer.empty[(Suite, Args, ScalaTestStatefulStatus)]
+    def apply(suite: Suite, args: Args): Status = {
+      val status = new ScalaTestStatefulStatus
+      buf += ((suite, args, status))
+      status
     }
     def executeInOrder() {
-      for ((suite, args) <- buf) {
-        suite.run(None, args)
+      for ((suite, args, status) <- buf) {
+        val runStatus = suite.run(None, args)
+        if (!runStatus.succeeds())
+          status.fails()
+        status.completes()
       }
     }
     def executeInReverseOrder() {
-      for ((suite, args) <- buf.reverse) {
-        suite.run(None, args)
+      for ((suite, args, status) <- buf.reverse) {
+        val runStatus = suite.run(None, args)
+        if (!runStatus.succeeds())
+          status.fails()
+        status.completes()
       }
     }
 
@@ -52,8 +60,10 @@ class ParallelTestExecutionProp extends FunSuite
       
       val buf = ListBuffer.empty[SuiteRunner]
       val execSvc: ExecutorService = Executors.newFixedThreadPool(2)
-      def apply(suite: Suite, args: Args) {
-        buf += new SuiteRunner(suite, args)
+      def apply(suite: Suite, args: Args): Status = {
+        val status = new ScalaTestStatefulStatus
+        buf += new SuiteRunner(suite, args, status)
+        status
       }
       def executeInOrder() {
         for (suiteRunner <- buf) {

@@ -304,7 +304,7 @@ trait FunSuite extends Suite { thisSuite =>
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  protected override def runTest(testName: String, args: Args) {
+  protected override def runTest(testName: String, args: Args): Status = {
 
     def invokeWithFixture(theTest: TestLeaf) {
       theTest.testFun match {
@@ -334,11 +334,11 @@ trait FunSuite extends Suite { thisSuite =>
    */
   override def tags: Map[String, Set[String]] = autoTagClassAnnotations(atomic.get.tagsMap, this)
 
-  protected override def runTests(testName: Option[String], args: Args) {
+  protected override def runTests(testName: Option[String], args: Args): Status = {
     runTestsImpl(thisSuite, testName, args, info, true, runTest)
   }
 
-  override def run(testName: Option[String], args: Args) {
+  override def run(testName: Option[String], args: Args): Status = {
     runImpl(thisSuite, testName, args: Args, super.run)
   }
 

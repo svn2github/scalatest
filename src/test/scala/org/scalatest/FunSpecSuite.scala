@@ -798,7 +798,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
   test("Config map should make it through to runTest") {
     var foundMyGoodie = false
     class MySpec extends FunSpec with ShouldMatchers {
-      override def runTest(testName: String, args: Args) {
+      override def runTest(testName: String, args: Args): Status = {
         foundMyGoodie = args.configMap.contains("my goodie")
         super.runTest(testName, args)
       }
@@ -1422,7 +1422,7 @@ class FunSpecSuite extends FunSuite with SharedHelpers {
   test("suite durations are included in SuiteAborted events fired from Spec") {
 
     class SuiteThatAborts extends Suite {
-      override def run(testName: Option[String], args: Args) {
+      override def run(testName: Option[String], args: Args): Status = {
         throw new RuntimeException("Aborting for testing purposes")
       }
     }

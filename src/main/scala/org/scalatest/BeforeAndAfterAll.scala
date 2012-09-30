@@ -248,15 +248,19 @@ trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
    * exception, this method will complete abruptly with the same exception.
    * </p>
   */
-  abstract override def run(testName: Option[String], args: Args) {
+  abstract override def run(testName: Option[String], args: Args): Status = {
     var thrownException: Option[Throwable] = None
 
     beforeAll(args.configMap)
     try {
-      super.run(testName, args)
+      val runStatus = super.run(testName, args)
+      runStatus.succeeds()
+      runStatus
     }
     catch {
-      case e: Exception => thrownException = Some(e)
+      case e: Exception => 
+        thrownException = Some(e)
+        new FailedStatus
     }
     finally {
       try {

@@ -39,8 +39,9 @@ class ArgsSpec extends WordSpec with TableDrivenPropertyChecks with ShouldMatche
     "call the new run method" in {
       class MySuite extends Suite {
         var newRunGotCalled = false
-        override def run(testName: Option[String], args: Args) {
+        override def run(testName: Option[String], args: Args): Status = {
           newRunGotCalled = true
+          new SucceededStatus
         }
       }
       val s = new MySuite

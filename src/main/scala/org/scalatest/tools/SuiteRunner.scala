@@ -24,7 +24,7 @@ import Suite.formatterForSuiteCompleted
 import Suite.formatterForSuiteAborted
 import org.scalatest.exceptions.NotAllowedException
 
-private[scalatest] class SuiteRunner(suite: Suite, args: Args) extends Runnable {
+private[scalatest] class SuiteRunner(suite: Suite, args: Args, status: ScalaTestStatefulStatus) extends Runnable {
 
   private val stopRequested = args.stopper
 
@@ -52,7 +52,7 @@ private[scalatest] class SuiteRunner(suite: Suite, args: Args) extends Runnable 
         dispatch(SuiteStarting(tracker.nextOrdinal(), suite.suiteName, suite.suiteId, Some(suite.getClass.getName), formatter, Some(TopOfClass(suite.getClass.getName)), suite.rerunner))
         
       try {
-        suite.run(None, args)
+        val runStatus = suite.run(None, args)
   
         val rawString2 = Resources("suiteCompletedNormally")
         val formatter = formatterForSuiteCompleted(suite)
@@ -60,6 +60,9 @@ private[scalatest] class SuiteRunner(suite: Suite, args: Args) extends Runnable 
         val duration = System.currentTimeMillis - suiteStartTime
         if (!suite.isInstanceOf[DistributedTestRunnerSuite])
           dispatch(SuiteCompleted(tracker.nextOrdinal(), suite.suiteName, suite.suiteId, Some(suite.getClass.getName), Some(duration), formatter, Some(TopOfClass(suite.getClass.getName)), suite.rerunner))
+          
+        if (!runStatus.succeeds())
+          status.fails()
       }
       catch {
         case e: NotAllowedException =>
@@ -67,7 +70,7 @@ private[scalatest] class SuiteRunner(suite: Suite, args: Args) extends Runnable 
           val duration = System.currentTimeMillis - suiteStartTime
           // dispatch(SuiteAborted(tracker.nextOrdinal(), e.getMessage, suite.suiteName, Some(suite.getClass.getName), None, None, formatter, rerunnable))
           dispatch(SuiteAborted(tracker.nextOrdinal(), e.getMessage, suite.suiteName, suite.suiteId, Some(suite.getClass.getName), Some(e), Some(duration), formatter, Some(SeeStackDepthException), suite.rerunner))
-
+          status.fails()
         case e: RuntimeException => { // Do fire SuiteAborted even if a DistributedTestRunnerSuite 
           val eMessage = e.getMessage
           val rawString3 = 
@@ -79,7 +82,11 @@ private[scalatest] class SuiteRunner(suite: Suite, args: Args) extends Runnable 
 
           val duration = System.currentTimeMillis - suiteStartTime
           dispatch(SuiteAborted(tracker.nextOrdinal(), rawString3, suite.suiteName, suite.suiteId, Some(suite.getClass.getName), Some(e), Some(duration), formatter3, Some(SeeStackDepthException), suite.rerunner))
+          status.fails()
         }
+      }
+      finally {
+        status.completes()
       }
     }
   }

@@ -241,7 +241,7 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
    *
    * @throws UnsupportedOperationException always.
    */
-  override final protected def runNestedSuites(args: Args) {
+  override final protected def runNestedSuites(args: Args): Status = {
 
     throw new UnsupportedOperationException
   }
@@ -264,7 +264,7 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
    *
    * @throws UnsupportedOperationException always.
    */
-  override protected final def runTests(testName: Option[String], args: Args) {
+  override protected final def runTests(testName: Option[String], args: Args): Status = {
     throw new UnsupportedOperationException
   }
 
@@ -285,19 +285,20 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
    *
    * @throws UnsupportedOperationException always.
    */
-  override protected final def runTest(testName: String, args: Args) {
+  override protected final def runTest(testName: String, args: Args): Status = {
         throw new UnsupportedOperationException
   }
 
-  override def run(testName: Option[String], args: Args) {
+  override def run(testName: Option[String], args: Args): Status = {
 
     import args._
 
     theTracker = tracker
+    val status = new ScalaTestStatefulStatus
 
     if (!filter.tagsToInclude.isDefined) {
       val testResult = new TestResult
-      testResult.addListener(new MyTestListener(wrapReporterIfNecessary(reporter), tracker))
+      testResult.addListener(new MyTestListener(wrapReporterIfNecessary(reporter), tracker, status))
       testName match {
         case None => new TestSuite(this.getClass).run(testResult)
         case Some(tn) =>
@@ -307,6 +308,9 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
           run(testResult)
       }
     }
+    
+    status.completes()
+    status
   }
   
   /**
@@ -324,7 +328,7 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
     }
 }
 
-private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker) extends TestListener {
+private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker, status: ScalaTestStatefulStatus) extends TestListener {
 
   // TODO: worry about threading
   private val failedTestsSet = scala.collection.mutable.Set[Test]()
@@ -403,6 +407,7 @@ private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker) exte
     }
     else {
       failedTestsSet -= testCase  
+      status.fails()
     }
   }
 

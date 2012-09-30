@@ -65,6 +65,6 @@ trait Distributor {
    *
    * @throws NullPointerException if either <code>suite</code> or <code>tracker</code> is <code>null</code>.
    */
-  def apply(suite: Suite, args: Args)
+  def apply(suite: Suite, args: Args): Status
 }
 

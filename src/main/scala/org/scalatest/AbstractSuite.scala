@@ -78,7 +78,7 @@ trait AbstractSuite { this: Suite =>
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
-  def run(testName: Option[String], args: Args)
+  def run(testName: Option[String], args: Args): Status
 
   /**
    * Runs zero to many of this suite's nested suites.
@@ -87,7 +87,7 @@ trait AbstractSuite { this: Suite =>
    *
    * @throws NullPointerException if <code>args</code> is <code>null</code>.
    */
-  protected def runNestedSuites(args: Args)
+  protected def runNestedSuites(args: Args): Status
 
   /**
    * Runs zero to many of this suite's tests.
@@ -98,7 +98,7 @@ trait AbstractSuite { this: Suite =>
    *
    * @throws NullPointerException if either <code>testName</code> or <code>args</code> is <code>null</code>.
    */
-  protected def runTests(testName: Option[String], args: Args)
+  protected def runTests(testName: Option[String], args: Args): Status
 
   /**
    * Runs a test.
@@ -112,7 +112,7 @@ trait AbstractSuite { this: Suite =>
   protected def runTest(
     testName: String,
     args: Args
-  )
+  ): Status
 
   /**
   * A <code>Set</code> of test names. If this <code>Suite</code> contains no tests, this method returns an empty <code>Set</code>.
@@ -201,7 +201,7 @@ trait AbstractSuite { this: Suite =>
     configMap: Map[String, Any],
     distributor: Option[Distributor],
     tracker: Tracker
-  ) {  // TODO: test that this grabs chosenStyles out of config map
+  ): Status = {  // TODO: test that this grabs chosenStyles out of config map
     run(testName, Args(reporter, stopper, filter, configMap, distributor, tracker, Set.empty))
   } 
 }

@@ -119,7 +119,7 @@ final class ConfigMapWrapperSuite(clazz: Class[_ <: Suite]) extends Suite {
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
    *     exists in the <code>Suite</code>
    */
-  override def run(testName: Option[String], args: Args) {
+  override def run(testName: Option[String], args: Args): Status = {
     val constructor = clazz.getConstructor(classOf[Map[_, _]])
     val suite = constructor.newInstance(args.configMap)
     suite.run(testName, args)

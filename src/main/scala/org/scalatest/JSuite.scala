@@ -29,7 +29,7 @@ private[scalatest] trait JSuite { thisSuite =>
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
-  def runJSuite(testName: Option[String], args: Args) // Will be testName: nullable String, args: JArgs
+  def runJSuite(testName: Option[String], args: Args): Status // Will be testName: nullable String, args: JArgs
 
   /**
   * A <code>Set</code> of test names. If this <code>Suite</code> contains no tests, this method returns an empty <code>Set</code>.

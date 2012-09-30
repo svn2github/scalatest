@@ -50,7 +50,9 @@ package org.scalatest.testng {
         }
       )
       
-      (new TestNGWrapperSuite(List(xmlSuiteFile))).runTestNG(reporter, new Tracker)
+      val status = new ScalaTestStatefulStatus
+      (new TestNGWrapperSuite(List(xmlSuiteFile))).runTestNG(reporter, new Tracker, status)
+      status.completes()
 
       context.assertIsSatisfied()
     }
@@ -78,7 +80,9 @@ package org.scalatest.testng {
         }
       )
       
-      (new TestNGWrapperSuite(List(xmlSuiteFile))).runTestNG(reporter, new Tracker)
+      val status = new ScalaTestStatefulStatus()
+      (new TestNGWrapperSuite(List(xmlSuiteFile))).runTestNG(reporter, new Tracker, status)
+      status.completes()
 
       context.assertIsSatisfied()
     }

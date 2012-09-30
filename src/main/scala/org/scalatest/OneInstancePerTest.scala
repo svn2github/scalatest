@@ -117,7 +117,7 @@ trait OneInstancePerTest extends SuiteMixin {
    * @param testName the name of one test to execute.
    * @param args the <code>Args</code> for this run
    */
-  protected abstract override def runTest(testName: String, args: Args) {
+  protected abstract override def runTest(testName: String, args: Args): Status = {
 
     if (args.runTestInNewInstance) {
       // In initial instance, so create a new test-specific instance for this test and invoke run on it.
@@ -165,7 +165,7 @@ trait OneInstancePerTest extends SuiteMixin {
    *     exists in this <code>Suite</code>, or if <code>runTestInNewInstance</code> is <code>true</code>, but <code>testName</code>
    *     is empty.
    */
-  protected abstract override def runTests(testName: Option[String], args: Args) {
+  protected abstract override def runTests(testName: Option[String], args: Args): Status = {
 
     if (args.runTestInNewInstance) {
       if (testName.isEmpty)

@@ -45,7 +45,7 @@ trait JettySpec extends FunSpec {
   
   lazy val host = serverThread.getHost
 
-  override def run(testName: Option[String], args: Args) {
+  override def run(testName: Option[String], args: Args): Status = {
     serverThread.start()
     while (!serverThread.isStarted)
       Thread.sleep(10)

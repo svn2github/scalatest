@@ -601,7 +601,7 @@ trait FreeSpec extends Suite { thisSuite =>
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
    */
-  protected override def runTest(testName: String, args: Args) {
+  protected override def runTest(testName: String, args: Args): Status = {
 
     def invokeWithFixture(theTest: TestLeaf) {
       theTest.testFun match {
@@ -669,7 +669,7 @@ trait FreeSpec extends Suite { thisSuite =>
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>tagsToInclude</code>,
    *     <code>tagsToExclude</code>, or <code>configMap</code> is <code>null</code>.
    */
-  protected override def runTests(testName: Option[String], args: Args) {
+  protected override def runTests(testName: Option[String], args: Args): Status = {
     runTestsImpl(thisSuite, testName, args, info, true, runTest)
   }
 
@@ -689,7 +689,7 @@ trait FreeSpec extends Suite { thisSuite =>
     ListSet(atomic.get.testNamesList.toArray: _*)
   }
 
-  override def run(testName: Option[String], args: Args) {
+  override def run(testName: Option[String], args: Args): Status = {
     runImpl(thisSuite, testName, args, super.run)
   }
 

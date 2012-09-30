@@ -1609,7 +1609,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     it("suite durations are included in SuiteAborted events fired from Spec") {
 
       class SuiteThatAborts extends Suite {
-        override def run(testName: Option[String], args: Args) {
+        override def run(testName: Option[String], args: Args): Status = {
           throw new RuntimeException("Aborting for testing purposes")
         }
       }
@@ -1641,50 +1641,51 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       it("should stop nested suites from being executed") {
         class SpecA extends Spec {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecB extends Spec {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecC extends Spec {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecD extends Spec {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
-            super.run(testName, args)
+            val status = super.run(testName, args)
             args.stopper.requestStop()
+            status
           }
         }
         class SpecE extends Spec {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecF extends Spec {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecG extends Spec {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
@@ -1942,7 +1943,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
   }
   
   class SpecThatAborts extends Spec {
-    override def run(testName: Option[String], args: Args) {
+    override def run(testName: Option[String], args: Args): Status = {
       throw new RuntimeException("Aborting for testing purposes")
     }
   }
@@ -2232,15 +2233,16 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     
       class MasterSpec extends Spec {
         override def nestedSuites = Vector(new NoTagSpec(), new IgnoreSpec(), new SlowAsMolassesSpec(), new FastAsLightSpec())
-        override def runNestedSuites(args: Args) {
+        override def runNestedSuites(args: Args): Status = {
           super.runNestedSuites(args)
         }
       }
     
       class CounterDistributor extends Distributor {
         var count = 0
-        def apply(suite: Suite, args: Args) {
+        def apply(suite: Suite, args: Args): Status = {
           count += 1
+          new SucceededStatus
         }
         def apply(suite: Suite, tracker: Tracker) {
           count += 1
@@ -2309,7 +2311,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     
       class MasterSpec extends Spec {
         override def nestedSuites = Vector(new NoTagSpec(), new IgnoreSpec(), new SlowAsMolassesSpec(), new FastAsLightSpec())
-        override def runNestedSuites(args: Args) {
+        override def runNestedSuites(args: Args): Status = {
           super.runNestedSuites(args)
         }
       }

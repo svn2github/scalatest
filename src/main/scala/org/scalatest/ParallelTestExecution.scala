@@ -76,7 +76,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
    */
-  protected abstract override def runTests(testName: Option[String], args: Args) {
+  protected abstract override def runTests(testName: Option[String], args: Args): Status = {
     val newArgs =
       if (args.runTestInNewInstance)
         args // This is the test-specific instance
@@ -144,7 +144,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    * @param testName the name of one test to execute.
    * @param args the <code>Args</code> for this run
    */
-  final protected abstract override def runTest(testName: String, args: Args) {
+  final protected abstract override def runTest(testName: String, args: Args): Status = {
 
     args.distributor match {
       case Some(distribute) =>
@@ -250,7 +250,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    *                 I.e., <code>None</code> acts like a wildcard that means execute all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
    */
-  abstract override def run(testName: Option[String], args: Args) {
+  abstract override def run(testName: Option[String], args: Args): Status = {
     (testName, args.distributedTestSorter) match {
       case (Some(name), Some(sorter)) =>
         class TestSpecificReporter(testSorter: DistributedTestSorter, testName: String) extends Reporter {

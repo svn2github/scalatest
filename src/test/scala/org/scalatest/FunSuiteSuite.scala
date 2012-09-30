@@ -332,7 +332,7 @@ class FunSuiteSuite extends Suite with SharedHelpers {
   def testThatSuiteDurationsAreIncludedInSuiteAbortedEventsFiredFromFunSuite() {
 
     class SuiteThatAborts extends Suite {
-      override def run(testName: Option[String], args: Args) {
+      override def run(testName: Option[String], args: Args): Status = {
         throw new RuntimeException("Aborting for testing purposes")
       }
     }

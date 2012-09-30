@@ -119,7 +119,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
    *
    * @throws UnsupportedOperationException always.
    */
-  override final protected def runNestedSuites(args: Args) {
+  override final protected def runNestedSuites(args: Args): Status = {
 
     throw new UnsupportedOperationException
   }
@@ -142,7 +142,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
    *
    * @throws UnsupportedOperationException always.
    */
-  override protected final def runTests(testName: Option[String], args: Args) {
+  override protected final def runTests(testName: Option[String], args: Args): Status = {
     throw new UnsupportedOperationException
   }
 
@@ -163,7 +163,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
    *
    * @throws UnsupportedOperationException always.
    */
-  override protected final def runTest(testName: String, args: Args) {
+  override protected final def runTest(testName: String, args: Args): Status = {
     throw new UnsupportedOperationException
   }
 
@@ -257,15 +257,16 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
     }
   }
 
-  override def run(testName: Option[String], args: Args) {
+  override def run(testName: Option[String], args: Args): Status = {
 
     import args._
 
     theTracker = tracker
+    val status = new ScalaTestStatefulStatus
 
     if (!filter.tagsToInclude.isDefined) {
       val jUnitCore = new JUnitCore
-      jUnitCore.addListener(new MyRunListener(wrapReporterIfNecessary(reporter), configMap, tracker))
+      jUnitCore.addListener(new MyRunListener(wrapReporterIfNecessary(reporter), configMap, tracker, status))
       val myClass = this.getClass
       testName match {
         case None => jUnitCore.run(myClass)
@@ -275,6 +276,9 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
           jUnitCore.run(Request.method(myClass, tn))
       }
     }
+    
+    status.completes()
+    status
   }
   
   /**

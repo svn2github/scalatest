@@ -182,7 +182,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
     TreeSet[String]() ++ testNameArray
   }
 
-  protected override def runTest(testName: String, args: Args) {
+  protected override def runTest(testName: String, args: Args): Status = {
 
     if (testName == null)
       throw new NullPointerException("testName was null")
@@ -249,6 +249,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
 
       val duration = System.currentTimeMillis - testStartTime
       reportTestSucceeded(thisSuite, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, thisSuite.rerunner, Some(getTopOfMethod(method)))
+      new SucceededStatus
     }
     catch { 
       case ite: InvocationTargetException =>
@@ -258,20 +259,24 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
             val duration = System.currentTimeMillis - testStartTime
             // testWasPending = true so info's printed out in the finally clause show up yellow
             reportTestPending(thisSuite, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(method)))
+            new SucceededStatus
           case e: TestCanceledException =>
             val duration = System.currentTimeMillis - testStartTime
             val message = getMessageForException(e)
             val formatter = getEscapedIndentedTextForTest(testName, 1, true)
             // testWasCanceled = true so info's printed out in the finally clause show up yellow
             report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), testName, testName, messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), thisSuite.rerunner))
+            new SucceededStatus
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
             handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
+            new FailedStatus
           case e => throw e
         }
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
+        new FailedStatus
       case e: Throwable => throw e
     }
   }

@@ -102,8 +102,10 @@ package org.scalatest.testng {
       val testReporter = new TestReporter
 
       val filter = Filter(if (groupsToInclude.isEmpty) None else Some(groupsToInclude), groupsToExclude)
+      val status = new ScalaTestStatefulStatus
       // when
-      new TestNGSuiteWithGroups().runTestNG(None, testReporter, filter, new Tracker)
+      new TestNGSuiteWithGroups().runTestNG(None, testReporter, filter, new Tracker, status)
+      status.completes()
 
       // then
       assert(testReporter.successCount === successCount)

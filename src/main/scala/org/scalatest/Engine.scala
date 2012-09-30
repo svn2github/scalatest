@@ -29,6 +29,7 @@ import org.scalatest.PathEngine.isInTargetPath
 import org.scalatest.Suite.checkChosenStyles
 import org.scalatest.events.Event
 import org.scalatest.events.Location
+import collection.mutable.ListBuffer
 
 // T will be () => Unit for FunSuite and FixtureParam => Any for fixture.FunSuite
 private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResourceName: String, simpleClassName: String)  {
@@ -188,13 +189,13 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     args: Args,
     includeIcon: Boolean,
     invokeWithFixture: TestLeaf => Unit
-  ) {
+  ): Status = {
 
     if (testName == null)
       throw new NullPointerException("testName was null")
     if (args == null)
       throw new NullPointerException("args was null")
-
+    
     import args._
 
     val (stopRequested, report, testStartTime) =
@@ -240,6 +241,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                           else
                             Vector.empty)
       reportTestSucceeded(theSuite, report, tracker, testName, theTest.testText, recordEvents, durationToReport, formatter, theSuite.rerunner, theTest.location)
+      new SucceededStatus
     }
     catch { // XXX
       case _: TestPendingException =>
@@ -251,6 +253,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                            else
                              Vector.empty)
         reportTestPending(theSuite, report, tracker, testName, theTest.testText, recordEvents, duration, formatter, theTest.location)
+        new SucceededStatus
       case e: TestCanceledException =>
         val duration = System.currentTimeMillis - testStartTime
         // testWasCanceled = true so info's printed out in the finally clause show up yellow
@@ -260,6 +263,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                            else
                              Vector.empty)
         reportTestCanceled(theSuite, report, e, testName, theTest.testText, recordEvents, theSuite.rerunner, tracker, duration, getIndentedTextForTest(theTest.testText, theTest.indentationLevel, includeIcon), theTest.location)
+        new SucceededStatus
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         val durationToReport = theTest.recordedDuration.getOrElse(duration)
@@ -269,6 +273,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                            else
                              Vector.empty)
         reportTestFailed(theSuite, report, e, testName, theTest.testText, recordEvents, theSuite.rerunner, tracker, durationToReport, getIndentedTextForTest(theTest.testText, theTest.indentationLevel, includeIcon),  Some(SeeStackDepthException))
+        new FailedStatus()
       case e: Throwable => throw e
     }
     finally {
@@ -287,10 +292,12 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     branch: Branch,
     args: Args,
     includeIcon: Boolean,
-    runTest: (String, Args) => Unit
-  ) {
+    runTest: (String, Args) => Status
+  ): Status = {
 
     val stopRequested = args.stopper
+    
+    val statusList = new ListBuffer[Status]()
 
     branch match {
 
@@ -320,7 +327,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                   reportTestIgnored(theSuite, args.reporter, args.tracker, testName, testTextWithOptionalPrefix, getIndentedTextForTest(testText, testLeaf.indentationLevel, true), theTest.location)
                 }
                 else
-                  runTest(testName, args)
+                  statusList += runTest(testName, args)
 
             case infoLeaf @ InfoLeaf(_, message, payload, location) =>
               reportInfoProvided(theSuite, args.reporter, args.tracker, None, message, payload, infoLeaf.indentationLevel, location, true, includeIcon)
@@ -328,11 +335,12 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
             case markupLeaf @ MarkupLeaf(_, message, location) =>
               reportMarkupProvided(theSuite, args.reporter, args.tracker, None, message, markupLeaf.indentationLevel, location, true, includeIcon)
 
-            case branch: Branch => runTestsInBranch(theSuite, branch, args, includeIcon, runTest)
+            case branch: Branch => statusList += runTestsInBranch(theSuite, branch, args, includeIcon, runTest)
           }
         }
       }
     }
+    new CompositeStatus(statusList.toIndexedSeq)
   }
 
   def prependChildPrefix(branch: Branch, testText: String): String =
@@ -347,8 +355,8 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     args: Args,
     info: Informer,
     includeIcon: Boolean,
-    runTest: (String, Args) => Unit
-  ) {
+    runTest: (String, Args) => Status
+  ): Status = {
     if (testName == null)
       throw new NullPointerException("testName was null")
     if (args == null)
@@ -366,6 +374,8 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     // into error messages on the standard error stream.
     val report = theSuite.wrapReporterIfNecessary(reporter)
     val newArgs = if (report eq reporter) args else args.copy(reporter = report)
+    
+    val statusBuffer = new ListBuffer[Status]()
 
     // If a testName is passed to run, just run that, else run the tests returned
     // by testNames.
@@ -378,19 +388,20 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
             reportTestIgnored(theSuite, report, tracker, tn, tn, getIndentedTextForTest(tn, 1, true), theTest.location)
           }
           else {
-            runTest(tn, newArgs)
+            statusBuffer += runTest(tn, newArgs)
           }
         }
-      case None => runTestsInBranch(theSuite, Trunk, newArgs, includeIcon, runTest)
+      case None => statusBuffer += runTestsInBranch(theSuite, Trunk, newArgs, includeIcon, runTest)
     }
+    new CompositeStatus(statusBuffer.toIndexedSeq)
   }
 
   def runImpl(
     theSuite: Suite,
     testName: Option[String],
     args: Args,
-    superRun: (Option[String], Args) => Unit
-  ) {
+    superRun: (Option[String], Args) => Status
+  ): Status = {
     import args._
 
     val stopRequested = stopper
@@ -415,7 +426,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     atomicInformer.set(informerForThisSuite)
 
     var swapAndCompareSucceeded = false
-    try {
+    val status = try {
       superRun(testName, args.copy(reporter = report))
     }
     finally {
@@ -424,6 +435,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     }
     if (!swapAndCompareSucceeded)  // Do outside finally to workaround Scala compiler bug
       throw new ConcurrentModificationException(Resources("concurrentInformerMod", theSuite.getClass.getName))
+    status
   }
   /*
   def describeImpl(description: String, fun: => Unit, registrationClosedResource: String, sourceFile: String, methodName: String) {
@@ -883,8 +895,8 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
     args: Args,
     info: Informer,
     includeIcon: Boolean,
-    runTest: (String, Args) => Unit
-  ) {
+    runTest: (String, Args) => Status
+  ): Status = {
     import args._
 
      // All but one line of code copied from runImpl. Factor out duplication later...
@@ -910,7 +922,7 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
     atomicInformer.set(informerForThisSuite)
 
     var swapAndCompareSucceeded = false
-    try {
+    val status = try {
      runTestsImpl(theSuite, testName, newArgs, info, true, runTest)
     }
     finally {
@@ -919,6 +931,7 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
     }
     if (!swapAndCompareSucceeded)  // Do outside finally to workaround Scala compiler bug
       throw new ConcurrentModificationException(Resources("concurrentInformerMod", theSuite.getClass.getName))
+    status
   }
    
   def handleIgnoredTest(testText: String, f: () => Unit, testRegistrationClosedResourceName: String, sourceFileName: String, methodName: String, stackDepth: Int, adjustment: Int, location: Option[Location], testTags: Tag*) {

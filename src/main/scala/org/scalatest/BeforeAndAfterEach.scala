@@ -259,7 +259,7 @@ trait BeforeAndAfterEach extends SuiteMixin {
    * exception, this method will complete abruptly with the exception thrown by <code>afterEach</code>.
    * </p>
   */
-  abstract protected override def runTest(testName: String, args: Args) {
+  abstract protected override def runTest(testName: String, args: Args): Status = {
 
     var thrownException: Option[Throwable] = None
 
@@ -268,7 +268,9 @@ trait BeforeAndAfterEach extends SuiteMixin {
       super.runTest(testName, args)
     }
     catch {
-      case e: Exception => thrownException = Some(e)
+      case e: Exception => 
+        thrownException = Some(e)
+        new FailedStatus
     }
     finally {
       try {

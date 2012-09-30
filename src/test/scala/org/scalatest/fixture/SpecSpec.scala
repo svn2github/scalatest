@@ -23,7 +23,7 @@ import org.scalatest.Suite._
 import org.scalatest.{ PrivateMethodTester, SharedHelpers, ShouldMatchers, BeforeAndAfterEach, BeforeAndAfterAll, 
                         Filter, Args, Stopper, Tracker, Ignore, SlowAsMolasses, FastAsLight, WeakAsAKitten, Specs, 
                         Reporter, Distributor, OptionValues, NotAllowedException, Resources, DoNotDiscover, WrapWith, 
-                        ConfigMapWrapperSuite, StringFixture }
+                        ConfigMapWrapperSuite, StringFixture, Status, SucceededStatus }
 
 class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with SharedHelpers {
 
@@ -1629,7 +1629,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     it("suite durations are included in SuiteAborted events fired from Spec") {
 
       class SuiteThatAborts extends Suite with StringFixture {
-        override def run(testName: Option[String], args: Args) {
+        override def run(testName: Option[String], args: Args): Status = {
           throw new RuntimeException("Aborting for testing purposes")
         }
       }
@@ -1661,50 +1661,51 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       it("should stop nested suites from being executed") {
         class SpecA extends Spec with StringFixture {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecB extends Spec with StringFixture {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecC extends Spec with StringFixture {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecD extends Spec with StringFixture {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
-            super.run(testName, args)
+            val status = super.run(testName, args)
             args.stopper.requestStop()
+            status
           }
         }
         class SpecE extends Spec with StringFixture {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecF extends Spec with StringFixture {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
         }
         class SpecG extends Spec with StringFixture {
           var executed = false;
-          override def run(testName: Option[String], args: Args) {
+          override def run(testName: Option[String], args: Args): Status = {
             executed = true
             super.run(testName, args)
           }
@@ -1963,7 +1964,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
   }
   
   class SpecThatAborts extends Spec with StringFixture {
-    override def run(testName: Option[String], args: Args) {
+    override def run(testName: Option[String], args: Args): Status = {
       throw new RuntimeException("Aborting for testing purposes")
     }
   }
@@ -2253,15 +2254,16 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     
       class MasterSpec extends Spec with StringFixture {
         override def nestedSuites = Vector(new NoTagSpec(), new IgnoreSpec(), new SlowAsMolassesSpec(), new FastAsLightSpec())
-        override def runNestedSuites(args: Args) {
+        override def runNestedSuites(args: Args): Status = {
           super.runNestedSuites(args)
         }
       }
     
       class CounterDistributor extends Distributor {
         var count = 0
-        def apply(suite: org.scalatest.Suite, args: Args) {
+        def apply(suite: org.scalatest.Suite, args: Args): Status = {
           count += 1
+          new SucceededStatus
         }
         def apply(suite: org.scalatest.Suite, tracker: Tracker) {
           count += 1
@@ -2330,7 +2332,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     
       class MasterSpec extends Spec with StringFixture {
         override def nestedSuites = Vector(new NoTagSpec(), new IgnoreSpec(), new SlowAsMolassesSpec(), new FastAsLightSpec())
-        override def runNestedSuites(args: Args) {
+        override def runNestedSuites(args: Args): Status = {
           super.runNestedSuites(args)
         }
       }
