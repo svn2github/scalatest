@@ -277,7 +277,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
       }
     }
     
-    status.completes()
+    status.setCompleted()
     status
   }
   

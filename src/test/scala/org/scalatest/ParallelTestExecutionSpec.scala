@@ -44,18 +44,18 @@ class ParallelTestExecutionSpec extends FunSpec with ShouldMatchers with EventHe
         for ((suite, args, status) <- buf) {
           val runStatus = suite.run(None, args)
           if (!runStatus.succeeds())
-            status.fails()
+            status.setFailed()
           
-          status.completes()
+          status.setCompleted()
         }
       }
       def executeInReverseOrder() {
         for ((suite, args, status) <- buf.reverse) {
           val runStatus = suite.run(None, args)
           if (!runStatus.succeeds())
-            status.fails()
+            status.setFailed()
             
-          status.completes()
+          status.setCompleted()
         }
       }
 

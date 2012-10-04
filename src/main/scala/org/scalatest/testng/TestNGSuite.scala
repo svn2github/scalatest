@@ -92,7 +92,7 @@ trait TestNGSuite extends Suite { thisSuite =>
     val status = new ScalaTestStatefulStatus
     runTestNG(testName, wrapReporterIfNecessary(reporter), filter, tracker, status)
     
-    status.completes()
+    status.setCompleted()
     status
   }
 
@@ -289,7 +289,7 @@ trait TestNGSuite extends Suite { thisSuite =>
           None
       }
       report(TestFailed(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.getClass.getName, Some(thisSuite.getClass.getName), testName, testName, Vector.empty, throwable, None, Some(formatter), Some(SeeStackDepthException), Some(className), payload)) // Can I add a duration?
-      status.fails()
+      status.setFailed()
     }
 
     /**
@@ -304,7 +304,7 @@ trait TestNGSuite extends Suite { thisSuite =>
       val message = if (throwableOrNull != null && throwableOrNull.getMessage != null) throwableOrNull.getMessage else Resources("testNGConfigFailed")
       val formatter = formatterForSuiteAborted(thisSuite, message)
       report(SuiteAborted(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.getClass.getName, Some(thisSuite.getClass.getName), throwable, None, formatter, Some(SeeStackDepthException)))
-      status.fails()
+      status.setFailed()
     }
 
     /**

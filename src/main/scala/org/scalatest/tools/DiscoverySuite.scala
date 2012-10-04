@@ -64,7 +64,7 @@ private[scalatest] class DiscoverySuite(path: String, accessibleSuites: Set[Stri
       throw new NullPointerException("testName was null")
     if (args == null)
       throw new NullPointerException("args was null")
-    new SucceededStatus
+    SucceededStatus
   }
 }
 

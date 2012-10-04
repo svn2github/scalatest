@@ -1202,7 +1202,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       )
       val duration = System.currentTimeMillis - testStartTime
       reportTestSucceeded(this, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, rerunner, Some(getTopOfMethod(method)))
-      new SucceededStatus
+      SucceededStatus
     }
     catch { 
       case ite: InvocationTargetException =>
@@ -1212,7 +1212,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
             val duration = System.currentTimeMillis - testStartTime
             // testWasPending = true so info's printed out in the finally clause show up yellow
             reportTestPending(this, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(method)))
-            new SucceededStatus
+            SucceededStatus
           case e: TestCanceledException =>
             val duration = System.currentTimeMillis - testStartTime
             val message = getMessageForException(e)
@@ -1220,17 +1220,17 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
             // testWasCanceled = true so info's printed out in the finally clause show up yellow
             report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), 
                                 testName, testName, messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(TopOfMethod(thisSuite.getClass.getName, method.toGenericString())), rerunner))
-            new SucceededStatus                 
+            SucceededStatus                 
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
             handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
-            new FailedStatus
+            FailedStatus
           case e => throw e
         }
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
-        new FailedStatus
+        FailedStatus
       case e: Throwable => throw e  
     }
   }
@@ -1507,7 +1507,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
           val duration = System.currentTimeMillis - suiteStartTime
           report(SuiteCompleted(tracker.nextOrdinal(), nestedSuite.suiteName, nestedSuite.suiteId, Some(nestedSuite.getClass.getName), Some(duration), formatter, Some(TopOfClass(nestedSuite.getClass.getName)), nestedSuite.rerunner))
-          new SucceededStatus
+          SucceededStatus
         }
         catch {       
           case e: RuntimeException => {
@@ -1521,12 +1521,12 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
             val duration = System.currentTimeMillis - suiteStartTime
             report(SuiteAborted(tracker.nextOrdinal(), rawString, nestedSuite.suiteName, nestedSuite.suiteId, Some(nestedSuite.getClass.getName), Some(e), Some(duration), formatter, Some(SeeStackDepthException), nestedSuite.rerunner))
-            new FailedStatus
+            FailedStatus
           }
         }
       }
       else
-        new FailedStatus
+        FailedStatus
     }
     
     val statusBuffer = new ListBuffer[Status]()

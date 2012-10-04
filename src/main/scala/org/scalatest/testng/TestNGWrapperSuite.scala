@@ -72,7 +72,7 @@ class TestNGWrapperSuite(xmlSuiteFilenames: List[String]) extends TestNGSuite {
     val status = new ScalaTestStatefulStatus
     runTestNG(reporter, tagsToInclude, tagsToExclude, tracker, status)
 
-    status.completes()
+    status.setCompleted()
     status
   }
 

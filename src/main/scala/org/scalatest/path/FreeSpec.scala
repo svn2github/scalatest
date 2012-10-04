@@ -1214,7 +1214,7 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    * <a href="#sharedFixtures">Shared fixtures</a> section in the main documentation for this trait.
    * </p>
    */
-  final protected override def runNestedSuites(args: Args): Status = new SucceededStatus
+  final protected override def runNestedSuites(args: Args): Status = SucceededStatus
 
   /**
    * Returns an empty list.

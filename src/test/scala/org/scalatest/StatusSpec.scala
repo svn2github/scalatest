@@ -3,10 +3,10 @@ package org.scalatest
 class StatusSpec extends fixture.Spec {
   
   protected type FixtureParam = { 
-    def completes()
+    def setCompleted()
     def isCompleted: Boolean
     def succeeds(): Boolean
-    def fails()
+    def setFailed()
     def waitUntilCompleted()
   }
   
@@ -23,23 +23,23 @@ class StatusSpec extends fixture.Spec {
     }
     
     def `should return true for isCompleted after completes() is called`(status: FixtureParam) {
-      status.completes()
+      status.setCompleted()
       assert(status.isCompleted)
     }
     
     def `should return true for succeeds() after completes() is called without fails()`(status: FixtureParam) {
-      status.completes()
+      status.setCompleted()
       assert(status.succeeds)
     }
     
     def `should return false for succeeds() after completes is called after fails()`(status: FixtureParam) {
-      status.fails()
-      status.completes()
+      status.setFailed()
+      status.setCompleted()
       assert(!status.succeeds)
     }
     
     def `waitUntilCompleted should not block after completes() is called`(status: FixtureParam) {
-      status.completes()
+      status.setCompleted()
       status.waitUntilCompleted()
     }
   }

@@ -599,7 +599,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
       var count = 0
       def apply(suite: Suite, args: Args): Status = {
         count += 1
-        new SucceededStatus
+        SucceededStatus
       }
       def apply(suite: Suite, tracker: Tracker) {
         count += 1

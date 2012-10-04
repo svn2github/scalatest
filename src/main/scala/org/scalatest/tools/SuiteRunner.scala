@@ -62,7 +62,7 @@ private[scalatest] class SuiteRunner(suite: Suite, args: Args, status: ScalaTest
           dispatch(SuiteCompleted(tracker.nextOrdinal(), suite.suiteName, suite.suiteId, Some(suite.getClass.getName), Some(duration), formatter, Some(TopOfClass(suite.getClass.getName)), suite.rerunner))
           
         if (!runStatus.succeeds())
-          status.fails()
+          status.setFailed()
       }
       catch {
         case e: NotAllowedException =>
@@ -70,7 +70,7 @@ private[scalatest] class SuiteRunner(suite: Suite, args: Args, status: ScalaTest
           val duration = System.currentTimeMillis - suiteStartTime
           // dispatch(SuiteAborted(tracker.nextOrdinal(), e.getMessage, suite.suiteName, Some(suite.getClass.getName), None, None, formatter, rerunnable))
           dispatch(SuiteAborted(tracker.nextOrdinal(), e.getMessage, suite.suiteName, suite.suiteId, Some(suite.getClass.getName), Some(e), Some(duration), formatter, Some(SeeStackDepthException), suite.rerunner))
-          status.fails()
+          status.setFailed()
         case e: RuntimeException => { // Do fire SuiteAborted even if a DistributedTestRunnerSuite 
           val eMessage = e.getMessage
           val rawString3 = 
@@ -82,11 +82,11 @@ private[scalatest] class SuiteRunner(suite: Suite, args: Args, status: ScalaTest
 
           val duration = System.currentTimeMillis - suiteStartTime
           dispatch(SuiteAborted(tracker.nextOrdinal(), rawString3, suite.suiteName, suite.suiteId, Some(suite.getClass.getName), Some(e), Some(duration), formatter3, Some(SeeStackDepthException), suite.rerunner))
-          status.fails()
+          status.setFailed()
         }
       }
       finally {
-        status.completes()
+        status.setCompleted()
       }
     }
   }

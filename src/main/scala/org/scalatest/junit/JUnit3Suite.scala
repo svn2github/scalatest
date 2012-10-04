@@ -309,7 +309,7 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
       }
     }
     
-    status.completes()
+    status.setCompleted()
     status
   }
   
@@ -407,7 +407,7 @@ private[scalatest] class MyTestListener(report: Reporter, tracker: Tracker, stat
     }
     else {
       failedTestsSet -= testCase  
-      status.fails()
+      status.setFailed()
     }
   }
 

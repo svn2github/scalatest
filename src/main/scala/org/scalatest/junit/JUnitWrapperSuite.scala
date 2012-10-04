@@ -64,7 +64,7 @@ class JUnitWrapperSuite(junitClassName: String, loader: ClassLoader) extends Sui
 
     jUnitCore.run(junitClass)
     
-    status.completes()
+    status.setCompleted()
     status
   }
 

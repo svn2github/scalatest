@@ -2263,7 +2263,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         var count = 0
         def apply(suite: org.scalatest.Suite, args: Args): Status = {
           count += 1
-          new SucceededStatus
+          SucceededStatus
         }
         def apply(suite: org.scalatest.Suite, tracker: Tracker) {
           count += 1

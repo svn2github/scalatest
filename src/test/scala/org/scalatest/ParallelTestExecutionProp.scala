@@ -37,16 +37,16 @@ class ParallelTestExecutionProp extends FunSuite
       for ((suite, args, status) <- buf) {
         val runStatus = suite.run(None, args)
         if (!runStatus.succeeds())
-          status.fails()
-        status.completes()
+          status.setFailed()
+        status.setCompleted()
       }
     }
     def executeInReverseOrder() {
       for ((suite, args, status) <- buf.reverse) {
         val runStatus = suite.run(None, args)
         if (!runStatus.succeeds())
-          status.fails()
-        status.completes()
+          status.setFailed()
+        status.setCompleted()
       }
     }
 

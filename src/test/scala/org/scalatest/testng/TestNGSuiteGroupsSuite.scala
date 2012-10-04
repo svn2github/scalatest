@@ -105,7 +105,7 @@ package org.scalatest.testng {
       val status = new ScalaTestStatefulStatus
       // when
       new TestNGSuiteWithGroups().runTestNG(None, testReporter, filter, new Tracker, status)
-      status.completes()
+      status.setCompleted()
 
       // then
       assert(testReporter.successCount === successCount)

@@ -41,7 +41,7 @@ class ArgsSpec extends WordSpec with TableDrivenPropertyChecks with ShouldMatche
         var newRunGotCalled = false
         override def run(testName: Option[String], args: Args): Status = {
           newRunGotCalled = true
-          new SucceededStatus
+          SucceededStatus
         }
       }
       val s = new MySuite

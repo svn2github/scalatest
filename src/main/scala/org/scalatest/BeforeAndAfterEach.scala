@@ -270,7 +270,7 @@ trait BeforeAndAfterEach extends SuiteMixin {
     catch {
       case e: Exception => 
         thrownException = Some(e)
-        new FailedStatus
+        FailedStatus
     }
     finally {
       try {

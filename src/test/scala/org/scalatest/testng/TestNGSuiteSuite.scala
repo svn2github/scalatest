@@ -39,7 +39,7 @@ package org.scalatest.testng {
       whenExecuting {
         val status = new ScalaTestStatefulStatus
         (new SuccessTestNGSuite()).runTestNG(reporter, new Tracker, status)
-        status.completes()
+        status.setCompleted()
       }
     }
 
@@ -54,7 +54,7 @@ package org.scalatest.testng {
       whenExecuting {
         val status = new ScalaTestStatefulStatus
         (new FailureTestNGSuite()).runTestNG(reporter, new Tracker, status)
-        status.completes
+        status.setCompleted()
       }
     }
 
@@ -65,7 +65,7 @@ package org.scalatest.testng {
       // when
       val status = new ScalaTestStatefulStatus
       (new FailureTestNGSuite()).runTestNG(testReporter, new Tracker, status)
-      status.completes
+      status.setCompleted
 
       // then
       testReporter.lastEvent match {
@@ -88,7 +88,7 @@ package org.scalatest.testng {
       whenExecuting {
         val status = new ScalaTestStatefulStatus
         (new TestNGSuiteWithInvocationCount()).runTestNG(reporter, new Tracker, status)
-        status.completes()
+        status.setCompleted()
       }
     }
 
@@ -109,7 +109,7 @@ package org.scalatest.testng {
       whenExecuting {
         val status = new ScalaTestStatefulStatus
         (new SuiteWithSkippedTest()).runTestNG(reporter, new Tracker, status)
-        status.completes()
+        status.setCompleted()
       }
     }
     
@@ -124,7 +124,7 @@ package org.scalatest.testng {
       whenExecuting {
         val status = new ScalaTestStatefulStatus
         (new SuiteWithTwoTests()).runTestNG("testThatPasses", reporter, new Tracker, status)
-        status.completes()
+        status.setCompleted()
       }
     }
 
@@ -135,7 +135,7 @@ package org.scalatest.testng {
       // when - run the failing suite
       val status = new ScalaTestStatefulStatus
       new FailureTestNGSuite().runTestNG(testReporter, new Tracker, status)
-      status.completes()
+      status.setCompleted()
 
       // then get rerunnable from the event 
       testReporter.lastEvent match {
@@ -152,7 +152,7 @@ package org.scalatest.testng {
       // when - run the passing suite
       val status = new ScalaTestStatefulStatus
       new SuccessTestNGSuite().runTestNG(testReporter, new Tracker, status)
-      status.completes()
+      status.setCompleted()
 
       // then get rerunner from report 
       val rerunner = testReporter.lastEvent.get.asInstanceOf[TestSucceeded].rerunner

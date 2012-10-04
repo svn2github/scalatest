@@ -76,7 +76,7 @@ import exceptions._
         // TODO: can I add a duration?
       }
       else
-        status.fails()
+        status.setFailed()
     }
 
     override def testIgnored(description: Description) {

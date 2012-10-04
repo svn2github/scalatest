@@ -13,13 +13,13 @@ trait Status {
   def waitUntilCompleted()  // For some reason I feel like this should have parens
 }
 
-final class SucceededStatus extends Status {
+object SucceededStatus extends Status {
   def succeeds() = true
   def isCompleted = true
   def waitUntilCompleted() {} // returns immediately
 }
 
-final class FailedStatus extends Status {
+object FailedStatus extends Status {
   def succeeds() = false
   def isCompleted = true
   def waitUntilCompleted() {} // returns immediately
@@ -40,11 +40,11 @@ private[scalatest] final class ScalaTestStatefulStatus extends Status {
     latch.await()
   }
   
-  def fails() {
+  def setFailed() {
     succeed = false
   }
   
-  def completes() {
+  def setCompleted() {
     latch.countDown()
   }
 }
@@ -64,19 +64,20 @@ final class StatefulStatus extends Status {
     latch.await()
   }
   
-  def fails() {
+  def setFailed() {
     succeed = false
   }
   
-  def completes() {
+  def setCompleted() {
     latch.countDown()
   }
 }
 
-final class CompositeStatus(statusSeq: IndexedSeq[Status]) extends Status {
-  def succeeds() = statusSeq.forall(_.succeeds())
-  def isCompleted = statusSeq.forall(_.isCompleted)
+final class CompositeStatus(statusSeq: Seq[Status]) extends Status {
+  private val statuses = statusSeq.toIndexedSeq
+  def succeeds() = statuses.forall(_.succeeds())
+  def isCompleted = statuses.forall(_.isCompleted)
   def waitUntilCompleted() {
-    statusSeq.foreach(_.waitUntilCompleted())
+    statuses.foreach(_.waitUntilCompleted())
   }
 }

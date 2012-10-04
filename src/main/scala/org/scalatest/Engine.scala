@@ -241,7 +241,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                           else
                             Vector.empty)
       reportTestSucceeded(theSuite, report, tracker, testName, theTest.testText, recordEvents, durationToReport, formatter, theSuite.rerunner, theTest.location)
-      new SucceededStatus
+      SucceededStatus
     }
     catch { // XXX
       case _: TestPendingException =>
@@ -253,7 +253,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                            else
                              Vector.empty)
         reportTestPending(theSuite, report, tracker, testName, theTest.testText, recordEvents, duration, formatter, theTest.location)
-        new SucceededStatus
+        SucceededStatus
       case e: TestCanceledException =>
         val duration = System.currentTimeMillis - testStartTime
         // testWasCanceled = true so info's printed out in the finally clause show up yellow
@@ -263,7 +263,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                            else
                              Vector.empty)
         reportTestCanceled(theSuite, report, e, testName, theTest.testText, recordEvents, theSuite.rerunner, tracker, duration, formatter, theTest.location)
-        new SucceededStatus
+        SucceededStatus
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         val durationToReport = theTest.recordedDuration.getOrElse(duration)
@@ -273,7 +273,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                            else
                              Vector.empty)
         reportTestFailed(theSuite, report, e, testName, theTest.testText, recordEvents, theSuite.rerunner, tracker, durationToReport, formatter,  Some(SeeStackDepthException))
-        new FailedStatus()
+        FailedStatus
       case e: Throwable => throw e
     }
     finally {
