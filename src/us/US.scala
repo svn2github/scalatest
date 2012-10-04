@@ -192,7 +192,7 @@ trait StateSuite extends Suite {
         handleFailedTest(e, testName, args.reporter, args.tracker, duration, None)
         new org.scalatest.FailedStatus
       case Succeeded(duration) => 
-        reportTestSucceeded(this, args.reporter, args.tracker, testName, testName, getDecodedName(testName), duration, formatter, None, None)
+        reportTestSucceeded(this, args.reporter, args.tracker, testName, testName, duration, formatter, None, None)
         new org.scalatest.SucceededStatus
     }
   }

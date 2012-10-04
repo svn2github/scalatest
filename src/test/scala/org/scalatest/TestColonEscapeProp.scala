@@ -59,8 +59,8 @@ trait NonTestColonEscapeExamples extends Tables {
     (fixtureFreeSpec, Some("- test: A Succeeded Test"), Some("- test: A Failed Test"), Some("- test: An Ignored Test"), Some("- test: A Pending Test"), Some("- test: A Canceled Test")),
     (propSpec, Some("- test: A Succeeded Test"), Some("- test: A Failed Test"), Some("- test: An Ignored Test"), Some("- test: A Pending Test"), Some("- test: A Canceled Test")),
     (fixturePropSpec, Some("- test: A Succeeded Test"), Some("- test: A Failed Test"), Some("- test: An Ignored Test"), Some("- test: A Pending Test"), Some("- test: A Canceled Test")),
-    (wordSpec, Some("- should test: A Succeeded Test"), Some("- test: A Failed Test"), Some("- test: An Ignored Test"), Some("- should test: A Pending Test"), Some("- test: A Canceled Test")),
-    (fixtureWordSpec, Some("- should test: A Succeeded Test"), Some("- test: A Failed Test"), Some("- test: An Ignored Test"), Some("- should test: A Pending Test"), Some("- test: A Canceled Test")),
+    (wordSpec, Some("- should test: A Succeeded Test"), Some("- should test: A Failed Test"), Some("- should test: An Ignored Test"), Some("- should test: A Pending Test"), Some("- should test: A Canceled Test")),
+    (fixtureWordSpec, Some("- should test: A Succeeded Test"), Some("- should test: A Failed Test"), Some("- should test: An Ignored Test"), Some("- should test: A Pending Test"), Some("- should test: A Canceled Test")),
     (pathFreeSpec, Some("- test: A Succeeded Test"), Some("- test: A Failed Test"), Some("- test: An Ignored Test"), Some("- test: A Pending Test"), Some("- test: A Canceled Test")),
     (pathFunSpec, Some("- test: A Succeeded Test"), Some("- test: A Failed Test"), Some("- test: An Ignored Test"), Some("- test: A Pending Test"), Some("- test: A Canceled Test")),
     (junit3Suite, Some("- test: A Succeeded Test(org.scalatest.TestColonEscapeExampleJUnit3Suite)"), Some("- test: A Failed Test(org.scalatest.TestColonEscapeExampleJUnit3Suite)"), None, None, None),
@@ -192,7 +192,7 @@ class NonTestColonEscapeProp extends FunSuite with NonTestColonEscapeExamples wi
     }
   }
   
-  test("All others style trais besides Suite and fixture.Suite should not escape 'test:' prefix in its IndentedText's formattedText") {
+  test("All others style traits besides Suite and fixture.Suite should not escape 'test:' prefix in its IndentedText's formattedText") {
     forAll(examples) { (suite, succeeded, failed, ignored, pending, canceled) =>
       val reporter = new EventRecordingReporter
       suite.run(None, Args(reporter))

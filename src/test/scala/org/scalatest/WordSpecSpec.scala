@@ -866,6 +866,67 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       assert(ts.size === 1)
       assert(ts.head.testName === "A Stack should chill out")
     }
+    
+    it("should contains correct formatter for TestStarting, TestSucceeded, TestFailed, TestPending, TestCanceled and TestIgnored") {
+      class TestSpec extends WordSpec {
+        "a feature" should {
+          "succeeded here" in {}
+          "failed here" in { fail }
+          "pending here" in { pending }
+          "cancel here" in { cancel }
+          "ignore here" ignore {}
+        }
+      }
+      val rep = new EventRecordingReporter
+      val s = new TestSpec
+      s.run(None, Args(rep))
+      val testStartingList = rep.testStartingEventsReceived
+      assert(testStartingList.size === 4)
+      assert(testStartingList(0).formatter === Some(MotionToSuppress), "Expected testStartingList(0).formatter to be Some(MotionToSuppress), but got: " + testStartingList(0).formatter.getClass.getName)
+      assert(testStartingList(1).formatter === Some(MotionToSuppress), "Expected testStartingList(1).formatter to be Some(MotionToSuppress), but got: " + testStartingList(1).formatter.getClass.getName)
+      assert(testStartingList(2).formatter === Some(MotionToSuppress), "Expected testStartingList(2).formatter to be Some(MotionToSuppress), but got: " + testStartingList(2).formatter.getClass.getName)
+      assert(testStartingList(3).formatter === Some(MotionToSuppress), "Expected testStartingList(3).formatter to be Some(MotionToSuppress), but got: " + testStartingList(3).formatter.getClass.getName)
+      
+      val testSucceededList = rep.testSucceededEventsReceived
+      assert(testSucceededList.size === 1)
+      assert(testSucceededList(0).formatter.isDefined, "Expected testSucceededList(0).formatter to be defined, but it is not.")
+      assert(testSucceededList(0).formatter.get.isInstanceOf[IndentedText], "Expected testSucceededList(0).formatter to be Some(IndentedText), but got: " + testSucceededList(0).formatter)
+      val testSucceededFormatter = testSucceededList(0).formatter.get.asInstanceOf[IndentedText]
+      assert(testSucceededFormatter.formattedText === "- should succeeded here")
+      assert(testSucceededFormatter.rawText === "should succeeded here")
+      
+      val testFailedList = rep.testFailedEventsReceived
+      assert(testFailedList.size === 1)
+      assert(testFailedList(0).formatter.isDefined, "Expected testFailedList(0).formatter to be defined, but it is not.")
+      assert(testFailedList(0).formatter.get.isInstanceOf[IndentedText], "Expected testFailedList(0).formatter to be Some(IndentedText), but got: " + testSucceededList(0).formatter)
+      val testFailedFormatter = testFailedList(0).formatter.get.asInstanceOf[IndentedText]
+      assert(testFailedFormatter.formattedText === "- should failed here")
+      assert(testFailedFormatter.rawText === "should failed here")
+      
+      val testPendingList = rep.testPendingEventsReceived
+      assert(testPendingList.size === 1)
+      assert(testPendingList(0).formatter.isDefined, "Expected testPendingList(0).formatter to be defined, but it is not.")
+      assert(testPendingList(0).formatter.get.isInstanceOf[IndentedText], "Expected testPendingList(0).formatter to be Some(IndentedText), but got: " + testSucceededList(0).formatter)
+      val testPendingFormatter = testPendingList(0).formatter.get.asInstanceOf[IndentedText]
+      assert(testPendingFormatter.formattedText === "- should pending here")
+      assert(testPendingFormatter.rawText === "should pending here")
+      
+      val testCanceledList = rep.testCanceledEventsReceived
+      assert(testCanceledList.size === 1)
+      assert(testCanceledList(0).formatter.isDefined, "Expected testCanceledList(0).formatter to be defined, but it is not.")
+      assert(testCanceledList(0).formatter.get.isInstanceOf[IndentedText], "Expected testCanceledList(0).formatter to be Some(IndentedText), but got: " + testSucceededList(0).formatter)
+      val testCanceledFormatter = testCanceledList(0).formatter.get.asInstanceOf[IndentedText]
+      assert(testCanceledFormatter.formattedText === "- should cancel here")
+      assert(testCanceledFormatter.rawText === "should cancel here")
+      
+      val testIgnoredList = rep.testIgnoredEventsReceived
+      assert(testIgnoredList.size === 1)
+      assert(testIgnoredList(0).formatter.isDefined, "Expected testIgnoredList(0).formatter to be defined, but it is not.")
+      assert(testIgnoredList(0).formatter.get.isInstanceOf[IndentedText], "Expected testIgnoredList(0).formatter to be Some(IndentedText), but got: " + testSucceededList(0).formatter)
+      val testIgnoredFormatter = testIgnoredList(0).formatter.get.asInstanceOf[IndentedText]
+      assert(testIgnoredFormatter.formattedText === "- should ignore here")
+      assert(testIgnoredFormatter.rawText === "should ignore here")
+    }
   }
   
   describe("when failure happens") {
