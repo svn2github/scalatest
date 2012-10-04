@@ -143,7 +143,7 @@ import org.scalatest.ScreenshotCapturer
  * 
  * <p>
  * Note: If you are using the <em>page object pattern</em>, you can also go to a page using the <code>Page</code> instance, as
- * illustrated in the section on <a href="pageObjects">page objects</a> below.
+ * illustrated in the section on <a href="#pageObjects">page objects</a> below.
  * </p>
  *
  * <p>
@@ -279,9 +279,9 @@ import org.scalatest.ScreenshotCapturer
  * </p>
  * 
  * <pre>
- * &lt;input type="radio" name="group1" value="Option 1"&gt; Option 1&lt;/input&gt;
- * &lt;input type="radio" name="group1" value="Option 2"&gt; Option 2&lt;/input&gt;
- * &lt;input type="radio" name="group1" value="Option 3"&gt; Option 3&lt;/input&gt;
+ * &lt;input type="radio" id="opt1" name="group1" value="Option 1"&gt; Option 1&lt;/input&gt;
+ * &lt;input type="radio" id="opt2" name="group1" value="Option 2"&gt; Option 2&lt;/input&gt;
+ * &lt;input type="radio" id="opt3" name="group1" value="Option 3"&gt; Option 3&lt;/input&gt;
  * </pre>
  * 
  * <p>
@@ -307,6 +307,30 @@ import org.scalatest.ScreenshotCapturer
  * will throw a <code>TestFailedException</code>. By using <code>value</code>, you are indicating you expect a selection, and if there
  * isn't a selection that should result in a failed test.
  * </p>
+ * 
+ * <p>
+ * If you would like to work with <code>RadioButton</code> element directly, you can select it by calling <code>radioButton</code>:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * click on radioButton("opt1")
+ * </pre>
+ * 
+ * <p>
+ * you can check if an option is selected by calling <code>isSelected</code>:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * radioButton("opt1").isSelected should be (true)
+ * </pre>
+ * 
+ * <p>
+ * to get the value of radio button, you can call <code>value</code>:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * radioButton("opt1").value should be ("Option 1")
+ * </pre>
  * 
  * <h3>Checkboxes</h3>
  * 
@@ -579,6 +603,96 @@ import org.scalatest.ScreenshotCapturer
  * delete all cookies
  * </pre>
  * 
+ * To get the underlying Selenium cookie, you can use <code>underlying</code>:
+ * 
+ * <pre class="stHighlight">
+ * cookie("cookie_name").underlying.validate()  // call the validate() method on underlying Selenium cookie
+ * </pre>
+ * 
+ * <h2>Other useful element properties</h2>
+ * 
+ * <p>
+ * All element types (<code>textField</code>, <code>textArea</code>, <code>radioButton</code>, <code>checkbox</code>, <code>singleSel</code>, <code>multiSel</code>) 
+ * support the following useful properties:
+ * </p>
+ * 
+ * <table style="border-collapse: collapse; border: 1px solid black">
+ * <tr><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black"><strong>Method</strong></th><th style="background-color: #CCCCCC; border-width: 1px; padding: 3px; text-align: center; border: 1px solid black"><strong>Description</strong></th></tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>location</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * The XY location of the top-left corner of this <code>Element</code>.
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>size</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * The width/height size of this <code>Element</code>.
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>isDisplayed</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * Indicates whether this <code>Element</code> is displayed.
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>isEnabled</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * Indicates whether this <code>Element</code> is enabled.
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>isSelected</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * Indicates whether this <code>Element</code> is selected.
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>tagName</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * The tag name of this element.
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>underlying</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * The underlying <code>WebElement</code> wrapped by this <code>Element</code>.
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>attribute(name: String)</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * The attribute value of the given attribute name of this element, wrapped in a <code>Some</code>, or <code>None</code> if no
+ * such attribute exists on this <code>Element</code>.
+ * </td>
+ * </tr>
+ * <tr>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * <code>text</code>
+ * </td>
+ * <td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: left">
+ * Returns the visible (<em>i.e.</em>, not hidden by CSS) text of this element, including sub-elements, without any leading or trailing whitespace.
+ * </td>
+ * </tr>
+ * </table>
+ * 
  * <h2>Implicit wait</h2>
  * 
  * <p>
@@ -650,17 +764,36 @@ import org.scalatest.ScreenshotCapturer
  * <pre class="stHighlight">
  * setCaptureDir("/home/your_name/screenshots")
  * </pre>
- *
+ * 
+ * <p>
+ * If you want to capture a screenshot when something goes wrong (e.g. test failed), you can use <code>withScreenshot</code>:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * withScreenshot {
+ *   assert("Gold" == "Silver", "Expected gold, but got silver")
+ * }
+ * </pre>
+ * 
+ * <p>
+ * In case the test code fails, you'll see the screenshot location appended to the error message, for example:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * Expected gold but got silver; screenshot capture in /tmp/AbCdEfGhIj.png
+ * </pre>
+ * 
+ * <a name="pageObjects"></a>
  * <h2>Using the page object pattern</h2>
  *
  * <p>
- * If you use the page object pattern, mixing trait <code>Page</code> into your page classes will allow you to use the <code>go to</code>
+ * If you use the page object pattern, mixing trait <code>Page</code> into your page classes will allow you to use the <code>go to</code> 
  * syntax with your page objects. Here's an example:
  * </p>
  *
  * <pre class="stHighlight">
  * class HomePage extends Page {
- *   val url = "localhost:9000/index.html"
+ *   val url = "http://localhost:9000/index.html"
  * }
  *
  * val homePage = new HomePage
