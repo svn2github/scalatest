@@ -32,16 +32,16 @@ package org.scalatest
  * class SetSpec extends FlatSpec with GivenWhenThen {
  *   
  *   "A mutable Set" should "allow an element to be added" in {
- *     given("an empty mutable Set")
+ *     Given("an empty mutable Set")
  *     val set = mutable.Set.empty[String]
  * 
- *     when("an element is added")
+ *     When("an element is added")
  *     set += "clarity"
  * 
- *     then("the Set should have size 1")
+ *     Then("the Set should have size 1")
  *     assert(set.size === 1)
  * 
- *     and("the Set should contain the added element")
+ *     And("the Set should contain the added element")
  *     assert(set.contains("clarity"))
  * 
  *     info("That's all folks!")
@@ -64,15 +64,21 @@ package org.scalatest
  *   + That's all folks! </span>
  * </pre>
  *
+ * <p>
+ * <strong>Note: The lower case forms of <code>given</code>, <code>when</code>, <code>then</code> and <code>and</code> were
+ * deprecated in ScalaTest because using <code>then</code> as an indentifier was deprecated in Scala 2.10.</strong>
+ * <p>
+ *
  * @author Bill Venners
  */
 trait GivenWhenThen {
 
   /**
-   * Forwards a message to an implicit <code>Informer</code>, preceded by "Given."
-   *
-   * @param message the message to forward to the passed informer
-   * @param info the <code>Informer</code> to which to forward the message
+   * <p>
+   * <strong>The lower case form of <code>given</code> was
+   * deprecated because using <code>then</code> as an indentifier was deprecated in Scala 2.10.
+   * Please use the upper case form, <code>Given</code>, instead.</strong>
+   * <p>
    */
   @deprecated("Please use Given(message: String)(implicit info: Informer) instead.")
   def given(message: String)(implicit info: Informer) {
@@ -90,10 +96,11 @@ trait GivenWhenThen {
   }
 
   /**
-   * Forwards a message to an implicit <code>Informer</code>, preceded by "When ".
-   *
-   * @param message the message to forward to the passed informer
-   * @param info the <code>Informer</code> to which to forward the message
+   * <p>
+   * <strong>The lower case form of <code>when</code> was
+   * deprecated because using <code>then</code> as an indentifier was deprecated in Scala 2.10.
+   * Please use the upper case form, <code>When</code>, instead.</strong>
+   * <p>
    */
   @deprecated("Please use When(message: String)(implicit info: Informer) instead.")
   def when(message: String)(implicit info: Informer) {
@@ -111,10 +118,11 @@ trait GivenWhenThen {
   }
 
   /**
-   * Forwards a message to an implicit <code>Informer</code>, preceded by "Then ".
-   *
-   * @param message the message to forward to the passed informer
-   * @param info the <code>Informer</code> to which to forward the message
+   * <p>
+   * <strong>The lower case form of <code>then</code> was
+   * deprecated because using <code>then</code> as an indentifier was deprecated in Scala 2.10.
+   * Please use the upper case form, <code>Then</code>, instead.</strong>
+   * <p>
    */
   @deprecated("Please use Then(message: String)(implicit info: Informer) instead.")
   def then(message: String)(implicit info: Informer) {
@@ -132,10 +140,11 @@ trait GivenWhenThen {
   }
 
   /**
-   * Forwards a message to an implicit <code>Informer</code>, preceded by "And ".
-   *
-   * @param message the message to forward to the passed informer
-   * @param info the <code>Informer</code> to which to forward the message
+   * <p>
+   * <strong>The lower case form of <code>and</code> was
+   * deprecated because using <code>then</code> as an indentifier was deprecated in Scala 2.10.
+   * Please use the upper case form, <code>And</code>, instead.</strong>
+   * <p>
    */
   @deprecated("Please use And(message: String)(implicit info: Informer) instead.")
   def and(message: String)(implicit info: Informer) {
