@@ -204,9 +204,7 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
       val head = waitingBuffer.head
       if (head.ready) {
         fireSlotEvents(head)
-        println("###before drop: " + waitingBuffer.length)
         waitingBuffer.remove(0)
-        println("###after drop: " + waitingBuffer.length)
         cancelTimeoutTask()
         val newHead = waitingBuffer.head
         if (newHead.ready)
