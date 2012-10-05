@@ -291,7 +291,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * You can pass the extra information to the <code>Informer</code> via one of its <code>apply</code> methods.
  * The <code>Informer</code> will then pass the information to the <code>Reporter</code> via an <code>InfoProvided</code> event.
  * Here's an example in which the <code>Informer</code> returned by <code>info</code> is used implicitly by the
- * <code>given</code>, <code>when</code>, and <code>then</code> methods of trait <code>GivenWhenThen</code>:
+ * <code>Given</code>, <code>When</code>, and <code>Then</code> methods of trait <code>GivenWhenThen</code>:
  * </p>
  *
  * <pre class="stHighlight">
@@ -304,16 +304,16 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *   
  *   object &#96;A mutable Set&#96; {
  *     def &#96;should allow an element to be added&#96; {
- *       given("an empty mutable Set")
+ *       Given("an empty mutable Set")
  *       val set = mutable.Set.empty[String]
  * 
- *       when("an element is added")
+ *       When("an element is added")
  *       set += "clarity"
  * 
- *       then("the Set should have size 1")
+ *       Then("the Set should have size 1")
  *       assert(set.size === 1)
  * 
- *       and("the Set should contain the added element")
+ *       And("the Set should contain the added element")
  *       assert(set.contains("clarity"))
  * 
  *       info("That's all folks!")

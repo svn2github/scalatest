@@ -74,7 +74,18 @@ trait GivenWhenThen {
    * @param message the message to forward to the passed informer
    * @param info the <code>Informer</code> to which to forward the message
    */
+  @deprecated("Please use Given(message: String)(implicit info: Informer) instead.")
   def given(message: String)(implicit info: Informer) {
+    Given(message)
+  }
+  
+  /**
+   * Forwards a message to an implicit <code>Informer</code>, preceded by "Given."
+   *
+   * @param message the message to forward to the passed informer
+   * @param info the <code>Informer</code> to which to forward the message
+   */
+  def Given(message: String)(implicit info: Informer) {
     info(Resources("givenMessage", message))
   }
 
@@ -84,7 +95,18 @@ trait GivenWhenThen {
    * @param message the message to forward to the passed informer
    * @param info the <code>Informer</code> to which to forward the message
    */
+  @deprecated("Please use When(message: String)(implicit info: Informer) instead.")
   def when(message: String)(implicit info: Informer) {
+    When(message)
+  }
+  
+  /**
+   * Forwards a message to an implicit <code>Informer</code>, preceded by "When ".
+   *
+   * @param message the message to forward to the passed informer
+   * @param info the <code>Informer</code> to which to forward the message
+   */
+  def When(message: String)(implicit info: Informer) {
     info(Resources("whenMessage", message))
   }
 
@@ -94,7 +116,18 @@ trait GivenWhenThen {
    * @param message the message to forward to the passed informer
    * @param info the <code>Informer</code> to which to forward the message
    */
+  @deprecated("Please use Then(message: String)(implicit info: Informer) instead.")
   def then(message: String)(implicit info: Informer) {
+    Then(message)
+  }
+  
+  /**
+   * Forwards a message to an implicit <code>Informer</code>, preceded by "Then ".
+   *
+   * @param message the message to forward to the passed informer
+   * @param info the <code>Informer</code> to which to forward the message
+   */
+  def Then(message: String)(implicit info: Informer) {
     info(Resources("thenMessage", message))
   }
 
@@ -104,7 +137,18 @@ trait GivenWhenThen {
    * @param message the message to forward to the passed informer
    * @param info the <code>Informer</code> to which to forward the message
    */
+  @deprecated("Please use And(message: String)(implicit info: Informer) instead.")
   def and(message: String)(implicit info: Informer) {
+    And(message)
+  }
+  
+   /**
+   * Forwards a message to an implicit <code>Informer</code>, preceded by "And ".
+   *
+   * @param message the message to forward to the passed informer
+   * @param info the <code>Informer</code> to which to forward the message
+   */
+  def And(message: String)(implicit info: Informer) {
     info(Resources("andMessage", message))
   }
 }

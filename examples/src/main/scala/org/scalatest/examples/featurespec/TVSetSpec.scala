@@ -20,28 +20,28 @@ class TVSetSpec extends FeatureSpec with GivenWhenThen {
   feature("TV power button") {
     scenario("User presses power button when TV is off") {
 
-      given("a TV that is switched off")
+      Given("a TV that is switched off")
       val tv = new TVSet
       assert(!tv.isOn)
 
-      when("the power button is pressed")
+      When("the power button is pressed")
       tv.pressPowerButton()
 
-      then("the TV should switch on")
+      Then("the TV should switch on")
       assert(tv.isOn)
     }
     
     scenario("User presses power button when TV is on") {
 
-      given("a TV that is switched on")
+      Given("a TV that is switched on")
       val tv = new TVSet
       tv.pressPowerButton()
       assert(tv.isOn)
 
-      when("the power button is pressed")
+      When("the power button is pressed")
       tv.pressPowerButton()
 
-      then("the TV should switch off")
+      Then("the TV should switch off")
       assert(!tv.isOn)
     }
   }

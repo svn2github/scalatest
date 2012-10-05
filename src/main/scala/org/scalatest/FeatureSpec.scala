@@ -64,28 +64,28 @@ import Suite.autoTagClassAnnotations
  *   feature("TV power button") {
  *     scenario("User presses power button when TV is off") {
  * 
- *       given("a TV set that is switched off")
+ *       Given("a TV set that is switched off")
  *       val tv = new TVSet
  *       assert(!tv.isOn)
  * 
- *       when("the power button is pressed")
+ *       When("the power button is pressed")
  *       tv.pressPowerButton()
  * 
- *       then("the TV should switch on")
+ *       Then("the TV should switch on")
  *       assert(tv.isOn)
  *     }
  *     
  *     scenario("User presses power button when TV is on") {
  * 
- *       given("a TV set that is switched on")
+ *       Given("a TV set that is switched on")
  *       val tv = new TVSet
  *       tv.pressPowerButton()
  *       assert(tv.isOn)
  * 
- *       when("the power button is pressed")
+ *       When("the power button is pressed")
  *       tv.pressPowerButton()
  * 
- *       then("the TV should switch off")
+ *       Then("the TV should switch off")
  *       assert(!tv.isOn)
  *     }
  *   }
@@ -93,7 +93,7 @@ import Suite.autoTagClassAnnotations
  * </pre>
  *
  * <p>
- * Note: for more information on the calls to <code>given</code>, <code>when</code>, and <code>then</code>, see the documentation 
+ * Note: for more information on the calls to <code>Given</code>, <code>When</code>, and <code>Then</code>, see the documentation 
  * for <a href="GivenWhenThen.html">trait <code>GivenWhenThen</code></a> and the <a href="#informers"><code>Informers</code> section</a> below.
  * </p>
  *
@@ -415,16 +415,16 @@ import Suite.autoTagClassAnnotations
  * 
  *   feature("TV power button") {
  *     scenario("User presses power button when TV is off") {
- *       given("a TV that is switched off")
- *       when("the power button is pressed")
- *       then("the TV should switch on")
+ *       Given("a TV that is switched off")
+ *       When("the power button is pressed")
+ *       Then("the TV should switch on")
  *       pending
  *     }
  * 
  *     scenario("User presses power button when TV is on") {
- *       given("a TV that is switched on")
- *       when("the power button is pressed")
- *       then("the TV should switch off")
+ *       Given("a TV that is switched on")
+ *       When("the power button is pressed")
+ *       Then("the TV should switch off")
  *       pending
  *     }
  *   }
@@ -1312,39 +1312,39 @@ import Suite.autoTagClassAnnotations
  * 
  *     scenario("empty is invoked on this non-empty stack: " + createNonEmptyStack.toString) {
  * 
- *       given("a non-empty stack")
+ *       Given("a non-empty stack")
  *       val stack = createNonEmptyStack
  * 
- *       when("empty is invoked on the stack")
- *       then("empty returns false")
+ *       When("empty is invoked on the stack")
+ *       Then("empty returns false")
  *       assert(!stack.empty)
  *     }
  * 
  *     scenario("peek is invoked on this non-empty stack: " + createNonEmptyStack.toString) {
  * 
- *       given("a non-empty stack")
+ *       Given("a non-empty stack")
  *       val stack = createNonEmptyStack
  *       val size = stack.size
  * 
- *       when("peek is invoked on the stack")
- *       then("peek returns the last item added")
+ *       When("peek is invoked on the stack")
+ *       Then("peek returns the last item added")
  *       assert(stack.peek === lastItemAdded)
  * 
- *       and("the size of the stack is the same as before")
+ *       And("the size of the stack is the same as before")
  *       assert(stack.size === size)
  *     }
  * 
  *     scenario("pop is invoked on this non-empty stack: " + createNonEmptyStack.toString) {
  * 
- *       given("a non-empty stack")
+ *       Given("a non-empty stack")
  *       val stack = createNonEmptyStack
  *       val size = stack.size
  * 
- *       when("pop is invoked on the stack")
- *       then("pop returns the last item added")
+ *       When("pop is invoked on the stack")
+ *       Then("pop returns the last item added")
  *       assert(stack.pop === lastItemAdded)
  * 
- *       and("the size of the stack one less than before")
+ *       And("the size of the stack one less than before")
  *       assert(stack.size === size - 1)
  *     }
  *   }
@@ -1353,27 +1353,27 @@ import Suite.autoTagClassAnnotations
  *       
  *     scenario("full is invoked on this non-full stack: " + createNonFullStack.toString) {
  * 
- *       given("a non-full stack")
+ *       Given("a non-full stack")
  *       val stack = createNonFullStack
  * 
- *       when("full is invoked on the stack")
- *       then("full returns false")
+ *       When("full is invoked on the stack")
+ *       Then("full returns false")
  *       assert(!stack.full)
  *     }
  *       
  *     scenario("push is invoked on this non-full stack: " + createNonFullStack.toString) {
  * 
- *       given("a non-full stack")
+ *       Given("a non-full stack")
  *       val stack = createNonFullStack
  *       val size = stack.size
  * 
- *       when("push is invoked on the stack")
+ *       When("push is invoked on the stack")
  *       stack.push(7)
  * 
- *       then("the size of the stack is one greater than before")
+ *       Then("the size of the stack is one greater than before")
  *       assert(stack.size === size + 1)
  * 
- *       and("the top of the stack contains the pushed value")
+ *       And("the top of the stack contains the pushed value")
  *       assert(stack.peek === 7)
  *     }
  *   }
@@ -1442,21 +1442,21 @@ import Suite.autoTagClassAnnotations
  *  
  *     scenario("empty is invoked on an empty stack") {
  * 
- *       given("an empty stack")
+ *       Given("an empty stack")
  *       val stack = emptyStack
  * 
- *       when("empty is invoked on the stack")
- *       then("empty returns true")
+ *       When("empty is invoked on the stack")
+ *       Then("empty returns true")
  *       assert(stack.empty)
  *     }
  *  
  *     scenario("peek is invoked on an empty stack") {
  * 
- *       given("an empty stack")
+ *       Given("an empty stack")
  *       val stack = emptyStack
  * 
- *       when("peek is invoked on the stack")
- *       then("peek throws IllegalStateException")
+ *       When("peek is invoked on the stack")
+ *       Then("peek throws IllegalStateException")
  *       intercept[IllegalStateException] {
  *         stack.peek
  *       }
@@ -1464,11 +1464,11 @@ import Suite.autoTagClassAnnotations
  *  
  *     scenario("pop is invoked on an empty stack") {
  * 
- *       given("an empty stack")
+ *       Given("an empty stack")
  *       val stack = emptyStack
  * 
- *       when("pop is invoked on the stack")
- *       then("pop throws IllegalStateException")
+ *       When("pop is invoked on the stack")
+ *       Then("pop throws IllegalStateException")
  *       intercept[IllegalStateException] {
  *         emptyStack.pop
  *       }
@@ -1482,11 +1482,11 @@ import Suite.autoTagClassAnnotations
  *  
  *     scenario("full is invoked on a full stack") {
  * 
- *       given("an full stack")
+ *       Given("an full stack")
  *       val stack = fullStack
  * 
- *       when("full is invoked on the stack")
- *       then("full returns true")
+ *       When("full is invoked on the stack")
+ *       Then("full returns true")
  *       assert(stack.full)
  *     }
  *  
@@ -1494,11 +1494,11 @@ import Suite.autoTagClassAnnotations
  *  
  *     scenario("push is invoked on a full stack") {
  * 
- *       given("an full stack")
+ *       Given("an full stack")
  *       val stack = fullStack
  * 
- *       when("push is invoked on the stack")
- *       then("push throws IllegalStateException")
+ *       When("push is invoked on the stack")
+ *       Then("push throws IllegalStateException")
  *       intercept[IllegalStateException] {
  *         stack.push(10)
  *       }

@@ -356,16 +356,16 @@ import Suite.autoTagClassAnnotations
  *   
  *   "A mutable Set" - {
  *     "should allow an element to be added" in {
- *       given("an empty mutable Set")
+ *       Given("an empty mutable Set")
  *       val set = mutable.Set.empty[String]
  * 
- *       when("an element is added")
+ *       When("an element is added")
  *       set += "clarity"
  * 
- *       then("the Set should have size 1")
+ *       Then("the Set should have size 1")
  *       assert(set.size === 1)
  * 
- *       and("the Set should contain the added element")
+ *       And("the Set should contain the added element")
  *       assert(set.contains("clarity"))
  * 
  *       info("That's all folks!")
@@ -481,9 +481,9 @@ import Suite.autoTagClassAnnotations
  * <pre class="stHighlight">
  *  "The Scala language" - {
  *     "should add correctly" in { 
- *       given("two integers")
- *       when("they are added")
- *       then("the result is the sum of the two numbers")
+ *       Given("two integers")
+ *       When("they are added")
+ *       Then("the result is the sum of the two numbers")
  *       pending
  *     }
  *     // ...

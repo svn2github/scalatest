@@ -17,7 +17,7 @@ package org.scalatest
 
 import events.InfoProvided
 
-class GivenWhenThenSpec extends FunSpec with SharedHelpers {
+class DeprecatedGivenWhenThenSpec extends FunSpec with SharedHelpers {
   describe("The GivenWhenThen trait") {
 
     val theGiven = "an invalid zip code"
@@ -26,10 +26,10 @@ class GivenWhenThenSpec extends FunSpec with SharedHelpers {
     val theThen = "the validator should return false"
     class GivenWhenThenInsideTestSpec extends FunSpec with GivenWhenThen {
       it("should do something") {
-        Given(theGiven)
-        And(theAnd)
-        When(theWhen)
-        Then(theThen)
+        given(theGiven)
+        and(theAnd)
+        when(theWhen)
+        then(theThen)
       }
     }
     val spec = new GivenWhenThenInsideTestSpec
