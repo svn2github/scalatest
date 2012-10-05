@@ -103,7 +103,7 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
 
     val orderedEvents = events.toList.filter { e => 
       e match {
-        case e: TestStarting => e.suiteId == suiteId
+        case e: TestStarting   => e.suiteId == suiteId
         case e: TestSucceeded  => e.suiteId == suiteId
         case e: TestIgnored    => e.suiteId == suiteId
         case e: TestFailed     => e.suiteId == suiteId
@@ -151,10 +151,8 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
       event match {
         case e: TestStarting =>
           val (testEndIndex, testcase) = processTest(orderedEvents, e, idx)
-          if (!testcase.pending && !testcase.canceled) {
-            testsuite.testcases += testcase
-            if (testcase.failure != None) testsuite.failures += 1
-          }
+          testsuite.testcases += testcase
+          if (testcase.failure != None) testsuite.failures += 1
           idx = testEndIndex + 1
 
         case e: SuiteAborted =>
@@ -168,7 +166,12 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
           testsuite.time = e.timeStamp - testsuite.timeStamp
           idx += 1
 
-        case e: TestIgnored    => idx += 1
+        case e: TestIgnored    =>
+          val testcase = Testcase(e.testName, e.suiteClassName, e.timeStamp)
+          testcase.ignored = true
+          testsuite.testcases += testcase
+          idx += 1
+
         case e: InfoProvided   => idx += 1
         case e: MarkupProvided => idx += 1
         case e: ScopeOpened    => idx += 1
@@ -333,7 +336,10 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
             time      = { "" + testcase.time / 1000.0     }
           >
           {
-            failureXml(testcase.failure)
+            if (testcase.ignored || testcase.pending || testcase.canceled)
+              <skipped/>
+            else
+              failureXml(testcase.failure)
           }
           </testcase>
         }
@@ -485,6 +491,7 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
     var time = 0L
     var pending = false
     var canceled = false
+    var ignored = false
     var failure: Option[TestFailed] = None
   }
 }

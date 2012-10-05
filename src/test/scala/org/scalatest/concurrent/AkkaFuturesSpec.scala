@@ -1,5 +1,5 @@
-/*package org.scalatest.concurrent
-
+package org.scalatest.concurrent
+/*
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.OptionValues
@@ -100,3 +100,4 @@ class AkkaFuturesSpec extends FunSpec with ShouldMatchers with OptionValues with
     
   }
 }*/
+class AkkaFuturesSpec {}
