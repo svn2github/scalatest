@@ -779,6 +779,19 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       // submit (name("name")) // This will work as well.
     }
     
+    it("should throw TestFailedException with correct stack depth when submit is called on none form's element") {
+      go to (host + "submit.html")
+      title should be ("Submit")
+      
+      val e = intercept[TestFailedException] {
+        click on "not_form_element" // This set the focus
+        textField("not_form_element").value = "Penguin"
+        submit()
+      }
+      e.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+      e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+    }
+    
     it("should submit form when submit button is clicked.") {
       go to (host + "submit.html")
       title should be ("Submit")
