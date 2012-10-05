@@ -165,14 +165,14 @@ trait StateSuite extends Suite {
         else
           testStatuses(simpleName)(testName) = Succeeded(duration)
         reportTestPending(this, args.reporter, args.tracker, testName, testName, duration, formatter, None)
-        new org.scalatest.SucceededStatus
+        org.scalatest.SucceededStatus
       case Ignored(duration, remaining) =>
         if (remaining > 1)
           testStatuses(simpleName)(testName) = Ignored(duration, remaining - 1)
         else
           testStatuses(simpleName)(testName) = Succeeded(duration)
         reportTestIgnored(args.reporter, args.tracker, testName, testName, 1)
-        new org.scalatest.SucceededStatus
+        org.scalatest.SucceededStatus
       case Canceled(duration, remaining) =>
         if (remaining > 1)
           testStatuses(simpleName)(testName) = Canceled(duration, remaining - 1)
@@ -182,7 +182,7 @@ trait StateSuite extends Suite {
           val message = getMessageForException(e)
           val formatter = getIndentedText(testName, 1, true)
           args.reporter(TestCanceled(args.tracker.nextOrdinal(), message, suiteName, suiteId, Some(getClass.getName), testName, testName, Vector.empty, Some(e), Some(duration), Some(formatter), Some(ToDoLocation), None))
-          new org.scalatest.SucceededStatus
+          org.scalatest.SucceededStatus
       case Failed(duration, remaining) =>
         if (remaining > 1)
           testStatuses(simpleName)(testName) = Failed(duration, remaining - 1)
@@ -190,10 +190,10 @@ trait StateSuite extends Suite {
           testStatuses(simpleName)(testName) = Succeeded(duration)
         val e = intercept[TestFailedException] { fail("1 + 1 did not equal 3, even for very large values of 1") }
         handleFailedTest(e, testName, args.reporter, args.tracker, duration, None)
-        new org.scalatest.FailedStatus
+        org.scalatest.FailedStatus
       case Succeeded(duration) => 
         reportTestSucceeded(this, args.reporter, args.tracker, testName, testName, duration, formatter, None, None)
-        new org.scalatest.SucceededStatus
+        org.scalatest.SucceededStatus
     }
   }
 }
