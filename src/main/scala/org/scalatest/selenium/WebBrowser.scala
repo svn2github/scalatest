@@ -3381,19 +3381,6 @@ trait WebBrowser {
    */
   object capture {
     
-    private var targetDir = new File(System.getProperty("java.io.tmpdir"))
-    
-    @deprecated("The 'capture set <dir name>' form will be removed in the next 2.0 milestone. Please use setCaptureDir(<dir name>) instead.")
-    def set(targetDirPath: String) {
-      targetDir = 
-        if (targetDirPath.endsWith(File.separator))
-          new File(targetDirPath)
-        else
-          new File(targetDirPath + File.separator)
-      if (!targetDir.exists)
-        targetDir.mkdirs()
-    }
-    
     /**
      * Capture screenshot and save it as the specified name (if file name does not end with .png, it will be extended automatically) in capture directory, 
      * which by default is system property's java.io.tmpdir.  You can change capture directory by calling <code>setCaptureDir</code>
@@ -3441,13 +3428,22 @@ trait WebBrowser {
     capture to fileName
   }
   
+  // Can get by with volatile, because the setting doesn't depend on the getting
+  @volatile private var targetDir = new File(System.getProperty("java.io.tmpdir"))
+    
   /**
    * Set capture directory.
    * 
    * @param targetDirPath the path of capture directory
    */
   def setCaptureDir(targetDirPath: String) {
-    capture set targetDirPath
+      targetDir = 
+        if (targetDirPath.endsWith(File.separator))
+          new File(targetDirPath)
+        else
+          new File(targetDirPath + File.separator)
+      if (!targetDir.exists)
+        targetDir.mkdirs()
   }
   
   /**

@@ -936,7 +936,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       val targetDir2 = new File(tempDir, "scalatest-test-target2")
       
       try {
-        capture set targetDir1.getAbsolutePath // TODO: We should deprecate this syntax
+        setCaptureDir(targetDir1.getAbsolutePath)
         capture to ("MyScreenShot.png")
         new File(targetDir1, "MyScreenShot.png").exists should be (true)
         
