@@ -545,7 +545,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
 
     it("should go to web page by using url and get its title correctly.") {
       go to (host + "index.html")
-      title should be ("Test Title")
+      pageTitle should be ("Test Title")
     }
     
     it("should go to web page by using Page and get its title correctly.") {
@@ -554,12 +554,12 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       }
       val radioPage = new RadioPage
       go to radioPage
-      title should be ("Radio Button")
+      pageTitle should be ("Radio Button")
     }
 
     it("should get and set text field value correctly.") {
       go to (host + "textfield.html")
-      title should be ("Text Field")
+      pageTitle should be ("Text Field")
 
       textField("text1").value should be ("")                   
                                                                 // textField("text1") should have ('value(""), 'attribute(""))
@@ -578,7 +578,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     it("should allow text to be entered in the active element if it is a text field.") {
 
       go to (host + "textfield.html")
-      title should be ("Text Field")
+      pageTitle should be ("Text Field")
                                                                 
       textField("text1").value should be ("")                   
 
@@ -610,7 +610,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
 
     it("should clear a text field.") {
       go to (host + "textfield.html")
-      title should be ("Text Field")
+      pageTitle should be ("Text Field")
                                                                 
       textField("text1").value = "value 1"                     
       textField("text1").value should be ("value 1")
@@ -624,7 +624,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
  
     it("should get and set text area value correctly.") {
       go to (host + "textarea.html")
-      title should be ("Text Area")
+      pageTitle should be ("Text Area")
       
       textArea("area1").value should be ("")
       textArea("area1").attribute("value") should be (Some(""))
@@ -641,7 +641,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     
     it("should clear a text area.") {
       go to (host + "textarea.html")
-      title should be ("Text Area")
+      pageTitle should be ("Text Area")
       
       textArea("area1").value = "area 1 - line 1\narea 1 - line 2"
       textArea("area1").value should be ("area 1 - line 1\narea 1 - line 2")
@@ -652,7 +652,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     
     it("should allow text to be entered in the active element if it is a text area.") {
       go to (host + "textarea.html")
-      title should be ("Text Area")
+      pageTitle should be ("Text Area")
       
       textArea("area1").value should be ("")
 
@@ -674,7 +674,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     
     it("should get and set radio button group correctly.") {
       go to (host + "radio.html")
-      title should be ("Radio Button")
+      pageTitle should be ("Radio Button")
       
       radioButtonGroup("group1").selection should be (None)
       intercept[TestFailedException] {
@@ -702,7 +702,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     
     it("should read, select and clear check box correctly.") {
       go to (host + "checkbox.html")
-      title should be ("Check Box")
+      pageTitle should be ("Check Box")
       
       checkbox("opt1").isSelected should be (false)
       checkbox("opt1").select()
@@ -719,7 +719,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
 
     it("should read, select and clear dropdown list (select) correctly.") {
       go to (host + "select.html")
-      title should be ("Select")
+      pageTitle should be ("Select")
       
       singleSel("select1").value should be ("option1")
       singleSel("select1").value = "option2"
@@ -771,7 +771,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     
     it("should submit form when submit is called on form's element.") {
       go to (host + "submit.html")
-      title should be ("Submit")
+      pageTitle should be ("Submit")
       
       click on "name" // This set the focus
       textField("name").value = "Penguin"
@@ -781,7 +781,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     
     it("should throw TestFailedException with correct stack depth when submit is called on none form's element") {
       go to (host + "submit.html")
-      title should be ("Submit")
+      pageTitle should be ("Submit")
       
       val e = intercept[TestFailedException] {
         click on "not_form_element" // This set the focus
@@ -794,7 +794,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     
     it("should submit form when submit button is clicked.") {
       go to (host + "submit.html")
-      title should be ("Submit")
+      pageTitle should be ("Submit")
       
       textField("name").value = "Penguin"
       click on "submitButton"
@@ -802,32 +802,32 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
     
     it("should navigate to, back, forward and refresh correctly") {
       go to (host + "navigate1.html")
-      title should be ("Navigation 1")
+      pageTitle should be ("Navigation 1")
       go to (host + "navigate2.html")
-      title should be ("Navigation 2")
+      pageTitle should be ("Navigation 2")
       goBack()
       // click back button
-      title should be ("Navigation 1")
+      pageTitle should be ("Navigation 1")
       goForward()
       // click forward button
-      title should be ("Navigation 2")
+      pageTitle should be ("Navigation 2")
       reloadPage()
       // click refreshPage button
       // click submit button
-      title should be ("Navigation 2")
+      pageTitle should be ("Navigation 2")
     }
     
     it("should support goBack, goForward and reloadPage correctly") {
       go to (host + "navigate1.html")
-      title should be ("Navigation 1")
+      pageTitle should be ("Navigation 1")
       go to (host + "navigate2.html")
-      title should be ("Navigation 2")
+      pageTitle should be ("Navigation 2")
       goBack()
-      title should be ("Navigation 1")
+      pageTitle should be ("Navigation 1")
       goForward()
-      title should be ("Navigation 2")
+      pageTitle should be ("Navigation 2")
       reloadPage()
-      title should be ("Navigation 2")
+      pageTitle should be ("Navigation 2")
     }
     
     it("should create, read and delete cookie correctly") {
@@ -1012,11 +1012,11 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       // Google's search is rendered dynamically with JavaScript.
       // Wait for the page to load, timeout after 10 seconds
       wait[Boolean](Span(10, Seconds)) {
-        title.toLowerCase.startsWith("cheese!")
+        pageTitle.toLowerCase.startsWith("cheese!")
       }
 
       // Should see: "cheese! - Google Search"
-      title should be ("Cheese! - Google Search")
+      pageTitle should be ("Cheese! - Google Search")
     }
  
     ignore("should be able to use ScalaTest's eventually in place of Selenium's wait") {
@@ -1028,10 +1028,10 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       submit()
       
       eventually(timeout(10 seconds)) {
-        title.toLowerCase.startsWith("cheese!") should be (true)
+        pageTitle.toLowerCase.startsWith("cheese!") should be (true)
       }
       
-      title should be ("Cheese! - Google Search")
+      pageTitle should be ("Cheese! - Google Search")
     }
         
     // Some operation not supported in HtmlUnit driver, e.g. switch to alert.
@@ -1069,9 +1069,9 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
   describe("goTo") {
     it("should go to given url correctly") {
       goTo(host + "index.html")
-      title should be ("Test Title")
+      pageTitle should be ("Test Title")
       goTo(host + "textfield.html")
-      title should be ("Text Field")
+      pageTitle should be ("Text Field")
     }
     it("should go to given page correctly") {
       class IndexPage extends Page {
@@ -1083,9 +1083,9 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       val indexPage = new IndexPage
       val textFieldPage = new TextFieldPage
       goTo(indexPage)
-      title should be ("Test Title")
+      pageTitle should be ("Test Title")
       goTo(textFieldPage)
-      title should be ("Text Field")
+      pageTitle should be ("Text Field")
     }
   }
   

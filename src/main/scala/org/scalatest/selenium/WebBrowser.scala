@@ -63,7 +63,7 @@ import org.scalatest.Resources
  *
  *   "The blog app home page" should "have the correct title" in {
  *     go to (host + "index.html")
- *     title should be ("Awesome Blog")
+ *     pageTitle should be ("Awesome Blog")
  *   }
  * }
  * </pre>
@@ -80,7 +80,7 @@ import org.scalatest.Resources
  *
  *   "The blog app home page" should "have the correct title" in {
  *     go to (host + "index.html")
- *     title should be ("Awesome Blog")
+ *     pageTitle should be ("Awesome Blog")
  *   }
  * }
  * </pre>
@@ -160,7 +160,7 @@ import org.scalatest.Resources
  * enter("Cheese!")
  * submit()
  * // Google's search is rendered dynamically with JavaScript.
- * eventually { title should be ("Cheese! - Google Search") }
+ * eventually { pageTitle should be ("Cheese! - Google Search") }
  * </pre>
  * 
  * <p>
@@ -881,7 +881,7 @@ import org.scalatest.Resources
  * textField("q").value = "Cheese!"
  * submit()
  * // Google's search is rendered dynamically with JavaScript.
- * eventually(assert(title === "Cheese! - Google Search"))
+ * eventually(assert(pageTitle === "Cheese! - Google Search"))
  * </pre>
  * 
  * <p>
@@ -2156,13 +2156,19 @@ trait WebBrowser {
     driver.close()
   }
   
+  @deprecated("The title method will be removed in the next 2.0 milestone release. Please use pageTitle instead.")
+  def title(implicit driver: WebDriver): String = {
+    val t = driver.getTitle
+    if (t != null) t else ""
+  }
+  
   /**
    * Returns the title of the current page, or the empty string if the current page has no title.
    *
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @returns the current page's title, or the empty string if the current page has no title
    */
-  def title(implicit driver: WebDriver): String = {
+  def pageTitle(implicit driver: WebDriver): String = {
     val t = driver.getTitle
     if (t != null) t else ""
   }
@@ -2841,13 +2847,6 @@ trait WebBrowser {
   def multiSel(queryString: String)(implicit driver: WebDriver): MultiSel = 
     tryQueries(queryString)(q => new MultiSel(q.webElement))
     
-  @deprecated("The button methods will be removed in the next 2.0 milestone release.")
-  def button(webElement: WebElement): WebElement = webElement  // enable syntax 'click on aButton', where aButton is a WebElement.
-  
-  @deprecated("The button methods will be removed in the next 2.0 milestone release.")
-  def button(queryString: String)(implicit driver: WebDriver): WebElement = 
-    tryQueries(queryString)(q => q.webElement)
-  
   /**
    * This object is part of ScalaTest's Selenium DSL. Please see the documentation for
    * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
@@ -2995,8 +2994,8 @@ trait WebBrowser {
   def implicitlyWait(timeout: Span)(implicit driver: WebDriver) {
     driver.manage.timeouts.implicitlyWait(timeout.totalNanos, TimeUnit.NANOSECONDS)
   }
-  
-  // TODO:Seems like better to use eventually, remove?
+
+  @deprecated("The wait method will be removed in the next 2.0 milestone release. Please use eventually instead.")
   def wait[T](timeout: Span, interval: Span = Span(500L, Milliseconds))(f: => T)(implicit driver: WebDriver): T = 
     new WebDriverWait(driver, timeout.totalNanos / 1000000000L, interval.totalNanos / 1000000)
       .until(new ExpectedCondition[T]() {
