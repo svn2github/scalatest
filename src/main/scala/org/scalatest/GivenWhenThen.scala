@@ -66,7 +66,7 @@ package org.scalatest
  *
  * <p>
  * <strong>Note: The lower case forms of <code>given</code>, <code>when</code>, <code>then</code> and <code>and</code> were
- * deprecated in ScalaTest because using <code>then</code> as an indentifier was deprecated in Scala 2.10.</strong>
+ * deprecated in ScalaTest because using <code>then</code> as an identifier was deprecated in Scala 2.10.</strong>
  * <p>
  *
  * @author Bill Venners
@@ -76,7 +76,7 @@ trait GivenWhenThen {
   /**
    * <p>
    * <strong>The lower case form of <code>given</code> was
-   * deprecated because using <code>then</code> as an indentifier was deprecated in Scala 2.10.
+   * deprecated because using <code>then</code> as an identifier was deprecated in Scala 2.10.
    * Please use the upper case form, <code>Given</code>, instead.</strong>
    * <p>
    */
@@ -98,7 +98,7 @@ trait GivenWhenThen {
   /**
    * <p>
    * <strong>The lower case form of <code>when</code> was
-   * deprecated because using <code>then</code> as an indentifier was deprecated in Scala 2.10.
+   * deprecated because using <code>then</code> as an identifier was deprecated in Scala 2.10.
    * Please use the upper case form, <code>When</code>, instead.</strong>
    * <p>
    */
@@ -120,7 +120,7 @@ trait GivenWhenThen {
   /**
    * <p>
    * <strong>The lower case form of <code>then</code> was
-   * deprecated because using <code>then</code> as an indentifier was deprecated in Scala 2.10.
+   * deprecated because using <code>then</code> as an identifier was deprecated in Scala 2.10.
    * Please use the upper case form, <code>Then</code>, instead.</strong>
    * <p>
    */
@@ -142,7 +142,7 @@ trait GivenWhenThen {
   /**
    * <p>
    * <strong>The lower case form of <code>and</code> was
-   * deprecated because using <code>then</code> as an indentifier was deprecated in Scala 2.10.
+   * deprecated because using <code>then</code> as an identifier was deprecated in Scala 2.10.
    * Please use the upper case form, <code>And</code>, instead.</strong>
    * <p>
    */
