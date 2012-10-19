@@ -3,6 +3,7 @@ package org.scalatest.tools
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSpec
 import org.scalatest.SharedHelpers.EventRecordingReporter
+import org.scalatest.SharedHelpers.SilentReporter
 import org.scalatest.events._
 import org.scalatest.time.Span
 import org.scalatest.time.Seconds
@@ -14,6 +15,8 @@ import org.scalatest.events.ScopeOpened
 import org.scalatest.events.TestSucceeded
 import java.io.PrintStream
 import java.io.ByteArrayOutputStream
+import org.scalatest.DistributedSuiteSorter
+import scala.collection.mutable.ListBuffer
 
 class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
 
@@ -291,6 +294,50 @@ class TestSortingReporterSpec extends FunSpec with ShouldMatchers {
       recordedEvents(7) should be (s1s2t1Succeeded)
       recordedEvents(8) should be (scope2Closed)
       recordedEvents(9) should be (scope1Closed)
+    }
+    
+    class RecordingDistributedSuiteSorter extends DistributedSuiteSorter {
+      val distributingTestsList = new ListBuffer[String]()
+      val completedTestsList = new ListBuffer[String]()
+      
+      def distributingTests(suiteId: String) {
+        distributingTestsList += suiteId
+      }
+      def completedTests(suiteId: String) {
+        completedTestsList += suiteId
+      }
+    }
+    
+    it("should call passed in DistributedSuiteSorter's completedTests when suite contains test.") {
+      val suiteSorter = new RecordingDistributedSuiteSorter
+      val dispatch = new TestSortingReporter("aSuite", SilentReporter, Span(3, Seconds), 1, Some(suiteSorter), new PrintStream(new ByteArrayOutputStream))
+      
+      dispatch(scope1Opened)
+      dispatch(scope2Opened)
+      dispatch.distributingTest(s1s2t1Starting.testName)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Starting)
+      dispatch("Scope 1 Scope 2 Test 1", s1s2t1Succeeded)
+      dispatch.completedTest("Scope 1 Scope 2 Test 1")
+      dispatch(scope2Closed)
+      dispatch(scope1Closed)
+      
+      suiteSorter.distributingTestsList.toList should be (List("aSuite"))
+      suiteSorter.completedTestsList.toList should be (List("aSuite"))
+    }
+    
+    it("should call passed in DistributedSuiteSorter's completedTests when suite does not contain test.") {
+      val suiteSorter = new RecordingDistributedSuiteSorter
+      val dispatch = new TestSortingReporter("aSuite", SilentReporter, Span(3, Seconds), 0, Some(suiteSorter), new PrintStream(new ByteArrayOutputStream))
+      
+      dispatch(scope1Opened)
+      dispatch(scope2Opened)
+      dispatch.distributingTest(s1s2t1Starting.testName)
+      dispatch.completedTest("Scope 1 Scope 2 Test 1")
+      dispatch(scope2Closed)
+      dispatch(scope1Closed)
+      
+      suiteSorter.distributingTestsList.toList should be (List("aSuite"))
+      suiteSorter.completedTestsList.toList should be (List("aSuite"))
     }
   }
 }

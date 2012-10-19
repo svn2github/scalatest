@@ -21,11 +21,13 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
   
   // Chee Seng: What's the UUID for?
   // Each test gets one slot, but other events such as an info from an after an also get a slot i think.
-  case class Slot(uuid: UUID, eventList: ListBuffer[Event], ready: Boolean)
+  case class Slot(uuid: UUID, eventList: ListBuffer[Event], completed: Boolean, completedEvent: Boolean, ready: Boolean)
   
   private val waitingBuffer = new ListBuffer[Slot]()
   private val slotMap = new collection.mutable.HashMap[String, Slot]()  // testName -> Slot
   @volatile private var completedTestCount = 0 // Called within synchronized. Don't need volatile and it wouldn't work anyway.
+  
+  checkCompletedTests()   // In case the suite does not comtain any test.
 
   // Passed slot will always be the head of waitingBuffer
   class TimeoutTask(val slot: Slot) extends TimerTask {
@@ -49,7 +51,7 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
     synchronized {
       if (slotMap.contains(testName))
         throw new IllegalArgumentException("The passed testname: " + testName + ", was already passed to distributedTests.")
-      val slot = Slot(UUID.randomUUID, new ListBuffer[Event](), false)
+      val slot = Slot(UUID.randomUUID, new ListBuffer[Event](), false, false, false)
       slotMap.put(testName, slot)
       waitingBuffer += slot
       // if it is the head, we should start the timer, because it is possible that this slot has no event coming later and it keeps blocking 
@@ -90,13 +92,25 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
       if (slotMap(testName).ready)
         throw new IllegalArgumentException("The passed testname: " + testName + ", has already completed.")
       val slot = slotMap(testName)
-      val newSlot = slot.copy(ready = true)
+      val newSlot = slot.copy(completed = true, ready = slot.completedEvent)
       val slotIdx = waitingBuffer.indexOf(slot)
       if (slotIdx >= 0)
         waitingBuffer.update(slotIdx, newSlot)
       slotMap.put(testName, newSlot)
       completedTestCount += 1
       fireReadyEvents()
+      
+      checkCompletedTests()
+    }
+  }
+  
+  private def checkCompletedTests() {
+    if (completedTestCount == testCount) {
+      suiteSorter match {
+        case Some(suiteSorter) => 
+          suiteSorter.completedTests(suiteId)
+        case None =>
+      }
     }
   }
 
@@ -159,7 +173,7 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
   private def handleSuiteEvent(event: Event) {
     val listBuffer = new ListBuffer[Event]()
     listBuffer += event
-    val slot = Slot(UUID.randomUUID, listBuffer, true)  // Already ready already!
+    val slot = Slot(UUID.randomUUID, listBuffer, true, true, true)  // Already ready already!
     waitingBuffer += slot
     // This is outside a test. That's why he calls it a SuiteEvent.
     // If inside a test, it comes through the other apply.
@@ -171,8 +185,11 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
     slotMap.get(testName) match {
       case Some(slot) =>
         val slotIdx = waitingBuffer.indexOf(slot)
-        if (slotIdx >= 0) 
-          slot.eventList += event // Normal path is just add it. Note not ready until completedTest call.
+        if (slotIdx >= 0) { // Normal path is just add it. Note not ready until completedTest call.
+          val newSlot = slot.copy(eventList = slot.eventList :+ event, completedEvent = true, ready = slot.completed)
+          waitingBuffer.update(slotIdx, newSlot)
+          slotMap.put(testName, newSlot)
+        }
         else // could happen when timeout, just fire the test completed event.
           dispatch(event) // Yup. Might be not there anymore.
       case None => 
@@ -219,12 +236,6 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
         fireSlotEvents(head)
         waitingBuffer.remove(0)
         cancelTimeoutTask()
-      }
-      if (completedTestCount == testCount)
-      suiteSorter match {
-        case Some(suiteSorter) => 
-          suiteSorter.completedTests(suiteId)
-        case None =>
       }
     }
   }

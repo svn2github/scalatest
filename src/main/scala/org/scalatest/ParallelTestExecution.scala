@@ -253,14 +253,18 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
   abstract override def run(testName: Option[String], args: Args): Status = {
     (testName, args.distributedTestSorter) match {
       case (Some(name), Some(sorter)) =>
-        class TestSpecificReporter(testSorter: DistributedTestSorter, testName: String) extends Reporter {
-          def apply(event: Event) {
-            testSorter.apply(testName, event)
-          }
-        }
-        super.run(testName, args.copy(reporter = new TestSpecificReporter(sorter, name)))
+        super.run(testName, args.copy(reporter = createTestSpecificReporter(sorter, name)))
       case _ =>
         super.run(testName, args)
     }
+  }
+  
+  private[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    class TestSpecificReporter(testSorter: DistributedTestSorter, testName: String) extends Reporter {
+      def apply(event: Event) {
+        testSorter.apply(testName, event)
+      }
+    }
+    new TestSpecificReporter(testSorter, testName)
   }
 }

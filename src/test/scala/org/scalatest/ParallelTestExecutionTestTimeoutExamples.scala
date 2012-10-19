@@ -4,9 +4,15 @@ import org.scalatest.events.Event
 import org.scalatest.time.Span
 import org.scalatest.time.Millis
 import org.scalatest.prop.Tables
+import org.scalatest.events.TestSucceeded
+import org.scalatest.tools.TestSortingReporter
 
-trait TestTimeoutExpectedResults extends EventHelpers {
+trait TestTimeoutExpectedResults extends EventHelpers { s: ParallelTestExecution =>
   def assertTestTimeoutTest(events: List[Event])
+  val holdTestSucceededName: String
+  val holdUntilEventCount: Int
+  override def sortingTimeout: Span = Span(300, Millis)
+  var holdingReporter: TestHoldingReporter = null
 }
 
 trait ParallelTestExecutionTestTimeoutExamples extends Tables {
@@ -54,13 +60,38 @@ trait ParallelTestExecutionTestTimeoutExamples extends Tables {
     )
 }
 
+class TestHoldingReporter(dispatch: Reporter, holdingTestSucceededName: String) extends CatchReporter {
+  val out = System.err
+  private var holdEvent: Option[Event] = None
+  override protected def doApply(event: Event) {
+    event match {
+      case testSucceeded: TestSucceeded if testSucceeded.testName == holdingTestSucceededName =>
+        holdEvent = Some(testSucceeded)
+      case _ => dispatch(event)
+    }
+  }
+  protected def doDispose() {}
+  def fireHoldEvent() {
+    holdEvent match {
+      case Some(event) => dispatch(event)
+      case None =>
+    }
+  }
+}
+
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutSuite extends Suite with TestTimeoutExpectedResults with ParallelTestExecution {
+class ExampleParallelTestExecutionTestTimeoutSuite extends Suite with ParallelTestExecution with TestTimeoutExpectedResults {
   def testMethod1() {}
-  def testMethod2() { Thread.sleep(600) }
+  def testMethod2() {}
   def testMethod3() {}
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "testMethod2"
+  val holdUntilEventCount = 5
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 6)
@@ -75,12 +106,18 @@ class ExampleParallelTestExecutionTestTimeoutSuite extends Suite with TestTimeou
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFixtureSuite extends fixture.Suite with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+class ExampleParallelTestExecutionTestTimeoutFixtureSuite extends fixture.Suite with ParallelTestExecution with TestTimeoutExpectedResults with StringFixture {
   def testMethod1() {}
-  def testMethod2() { Thread.sleep(600) }
+  def testMethod2() {}
   def testMethod3() {}
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "testMethod2"
+  val holdUntilEventCount = 5
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 6)
@@ -95,12 +132,18 @@ class ExampleParallelTestExecutionTestTimeoutFixtureSuite extends fixture.Suite 
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutSpec extends Spec with TestTimeoutExpectedResults with ParallelTestExecution {
+class ExampleParallelTestExecutionTestTimeoutSpec extends Spec with ParallelTestExecution with TestTimeoutExpectedResults {
   def `test 1` {}
-  def `test 2` { Thread.sleep(600) }
+  def `test 2` {}
   def `test 3` {}
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "test 2"
+  val holdUntilEventCount = 5
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 6)
@@ -115,12 +158,18 @@ class ExampleParallelTestExecutionTestTimeoutSpec extends Spec with TestTimeoutE
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFixtureSpec extends fixture.Spec with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+class ExampleParallelTestExecutionTestTimeoutFixtureSpec extends fixture.Spec with ParallelTestExecution with TestTimeoutExpectedResults with StringFixture {
   def `test 1`(fixture: String) {}
-  def `test 2`(fixture: String) { Thread.sleep(600) }
+  def `test 2`(fixture: String) {}
   def `test 3`(fixture: String) {}
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "test 2"
+  val holdUntilEventCount = 5
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 6)
@@ -135,12 +184,18 @@ class ExampleParallelTestExecutionTestTimeoutFixtureSpec extends fixture.Spec wi
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFunSuite extends FunSuite with TestTimeoutExpectedResults with ParallelTestExecution {
+class ExampleParallelTestExecutionTestTimeoutFunSuite extends FunSuite with ParallelTestExecution with TestTimeoutExpectedResults {
   test("Test 1") {}
-  test("Test 2") { Thread.sleep(600) }
+  test("Test 2") {}
   test("Test 3") {}
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Test 2"
+  val holdUntilEventCount = 5
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 6)
@@ -155,12 +210,18 @@ class ExampleParallelTestExecutionTestTimeoutFunSuite extends FunSuite with Test
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFixtureFunSuite extends fixture.FunSuite with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+class ExampleParallelTestExecutionTestTimeoutFixtureFunSuite extends fixture.FunSuite with ParallelTestExecution with TestTimeoutExpectedResults with StringFixture {
   test("Test 1") { fixture => }
-  test("Test 2") { fixture => Thread.sleep(600) }
+  test("Test 2") { fixture => }
   test("Test 3") { fixture => }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Test 2"
+  val holdUntilEventCount = 5
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 6)
@@ -175,17 +236,23 @@ class ExampleParallelTestExecutionTestTimeoutFixtureFunSuite extends fixture.Fun
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFunSpec extends FunSpec with TestTimeoutExpectedResults with ParallelTestExecution {
+class ExampleParallelTestExecutionTestTimeoutFunSpec extends FunSpec with ParallelTestExecution with TestTimeoutExpectedResults {
   describe("Scope 1") {
     it("Test 1") {}
     it("Test 2") {}
   }
   describe("Scope 2") {
-    it("Test 3") { Thread.sleep(600) }
+    it("Test 3") {}
     it("Test 4") {}
   }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Scope 2 Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
@@ -206,17 +273,23 @@ class ExampleParallelTestExecutionTestTimeoutFunSpec extends FunSpec with TestTi
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFixtureFunSpec extends fixture.FunSpec with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+class ExampleParallelTestExecutionTestTimeoutFixtureFunSpec extends fixture.FunSpec with ParallelTestExecution with TestTimeoutExpectedResults with StringFixture {
   describe("Scope 1") {
     it("Test 1") { fixture => }
     it("Test 2") { fixture =>}
   }
   describe("Scope 2") {
-    it("Test 3") { fixture => Thread.sleep(600) }
+    it("Test 3") { fixture => }
     it("Test 4") { fixture => }
   }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Scope 2 Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
@@ -237,17 +310,23 @@ class ExampleParallelTestExecutionTestTimeoutFixtureFunSpec extends fixture.FunS
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFeatureSpec extends FeatureSpec with TestTimeoutExpectedResults with ParallelTestExecution {
+class ExampleParallelTestExecutionTestTimeoutFeatureSpec extends FeatureSpec with ParallelTestExecution with TestTimeoutExpectedResults {
   feature("Scope 1") {
     scenario("Test 1") {}
     scenario("Test 2") {}
   }
   feature("Scope 2") {
-    scenario("Test 3") { Thread.sleep(600) }
+    scenario("Test 3") {}
     scenario("Test 4") {}
   }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Feature: Scope 2 Scenario: Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
@@ -268,17 +347,23 @@ class ExampleParallelTestExecutionTestTimeoutFeatureSpec extends FeatureSpec wit
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFixtureFeatureSpec extends fixture.FeatureSpec with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+class ExampleParallelTestExecutionTestTimeoutFixtureFeatureSpec extends fixture.FeatureSpec with ParallelTestExecution with TestTimeoutExpectedResults with StringFixture {
   feature("Scope 1") {
     scenario("Test 1") { fixture => }
     scenario("Test 2") { fixture =>}
   }
   feature("Scope 2") {
-    scenario("Test 3") { fixture => Thread.sleep(600) }
+    scenario("Test 3") { fixture => }
     scenario("Test 4") { fixture => }
   }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Feature: Scope 2 Scenario: Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
@@ -299,16 +384,22 @@ class ExampleParallelTestExecutionTestTimeoutFixtureFeatureSpec extends fixture.
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFlatSpec extends FlatSpec with TestTimeoutExpectedResults with ParallelTestExecution {
+class ExampleParallelTestExecutionTestTimeoutFlatSpec extends FlatSpec with ParallelTestExecution with TestTimeoutExpectedResults {
   behavior of "Scope 1"
   it should "Test 1" in {}
   it should "Test 2" in {}
   
   behavior of "Scope 2"
-  it should "Test 3" in { Thread.sleep(600) }
+  it should "Test 3" in {}
   it should "Test 4" in {}
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Scope 2 should Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
@@ -329,16 +420,22 @@ class ExampleParallelTestExecutionTestTimeoutFlatSpec extends FlatSpec with Test
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFixtureFlatSpec extends fixture.FlatSpec with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+class ExampleParallelTestExecutionTestTimeoutFixtureFlatSpec extends fixture.FlatSpec with ParallelTestExecution with TestTimeoutExpectedResults with StringFixture {
   behavior of "Scope 1"
   it should "Test 1" in { fixture => }
   it should "Test 2" in { fixture => }
   
   behavior of "Scope 2"
-  it should "Test 3" in { fixture => Thread.sleep(600) }
+  it should "Test 3" in { fixture => }
   it should "Test 4" in { fixture => }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Scope 2 should Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
@@ -359,18 +456,24 @@ class ExampleParallelTestExecutionTestTimeoutFixtureFlatSpec extends fixture.Fla
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFreeSpec extends FreeSpec with TestTimeoutExpectedResults with ParallelTestExecution {
+class ExampleParallelTestExecutionTestTimeoutFreeSpec extends FreeSpec with ParallelTestExecution with TestTimeoutExpectedResults {
   "Scope 1" - {
     "Test 1" in {}
     "Test 2" in {}
   }
   
   "Scope 2" - {
-    "Test 3" in { Thread.sleep(600) }
+    "Test 3" in {}
     "Test 4" in {}
   }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Scope 2 Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
@@ -391,18 +494,24 @@ class ExampleParallelTestExecutionTestTimeoutFreeSpec extends FreeSpec with Test
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFixtureFreeSpec extends fixture.FreeSpec with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+class ExampleParallelTestExecutionTestTimeoutFixtureFreeSpec extends fixture.FreeSpec with ParallelTestExecution with TestTimeoutExpectedResults with StringFixture {
   "Scope 1" - {
     "Test 1" in { fixture => }
     "Test 2" in { fixture => }
   }
   
   "Scope 2" - {
-    "Test 3" in { fixture => Thread.sleep(600) }
+    "Test 3" in { fixture => }
     "Test 4" in { fixture => }
   }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Scope 2 Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
@@ -423,12 +532,18 @@ class ExampleParallelTestExecutionTestTimeoutFixtureFreeSpec extends fixture.Fre
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutPropSpec extends PropSpec with TestTimeoutExpectedResults with ParallelTestExecution {
+class ExampleParallelTestExecutionTestTimeoutPropSpec extends PropSpec with ParallelTestExecution with TestTimeoutExpectedResults {
   property("Test 1") {}
-  property("Test 2") { Thread.sleep(600) }
+  property("Test 2") {}
   property("Test 3") {}
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Test 2"
+  val holdUntilEventCount = 5
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 6)
@@ -443,12 +558,18 @@ class ExampleParallelTestExecutionTestTimeoutPropSpec extends PropSpec with Test
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFixturePropSpec extends fixture.PropSpec with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+class ExampleParallelTestExecutionTestTimeoutFixturePropSpec extends fixture.PropSpec with ParallelTestExecution with TestTimeoutExpectedResults with StringFixture {
   property("Test 1") { fixture => }
-  property("Test 2") { fixture => Thread.sleep(600) }
+  property("Test 2") { fixture => }
   property("Test 3") { fixture => }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Test 2"
+  val holdUntilEventCount = 5
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 6)
@@ -463,18 +584,24 @@ class ExampleParallelTestExecutionTestTimeoutFixturePropSpec extends fixture.Pro
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutWordSpec extends WordSpec with TestTimeoutExpectedResults with ParallelTestExecution {
+class ExampleParallelTestExecutionTestTimeoutWordSpec extends WordSpec with ParallelTestExecution with TestTimeoutExpectedResults {
   "Scope 1" should {
     "Test 1" in {}
     "Test 2" in {}
   }
   
   "Scope 2" should {
-    "Test 3" in { Thread.sleep(600) }
+    "Test 3" in {}
     "Test 4" in {}
   }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Scope 2 should Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
@@ -495,18 +622,24 @@ class ExampleParallelTestExecutionTestTimeoutWordSpec extends WordSpec with Test
 }
 
 @DoNotDiscover
-class ExampleParallelTestExecutionTestTimeoutFixtureWordSpec extends fixture.WordSpec with TestTimeoutExpectedResults with ParallelTestExecution with StringFixture {
+class ExampleParallelTestExecutionTestTimeoutFixtureWordSpec extends fixture.WordSpec with ParallelTestExecution with TestTimeoutExpectedResults with StringFixture {
   "Scope 1" should {
     "Test 1" in { fixture => }
     "Test 2" in { fixture => }
   }
   
   "Scope 2" should {
-    "Test 3" in { fixture => Thread.sleep(600) }
+    "Test 3" in { fixture => }
     "Test 4" in { fixture => }
   }
   
-  override protected def sortingTimeout: Span = Span(300, Millis)
+  val holdTestSucceededName = "Scope 2 should Test 3"
+  val holdUntilEventCount = 11
+  
+  override protected[scalatest] def createTestSpecificReporter(testSorter: DistributedTestSorter, testName: String): Reporter = {
+    holdingReporter = new TestHoldingReporter(super.createTestSpecificReporter(testSorter, testName), holdTestSucceededName)
+    holdingReporter
+  }
   
   def assertTestTimeoutTest(events: List[Event]) {
     assert(events.size === 12)
