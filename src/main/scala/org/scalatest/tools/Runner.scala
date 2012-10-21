@@ -87,6 +87,7 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-g<em>[NCXEHLOPQMD]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the graphical reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-g</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-f<em>[NCXEHLOPQMDWSFU] &lt;filename&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the file reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-f output.txt</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-u <em>&lt;directory name&gt;</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the JUnit XML reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-u target/junitxmldir</code></td></tr>
+ * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-h <em>&lt;directory name&gt;</em> [-Y <em>&lt;css file name&gt;</em>]</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the HTML reporter, optionally including the specified CSS file</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-h target/htmldir -Y src/main/html/customStyles.css</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-v</code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">print the ScalaTest version</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-v</code> <em>or, also</em> <code>-version</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-o<em>[NCXEHLOPQMDWSFU]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the standard output reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-o</code></td></tr>
  * <tr><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-e<em>[NCXEHLOPQMDWSFU]</em></code></td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center">select the standard error reporter</td><td style="border-width: 1px; padding: 3px; border: 1px solid black; text-align: center"><code>-e</code></td></tr>
@@ -164,8 +165,8 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  *     the named file</li>
  * <li> <code><b>-u &lt;directory&gt;</b></code> - causes test results to be written to
  *      junit-style xml files in the named directory</li>
- * <li> <code><b>-d &lt;directory&gt;</b></code> - causes test results to be written to
- *      dashboard files in the named directory</li>
+ * <li> <code><b>-h &lt;directory&gt; [-Y &lt;CSS file&gt;]</b></code> - causes test results to be written to
+ *      HTML files in the named directory, optionally included the specified CSS file</li>
  * <li> <code><b>-a &lt;number of files to archive&gt;</b></code> - causes specified number of old
  *      summary and durations files to be archived (in summaries/ and durations/ subdirectories)
  *      for dashboard reporter (default is two)</li>
@@ -881,7 +882,7 @@ object Runner {
   private[scalatest] def checkArgsForValidity(args: Array[String]) = {
 
     val lb = new ListBuffer[String]
-    val it = args.iterator
+    val it = args.iterator.buffered
     while (it.hasNext) {
       val s = it.next
       if (
@@ -891,7 +892,6 @@ object Runner {
         s.startsWith("-u") ||
         s.startsWith("-d") ||
         s.startsWith("-a") ||
-        s.startsWith("-h") ||
         s.startsWith("-r") ||
         s.startsWith("-C") ||
         s.startsWith("-n") ||
@@ -919,6 +919,14 @@ object Runner {
           it.next
         if (it.hasNext)
           it.next
+      }
+      else if (s.startsWith("-h")) {
+        if (it.hasNext)
+          it.next
+        if (it.hasNext && it.head == "-Y") {
+          it.next
+          it.next
+        }
       }
       else if (!s.startsWith("-D") && !s.startsWith("-g") && !s.startsWith("-o") && !s.startsWith("-e") && !s.startsWith("-c") && !s.startsWith("-P")) {
         lb += s
@@ -1046,6 +1054,11 @@ object Runner {
         reporters += s
         if (it.hasNext)
           reporters += it.next
+        if (it.hasNext && it.head == "-Y") {
+          reporters += it.next
+          if (it.hasNext)
+            reporters += it.next
+        }
       }
       else if (s.startsWith("-n")) {
         includes += s
@@ -1348,10 +1361,18 @@ object Runner {
             throw new IllegalArgumentException("-x needs to be followed by a directory name arg: ")
           }
         case "-h" =>
-          if (it.hasNext)
+          if (it.hasNext) {
             it.next // scroll past the filename
+            if (it.hasNext && it.head == "-Y") {
+              it.next // scroll past the -Y
+              if (it.hasNext)
+                it.next // scroll past the css file name
+              else
+                throw new IllegalArgumentException("-Y needs to be followed by a file name arg: ")
+            }
+          }
           else
-            throw new IllegalArgumentException("-h needs to be followed by a file name arg: ")
+            throw new IllegalArgumentException("-h needs to be followed by a directory name arg: ")
         case "-r" =>
           if (it.hasNext)
             it.next // scroll past the reporter class
@@ -1472,8 +1493,24 @@ object Runner {
       val lb = new ListBuffer[HtmlReporterConfiguration]
       while (it.hasNext) {
         val arg = it.next
-        if (arg.startsWith("-h"))
-          lb += new HtmlReporterConfiguration(parseConfigSet(arg), it.next)
+        if (arg.startsWith("-h") && it.hasNext) {
+          if (it.hasNext) {
+            val configSet = parseConfigSet(arg)
+            val directory = it.next
+            val cssFile = 
+              if (it.hasNext && it.next == "-Y") {
+                if (it.hasNext)
+                  Some(new File(it.next).toURI.toURL)
+                else
+                  throw new IllegalArgumentException("-Y cannot be last, expected CSS file name to follow.")
+              }
+              else
+                None
+            lb += new HtmlReporterConfiguration(configSet, directory, cssFile)
+          }
+          else
+            throw new IllegalArgumentException("-h cannot be last, expected HTML output directory name to follow.")
+        }
       }
       lb.toList
     }

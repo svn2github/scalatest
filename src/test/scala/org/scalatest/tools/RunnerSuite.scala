@@ -17,6 +17,8 @@ package org.scalatest.tools
 
 import org.scalatest._
 import java.util.regex.Pattern
+import java.net.URL
+import java.io.File
 
 class RunnerSuite() extends Suite with PrivateMethodTester {
 
@@ -744,6 +746,50 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
       Nil, 
       List("-T", "20")
     )
+    // Test -h option
+    verify(
+      Array("-c", "-g", "-Dincredible=whatshername", "-Ddbname=testdb", "-Dserver=192.168.1.188", "-p",
+          "\"serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar\"", "-g", "-h", "directory/",
+          "-n", "One Two Three", "-l", "SlowTests", "-s", "SuiteOne",
+          "-m", "com.example.webapp", "-w", "com.example.root", "-b", "some/path/file.xml"),
+      List("-p", "\"serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar\""),
+      List("-g", "-g", "-h", "directory/"),
+      List("-s", "SuiteOne"),
+      Nil,
+      List("-Dincredible=whatshername", "-Ddbname=testdb", "-Dserver=192.168.1.188"),
+      List("-n", "One Two Three"),
+      List("-l", "SlowTests"),
+      List("-c"),
+      List("-m", "com.example.webapp"),
+      List("-w", "com.example.root"),
+      List("-b", "some/path/file.xml"),
+      None, 
+      Nil, 
+      Nil, 
+      Nil
+    )
+    // Test -h -Y option
+    verify(
+      Array("-c", "-g", "-Dincredible=whatshername", "-Ddbname=testdb", "-Dserver=192.168.1.188", "-p",
+          "\"serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar\"", "-g", "-h", "directory/",
+          "-Y", "mystyles.css", "-n", "One Two Three", "-l", "SlowTests", "-s", "SuiteOne",
+          "-m", "com.example.webapp", "-w", "com.example.root", "-b", "some/path/file.xml"),
+      List("-p", "\"serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar\""),
+      List("-g", "-g", "-h", "directory/", "-Y", "mystyles.css"),
+      List("-s", "SuiteOne"),
+      Nil,
+      List("-Dincredible=whatshername", "-Ddbname=testdb", "-Dserver=192.168.1.188"),
+      List("-n", "One Two Three"),
+      List("-l", "SlowTests"),
+      List("-c"),
+      List("-m", "com.example.webapp"),
+      List("-w", "com.example.root"),
+      List("-b", "some/path/file.xml"),
+      None, 
+      Nil, 
+      Nil, 
+      Nil
+    )
   }
 
   def testParseCompoundArgIntoSet() {
@@ -887,6 +933,12 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
     intercept[IllegalArgumentException] {
       Runner.parseReporterArgsIntoConfigurations(List("-C")) // Can't have -C last, because need a reporter class
     }
+    intercept[IllegalArgumentException] {
+      Runner.parseReporterArgsIntoConfigurations(List("-h"))
+    }
+    intercept[IllegalArgumentException] {
+      Runner.parseReporterArgsIntoConfigurations(List("-h", "html", "-Y"))
+    }
     expectResult(new ReporterConfigurations(Some(new GraphicReporterConfiguration(Set())), Nil, Nil, Nil, Nil, None, None, Nil, Nil, Nil)) {
       Runner.parseReporterArgsIntoConfigurations(List("-g"))
     }
@@ -928,6 +980,12 @@ class RunnerSuite() extends Suite with PrivateMethodTester {
     }
     expectResult(new ReporterConfigurations(None, Nil, Nil, Nil, Nil, None, None, Nil, Nil, List(new SocketReporterConfiguration("localhost", 8888), new SocketReporterConfiguration("another host", 1234)))) {
       Runner.parseReporterArgsIntoConfigurations(List("-k", "localhost", "8888", "-k", "another host", "1234"))
+    }
+    expectResult(new ReporterConfigurations(None, Nil, Nil, Nil, Nil, None, None, List(new HtmlReporterConfiguration(Set(), "html", None)), Nil, Nil)) {
+      Runner.parseReporterArgsIntoConfigurations(List("-h", "html"))
+    }
+    expectResult(new ReporterConfigurations(None, Nil, Nil, Nil, Nil, None, None, List(new HtmlReporterConfiguration(Set(), "html", Some(new File("MyStyle.css").toURI.toURL))), Nil, Nil)) {
+      Runner.parseReporterArgsIntoConfigurations(List("-h", "html", "-Y", "MyStyle.css"))
     }
   }
 

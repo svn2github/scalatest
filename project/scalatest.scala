@@ -101,7 +101,9 @@ object ScalatestBuild extends Build {
      "net.sourceforge.cobertura" % "cobertura" % "1.9.1" % "test",
      "commons-io" % "commons-io" % "1.3.2" % "test", 
      "org.eclipse.jetty" % "jetty-server" % "8.0.1.v20110908" % "test", 
-     "org.eclipse.jetty" % "jetty-webapp" % "8.0.1.v20110908" % "test"
+     "org.eclipse.jetty" % "jetty-webapp" % "8.0.1.v20110908" % "test", 
+     "asm" % "asm" % "3.3.1", // TODO optional
+     "org.pegdown" % "pegdown" % "1.1.0" // TODO optional
   )
 
   def genFiles(name: String, generatorSource: String)(gen: (File, String) => Unit)(basedir: File, outDir: File): Seq[File] = {

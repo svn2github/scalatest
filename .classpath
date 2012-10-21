@@ -47,5 +47,8 @@
 	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/servlet-api/3.0.20100224/servlet-api-3.0.20100224.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-http/8.0.1.v20110908/jetty-http-8.0.1.v20110908.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-security/8.0.1.v20110908/jetty-security-8.0.1.v20110908.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/pegdown/pegdown/1.1.0/pegdown-1.1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/parboiled/parboiled-core/1.0.2/parboiled-core-1.0.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/parboiled/parboiled-java/1.0.2/parboiled-java-1.0.2.jar"/>
 	<classpathentry kind="output" path="target/tests"/>
 </classpath>

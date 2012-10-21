@@ -264,6 +264,9 @@
         <copy todir="${jar.contents}/images">
             <fileset dir="${images}" />
         </copy>
+    	<copy file="${resources}/org/scalatest/HtmlReporter.css" todir="${jar.contents}/org/scalatest" />
+    	<copy file="${resources}/org/scalatest/sorttable.js" todir="${jar.contents}/org/scalatest" />
+	    <copy file="${resources}/org/scalatest/d3.v2.min.js" todir="${jar.contents}/org/scalatest" />
     </target>
 
     <target name="compile-tests" depends="compile-main">
@@ -394,12 +397,14 @@
       -->
     <target name="runtest" depends="compile,copyprops,taskdefscalatest">
         <mkdir dir="target/dash" />
+    	<mkdir dir="target/html" />
         <scalatest fork="true" runpath="${test.runpath}" parallel="true" haltonfailure="true">
             <jvmarg value="-XX:MaxPermSize=512m"/>
             <reporter type="graphic"/>
             <reporter type="dashboard" directory="target/dash" numfiles="3" />
             <reporter type="junitxml" directory="target"/>
             <reporter type="stdout" config="D"/>
+        	<reporter type="html" directory="target/html" config="D" />
             <membersonly package="org.scalatest" />
             <membersonly package="org.scalatest.fixture" />
             <membersonly package="org.scalatest.concurrent" />

@@ -16,6 +16,7 @@
 package org.scalatest.tools
 
 import org.scalatest._
+import java.net.URL
 
 /**
  * This file has types that are used in parsing command line arguments to Runner.
@@ -31,7 +32,7 @@ private[tools] case class FileReporterConfiguration(configSet: Set[ReporterConfi
 private[tools] case class JunitXmlReporterConfiguration(configSet: Set[ReporterConfigParam], fileName: String) extends ReporterConfiguration
 private[tools] case class DashboardReporterConfiguration(configSet: Set[ReporterConfigParam], fileName: String, numOldFilesToKeep: Int) extends ReporterConfiguration
 private[tools] case class XmlReporterConfiguration(configSet: Set[ReporterConfigParam], fileName: String) extends ReporterConfiguration
-private[tools] case class HtmlReporterConfiguration(configSet: Set[ReporterConfigParam], fileName: String) extends ReporterConfiguration
+private[tools] case class HtmlReporterConfiguration(configSet: Set[ReporterConfigParam], directory: String, cssFileName: Option[URL]) extends ReporterConfiguration
 private[tools] case class CustomReporterConfiguration(configSet: Set[ReporterConfigParam], reporterClass: String) extends ReporterConfiguration
 private[tools] case class SocketReporterConfiguration(host: String, port: Int) extends ReporterConfiguration
 

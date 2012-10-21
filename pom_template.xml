@@ -172,6 +172,20 @@
       <scope>test</scope>
     </dependency>
     
+    <dependency>
+	  <groupId>asm</groupId>
+	  <artifactId>asm</artifactId>
+	  <version>3.3.1</version>
+	  <optional>true</optional>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.pegdown</groupId>
+      <artifactId>pegdown</artifactId>
+      <version>1.1.0</version>
+      <optional>true</optional>
+    </dependency>
+    
   </dependencies>
 
 </project>

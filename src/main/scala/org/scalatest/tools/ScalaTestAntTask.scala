@@ -572,11 +572,16 @@ class ScalaTestAntTask extends Task {
   {
     addReporterOption(args, reporter, "-h")
 
-    if (reporter.getFilename == null)
+    if (reporter.getDirectory == null)
       throw new BuildException(
-        "reporter type 'html' requires 'filename' attribute")
+        "reporter type 'html' requires 'directory' attribute")
 
-    args += reporter.getFilename
+    args += reporter.getDirectory
+    
+    if (reporter.getCss != null) {
+      args += "-Y"
+      args += reporter.getCss
+    }
   }
 
   //
@@ -987,6 +992,7 @@ class ScalaTestAntTask extends Task {
     private var directory : String = null
     private var classname : String = null
     private var numfiles  : Int    = -1
+    private var css       : String = null
 
     def setType(rtype          : String) { this.rtype     = rtype     }
     def setConfig(config       : String) { this.config    = config    }
@@ -994,6 +1000,7 @@ class ScalaTestAntTask extends Task {
     def setDirectory(directory : String) { this.directory = directory }
     def setClassName(classname : String) { this.classname = classname }
     def setNumfiles(numfiles   : Int)    { this.numfiles  = numfiles  }
+    def setCss(css: String) { this.css = css }
 
     def getType      = rtype
     def getConfig    = config
@@ -1001,4 +1008,5 @@ class ScalaTestAntTask extends Task {
     def getDirectory = directory
     def getClassName = classname
     def getNumfiles  = numfiles
+    def getCss = css
   }

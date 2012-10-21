@@ -1,0 +1,565 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+  font-size: 80%;
+  font-family: "Lucida Grande", Helvetica, sans-serif;
+}
+
+#scalatest-header {
+  color: #fff; 
+  height: 4.5em;
+}
+    
+.scalatest-header-passed {
+  background-color: #65c400; 
+}
+
+.scalatest-header-failed {
+  background-color: #c20000; 
+}
+            
+#title {
+  font-size: 2.0em;
+  float: left;
+}
+
+.scalatest-report h1 {
+  margin: 0px 10px 0px 10px;
+  padding: 10px;
+  font-size: 1.8em;
+  position: absolute;
+}
+
+#display-filters {            
+  padding: 0px 0 0 0px;
+  font-size: 0.5em;
+}
+
+#summary {
+  float:right;
+  padding: 5px 10px;
+  text-align: right;
+}
+
+#summary p {
+  margin: 0 0 0 2px;
+}
+
+#chart_div {
+  width: 200px; 
+  height: 200px;
+}
+
+#summary_view {
+  float: left;
+}
+
+#details_view {
+  padding-right: 15px;
+  position: fixed;
+  float: right;
+  height: 500px;
+}
+
+#summary_view_row_1_chart {
+  text-align:right;
+  padding-top: 30px;
+  padding-left: 30px;
+  padding-bottom: 30px;
+  width: 230px;
+}
+
+#summary_view_row_1_legend_succeeded_label {
+  background-color: #339933;
+  color: #fff;
+}
+
+#summary_view_row_1_legend_succeeded_count {
+  padding-left: 5px;
+  text-align: right;
+  color: #339933;
+}
+
+#summary_view_row_1_legend_succeeded_percent {
+  padding-left: 5px;
+  text-align: right;
+  color: #339933;
+}
+
+#summary_view_row_1_legend_failed_label {
+  background-color: #993333;
+  color: #fff;
+}
+
+#summary_view_row_1_legend_failed_count {
+  padding-left: 5px;
+  text-align: right;
+  color: #993333;
+}
+
+#summary_view_row_1_legend_failed_percent {
+  padding-left: 5px;
+  text-align: right;
+  color: #993333;
+}
+
+#summary_view_row_1_legend_ignored_label {
+  background-color: #FF6600;
+  color: #fff;
+}
+
+#summary_view_row_1_legend_ignored_count {
+  padding-left: 5px;
+  text-align: right;
+  color: #FF6600;
+}
+
+#summary_view_row_1_legend_ignored_percent {
+  padding-left: 5px;
+  text-align: right;
+  color: #FF6600;
+}
+
+#summary_view_row_1_legend_pending_label {
+  background-color: #33CCCC;
+  color: #fff;
+}
+
+#summary_view_row_1_legend_pending_count {
+  padding-left: 5px;
+  text-align: right;
+  color: #33CCCC;
+}
+
+#summary_view_row_1_legend_pending_percent {
+  padding-left: 5px;
+  text-align: right;
+  color: #33CCCC;
+}
+
+#summary_view_row_1_legend_canceled_label {
+  background-color: #FFCC00;
+  color: #fff;
+}
+
+#summary_view_row_1_legend_canceled_count {
+  padding-left: 5px;
+  text-align: right;
+  color: #FFCC00;
+}
+
+#summary_view_row_1_legend_canceled_percent {
+  padding-left: 5px;
+  text-align: right;
+  color: #FFCC00;
+}
+
+/* Sortable tables */
+table.sortable thead {
+  background-color: #eee;
+  color: #666666;
+  font-weight: bold;
+  cursor: default;
+}
+
+table.sortable tr td.suite_name_passed_all {
+  padding-left: 15px;
+  padding-right: 15px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+table.sortable tr td.suite_name_passed {
+  padding-left: 15px;
+  padding-right: 15px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+table.sortable tr td.suite_name_with_failed {
+  padding-left: 15px;
+  padding-right: 15px;
+  background-color: #C20000;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+table.sortable tr td.duration_passed_all {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+table.sortable tr td.duration_passed {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+table.sortable tr td.duration_with_failed {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #C20000;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+table.sortable tr td.succeeded_zero {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #339933;
+}
+
+table.sortable tr td.succeeded {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #339933;
+  color: #fff;
+}
+
+table.sortable tr td.failed_zero {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #993333;
+}
+
+table.sortable tr td.failed {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #993333;
+  color: #fff;
+}
+
+table.sortable tr td.ignored_zero {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #FF6600;
+}
+
+table.sortable tr td.ignored {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #FF6600;
+  color: #fff;
+}
+
+table.sortable tr td.pending_zero {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #33CCCC;
+}
+
+table.sortable tr td.pending {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #33CCCC;
+  color: #fff;
+}
+
+table.sortable tr td.canceled_zero {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #FFCC00;
+}
+
+table.sortable tr td.canceled {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #FFCC00;
+  color: #fff;
+}
+
+table.sortable tr td.total_passed {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+table.sortable tr td.total_passed_all {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+table.sortable tr td.total_with_failed {
+  text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #C20000;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.suite {
+  margin: 0 10px 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+            
+.scope {
+  margin: 0 10px 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.test_passed {
+  margin: 0 10px 5px;
+  border-left: 5px solid #65C400;
+  border-bottom: 1px solid #65C400;
+  background-color: #DBFFB4; 
+  color: #3D7700;
+}
+
+.test_failed {
+  margin: 0 10px 5px;
+  border-left: 5px solid #C20000;
+  border-bottom: 1px solid #C20000;
+  color: #C20000; 
+  background-color: #FFFBD3;
+}
+
+.test_ignored {
+  margin: 0 10px 5px;
+  border-left: 5px solid #FAF834;
+  border-bottom: 1px solid #FAF834;
+  background-color: #FCFB98; color: #131313;
+}
+
+.test_pending {
+  margin: 0 10px 5px;
+  border-left: 5px solid #FAF834;
+  border-bottom: 1px solid #FAF834;
+  background-color: #FCFB98; color: #131313;
+}
+
+.test_canceled {
+  margin: 0 10px 5px;
+  border-left: 5px solid #FAF834;
+  border-bottom: 1px solid #FAF834;
+  background-color: #FCFB98; color: #131313;
+}
+
+.markup {
+  margin: 0 10px 5px;
+  border-left: 5px solid #65C400;
+  border-bottom: 1px solid #65C400;
+  background-color: #DBFFB4; 
+  color: #3D7700;
+}
+
+.info {
+  margin: 0 10px 5px;
+  border-left: 5px solid #65C400;
+  border-bottom: 1px solid #65C400;
+  background-color: #DBFFB4; 
+  color: #3D7700;
+}
+            
+.gray { 
+  color: grey; 
+}
+          
+.dark { 
+  font-weight: bold; 
+}
+            
+.label { 
+  color: #444444; 
+  font-weight: bold; 
+}
+
+iframe {
+  border: none;
+}
+
+#suite_header_id_label_passed {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_id_label_passed_all {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_id_label_with_failed {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #C20000;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_id_value_passed {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #65c400;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_id_value_passed_all {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #65c400;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_id_value_with_failed {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #C20000;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_name_label_passed {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_name_label_passed_all {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_name_label_with_failed {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #C20000;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_name_value_passed {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #65c400;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_name_value_passed_all {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #65c400;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_name_value_with_failed {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #C20000;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_class_label_passed {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_class_label_passed_all {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #65c400;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_class_label_with_failed {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #C20000;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_class_value_passed {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #65c400;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_class_value_passed_all {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #65c400;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#suite_header_class_value_with_failed {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #C20000;
+  font-weight: bold;
+  font-size: 11px;
+}
