@@ -2166,7 +2166,7 @@ trait WebBrowser {
    * Returns the title of the current page, or the empty string if the current page has no title.
    *
    * @param driver the <code>WebDriver</code> with which to drive the browser
-   * @returns the current page's title, or the empty string if the current page has no title
+   * @return the current page's title, or the empty string if the current page has no title
    */
   def pageTitle(implicit driver: WebDriver): String = {
     val t = driver.getTitle
@@ -2181,7 +2181,7 @@ trait WebBrowser {
    * </p>
    *
    * @param driver the <code>WebDriver</code> with which to drive the browser
-   * @returns the source of the current page
+   * @return the source of the current page
    */
   def pageSource(implicit driver: WebDriver): String = driver.getPageSource
   
@@ -2193,7 +2193,7 @@ trait WebBrowser {
    * </p>
    *
    * @param driver the <code>WebDriver</code> with which to drive the browser
-   * @returns the URL of the current page
+   * @return the URL of the current page
    */
   def currentUrl(implicit driver: WebDriver): String = driver.getCurrentUrl
   
@@ -2238,7 +2238,7 @@ trait WebBrowser {
      * </p>
      *
      * @param driver the <code>WebDriver</code> with which to drive the browser
-     * @returns the <code>Element</code> selected by this query
+     * @return the <code>Element</code> selected by this query
      * @throws TestFailedException if nothing is selected by this query
      */
     def element(implicit driver: WebDriver): Element = {
@@ -2266,7 +2266,7 @@ trait WebBrowser {
      * </p>
      *
      * @param driver the <code>WebDriver</code> with which to drive the browser
-     * @returns the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
+     * @return the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
      *   no <code>Element</code> is selected
      */
     def findElement(implicit driver: WebDriver): Option[Element] = 
@@ -2292,7 +2292,7 @@ trait WebBrowser {
      * <p>
      *
      * @param driver the <code>WebDriver</code> with which to drive the browser
-     * @returns the <code>Iterator</code> over all <code>Element</code>s selected by this query
+     * @return the <code>Iterator</code> over all <code>Element</code>s selected by this query
      */
     def findAllElements(implicit driver: WebDriver): Iterator[Element] = driver.findElements(by).asScala.toIterator.map { e => createTypedElement(e) }
     
@@ -2301,7 +2301,7 @@ trait WebBrowser {
      * if no <code>WebElement</code> is selected.
      *
      * @param driver the <code>WebDriver</code> with which to drive the browser
-     * @returns the <code>WebElement</code> selected by this query
+     * @return the <code>WebElement</code> selected by this query
      * @throws TestFailedException if nothing is selected by this query
      */
     def webElement(implicit driver: WebDriver): WebElement = {
@@ -2609,7 +2609,7 @@ trait WebBrowser {
    *
    * @param query the <code>Query</code> with which to search
    * @param driver the <code>WebDriver</code> with which to drive the browser
-   * @returns the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
+   * @return the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
    *   no <code>Element</code> is selected
    */
   def find(query: Query)(implicit driver: WebDriver): Option[Element] = query.findElement
@@ -2631,7 +2631,7 @@ trait WebBrowser {
    *
    * @param queryString the string with which to search, first by ID then by name
    * @param driver the <code>WebDriver</code> with which to drive the browser
-   * @returns the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
+   * @return the <code>Element</code> selected by this query, wrapped in a <code>Some</code>, or <code>None</code> if
    *   no <code>Element</code> is selected
    */
   def find(queryString: String)(implicit driver: WebDriver): Option[Element] = 
@@ -2659,7 +2659,7 @@ trait WebBrowser {
    *
    * @param query the <code>Query</code> with which to search
    * @param driver the <code>WebDriver</code> with which to drive the browser
-   * @returns the <code>Iterator</code> over all <code>Element</code>s selected by this query
+   * @return the <code>Iterator</code> over all <code>Element</code>s selected by this query
    */
   def findAll(query: Query)(implicit driver: WebDriver): Iterator[Element] = query.findAllElements
 
@@ -2679,7 +2679,7 @@ trait WebBrowser {
    *
    * @param queryString the string with which to search, first by ID then by name
    * @param driver the <code>WebDriver</code> with which to drive the browser
-   * @returns the <code>Iterator</code> over all <code>Element</code>s selected by this query
+   * @return the <code>Iterator</code> over all <code>Element</code>s selected by this query
    */
   def findAll(queryString: String)(implicit driver: WebDriver): Iterator[Element] = {
     val byIdItr = new IdQuery(queryString).findAllElements
@@ -2705,7 +2705,7 @@ trait WebBrowser {
    * @param query the <code>Query</code> with which to search
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>TextField</code>
-   * @returns the <code>TextField</code> selected by this query
+   * @return the <code>TextField</code> selected by this query
    */
   def textField(query: Query)(implicit driver: WebDriver): TextField = new TextField(query.webElement)
   
@@ -2716,7 +2716,7 @@ trait WebBrowser {
    * @param queryString the string with which to search, first by ID then by name
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>TextField</code>
-   * @returns the <code>TextField</code> selected by this query
+   * @return the <code>TextField</code> selected by this query
    */
   def textField(queryString: String)(implicit driver: WebDriver): TextField = 
     tryQueries(queryString)(q => new TextField(q.webElement))
@@ -2728,7 +2728,7 @@ trait WebBrowser {
    * @param query the <code>Query</code> with which to search
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>TextArea</code>
-   * @returns the <code>TextArea</code> selected by this query
+   * @return the <code>TextArea</code> selected by this query
    */
   def textArea(query: Query)(implicit driver: WebDriver) = new TextArea(query.webElement)
   
@@ -2739,7 +2739,7 @@ trait WebBrowser {
    * @param queryString the string with which to search, first by ID then by name
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>TextArea</code>
-   * @returns the <code>TextArea</code> selected by this query
+   * @return the <code>TextArea</code> selected by this query
    */
   def textArea(queryString: String)(implicit driver: WebDriver): TextArea = 
     tryQueries(queryString)(q => new TextArea(q.webElement))
@@ -2751,7 +2751,7 @@ trait WebBrowser {
    * @param groupName the group name with which to search
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if no element with the specified group name is found, or found any element with the specified group name but not a <code>RadioButton</code>
-   * @returns the <code>RadioButtonGroup</code> selected by this query
+   * @return the <code>RadioButtonGroup</code> selected by this query
    */
   def radioButtonGroup(groupName: String)(implicit driver: WebDriver) = new RadioButtonGroup(groupName, driver)
   
@@ -2762,7 +2762,7 @@ trait WebBrowser {
    * @param query the <code>Query</code> with which to search
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>RadioButton</code>
-   * @returns the <code>RadioButton</code> selected by this query
+   * @return the <code>RadioButton</code> selected by this query
    */
   def radioButton(query: Query)(implicit driver: WebDriver) = new RadioButton(query.webElement)
   
@@ -2773,7 +2773,7 @@ trait WebBrowser {
    * @param queryString the string with which to search, first by ID then by name
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>RadioButton</code>
-   * @returns the <code>RadioButton</code> selected by this query
+   * @return the <code>RadioButton</code> selected by this query
    */
   def radioButton(queryString: String)(implicit driver: WebDriver): RadioButton = 
     tryQueries(queryString)(q => new RadioButton(q.webElement))
@@ -2785,7 +2785,7 @@ trait WebBrowser {
    * @param query the <code>Query</code> with which to search
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>Checkbox</code>
-   * @returns the <code>Checkbox</code> selected by this query
+   * @return the <code>Checkbox</code> selected by this query
    */
   def checkbox(query: Query)(implicit driver: WebDriver) = new Checkbox(query.webElement)
   
@@ -2796,7 +2796,7 @@ trait WebBrowser {
    * @param queryString the string with which to search, first by ID then by name
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>Checkbox</code>
-   * @returns the <code>Checkbox</code> selected by this query
+   * @return the <code>Checkbox</code> selected by this query
    */
   def checkbox(queryString: String)(implicit driver: WebDriver): Checkbox = 
     tryQueries(queryString)(q => new Checkbox(q.webElement))
@@ -2808,7 +2808,7 @@ trait WebBrowser {
    * @param query the <code>Query</code> with which to search
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>SingleSel</code>
-   * @returns the <code>SingleSel</code> selected by this query
+   * @return the <code>SingleSel</code> selected by this query
    */
   def singleSel(query: Query)(implicit driver: WebDriver) = new SingleSel(query.webElement)
   
@@ -2819,7 +2819,7 @@ trait WebBrowser {
    * @param queryString the string with which to search, first by ID then by name
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>SingleSel</code>
-   * @returns the <code>SingleSel</code> selected by this query
+   * @return the <code>SingleSel</code> selected by this query
    */
   def singleSel(queryString: String)(implicit driver: WebDriver): SingleSel = 
     tryQueries(queryString)(q => new SingleSel(q.webElement))
@@ -2831,7 +2831,7 @@ trait WebBrowser {
    * @param query the <code>Query</code> with which to search
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>MultiSel</code>
-   * @returns the <code>MultiSel</code> selected by this query
+   * @return the <code>MultiSel</code> selected by this query
    */
   def multiSel(query: Query)(implicit driver: WebDriver) = new MultiSel(query.webElement)
   
@@ -2842,7 +2842,7 @@ trait WebBrowser {
    * @param queryString the string with which to search, first by ID then by name
    * @param driver the <code>WebDriver</code> with which to drive the browser
    * @throws TestFailedException if element not found or found element is not a <code>MultiSel</code>
-   * @returns the <code>MultiSel</code> selected by this query
+   * @return the <code>MultiSel</code> selected by this query
    */
   def multiSel(queryString: String)(implicit driver: WebDriver): MultiSel = 
     tryQueries(queryString)(q => new MultiSel(q.webElement))
@@ -3046,7 +3046,7 @@ trait WebBrowser {
      * 
      * @param target the <code>SwitchTarget</code> to switch to
      * @param driver the <code>WebDriver</code> with which to drive the browser
-     * @returns instance of specified <code>SwitchTarget</code>'s type parameter
+     * @return instance of specified <code>SwitchTarget</code>'s type parameter
      */
     def to[T](target: SwitchTarget[T])(implicit driver: WebDriver): T = {
       target.switch(driver)
@@ -3184,7 +3184,7 @@ trait WebBrowser {
    * 
    * @param target the <code>SwitchTarget</code> to switch to
    * @param driver the <code>WebDriver</code> with which to drive the browser
-   * @returns instance of specified <code>SwitchTarget</code>'s type parameter
+   * @return instance of specified <code>SwitchTarget</code>'s type parameter
    */
   def switchTo[T](target: SwitchTarget[T])(implicit driver: WebDriver): T = switch to target
   

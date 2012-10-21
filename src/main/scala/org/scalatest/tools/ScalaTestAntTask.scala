@@ -9,7 +9,7 @@ import org.apache.tools.ant.taskdefs.Java
 
 /**
  * <p>
- * An ant task to run ScalaTest.  Instructions on how to specify various
+ * An ant task to run ScalaTest. Instructions on how to specify various
  * options are below.  See the scaladocs for the <code>Runner</code> class for a description
  * of what each of the options does.
  * </p>
@@ -19,7 +19,7 @@ import org.apache.tools.ant.taskdefs.Java
  * Here's an example:
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *  &lt;path id="scalatest.classpath"&gt;
  *    &lt;pathelement location="${lib}/scalatest.jar"/&gt;
  *    &lt;pathelement location="${lib}/scala-library.jar"/&gt;
@@ -38,7 +38,7 @@ import org.apache.tools.ant.taskdefs.Java
  * Once defined, you use the task by specifying information in a <code>scalatest</code> element:
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest ...&gt;
  *     ...
  *   &lt;/scalatest&gt;
@@ -49,7 +49,7 @@ import org.apache.tools.ant.taskdefs.Java
  * like this:
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest&gt;
  *     &lt;config name="dbname" value="testdb"/&gt;
  *     &lt;config name="server" value="192.168.1.188"/&gt;
@@ -60,13 +60,13 @@ import org.apache.tools.ant.taskdefs.Java
  * <code>&lt;runpath&gt;</code> elements, using standard ant path notation:
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest runpath="serviceuitest-1.1beta4.jar:myjini"&gt;
  * </pre>
  *
  * or
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest&gt;
  *     &lt;runpath&gt;
  *       &lt;pathelement location="serviceuitest-1.1beta4.jar"/&gt;
@@ -79,7 +79,7 @@ import org.apache.tools.ant.taskdefs.Java
  * (since ant paths don't support URLs):
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest&gt;
  *     &lt;runpathurl url="http://foo.com/bar.jar"/&gt;
  * </pre>
@@ -93,7 +93,7 @@ import org.apache.tools.ant.taskdefs.Java
  *   <li>  <code>graphic</code>          </li>
  *   <li>  <code>file</code>             </li>
  *   <li>  <code>junitxml</code>         </li>
- *   <li>  <code>dashboard</code>        </li>
+ *   <li>  <code>html</code>             </li>
  *   <li>  <code>stdout</code>           </li>
  *   <li>  <code>stderr</code>           </li>
  *   <li>  <code>reporterclass</code>    </li>
@@ -101,31 +101,25 @@ import org.apache.tools.ant.taskdefs.Java
  *
  * <p>
  * Each may include a <code>config</code> attribute to specify the reporter configuration.
- * Types <code>file</code>, <code>junitxml</code>, <code>dashboard</code>, and <code>reporterclass</code> require additional attributes
- * <code>filename</code>, <code>directory</code>, and <code>classname</code>, respectively:
+ * Types <code>file</code>, <code>junitxml</code>, <code>html</code>, and <code>reporterclass</code> require additional attributes
+ * (the css attribute is optional for the html reporter):
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest&gt;
- *     &lt;reporter type="stdout"        config="FAB"/&gt;
- *     &lt;reporter type="file"          filename="test.out"/&gt;
- *     &lt;reporter type="junitxml"      directory="target"/&gt;
- *     &lt;reporter type="dashboard"     directory="target"/&gt;
+ *     &lt;reporter type="stdout" config="FAB"/&gt;
+ *     &lt;reporter type="file" filename="test.out"/&gt;
+ *     &lt;reporter type="junitxml" directory="target"/&gt;
+ *     &lt;reporter type="html" directory="target" css="src/main/html/mystylesheet.css"/&gt;
  *     &lt;reporter type="reporterclass" classname="my.ReporterClass"/&gt;
  * </pre>
- *
- * <p>
- * For reporter type 'dashboard', an optional <code>numfiles</code> attribute may be
- * included to specify the number of old summary and duration files to be archived.
- * Default is 2.
- * </p>
  *
  * <p>
  * Specify tags to include and/or exclude using <code>&lt;tagsToInclude&gt;</code> and
  * <code>&lt;tagsToExclude&gt;</code> elements, like this:
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest&gt;
  *     &lt;tagsToInclude&gt;
  *         CheckinTests
@@ -143,7 +137,7 @@ import org.apache.tools.ant.taskdefs.Java
  * <code>&lt;suite&gt;</code> elements:
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest suite="com.artima.serviceuitest.ServiceUITestkit"&gt;
  * </pre>
  *
@@ -151,7 +145,7 @@ import org.apache.tools.ant.taskdefs.Java
  * or
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest&gt;
  *     &lt;suite classname="com.artima.serviceuitest.ServiceUITestkit"/&gt;
  * </pre>
@@ -162,7 +156,7 @@ import org.apache.tools.ant.taskdefs.Java
  * <code>&lt;membersonly&gt;</code> or <code>&lt;wildcard&gt;</code> elements:
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest membersonly="com.artima.serviceuitest"&gt;
  * </pre>
  *
@@ -170,7 +164,7 @@ import org.apache.tools.ant.taskdefs.Java
  * or
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest wildcard="com.artima.joker"&gt;
  * </pre>
  *
@@ -178,7 +172,7 @@ import org.apache.tools.ant.taskdefs.Java
  * or
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest&gt;
  *     &lt;membersonly package="com.artima.serviceuitest"/&gt;
  *     &lt;wildcard package="com.artima.joker"/&gt;
@@ -191,7 +185,7 @@ import org.apache.tools.ant.taskdefs.Java
  * be used to improve discovery time or to limit the scope of a test. E.g.:
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest suffixes="Spec|Suite"&gt;
  * </pre>
  *
@@ -199,7 +193,7 @@ import org.apache.tools.ant.taskdefs.Java
  * Use attribute <code>parallel="true"</code> to specify parallel execution of suites.
  * (If the <code>parallel</code> attribute is left out or set to false, suites will be executed sequentially by one thread.)
  * When <code>parallel</code> is true, you can include an optional <code>sortSuites</code> attribute to request that events be sorted on-the-fly so that
- * events for the same suite are reported together, with a timeout, (<em>e.g.</em>, <code>sortSuites="true"),
+ * events for the same suite are reported together, with a timeout, (<em>e.g.</em>, <code>sortSuites="true"</code>),
  * and an optional <code>numthreads</code> attribute to specify the number
  * of threads to be created in thread pool (<em>e.g.</em>, <code>numthreads="10"</code>).
  * </p>
@@ -221,7 +215,7 @@ import org.apache.tools.ant.taskdefs.Java
  * run the tests.
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;scalatest maxmemory="1280M"&gt;
  * </pre>
  *
@@ -232,7 +226,7 @@ import org.apache.tools.ant.taskdefs.Java
  * you could add the following <code>jvmarg</code> to bump up the JVM's <code>MaxPermSize</code> value:
  * </p>
  *
- * <pre class="stExamples">
+ * <pre>
  *   &lt;jvmarg value="-XX:MaxPermSize=128m"/&gt;
  * </pre>
  *
@@ -1010,3 +1004,14 @@ class ScalaTestAntTask extends Task {
     def getNumfiles  = numfiles
     def getCss = css
   }
+/*
+ *   <li>  <code>dashboard</code>             </li>
+ * Types <code>file</code>, <code>junitxml</code>, <code>dashboard</code>, and <code>reporterclass</code> require additional attributes
+ *     &lt;reporter type="dashboard"          directory="target"/&gt;
+ * <p>
+ * For reporter type 'dashboard', an optional <code>numfiles</code> attribute may be
+ * included to specify the number of old summary and duration files to be archived.
+ * Default is 2.
+ * </p>
+ *
+*/
