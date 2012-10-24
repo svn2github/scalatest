@@ -54,11 +54,19 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
     
   private def copyResource(url: URL, targetFileName: String) {
     val inputStream = url.openStream
-    val outputStream = new FileOutputStream(new File(directory, targetFileName))
-    outputStream getChannel() transferFrom(Channels.newChannel(inputStream), 0, Long.MaxValue)
-    inputStream.close()
-    outputStream.flush()
-    outputStream.close()
+    try {
+      val outputStream = new FileOutputStream(new File(directory, targetFileName))
+      try {
+        outputStream getChannel() transferFrom(Channels.newChannel(inputStream), 0, Long.MaxValue)
+      }
+      finally {
+        outputStream.flush()
+      outputStream.close()
+      }
+    }
+    finally {
+      inputStream.close()
+    }
   }
   
   cssUrl match {
