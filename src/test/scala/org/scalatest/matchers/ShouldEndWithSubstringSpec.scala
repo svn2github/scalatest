@@ -22,11 +22,11 @@ import Arbitrary._
 import Prop._
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
+class ShouldEndWithSubstringSpec extends Spec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
 
-  describe("The endWith substring syntax") {
+  object `The endWith substring syntax` {
 
-    it("should do nothing if the string ends with the specified substring") {
+    def `should do nothing if the string ends with the specified substring` {
 
       "1.78" should endWith (".78")
       "21.7" should endWith ("7")
@@ -34,7 +34,7 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       check((s: String, t: String) => returnsNormally(s + t should endWith (t)))
     }
 
-    it("should do nothing if the string does not end with the specified substring when used with not") {
+    def `should do nothing if the string does not end with the specified substring when used with not` {
 
       "eight" should not { endWith ("1.7") }
       "eight" should not endWith ("1.7")
@@ -42,7 +42,7 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       check((s: String, t: String) => !(s + t).endsWith(s) ==> returnsNormally(s + t should not endWith (s)))
     }
 
-    it("should do nothing if the string does not end with the specified substring when used in a logical-and expression") {
+    def `should do nothing if the string does not end with the specified substring when used in a logical-and expression` {
 
       "1.7b" should ((endWith ("1.7b")) and (endWith ("7b")))
       "1.7b" should (endWith ("1.7b") and (endWith ("7b")))
@@ -51,7 +51,7 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       check((s: String, t: String) => returnsNormally(s + t should (endWith (t) and endWith (""))))
     }
 
-    it("should do nothing if the string does not end with the specified substring when used in a logical-or expression") {
+    def `should do nothing if the string does not end with the specified substring when used in a logical-or expression` {
 
       "1.7b" should (endWith ("hello") or (endWith ("1.7b")))
       "1.7b" should ((endWith ("hello")) or (endWith ("1.7b")))
@@ -64,7 +64,7 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       check((s: String, t: String) => returnsNormally(s + t should (endWith ("hi") or endWith (t))))
     }
 
-    it("should do nothing if the string does not end with the specified substring when used in a logical-and expression with not") {
+    def `should do nothing if the string does not end with the specified substring when used in a logical-and expression with not` {
 
       "fred" should (not (endWith ("fre")) and not (endWith ("1.7")))
       "fred" should ((not endWith ("fre")) and (not endWith ("1.7")))
@@ -72,14 +72,14 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       check((s: String) => !(s endsWith "bob") && !(s endsWith "1.7") ==> returnsNormally(s should (not endWith ("bob") and not endWith ("1.7"))))
     }
 
-    it("should do nothing if the string does not end with the specified substring when used in a logical-or expression with not") {
+    def `should do nothing if the string does not end with the specified substring when used in a logical-or expression with not` {
       "fred" should (not (endWith ("fred")) or not (endWith ("1.7")))
       "fred" should ((not endWith ("fred")) or (not endWith ("1.7")))
       "fred" should (not endWith ("fred") or not endWith ("1.7"))
       check((s: String) => s.indexOf("a") != 0 || s.indexOf("b") != 0 ==> returnsNormally(s should (not endWith ("a") or not endWith ("b"))))
     }
 
-    it("should throw TestFailedException if the string does not match the specified substring") {
+    def `should throw TestFailedException if the string does not match the specified substring` {
 
       val caught1 = intercept[TestFailedException] {
         "1.7" should endWith ("1.78")
@@ -119,7 +119,7 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       check((s: String) => !(s endsWith "1.7") ==> throwsTestFailedException(s should endWith ("1.7")))
     }
 
-    it("should throw TestFailedException if the string does matches the specified substring when used with not") {
+    def `should throw TestFailedException if the string does matches the specified substring when used with not` {
 
       val caught1 = intercept[TestFailedException] {
         "1.7" should not { endWith ("1.7") }
@@ -184,7 +184,7 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       check((s: String) => s.length != 0 ==> throwsTestFailedException(s should not endWith (s.substring(s.length - 1, s.length))))
     }
 
-    it("should throw TestFailedException if the string ends with the specified substring when used in a logical-and expression") {
+    def `should throw TestFailedException if the string ends with the specified substring when used in a logical-and expression` {
 
       val caught1 = intercept[TestFailedException] {
         "1.7" should (endWith ("1.7") and (endWith ("1.8")))
@@ -220,7 +220,7 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       check((s: String, t: String, u: String) => !((s + u) endsWith t) ==> throwsTestFailedException(s + u should (endWith (u) and endWith (t))))
     }
 
-    it("should throw TestFailedException if the string ends with the specified substring when used in a logical-or expression") {
+    def `should throw TestFailedException if the string ends with the specified substring when used in a logical-or expression` {
 
       val caught1 = intercept[TestFailedException] {
         "one.seven" should (endWith ("1.7") or (endWith ("1.8")))
@@ -245,7 +245,7 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       )
     }
 
-    it("should throw TestFailedException if the string ends with the specified substring when used in a logical-and expression used with not") {
+    def `should throw TestFailedException if the string ends with the specified substring when used in a logical-and expression used with not` {
 
       val caught1 = intercept[TestFailedException] {
         "1.7" should (not endWith ("1.8") and (not endWith ("1.7")))
@@ -284,7 +284,7 @@ class ShouldEndWithSubstringSpec extends FunSpec with ShouldMatchers with Checke
       )
     }
 
-    it("should throw TestFailedException if the string ends with the specified substring when used in a logical-or expression used with not") {
+    def `should throw TestFailedException if the string ends with the specified substring when used in a logical-or expression used with not` {
 
       val caught1 = intercept[TestFailedException] {
         "1.7" should (not endWith ("1.7") or (not endWith ("1.7")))

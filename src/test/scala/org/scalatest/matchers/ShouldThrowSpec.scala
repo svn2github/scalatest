@@ -18,45 +18,45 @@ package org.scalatest.matchers
 import org.scalatest._
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldThrowSpec extends WordSpec with OptionValues with ShouldMatchers {
+class ShouldThrowSpec extends Spec with OptionValues with ShouldMatchers {
 
-  "The evaluating { ... } should produce [ExceptionType] syntax" should {
+  object `The evaluating { ... } should produce [ExceptionType] syntax` {
 
-    "fail if a different exception is thrown" in {
+    def `fail if a different exception is thrown` {
       val caught1 = intercept[TestFailedException] {
         evaluating { "hi".charAt(-1) } should produce [IllegalArgumentException]
       }
       assert(caught1.getMessage === "Expected exception java.lang.IllegalArgumentException to be thrown, but java.lang.StringIndexOutOfBoundsException was thrown.")
     }
 
-    "fail if no exception is thrown" in {
+    def `fail if no exception is thrown` {
       val caught2 = intercept[TestFailedException] {
         evaluating { "hi" } should produce [IllegalArgumentException]
       }
       assert(caught2.getMessage === "Expected exception java.lang.IllegalArgumentException to be thrown, but no exception was thrown.")
     }
 
-    "succeed if the expected exception is thrown" in {
+    def `succeed if the expected exception is thrown` {
       evaluating { "hi".charAt(-1) } should produce [StringIndexOutOfBoundsException]
     }
     
-    "succeed if a subtype of the expected exception is thrown, where the expected type is a class" in {
+    def `succeed if a subtype of the expected exception is thrown, where the expected type is a class` {
       evaluating { "hi".charAt(-1) } should produce [Exception]
     }
 
-    "succeed if a subtype of the expected exception is thrown, where the expected type is a trait" in {
+    def `succeed if a subtype of the expected exception is thrown, where the expected type is a trait` {
       trait Excitement
       def kaboom() { throw new Exception with Excitement }
       evaluating { kaboom() } should produce [Excitement]
     }
     
-    "return the caught exception" in {
+    def `return the caught exception` {
       def kaboom() { throw new Exception("howdy") }
       val thrown = evaluating { kaboom() } should produce [Exception]
       thrown.getMessage should be === "howdy"
     }  
     
-    "include that wrong exception as the TFE's cause" in {
+    def `include that wrong exception as the TFE's cause` {
       val wrongException = new RuntimeException("oops!")
       val caught =
         intercept[TestFailedException] {

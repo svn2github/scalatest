@@ -23,7 +23,7 @@ import Prop._
 import scala.reflect.BeanProperty
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion with BookPropertyMatchers {
+class ShouldBeMatcherSpec extends Spec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion with BookPropertyMatchers {
 
   class OddMatcher extends BeMatcher[Int] {
     def apply(left: Int): MatchResult = {
@@ -37,9 +37,9 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
   val odd = new OddMatcher
   val even = not (odd)
 
-  describe("The BeMatcher syntax") {
+  object `The BeMatcher syntax` {
 
-    it("should do nothing if a BeMatcher matches") {
+    def `should do nothing if a BeMatcher matches` {
       1 should be (odd)
       2 should be (even)
       
@@ -47,7 +47,7 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       2 shouldBe even
     }
 
-    it("should throw TestFailedException if a BeMatcher does not match") {
+    def `should throw TestFailedException if a BeMatcher does not match` {
 
       val caught1 = intercept[TestFailedException] {
         4 should be (odd)
@@ -62,14 +62,14 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       assert(caught2.getMessage === "5 was odd")
     }
 
-    it("should do nothing if a BeMatcher does not match, when used with not") {
+    def `should do nothing if a BeMatcher does not match, when used with not` {
       2 should not be (odd)
       1 should not be (even)
       22 should not (not (be (even)))
       1 should not (not (be (odd)))
     }
 
-    it("should throw TestFailedException if a BeMatcher matches, when used with not") {
+    def `should throw TestFailedException if a BeMatcher matches, when used with not` {
 
       val caught1 = intercept[TestFailedException] {
         3 should not be (odd)
@@ -87,14 +87,14 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       assert(caught3.getMessage === "6 was even")
     }
 
-    it("should do nothing if a BeMatcher matches, when used in a logical-and expression") {
+    def `should do nothing if a BeMatcher matches, when used in a logical-and expression` {
       1 should (be (odd) and be (odd))
       1 should (be (odd) and (be (odd)))
       2 should (be (even) and be (even))
       2 should (be (even) and (be (even)))
     }
 
-    it("should throw TestFailedException if at least one BeMatcher does not match, when used in a logical-or expression") {
+    def `should throw TestFailedException if at least one BeMatcher does not match, when used in a logical-or expression` {
 
       // both false
       val caught1 = intercept[TestFailedException] {
@@ -164,7 +164,7 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       assert(caught12.getMessage === "2 was even, but 2 was even")
     }
 
-    it("should do nothing if at least one BeMatcher matches, when used in a logical-or expression") {
+    def `should do nothing if at least one BeMatcher matches, when used in a logical-or expression` {
 
       // both true
       1 should (be (odd) or be (odd))
@@ -185,7 +185,7 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       2 should (be (even) or (be (odd)))
     }
 
-    it("should throw TestFailedException if a BeMatcher does not match, when used in a logical-or expression") {
+    def `should throw TestFailedException if a BeMatcher does not match, when used in a logical-or expression` {
 
       val caught1 = intercept[TestFailedException] {
         2 should (be (odd) or be (odd))
@@ -208,7 +208,7 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       assert(caught4.getMessage === "1 was odd, and 1 was odd")
     }
 
-    it("should do nothing if a BeMatcher does not match, when used in a logical-and expression with not") {
+    def `should do nothing if a BeMatcher does not match, when used in a logical-and expression with not` {
       2 should (not be (odd) and not be (odd))
       2 should (not be (odd) and not (be (odd)))
       2 should (not be (odd) and (not (be (odd))))
@@ -217,7 +217,7 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       1 should (not be (even) and (not (be (even))))
     }
 
-    it("should throw TestFailedException if at least one BeMatcher matches, when used in a logical-and expression with not") {
+    def `should throw TestFailedException if at least one BeMatcher matches, when used in a logical-and expression with not` {
 
       // both true
       val caught1 = intercept[TestFailedException] {
@@ -315,7 +315,7 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       assert(caught18.getMessage === "2 was even")
     }
 
-    it("should do nothing if at least one BeMatcher doesn't match, when used in a logical-or expression when used with not") {
+    def `should do nothing if at least one BeMatcher doesn't match, when used in a logical-or expression when used with not` {
 
       // both false
       2 should (not be (odd) or not be (odd))
@@ -342,7 +342,7 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       2 should (not be (even) or (not (be (odd))))
     }
 
-    it("should throw TestFailedException if both BeMatcher match, when used in a logical-or expression with not") {
+    def `should throw TestFailedException if both BeMatcher match, when used in a logical-or expression with not` {
 
       val caught1 = intercept[TestFailedException] {
         1 should (not be (odd) or not be (odd))
@@ -375,7 +375,7 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       assert(caught6.getMessage === "2 was even, and 2 was even")
     }
 
-    it("should work when the types aren't exactly the same") {
+    def `should work when the types aren't exactly the same` {
 
       class UnlikableMatcher extends BeMatcher[Any] {
         def apply(left: Any): MatchResult = {
@@ -405,8 +405,8 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       assert(caught2.getMessage === "The dish was not to my liking")
     }
   }
-  describe("the compose method on BeMatcher") {
-    it("should return another BeMatcher") {
+  object `the compose method on BeMatcher` {
+    def `should return another BeMatcher` {
       val oddAsInt = odd compose { (s: String) => s.toInt }
       "3" should be (oddAsInt)
       "4" should not be (oddAsInt)
@@ -414,8 +414,8 @@ class ShouldBeMatcherSpec extends FunSpec with ShouldMatchers with Checkers with
       "3" shouldBe oddAsInt
     }
   }
-  describe("A factory method on BeMatcher's companion object") {
-    it("should produce a be-matcher that executes the passed function when its apply is called") {
+  object `A factory method on BeMatcher's companion object` {
+    def `should produce a be-matcher that executes the passed function when its apply is called` {
       val f = { (s: String) => MatchResult(s.length < 3, "s was not less than 3", "s was less than 3") }
       val lessThanThreeInLength = BeMatcher(f)
       "" should be (lessThanThreeInLength)

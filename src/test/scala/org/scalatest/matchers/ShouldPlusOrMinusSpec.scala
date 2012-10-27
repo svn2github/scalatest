@@ -18,9 +18,9 @@ package org.scalatest.matchers
 import org.scalatest._
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
+class ShouldPlusOrMinusSpec extends Spec with ShouldMatchers {
 
-  describe("The be (X plusOrMinus Y) syntax") {
+  object `The be (X plusOrMinus Y) syntax` {
 
     val sevenDotOh = 7.0
     val minusSevenDotOh = -7.0
@@ -42,7 +42,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       And if X is Byte, Y must be Byte.
       minusSevenDotOhFloat should be (-6.8f plusOrMinus 0.2d)
     */
-    it("should do nothing if the number is within the specified range") {
+    def `should do nothing if the number is within the specified range` {
 
       // Double plusOrMinus Double
       sevenDotOh should be (7.1 plusOrMinus 0.2)
@@ -297,7 +297,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       minusSevenByte should be ((-5).toByte plusOrMinus 2.toByte)
     }
 
-    it("should do nothing if the number is within the specified range, when used with not") {
+    def `should do nothing if the number is within the specified range, when used with not` {
 
       // Double plusOrMinus Double
       sevenDotOh should not { be (7.5 plusOrMinus 0.2) }
@@ -468,7 +468,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       minusSevenByte should not be ((-10).toByte plusOrMinus 2.toByte)
     }
 
-    it("should do nothing if the number is within the specified range, when used in a logical-and expression") {
+    def `should do nothing if the number is within the specified range, when used in a logical-and expression` {
 
       // Double plusOrMinus Double
       sevenDotOh should ((be (7.1 plusOrMinus 0.2)) and (be (7.1 plusOrMinus 0.2)))
@@ -576,7 +576,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       sevenByte should (be (7.toByte plusOrMinus 2.toByte) and be (7.toByte plusOrMinus 2.toByte))
     }
 
-    it("should do nothing if the number is within the specified range, when used in a logical-or expression") {
+    def `should do nothing if the number is within the specified range, when used in a logical-or expression` {
 
       // Double plusOrMinus Double
       sevenDotOh should ((be (7.1 plusOrMinus 0.2)) or (be (7.1 plusOrMinus 0.2)))
@@ -684,7 +684,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       sevenByte should (be (7.toByte plusOrMinus 2.toByte) or be (7.toByte plusOrMinus 2.toByte))
     }
 
-    it("should do nothing if the number is not within the specified range, when used in a logical-and expression with not") {
+    def `should do nothing if the number is not within the specified range, when used in a logical-and expression with not` {
 
       // Double plusOrMinus Double
       sevenDotOh should ((not be (17.1 plusOrMinus 0.2)) and (not be (17.1 plusOrMinus 0.2)))
@@ -792,7 +792,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       sevenByte should (not be (17.toByte plusOrMinus 2.toByte) and not be (17.toByte plusOrMinus 2.toByte))
     }
 
-    it("should do nothing if the number is not within the specified range, when used in a logical-or expression with not") {
+    def `should do nothing if the number is not within the specified range, when used in a logical-or expression with not` {
 
       // Double plusOrMinus Double
       sevenDotOh should ((not be (17.1 plusOrMinus 0.2)) or (not be (17.1 plusOrMinus 0.2)))
@@ -900,7 +900,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       sevenByte should (not be (17.toByte plusOrMinus 2.toByte) or not be (17.toByte plusOrMinus 2.toByte))
     }
 
-    it("should throw TestFailedException if the number is not within the specified range") {
+    def `should throw TestFailedException if the number is not within the specified range` {
 
       // Double plusOrMinus Double
       val caught1 = intercept[TestFailedException] {
@@ -1029,7 +1029,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       assert(caught21.getMessage === "7 was not 19 plus or minus 2")
     }
 
-    it("should throw TestFailedException if the number is within the specified range, when used with not") {
+    def `should throw TestFailedException if the number is within the specified range, when used with not` {
 
       // Double plusOrMinus Double
       val caught1 = intercept[TestFailedException] {
@@ -1158,7 +1158,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       assert(caught21.getMessage === "7 was 9 plus or minus 2")
     }
 
-    it("should throw TestFailedException if the number is not within the specified range, when used in a logical-and expression") {
+    def `should throw TestFailedException if the number is not within the specified range, when used in a logical-and expression` {
 
       // Double plusOrMinus Double
       val caught1 = intercept[TestFailedException] {
@@ -1455,7 +1455,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       assert(caught63.getMessage === "7 was not 17 plus or minus 2")
     }
 
-    it("should throw TestFailedException if the number is not within the specified range, when used in a logical-or expression") {
+    def `should throw TestFailedException if the number is not within the specified range, when used in a logical-or expression` {
 
       // Double plusOrMinus Double
       val caught1 = intercept[TestFailedException] {
@@ -1472,7 +1472,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       assert(caught3.getMessage === "7.0 was not 17.0 plus or minus 0.2, and 7.0 was not 97.0 plus or minus 0.2")
     }
 
-    it("should throw TestFailedException if the number is within the specified range, when used in a logical-and expression with not") {
+    def `should throw TestFailedException if the number is within the specified range, when used in a logical-and expression with not` {
 
       // Double plusOrMinus Double
       val caught1 = intercept[TestFailedException] {
@@ -1495,7 +1495,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       assert(caught4.getMessage === "7.0 was 7.1 plus or minus 0.2")
     }
 
-    it("should throw TestFailedException if the number is within the specified range, when used in a logical-or expression with not") {
+    def `should throw TestFailedException if the number is within the specified range, when used in a logical-or expression with not` {
 
       // Double plusOrMinus Double
       val caught1 = intercept[TestFailedException] {
@@ -1512,7 +1512,7 @@ class ShouldPlusOrMinusSpec extends FunSpec with ShouldMatchers {
       assert(caught3.getMessage === "7.0 was 7.0 plus or minus 0.2, and 7.0 was 7.0 plus or minus 0.2")
     }
 
-    it("should throw TestFailedException if the number passed as the range is 0 or negative") {
+    def `should throw TestFailedException if the number passed as the range is 0 or negative` {
 
       // Double plusOrMinus Double
       val caught1 = intercept[TestFailedException] {

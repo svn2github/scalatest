@@ -23,21 +23,21 @@ This has a bit of redundancy with several other specs, but was the
 original file I used to develop the matchers syntax, and it has a few
 tests that don't exist elsewhere, so I'm keeping it alive for now.
 */
-class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
+class ShouldMatcherSpec extends Spec with ShouldMatchers {
 
-  describe("The be matcher") {
+  object `The be matcher` {
 
-    describe("(for booleans)") {
+    object `(for booleans)` {
 
-      it("should do nothing when false is compared to false") {
+      def `should do nothing when false is compared to false` {
         false should be (false)
       }
 
-      it("should do nothing when true is compared to true") {
+      def `should do nothing when true is compared to true` {
         true should be (true)
       }
 
-      it("should throw an assertion error when not equal") {
+      def `should throw an assertion error when not equal` {
         val caught = intercept[TestFailedException] {
           false should be (true)
         }
@@ -45,15 +45,15 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       }
     }
 
-    describe("(for null)") {
+    object `(for null)` {
 
-      it("should do nothing when null is compared to null") {
+      def `should do nothing when null is compared to null` {
         val o: String = null
         o should be (null)
         o should equal (null)
       }
 
-      it("should throw an assertion error when non-null compared to null") {
+      def `should throw an assertion error when non-null compared to null` {
         val caught = intercept[TestFailedException] {
           val o = "Helloooooo"
           o should be (null)
@@ -61,12 +61,12 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
         assert(caught.getMessage === "\"Helloooooo\" was not null")
       }
 
-      it("should do nothing when non-null is compared to not null") {
+      def `should do nothing when non-null is compared to not null` {
         val o = "Helloooooo"
         o should not { be (null) }
       }
 
-      it("should throw an assertion error when null compared to not null") {
+      def `should throw an assertion error when null compared to not null` {
         val caught1 = intercept[TestFailedException] {
           val o: String = null
           o should not { be (null) }
@@ -74,22 +74,22 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
         assert(caught1.getMessage === "The reference was null")
       }
 
-      it("should work when used in a logical expression") {
+      def `should work when used in a logical expression` {
         val o: String = null
         o should { be (null) and equal (null) }
         o should { equal (null) and be (null) }
       }
     }
 
-    describe("(for Nil)") {
+    object `(for Nil)` {
 
-      it("should do nothing when an empty list is compared to Nil") {
+      def `should do nothing when an empty list is compared to Nil` {
         val emptyList = List[String]()
         emptyList should be (Nil)
         emptyList should equal (Nil)
       }
 
-      it("should throw an assertion error when a non-empty list is compared to Nil") {
+      def `should throw an assertion error when a non-empty list is compared to Nil` {
         val nonEmptyList = List("Helloooooo")
         val caught1 = intercept[TestFailedException] {
           nonEmptyList should be (Nil)
@@ -101,13 +101,13 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
         assert(caught2.getMessage === "List(Helloooooo) did not equal List()")
       }
 
-      it("should do nothing when non-null is compared to not null") {
+      def `should do nothing when non-null is compared to not null` {
         val nonEmptyList = List("Helloooooo")
         nonEmptyList should not { be (Nil) }
         nonEmptyList should not { equal (Nil) }
       }
 
-      it("should throw an assertion error when null compared to not null") {
+      def `should throw an assertion error when null compared to not null` {
         val emptyList = List[String]()
         val caught1 = intercept[TestFailedException] {
           emptyList should not { be (Nil) }
@@ -120,14 +120,14 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
         assert(caught3.getMessage === "List() equaled List()")
       }
 
-      it("should work when used in a logical expression") {
+      def `should work when used in a logical expression` {
         val emptyList = List[Int]()
         emptyList should { be (Nil) and equal (Nil) }
         emptyList should { equal (Nil) and be (Nil) } // Nada, and nada is nada
       }
     }
 
-    describe("(for None)") {
+    object `(for None)` {
 
         /* I think I should have tests for options somewhere
         val option = Some(1)
@@ -136,13 +136,13 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       option should not { equal (Some(2)) }
 
          */
-      it("should do nothing when a None option is compared to None") {
+      def `should do nothing when a None option is compared to None` {
         val option: Option[String] = None
         option should be (None)
         option should equal (None)
       }
 
-      it("should throw an assertion error when a Some is compared to None") {
+      def `should throw an assertion error when a Some is compared to None` {
         val someString = Some("Helloooooo")
         val caught1 = intercept[TestFailedException] {
           someString should be (None)
@@ -154,13 +154,13 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
         assert(caught2.getMessage === "Some(Helloooooo) did not equal None")
       }
 
-      it("should do nothing when Some is compared to not None") {
+      def `should do nothing when Some is compared to not None` {
         val someString = Some("Helloooooo")
         someString should not { be (None) }
         someString should not { equal (None) }
       }
 
-      it("should throw an assertion error when None compared to not None") {
+      def `should throw an assertion error when None compared to not None` {
         val none = None
         val caught1 = intercept[TestFailedException] {
           none should not { be (None) }
@@ -184,7 +184,7 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
         assert(caught7.getMessage === "None equaled None")
       }
 
-      it("should work when used in a logical expression") {
+      def `should work when used in a logical expression` {
         val none = None
         none should { be (None) and equal (None) }
         none should { equal (None) and be (None) }
@@ -194,27 +194,27 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       }
     }
 
-    describe("(for Any)") {
-      it("should do nothing when equal") {
+    object `(for Any)` {
+      def `should do nothing when equal` {
         1 should be (1)
         val option = Some(1)
         option should be (Some(1)) 
       }
 
-      it("should throw an assertion error when not equal") {
+      def `should throw an assertion error when not equal` {
         val caught = intercept[TestFailedException] {
           1 should be (2)
         }
         assert(caught.getMessage === "1 was not equal to 2")
       }
 
-      it("should do nothing when not equal and used with should not") {
+      def `should do nothing when not equal and used with should not` {
         1 should not { be (2) }
         val option = Some(1)
         option should not { be (Some(2)) }
       }
 
-      it("should throw an assertion error when equal but used with should not") {
+      def `should throw an assertion error when equal but used with should not` {
         val caught = intercept[TestFailedException] {
           1 should not { be (1) }
         }
@@ -223,9 +223,9 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
     }
   }
 
-  describe("The have word") {
+  object `The have word` {
 
-    it("should work with map and key, right after a 'should'") {
+    def `should work with map and key, right after a 'should'` {
       val map = Map(1 -> "Howdy")
       map should contain key (1)
       map should contain key (1)
@@ -238,7 +238,7 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       treeMap should contain key (1)
     }
 
-    it("should work with map and key, in a logical expression") {
+    def `should work with map and key, in a logical expression` {
       val map = Map(1 -> "Howdy")
       // The compiler infer the type of the value to be Nothing if I say: map should { contain key 1 and equal (Map(1 -> "Howdy")) }
       // map should { have.key[Int, String](1) and equal (Map(1 -> "Howdy")) }
@@ -248,12 +248,12 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       otherMap should { contain key ("Howdy") and equal (Map("Howdy" -> 1)) }
     }
 
-    it("should work with map and key, right after a 'should not'") {
+    def `should work with map and key, right after a 'should not'` {
       val map = Map(1 -> "Howdy")
       map should not { contain key (2) }
     }
 
-    it("should work with map and value, right after a 'should'") {
+    def `should work with map and value, right after a 'should'` {
       val map = Map(1 -> "Howdy")
       map should contain value ("Howdy")
       map should contain value ("Howdy")
@@ -263,24 +263,24 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       otherMap should equal { Map("Howdy" -> 1) }
     }
 
-    it("should work with map and value, in a logical expression") {
+    def `should work with map and value, in a logical expression` {
       val map = Map(1 -> "Howdy")
       map should { equal (Map(1 -> "Howdy")) and (contain value "Howdy") }
       val otherMap = Map("Howdy" -> 1)
       otherMap should { contain value (1) and equal (Map("Howdy" -> 1)) }
     }
 
-    it("should work with map and value, right after a 'should not'") {
+    def `should work with map and value, right after a 'should not'` {
       val map = Map(1 -> "Howdy")
       map should not { contain value ("Doody") }
     }
 
-    it("should work with collection and size, in an and expression.") {
+    def `should work with collection and size, in an and expression.` {
       val list = List(1, 2, 3)
       list should { have size (3) and equal (List(1, 2, 3)) }
     }
 
-    it("should work with collection and size, right after a 'should'") {
+    def `should work with collection and size, right after a 'should'` {
 
       val map = Map(1 -> "Howdy")
       map should have size (1)
@@ -311,7 +311,7 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       assert(caught4.getMessage.indexOf("did not have size") != -1)
     }
 
-    it("should work with collection and size, right after a 'should not'") {
+    def `should work with collection and size, right after a 'should not'` {
 
       val map = Map(1 -> "Howdy")
       map should not { have size (2) }
@@ -343,9 +343,9 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
     }
   }
 
-  describe("The contain word") {
+  object `The contain word` {
  
-    it("should work with a set, list, array, and map right after a 'should'") {
+    def `should work with a set, list, array, and map right after a 'should'` {
 
       val set = Set(1, 2, 3)
       set should contain (2)
@@ -383,7 +383,7 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       assert(caught4.getMessage.indexOf("did not contain element") != -1)
     }
 
-    it("should work with a set, list, array, and map right after a 'should not'") {
+    def `should work with a set, list, array, and map right after a 'should not'` {
 
       val set = Set(1, 2, 3)
       set should not { contain (5) }
@@ -416,20 +416,20 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
     }
   }
 
-  describe("The be theSameInstanceAs syntax") {
+  object `The be theSameInstanceAs syntax` {
 
     val string = "Hi"
     val obj: AnyRef = string
     val otherString = new String("Hi")
 
-    it("should do nothing if the two objects are the same") {
+    def `should do nothing if the two objects are the same` {
       string should be theSameInstanceAs (string)
       obj should be theSameInstanceAs (string)
       string should be theSameInstanceAs (obj)
       otherString should not { be theSameInstanceAs (string) }
     }
 
-    it("should throw TestFailedException if the two objects are not the same") {
+    def `should throw TestFailedException if the two objects are not the same` {
       val caught1 = intercept[TestFailedException] {
         string should not { be theSameInstanceAs (string) }
       }
@@ -446,8 +446,8 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
     }
   }
 
-  describe("The floating point numbers when compared with equals") {
-    it("should do nothing if the floating point number is exactly equal to the specified value") {
+  object `The floating point numbers when compared with equals` {
+    def `should do nothing if the floating point number is exactly equal to the specified value` {
       val sevenDotOh = 7.0
       sevenDotOh should be (7.0)
       sevenDotOh should equal (7.0)
@@ -459,7 +459,7 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       sixDotOh should not { be (6.0001) }
     }
 
-    it("should throw TestFailedException if the floating point number is not exactly equal to the specified value") {
+    def `should throw TestFailedException if the floating point number is not exactly equal to the specified value` {
       val sevenDotOh = 7.0001
       val caught1 = intercept[TestFailedException] {
         sevenDotOh should be (7.0)
@@ -496,8 +496,8 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
     }
   }
 
-  describe("The floating point 'plusOrMinus' operator") {
-    it("should do nothing if the floating point number is within the specified range") {
+  object `The floating point 'plusOrMinus' operator` {
+    def `should do nothing if the floating point number is within the specified range` {
       val sevenDotOh = 7.0
       sevenDotOh should be (7.1 plusOrMinus 0.2)
       sevenDotOh should be (6.9 plusOrMinus 0.2)
@@ -510,7 +510,7 @@ class ShouldMatcherSpec extends FunSpec with ShouldMatchers {
       minusSevenDotOh should not { be (-6.5 plusOrMinus 0.2) }
     }
 
-    it("should throw TestFailedException if the floating point number is not within the specified range") {
+    def `should throw TestFailedException if the floating point number is not within the specified range` {
       val sevenDotOh = 7.0
       val caught1 = intercept[TestFailedException] {
         sevenDotOh should not { be (7.1 plusOrMinus 0.2) }

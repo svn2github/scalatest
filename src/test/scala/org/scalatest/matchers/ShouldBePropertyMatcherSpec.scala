@@ -23,10 +23,10 @@ import Prop._
 import scala.reflect.BeanProperty
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion with BookPropertyMatchers {
+class ShouldBePropertyMatcherSpec extends Spec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion with BookPropertyMatchers {
 
   // Checking for a specific size
-  describe("The be (BePropertyMatcher) syntax") {
+  object `The be (BePropertyMatcher) syntax` {
 
     case class MyFile(
       val name: String,
@@ -54,7 +54,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
     val book = new Book("A Tale of Two Cities", "Dickens", 1859, 45, true)
     val badBook = new Book("A Tale of Two Cities", "Dickens", 1859, 45, false)
 
-    it("should do nothing if the property is true") {
+    def `should do nothing if the property is true` {
       book should be (goodRead)
       book should be a (goodRead)
       book should be an (goodRead)
@@ -64,7 +64,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       book shouldBe an (goodRead)
     }
 
-    it("should throw TestFailedException if the property is false") {
+    def `should throw TestFailedException if the property is false` {
 
       val caught1 = intercept[TestFailedException] {
         badBook should be (goodRead)
@@ -98,13 +98,13 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       
     }
 
-    it("should do nothing if the property is false, when used with not") {
+    def `should do nothing if the property is false, when used with not` {
       badBook should not be (goodRead)
       badBook should not be a (goodRead)
       badBook should not be an (goodRead)
     }
 
-    it("should throw TestFailedException if the property is true, when used with not") {
+    def `should throw TestFailedException if the property is true, when used with not` {
 
       val caught1 = intercept[TestFailedException] {
         book should not be (goodRead)
@@ -152,7 +152,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       assert(caught9.getMessage === "Book(A Tale of Two Cities,Dickens,1859,45,true) was an goodRead")
     }
 
-    it("should do nothing if the the property returns true, when used in a logical-and expression") {
+    def `should do nothing if the the property returns true, when used in a logical-and expression` {
 
       myFile should ((be (file)) and (be (file)))
       myFile should (be (file) and (be (file)))
@@ -167,7 +167,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       myFile should (be an (file) and be an (file))
     }
 
-    it("should throw TestFailedException if at least one of the properties returns false, when used in a logical-and expression") {
+    def `should throw TestFailedException if at least one of the properties returns false, when used in a logical-and expression` {
 
       // first false
       val caught1 = intercept[TestFailedException] {
@@ -316,7 +316,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       assert(caught27.getMessage === "MyFile(temp.txt,true,false) was not an directory")
     }
 
-    it("should do nothing if the property returns true, when used in a logical-or expression") {
+    def `should do nothing if the property returns true, when used in a logical-or expression` {
 
       // second true
       myFile should ((be (directory)) or (be (file)))
@@ -358,7 +358,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       myFile should (be an (file) or be an (file))
     }
 
-    it("should throw TestFailedException if the both properties return false, when used in a logical-or expression") {
+    def `should throw TestFailedException if the both properties return false, when used in a logical-or expression` {
 
       val caught1 = intercept[TestFailedException] {
         myFile should ((be (directory)) or (be (directory)))
@@ -408,7 +408,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       assert(caught9.getMessage === "MyFile(temp.txt,true,false) was not an directory, and MyFile(temp.txt,true,false) was not an directory")
     }
 
-    it("should do nothing if the property returns false, when used in a logical-and expression with not") {
+    def `should do nothing if the property returns false, when used in a logical-and expression with not` {
 
       myFile should (not (be (directory)) and not (be (directory)))
       myFile should ((not be (directory)) and (not be (directory)))
@@ -423,7 +423,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       myFile should (not be an (directory) and not be an (directory))
     }
 
-    it("should throw TestFailedException if at least one property returns false, when used in a logical-and expression with not") {
+    def `should throw TestFailedException if at least one property returns false, when used in a logical-and expression with not` {
 
       // second false
       val caught1 = intercept[TestFailedException] {
@@ -572,7 +572,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       assert(caught27.getMessage === "MyFile(temp.txt,true,false) was an file")
     }
 
-    it("should do nothing if the property returns false, when used in a logical-or expression with not") {
+    def `should do nothing if the property returns false, when used in a logical-or expression with not` {
 
       // first true
       myFile should (not (be (directory)) or not (be (file)))
@@ -614,7 +614,7 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       myFile should (not be an (directory) or not be an (directory))
     }
 
-    it("should throw TestFailedException if both properties return false, when used in a logical-or expression with not") {
+    def `should throw TestFailedException if both properties return false, when used in a logical-or expression with not` {
 
       val caught1 = intercept[TestFailedException] {
         myFile should (not (be (file)) or not (be (file)))
@@ -664,8 +664,8 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       assert(caught9.getMessage === "MyFile(temp.txt,true,false) was an file, and MyFile(temp.txt,true,false) was an file")
     }
   }
-  describe("the compose method on BePropertyMatcher") {
-    it("should return another BePropertyMatcher") {
+  object `the compose method on BePropertyMatcher` {
+    def `should return another BePropertyMatcher` {
       val book1 = new Book("A Tale of Two Cities", "Dickens", 1859, 45, true)
       val book2 = new Book("The Handmaid's Tail", "Atwood", 1985, 200, true)
       val badBook = new Book("Some Bad Book", "Bad Author", 1999, 150, false)
@@ -679,8 +679,8 @@ class ShouldBePropertyMatcherSpec extends FunSpec with ShouldMatchers with Check
       goodLibrary shouldBe filledWithGoodReads
     }
   }
-  describe("A factory method on BePropertyMatcher's companion object") {
-    it("should produce a be-property-matcher that executes the passed function when its apply is called") {
+  object `A factory method on BePropertyMatcher's companion object` {
+    def `should produce a be-property-matcher that executes the passed function when its apply is called` {
       val f = { (s: String) => BePropertyMatchResult(s.isEmpty, "empty") }
       val empty = BePropertyMatcher(f)
       "" should be (empty)

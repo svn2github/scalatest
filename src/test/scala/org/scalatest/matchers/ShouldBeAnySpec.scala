@@ -22,16 +22,16 @@ import Arbitrary._
 import Prop._
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldBeAnySpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
+class ShouldBeAnySpec extends Spec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
 
   // Checking for equality with "be"
-  describe("The be token") {
+  object `The be token` {
 
-    it("should compare arrays structurally") {
+    def `should compare arrays structurally` {
       Array(1, 2) should be (Array(1, 2))
     }
 
-    it("should do nothing when equal") {
+    def `should do nothing when equal` {
       1 should be (1)
       1 shouldBe 1
 
@@ -43,7 +43,7 @@ class ShouldBeAnySpec extends FunSpec with ShouldMatchers with Checkers with Ret
       check((s: String) => returnsNormally(s should be (new String(s))))
     }
 
-    it("should do nothing when not equal and used with not") {
+    def `should do nothing when not equal and used with not` {
       1 should not { be (2) }
       1 should not be (2)
 
@@ -52,11 +52,11 @@ class ShouldBeAnySpec extends FunSpec with ShouldMatchers with Checkers with Ret
       check((s: String, t: String) => s != t ==> returnsNormally(s should not be (t)))
     }
 
-    it("should do nothing when equal and used in a logical-and expression") {
+    def `should do nothing when equal and used in a logical-and expression` {
       1 should (be (1) and be (2 - 1))
     }
 
-    it("should do nothing when equal and used in multi-part logical expressions") {
+    def `should do nothing when equal and used in multi-part logical expressions` {
 
         // Just to make sure these work strung together
         1 should (be (1) and be (1) and be (1) and be (1))
@@ -70,23 +70,23 @@ class ShouldBeAnySpec extends FunSpec with ShouldMatchers with Checkers with Ret
         )
     }
 
-    it("should do nothing when equal and used in a logical-or expression") {
+    def `should do nothing when equal and used in a logical-or expression` {
       1 should { be (1) or be (2 - 1) }
     }
 
-    it("should do nothing when not equal and used in a logical-and expression with not") {
+    def `should do nothing when not equal and used in a logical-and expression with not` {
       1 should { not { be (2) } and not { be (3 - 1) }}
       1 should { not be (2) and (not be (3 - 1)) }
       1 should (not be (2) and not be (3 - 1))
     }
 
-    it("should do nothing when not equal and used in a logical-or expression with not") {
+    def `should do nothing when not equal and used in a logical-or expression with not` {
       1 should { not { be (2) } or not { be (3 - 1) }}
       1 should { not be (2) or (not be (3 - 1)) }
       1 should (not be (2) or not be (3 - 1))
     }
 
-    it("should throw an assertion error when not equal") {
+    def `should throw an assertion error when not equal` {
       val caught1 = intercept[TestFailedException] {
         1 should be (2)
       }
@@ -107,7 +107,7 @@ class ShouldBeAnySpec extends FunSpec with ShouldMatchers with Checkers with Ret
       assert(caught3.getMessage === "\"hi\" was not null")
     }
 
-    it("should throw an assertion error when equal but used with should not") {
+    def `should throw an assertion error when equal but used with should not` {
       val caught1 = intercept[TestFailedException] {
         1 should not { be (1) }
       }
@@ -134,21 +134,21 @@ class ShouldBeAnySpec extends FunSpec with ShouldMatchers with Checkers with Ret
       assert(caught3.getMessage === "1 was equal to 1")
     }
 
-    it("should throw an assertion error when not equal and used in a logical-and expression") {
+    def `should throw an assertion error when not equal and used in a logical-and expression` {
       val caught = intercept[TestFailedException] {
         1 should { be (5) and be (2 - 1) }
       }
       assert(caught.getMessage === "1 was not equal to 5")
     }
 
-    it("should throw an assertion error when not equal and used in a logical-or expression") {
+    def `should throw an assertion error when not equal and used in a logical-or expression` {
       val caught = intercept[TestFailedException] {
         1 should { be (5) or be (5 - 1) }
       }
       assert(caught.getMessage === "1 was not equal to 5, and 1 was not equal to 4")
     }
 
-    it("should throw an assertion error when equal and used in a logical-and expression with not") {
+    def `should throw an assertion error when equal and used in a logical-and expression with not` {
 
       val caught1 = intercept[TestFailedException] {
         1 should { not { be (1) } and not { be (3 - 1) }}
@@ -181,7 +181,7 @@ class ShouldBeAnySpec extends FunSpec with ShouldMatchers with Checkers with Ret
       assert(caught6.getMessage === "1 was not equal to 2, but 1 was equal to 1")
     }
 
-    it("should throw an assertion error when equal and used in a logical-or expression with not") {
+    def `should throw an assertion error when equal and used in a logical-or expression with not` {
 
       val caught1 = intercept[TestFailedException] {
         1 should { not { be (1) } or not { be (2 - 1) }}

@@ -146,7 +146,11 @@ object GenMatchers {
         "ShouldSameInstanceAsSpec.scala",
         "ShouldStartWithRegexSpec.scala",
         "ShouldStartWithSubstringSpec.scala",
-        "ShouldBeNullSpec.scala"
+        "ShouldBeNullSpec.scala", 
+        "ShouldBeAnySpec.scala", 
+        "ShouldBeTripleEqualsSpec.scala", 
+        "ShouldFileBePropertyMatcherSpec.scala", 
+        "ShouldThrowSpec.scala"
       )
 
     for (shouldFileName <- shouldFileNames) {

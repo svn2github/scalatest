@@ -22,14 +22,14 @@ import Arbitrary._
 import Prop._
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldBeNullSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
+class ShouldBeNullSpec extends Spec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
 
   val nullMap: Map[Int, String] = null
   val map = Map(1 -> "one", 2 -> "two")
 
-  describe("the be (null) syntax") {
+  object `the be (null) syntax` {
 
-    it("should work in its basic for with or without not") {
+    def `should work in its basic for with or without not` {
 
       map should not be (null)
       map should not (be (null))
@@ -66,7 +66,7 @@ class ShouldBeNullSpec extends FunSpec with ShouldMatchers with Checkers with Re
       assert(caught5.getMessage === "The reference was null")
     }
 
-    it("should throw a NullPointerException if they try to short circuit with a null check first") {
+    def `should throw a NullPointerException if they try to short circuit with a null check first` {
       // The reason I check this is I warn that this will happen in the ShouldMatcher scaladoc
       intercept[NullPointerException] {
         nullMap should (not be (null) and contain key (7))
@@ -76,7 +76,7 @@ class ShouldBeNullSpec extends FunSpec with ShouldMatchers with Checkers with Re
       }
     }
 
-    it("should compile and run when used with and (with or without not)") {
+    def `should compile and run when used with and (with or without not)` {
 
       val caught1 = intercept[TestFailedException] {
         Map(1 -> "one") should (contain key (7) and not be (null))
@@ -141,7 +141,7 @@ class ShouldBeNullSpec extends FunSpec with ShouldMatchers with Checkers with Re
       assert(caught11.getMessage === "The reference was null, but the reference was null")
     }
 
-    it("should compile and run when used with or (with or without not)") {
+    def `should compile and run when used with or (with or without not)` {
 
       Map(1 -> "one") should (contain key (7) or not be (null))
       Map(1 -> "one") should (contain key (7) or not (be (null)))
@@ -181,9 +181,9 @@ class ShouldBeNullSpec extends FunSpec with ShouldMatchers with Checkers with Re
     }
   }
   
-  describe("the shouldBe null syntax") {
+  object `the shouldBe null syntax` {
     
-    it("should work in its basic") {
+    def `should work in its basic` {
       nullMap shouldBe null
       
       val caught1 = intercept[TestFailedException] {

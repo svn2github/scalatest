@@ -22,7 +22,7 @@ import Arbitrary._
 import Prop._
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldEndWithRegexSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
+class ShouldEndWithRegexSpec extends Spec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
 
 /*
 s should include substring t
@@ -34,14 +34,14 @@ s should endWith regex t
 s should fullyMatch regex t
 */
 
-  describe("The endWith regex syntax") {
+  object `The endWith regex syntax` {
 
     val decimal = """(-)?(\d+)(\.\d*)?"""
     val decimalRegex = """(-)?(\d+)(\.\d*)?""".r
 
-    describe("(when the regex is specified by a string)") {
+    object `(when the regex is specified by a string)` {
 
-      it("should do nothing if the string ends with substring that matched the regular expression specified as a string") {
+      def `should do nothing if the string ends with substring that matched the regular expression specified as a string` {
 
         "1.78" should endWith regex (".78")
         "1.7" should endWith regex (decimal)
@@ -58,7 +58,7 @@ s should fullyMatch regex t
         "1." should endWith regex (decimal)
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used with not") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used with not` {
 
         "eight" should not { endWith regex (decimal) }
         "one.eight" should not { endWith regex (decimal) }
@@ -67,7 +67,7 @@ s should fullyMatch regex t
         "one.eight" should not endWith regex (decimal)
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-and expression") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-and expression` {
 
         "b1.7" should (endWith regex (decimal) and (endWith regex (decimal)))
         "b1.7" should ((endWith regex (decimal)) and (endWith regex (decimal)))
@@ -78,7 +78,7 @@ s should fullyMatch regex t
         "1.7" should (endWith regex (decimal) and endWith regex (decimal))
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-or expression") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-or expression` {
 
         "b1.7" should (endWith regex ("hello") or (endWith regex (decimal)))
         "b1.7" should ((endWith regex ("hello")) or (endWith regex (decimal)))
@@ -89,19 +89,19 @@ s should fullyMatch regex t
         "1.7" should (endWith regex ("hello") or endWith regex (decimal))
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-and expression with not") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-and expression with not` {
         "fred" should (not (endWith regex ("bob")) and not (endWith regex (decimal)))
         "fred" should ((not endWith regex ("bob")) and (not endWith regex (decimal)))
         "fred" should (not endWith regex ("bob") and not endWith regex (decimal))
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-or expression with not") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-or expression with not` {
         "fred" should (not (endWith regex ("fred")) or not (endWith regex (decimal)))
         "fred" should ((not endWith regex ("fred")) or (not endWith regex (decimal)))
         "fred" should (not endWith regex ("fred") or not endWith regex (decimal))
       }
   
-      it("should throw TestFailedException if the string does not match substring that matched the regular expression specified as a string") {
+      def `should throw TestFailedException if the string does not match substring that matched the regular expression specified as a string` {
   
         val caught1 = intercept[TestFailedException] {
           "1.7" should endWith regex ("1.78")
@@ -139,7 +139,7 @@ s should fullyMatch regex t
         assert(caught9.getMessage === "\"***\" did not end with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?")
       }
   
-      it("should throw TestFailedException if the string does matches substring that matched the regular expression specified as a string when used with not") {
+      def `should throw TestFailedException if the string does matches substring that matched the regular expression specified as a string when used with not` {
   
         val caught1 = intercept[TestFailedException] {
           "1.7" should not { endWith regex ("1.7") }
@@ -208,7 +208,7 @@ s should fullyMatch regex t
         assert(caught23.getMessage === "\"b-1.8\" ended with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?")
       }
 
-      it("should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-and expression") {
+      def `should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-and expression` {
   
         val caught1 = intercept[TestFailedException] {
           "1.7" should (endWith regex (decimal) and (endWith regex ("1.8")))
@@ -242,7 +242,7 @@ s should fullyMatch regex t
         assert(caught6.getMessage === "\"1.eight\" did not end with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?")
       }
   
-      it("should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-or expression") {
+      def `should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-or expression` {
   
         val caught1 = intercept[TestFailedException] {
           "1.seven" should (endWith regex (decimal) or (endWith regex ("1.8")))
@@ -260,7 +260,7 @@ s should fullyMatch regex t
         assert(caught3.getMessage === "\"1.seven\" did not end with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?, and \"1.seven\" did not end with a substring that matched the regular expression 1.8")
       }
   
-      it("should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-and expression used with not") {
+      def `should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-and expression used with not` {
 
         val caught1 = intercept[TestFailedException] {
           "1.7" should (not endWith regex ("1.8") and (not endWith regex (decimal)))
@@ -288,7 +288,7 @@ s should fullyMatch regex t
         assert(caught5.getMessage === "\"1.7\" did not end with a substring that matched the regular expression 1.8, but \"1.7\" ended with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?")
       }
 
-      it("should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-or expression used with not") {
+      def `should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-or expression used with not` {
   
         val caught1 = intercept[TestFailedException] {
           "1.7" should (not endWith regex (decimal) or (not endWith regex ("1.7")))
@@ -317,9 +317,9 @@ s should fullyMatch regex t
       }
     }
 
-    describe("(when the regex is specified by an actual Regex)") {
+    object `(when the regex is specified by an actual Regex)` {
 
-      it("should do nothing if the string ends with substring that matched the regular expression specified as a string") {
+      def `should do nothing if the string ends with substring that matched the regular expression specified as a string` {
 
         "1.78" should endWith regex (".78")
         "1.7" should endWith regex (decimalRegex)
@@ -336,7 +336,7 @@ s should fullyMatch regex t
         "1." should endWith regex (decimalRegex)
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used with not") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used with not` {
 
         "eight" should not { endWith regex (decimalRegex) }
         "one.eight" should not { endWith regex (decimalRegex) }
@@ -345,7 +345,7 @@ s should fullyMatch regex t
         "one.eight" should not endWith regex (decimalRegex)
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-and expression") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-and expression` {
 
         "b1.7" should (endWith regex (decimalRegex) and (endWith regex (decimalRegex)))
         "b1.7" should ((endWith regex (decimalRegex)) and (endWith regex (decimalRegex)))
@@ -356,7 +356,7 @@ s should fullyMatch regex t
         "1.7" should (endWith regex (decimalRegex) and endWith regex (decimalRegex))
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-or expression") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-or expression` {
 
         "b1.7" should (endWith regex ("hello") or (endWith regex (decimalRegex)))
         "b1.7" should ((endWith regex ("hello")) or (endWith regex (decimalRegex)))
@@ -367,19 +367,19 @@ s should fullyMatch regex t
         "1.7" should (endWith regex ("hello") or endWith regex (decimalRegex))
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-and expression with not") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-and expression with not` {
         "fred" should (not (endWith regex ("bob")) and not (endWith regex (decimalRegex)))
         "fred" should ((not endWith regex ("bob")) and (not endWith regex (decimalRegex)))
         "fred" should (not endWith regex ("bob") and not endWith regex (decimalRegex))
       }
   
-      it("should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-or expression with not") {
+      def `should do nothing if the string does not end with a substring that matched the regular expression specified as a string when used in a logical-or expression with not` {
         "fred" should (not (endWith regex ("fred")) or not (endWith regex (decimalRegex)))
         "fred" should ((not endWith regex ("fred")) or (not endWith regex (decimalRegex)))
         "fred" should (not endWith regex ("fred") or not endWith regex (decimalRegex))
       }
   
-      it("should throw TestFailedException if the string does not match substring that matched the regular expression specified as a string") {
+      def `should throw TestFailedException if the string does not match substring that matched the regular expression specified as a string` {
   
         val caught1 = intercept[TestFailedException] {
           "1.7" should endWith regex ("1.78")
@@ -417,7 +417,7 @@ s should fullyMatch regex t
         assert(caught9.getMessage === "\"***\" did not end with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?")
       }
   
-      it("should throw TestFailedException if the string does matches substring that matched the regular expression specified as a string when used with not") {
+      def `should throw TestFailedException if the string does matches substring that matched the regular expression specified as a string when used with not` {
   
         val caught1 = intercept[TestFailedException] {
           "1.7" should not { endWith regex ("1.7") }
@@ -486,7 +486,7 @@ s should fullyMatch regex t
         assert(caught23.getMessage === "\"b-1.8\" ended with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?")
       }
 
-      it("should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-and expression") {
+      def `should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-and expression` {
   
         val caught1 = intercept[TestFailedException] {
           "1.7" should (endWith regex (decimalRegex) and (endWith regex ("1.8")))
@@ -520,7 +520,7 @@ s should fullyMatch regex t
         assert(caught6.getMessage === "\"1.eight\" did not end with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?")
       }
   
-      it("should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-or expression") {
+      def `should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-or expression` {
   
         val caught1 = intercept[TestFailedException] {
           "1.seven" should (endWith regex (decimalRegex) or (endWith regex ("1.8")))
@@ -538,7 +538,7 @@ s should fullyMatch regex t
         assert(caught3.getMessage === "\"1.seven\" did not end with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?, and \"1.seven\" did not end with a substring that matched the regular expression 1.8")
       }
   
-      it("should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-and expression used with not") {
+      def `should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-and expression used with not` {
 
         val caught1 = intercept[TestFailedException] {
           "1.7" should (not endWith regex ("1.8") and (not endWith regex (decimalRegex)))
@@ -566,7 +566,7 @@ s should fullyMatch regex t
         assert(caught5.getMessage === "\"1.7\" did not end with a substring that matched the regular expression 1.8, but \"1.7\" ended with a substring that matched the regular expression (-)?(\\d+)(\\.\\d*)?")
       }
 
-      it("should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-or expression used with not") {
+      def `should throw TestFailedException if the string ends with substring that matched the regular expression specified as a string when used in a logical-or expression used with not` {
   
         val caught1 = intercept[TestFailedException] {
           "1.7" should (not endWith regex (decimalRegex) or (not endWith regex ("1.7")))

@@ -22,13 +22,13 @@ import Arbitrary._
 import Prop._
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
+class ShouldBeTripleEqualsSpec extends Spec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
 
   // Checking for a specific size
-  describe("The 'be === (x)' syntax") {
+  object `The 'be === (x)' syntax` {
 
-    describe("when used with Arrays") {
-      it("should compare arrays structurally") {
+    object `when used with Arrays` {
+      def `should compare arrays structurally` {
         Array(1, 2) should be === Array(1, 2)
         val a1 = Array(1, 2, 3)
         val a2 = Array(1, 2, 3)
@@ -39,7 +39,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
           a1 should be === a3
         }
       }
-      it("should compare arrays deeply") {
+      def `should compare arrays deeply` {
         val a1 = Array(1, Array("a", "b"), 3)
         val a2 = Array(1, Array("a", "b"), 3)
         val a3 = Array(1, Array("c", "d"), 3)
@@ -51,8 +51,8 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
     }
 
-    describe("when used with nulls") {
-      it("should not throw NullPointerException") {
+    object `when used with nulls` {
+      def `should not throw NullPointerException` {
         val s: String = null
         intercept[TestFailedException] {
           s should be === Array(1, 2)
@@ -64,21 +64,21 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
     }
 
-    describe("on Int") {
+    object `on Int` {
 
-      it("should do nothing if the comparison holds true") {
+      def `should do nothing if the comparison holds true` {
         check((i: Int) => returnsNormally(i should be === (i)))
         check((i: Int) => returnsNormally(i should be === i))
       }
 
-      it("should do nothing if the comparison fails and used with not") {
+      def `should do nothing if the comparison fails and used with not` {
 
         check((left: Int, right: Int) => left != right ==> returnsNormally(left should not be === (right)))
         check((left: Int, right: Int) => left != right ==> returnsNormally(left should not (be === (right))))
         check((left: Int, right: Int) => left != right ==> returnsNormally(left should not (be === right)))
       }
 
-      it("should do nothing when comparison succeeds and used in a logical-and expression") {
+      def `should do nothing when comparison succeeds and used in a logical-and expression` {
 
         check((i: Int) => returnsNormally(i should ((be === (i)) and (be === (i)))))
         check((i: Int) => returnsNormally(i should (be === (i) and (be === i))))
@@ -86,7 +86,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
         check((i: Int) => returnsNormally(i should (be === i and be === i)))
       }
 
-      it("should do nothing when comparison succeeds and used in a logical-or expression") {
+      def `should do nothing when comparison succeeds and used in a logical-or expression` {
 
         check((i: Int) => returnsNormally(i should ((be === (i)) or (be === (i)))))
         check((i: Int) => returnsNormally(i should (be === (i) or (be === i))))
@@ -99,21 +99,21 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
         check((i: Int) => returnsNormally(i should ((not equal i) or be === i)))
       }
 
-      it("should do nothing when comparison fails and used in a logical-and expression with not") {
+      def `should do nothing when comparison fails and used in a logical-and expression with not` {
 
         check((left: Int, right: Int) => left != right ==> returnsNormally(left should (not (be === (right)) and not (be === (right)))))
         check((left: Int, right: Int) => left != right ==> returnsNormally(left should ((not be === (right)) and (not be === (right)))))
         check((left: Int, right: Int) => left != right ==> returnsNormally(left should (not be === (right) and not be === (right))))
       }
 
-      it("should do nothing when comparison fails and used in a logical-or expression with not") {
+      def `should do nothing when comparison fails and used in a logical-or expression with not` {
 
         check((left: Int, right: Int) => left != right ==> returnsNormally(left should (not (be === (right)) or not (be === (right)))))
         check((left: Int, right: Int) => left != right ==> returnsNormally(left should ((not be === (right)) or (not be === (right)))))
         check((left: Int, right: Int) => left != right ==> returnsNormally(left should (not be === (right) or not be === (right))))
       }
 
-      it("should throw TestFailedException if comparison does not succeed") {
+      def `should throw TestFailedException if comparison does not succeed` {
 
         val caught1 = intercept[TestFailedException] {
           1 should be === (2)
@@ -128,7 +128,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
         check((left: Int, right: Int) => left != right ==> throwsTestFailedException(left should be === right))
       }
 
-      it("should throw TestFailedException if comparison succeeds but used with not") {
+      def `should throw TestFailedException if comparison succeeds but used with not` {
 
         val caught1 = intercept[TestFailedException] {
           1 should not be === (1)
@@ -138,7 +138,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
 
       // Comparison with and
-      it("should throw TestFailedException when comparison doesn't succeed and used in a logical-and expression") {
+      def `should throw TestFailedException when comparison doesn't succeed and used in a logical-and expression` {
 
         val caught1 = intercept[TestFailedException] {
           2 should { be === (2) and (be === (5)) }
@@ -167,7 +167,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
 
       // Comparison with or
-      it("should throw throw TestFailedException when comparison doesn't succeed and used in a logical-or expression") {
+      def `should throw throw TestFailedException when comparison doesn't succeed and used in a logical-or expression` {
 
 
         val caught1 = intercept[TestFailedException] {
@@ -192,7 +192,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
 
       // Comparison with and not
-      it("should throw throw TestFailedException when comparison doesn't succeed and used in a logical-and expression used with not") {
+      def `should throw throw TestFailedException when comparison doesn't succeed and used in a logical-and expression used with not` {
 
         val caught1 = intercept[TestFailedException] {
           5 should { not { be === (2) } and not { be === (5) }}
@@ -211,7 +211,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
 
       // Comparison with or not
-      it("should throw throw TestFailedException when comparison doesn't succeed and used in a logical-or expression used with not") {
+      def `should throw throw TestFailedException when comparison doesn't succeed and used in a logical-or expression used with not` {
 
         val caught1 = intercept[TestFailedException] {
           5 should { not { be === (5) } or not { be === (5) }}
@@ -231,21 +231,21 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
     }
 
-    describe("on String") {
+    object `on String` {
 
-      it("should do nothing if the comparison holds true") {
+      def `should do nothing if the comparison holds true` {
         check((s: String) => returnsNormally(s should be === (s)))
         check((s: String) => returnsNormally(s should be === s))
       }
 
-      it("should do nothing if the comparison fails and used with not") {
+      def `should do nothing if the comparison fails and used with not` {
 
         check((left: String, right: String) => left != right ==> returnsNormally(left should not be === (right)))
         check((left: String, right: String) => left != right ==> returnsNormally(left should not (be === (right))))
         check((left: String, right: String) => left != right ==> returnsNormally(left should not (be === right)))
       }
 
-      it("should do nothing when comparison succeeds and used in a logical-and expression") {
+      def `should do nothing when comparison succeeds and used in a logical-and expression` {
 
         check((s: String) => returnsNormally(s should ((be === (s)) and (be === (s)))))
         check((s: String) => returnsNormally(s should (be === (s) and (be === s))))
@@ -253,7 +253,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
         check((s: String) => returnsNormally(s should (be === s and be === s)))
       }
 
-      it("should do nothing when comparison succeeds and used in a logical-or expression") {
+      def `should do nothing when comparison succeeds and used in a logical-or expression` {
 
         check((s: String) => returnsNormally(s should ((be === (s)) or (be === (s)))))
         check((s: String) => returnsNormally(s should (be === (s) or (be === s))))
@@ -266,21 +266,21 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
         check((s: String) => returnsNormally(s should ((not equal s) or be === s)))
       }
 
-      it("should do nothing when comparison fails and used in a logical-and expression with not") {
+      def `should do nothing when comparison fails and used in a logical-and expression with not` {
 
         check((left: String, right: String) => left != right ==> returnsNormally(left should (not (be === (right)) and not (be === (right)))))
         check((left: String, right: String) => left != right ==> returnsNormally(left should ((not be === (right)) and (not be === (right)))))
         check((left: String, right: String) => left != right ==> returnsNormally(left should (not be === (right) and not be === (right))))
       }
 
-      it("should do nothing when comparison fails and used in a logical-or expression with not") {
+      def `should do nothing when comparison fails and used in a logical-or expression with not` {
 
         check((left: String, right: String) => left != right ==> returnsNormally(left should (not (be === (right)) or not (be === (right)))))
         check((left: String, right: String) => left != right ==> returnsNormally(left should ((not be === (right)) or (not be === (right)))))
         check((left: String, right: String) => left != right ==> returnsNormally(left should (not be === (right) or not be === (right))))
       }
 
-      it("should throw TestFailedException if comparison does not succeed") {
+      def `should throw TestFailedException if comparison does not succeed` {
 
         val caught1 = intercept[TestFailedException] {
           1 should be === (2)
@@ -295,7 +295,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
         check((left: String, right: String) => left != right ==> throwsTestFailedException(left should be === right))
       }
 
-      it("should throw TestFailedException if comparison succeeds but used with not") {
+      def `should throw TestFailedException if comparison succeeds but used with not` {
 
         val caught1 = intercept[TestFailedException] {
           1 should not be === (1)
@@ -305,7 +305,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
 
       // Comparison with and
-      it("should throw TestFailedException when comparison doesn't succeed and used in a logical-and expression") {
+      def `should throw TestFailedException when comparison doesn't succeed and used in a logical-and expression` {
 
         val caught1 = intercept[TestFailedException] {
           2 should { be === (2) and (be === (5)) }
@@ -334,7 +334,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
 
       // Comparison with or
-      it("should throw throw TestFailedException when comparison doesn't succeed and used in a logical-or expression") {
+      def `should throw throw TestFailedException when comparison doesn't succeed and used in a logical-or expression` {
 
 
         val caught1 = intercept[TestFailedException] {
@@ -359,7 +359,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
 
       // Comparison with and not
-      it("should throw throw TestFailedException when comparison doesn't succeed and used in a logical-and expression used with not") {
+      def `should throw throw TestFailedException when comparison doesn't succeed and used in a logical-and expression used with not` {
 
         val caught1 = intercept[TestFailedException] {
           5 should { not { be === (2) } and not { be === (5) }}
@@ -378,7 +378,7 @@ class ShouldBeTripleEqualsSpec extends FunSpec with ShouldMatchers with Checkers
       }
 
       // Comparison with or not
-      it("should throw throw TestFailedException when comparison doesn't succeed and used in a logical-or expression used with not") {
+      def `should throw throw TestFailedException when comparison doesn't succeed and used in a logical-or expression used with not` {
 
         val caught1 = intercept[TestFailedException] {
           5 should { not { be === (5) } or not { be === (5) }}

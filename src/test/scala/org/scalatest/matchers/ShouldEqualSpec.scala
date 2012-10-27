@@ -25,12 +25,12 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.exceptions._
 import org.scalatest.exceptions.TestFailedException
 
-class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
+class ShouldEqualSpec extends Spec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
 
   // Checking for equality with "equal"
-  describe("The equal token") {
+  object `The equal token` {
 
-    it("should do nothing when equal") {
+    def `should do nothing when equal` {
       1 should equal (1)
 
       // objects should equal themselves
@@ -41,7 +41,7 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       check((s: String) => returnsNormally(s should equal (new String(s))))
     }
 
-    it("should do nothing when not equal and used with not") {
+    def `should do nothing when not equal and used with not` {
       1 should not { equal (2) }
       1 should not equal (2)
 
@@ -50,11 +50,11 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       check((s: String, t: String) => s != t ==> returnsNormally(s should not equal (t)))
     }
 
-    it("should do nothing when equal and used in a logical-and expression") {
+    def `should do nothing when equal and used in a logical-and expression` {
       1 should (equal (1) and equal (2 - 1))
     }
 
-    it("should do nothing when equal and used in multi-part logical expressions") {
+    def `should do nothing when equal and used in multi-part logical expressions` {
 
         // Just to make sure these work strung together
         1 should (equal (1) and equal (1) and equal (1) and equal (1))
@@ -68,23 +68,23 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
         )
     }
 
-    it("should do nothing when equal and used in a logical-or expression") {
+    def `should do nothing when equal and used in a logical-or expression` {
       1 should { equal (1) or equal (2 - 1) }
     }
 
-    it("should do nothing when not equal and used in a logical-and expression with not") {
+    def `should do nothing when not equal and used in a logical-and expression with not` {
       1 should { not { equal (2) } and not { equal (3 - 1) }}
       1 should { not equal (2) and (not equal (3 - 1)) }
       1 should (not equal (2) and not equal (3 - 1))
     }
 
-    it("should do nothing when not equal and used in a logical-or expression with not") {
+    def `should do nothing when not equal and used in a logical-or expression with not` {
       1 should { not { equal (2) } or not { equal (3 - 1) }}
       1 should { not equal (2) or (not equal (3 - 1)) }
       1 should (not equal (2) or not equal (3 - 1))
     }
 
-    it("should throw a TFE when not equal") {
+    def `should throw a TFE when not equal` {
       val caught1 = intercept[TestFailedException] {
         1 should equal (2)
       }
@@ -99,7 +99,7 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       assert(caught2.getMessage === "1 did not equal 2")
     }
 
-    it("should throw a TFE when equal but used with should not") {
+    def `should throw a TFE when equal but used with should not` {
       val caught1 = intercept[TestFailedException] {
         1 should not { equal (1) }
       }
@@ -126,21 +126,21 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       assert(caught3.getMessage === "1 equaled 1")
     }
 
-    it("should throw a TFE when not equal and used in a logical-and expression") {
+    def `should throw a TFE when not equal and used in a logical-and expression` {
       val caught = intercept[TestFailedException] {
         1 should { equal (5) and equal (2 - 1) }
       }
       assert(caught.getMessage === "1 did not equal 5")
     }
 
-    it("should throw a TFE when not equal and used in a logical-or expression") {
+    def `should throw a TFE when not equal and used in a logical-or expression` {
       val caught = intercept[TestFailedException] {
         1 should { equal (5) or equal (5 - 1) }
       }
       assert(caught.getMessage === "1 did not equal 5, and 1 did not equal 4")
     }
 
-    it("should throw a TFE when equal and used in a logical-and expression with not") {
+    def `should throw a TFE when equal and used in a logical-and expression with not` {
 
       val caught1 = intercept[TestFailedException] {
         1 should { not { equal (1) } and not { equal (3 - 1) }}
@@ -173,7 +173,7 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       assert(caught6.getMessage === "1 did not equal 2, but 1 equaled 1")
     }
 
-    it("should throw a TFE when equal and used in a logical-or expression with not") {
+    def `should throw a TFE when equal and used in a logical-or expression with not` {
 
       val caught1 = intercept[TestFailedException] {
         1 should { not { equal (1) } or not { equal (2 - 1) }}
@@ -191,7 +191,7 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       assert(caught3.getMessage === "1 equaled 1, and 1 equaled 1")
     }
     
-    it("should put string differences in square bracket") {
+    def `should put string differences in square bracket` {
       val caught1 = intercept[TestFailedException] { "dummy" should equal ("dunny") }
       caught1.getMessage should equal ("\"du[mm]y\" did not equal \"du[nn]y\"")
       
@@ -202,7 +202,7 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       caught3.getMessage should be ("\"hi[] there mom\" was not equal to \"hi[gh] there mom\"")
     }
     
-    it("should not put string differences in square bracket") {
+    def `should not put string differences in square bracket` {
       val caught1 = intercept[TestFailedException] { "dummy" should not equal "dummy" }
       caught1.getMessage should equal ("\"dummy\" equaled \"dummy\"")
       
@@ -210,12 +210,12 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       caught2.getMessage should equal ("\"dummy\" was equal to \"dummy\"")
     }
 
-    it("should be usable when the left expression results in null") {
+    def `should be usable when the left expression results in null` {
       val npe = new NullPointerException
       npe.getMessage should equal (null)
     }
 
-    it("should compare arrays structurally") {
+    def `should compare arrays structurally` {
       val a1 = Array(1, 2, 3)
       val a2 = Array(1, 2, 3)
       val a3 = Array(4, 5, 6)
@@ -226,7 +226,7 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       }
     }
 
-    it("should compare arrays deeply") {
+    def `should compare arrays deeply` {
       val a1 = Array(1, Array("a", "b"), 3)
       val a2 = Array(1, Array("a", "b"), 3)
       val a3 = Array(1, Array("c", "d"), 3)
@@ -237,7 +237,7 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       }
     }
 
-    it("should compare arrays containing nulls fine") {
+    def `should compare arrays containing nulls fine` {
       val a1 = Array(1, Array("a", null), 3)
       val a2 = Array(1, Array("a", null), 3)
       val a3 = Array(1, Array("c", "d"), 3)
@@ -251,7 +251,7 @@ class ShouldEqualSpec extends FunSpec with ShouldMatchers with Checkers with Ret
       }
     }
 
-    it("should compare nulls in a satisfying manner") {
+    def `should compare nulls in a satisfying manner` {
       val n1: String = null
       val n2: String = null
       n1 should equal (n2)
