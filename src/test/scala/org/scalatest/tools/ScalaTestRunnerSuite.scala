@@ -129,14 +129,12 @@ import org.scalatools.testing.{Event, EventHandler, Result, Logger, Runner => Te
       assert(results(0).result === Result.Skipped)
     }
 
-    val framework = new ScalaTestFramework
-
-    val runner: TestingRunner = {
-      framework.testRunner(Thread.currentThread.getContextClassLoader, Array(new TestLogger))
+    def runner: TestingRunner = {
+      new ScalaTestFramework().testRunner(Thread.currentThread.getContextClassLoader, Array(new TestLogger))
     }
 
     val fingerprint = {
-      val fingerprints = framework.tests
+      val fingerprints = new ScalaTestFramework().tests
       fingerprints(0).
                     asInstanceOf[org.scalatools.testing.TestFingerprint]
     }

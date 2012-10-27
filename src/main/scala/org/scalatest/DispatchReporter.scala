@@ -206,6 +206,8 @@ private[scalatest] class DispatchReporter(val reporters: List[Reporter], val out
   def doDispose() {
     dispatchDisposeAndWaitUntilDone()
   }
+  
+  def isDisposed = latch.getCount == 0
 }
 
 // TODO: Not a real problem, but if a DispatchReporter ever got itself in

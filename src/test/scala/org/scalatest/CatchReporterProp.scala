@@ -46,9 +46,14 @@ class CatchReporterProp extends AllSuiteProp {
         val stackTraceList = Thread.currentThread.getStackTrace.drop(2)
         isWrapped = stackTraceList.find { element => 
           val className = element.getClassName
-          val clazz = getClass.getClassLoader.loadClass(className)
-          val t = classOf[Reporter].isAssignableFrom(clazz)
-          classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          try {
+            val clazz = getClass.getClassLoader.loadClass(className)
+            val t = classOf[Reporter].isAssignableFrom(clazz)
+            classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          }
+          catch {
+            case _ => false
+          }
         }.isDefined
       }
       super.apply(event)
@@ -68,9 +73,14 @@ class CatchReporterProp extends AllSuiteProp {
         val stackTraceList = Thread.currentThread.getStackTrace.drop(2)
         isWrapped = stackTraceList.find { element => 
           val className = element.getClassName
-          val clazz = getClass.getClassLoader.loadClass(className)
-          val t = classOf[Reporter].isAssignableFrom(clazz)
-          classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          try {
+            val clazz = getClass.getClassLoader.loadClass(className)
+            val t = classOf[Reporter].isAssignableFrom(clazz)
+            classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          }
+          catch {
+            case _ => false
+          }
         }.isDefined
       }
       super.apply(event)
@@ -84,8 +94,13 @@ class CatchReporterProp extends AllSuiteProp {
       if (!isWrapped) {
         isWrapped = stackTraceList.exists { element => 
           val className = element.getClassName
-          val clazz = getClass.getClassLoader.loadClass(className)
-          classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          try {
+            val clazz = getClass.getClassLoader.loadClass(className)
+            classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          }
+          catch {
+            case _ => false
+          }
         }
       }
       
@@ -109,9 +124,14 @@ class CatchReporterProp extends AllSuiteProp {
         val stackTraceList = Thread.currentThread.getStackTrace.drop(2)
         isWrapped = stackTraceList.find { element => 
           val className = element.getClassName
-          val clazz = getClass.getClassLoader.loadClass(className)
-          val t = classOf[Reporter].isAssignableFrom(clazz)
-          classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          try {
+            val clazz = getClass.getClassLoader.loadClass(className)
+            val t = classOf[Reporter].isAssignableFrom(clazz)
+            classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          }
+          catch {
+            case _ => false
+          }
         }.isDefined
       }
       super.apply(event)
@@ -125,9 +145,14 @@ class CatchReporterProp extends AllSuiteProp {
         val stackTraceList = Thread.currentThread.getStackTrace.drop(2)
         isWrapped = stackTraceList.find { element => 
           val className = element.getClassName
-          val clazz = getClass.getClassLoader.loadClass(className)
-          val t = classOf[Reporter].isAssignableFrom(clazz)
-          classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          try {
+            val clazz = getClass.getClassLoader.loadClass(className)
+            val t = classOf[Reporter].isAssignableFrom(clazz)
+            classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          }
+          catch {
+            case _ => false
+          }
         }.isDefined
       }
       super.apply(event)
@@ -141,9 +166,14 @@ class CatchReporterProp extends AllSuiteProp {
         val stackTraceList = Thread.currentThread.getStackTrace.drop(2)
         isWrapped = stackTraceList.find { element => 
           val className = element.getClassName
-          val clazz = getClass.getClassLoader.loadClass(className)
-          val t = classOf[Reporter].isAssignableFrom(clazz)
-          classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          try {
+            val clazz = getClass.getClassLoader.loadClass(className)
+            val t = classOf[Reporter].isAssignableFrom(clazz)
+            classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          }
+          catch {
+            case _ => false
+          }
         }.isDefined
       }
       super.apply(event)
@@ -157,9 +187,14 @@ class CatchReporterProp extends AllSuiteProp {
         val stackTraceList = Thread.currentThread.getStackTrace.drop(2)
         isWrapped = stackTraceList.find { element => 
           val className = element.getClassName
-          val clazz = getClass.getClassLoader.loadClass(className)
-          val t = classOf[Reporter].isAssignableFrom(clazz)
-          classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          try {
+            val clazz = getClass.getClassLoader.loadClass(className)
+            val t = classOf[Reporter].isAssignableFrom(clazz)
+            classOf[Reporter].isAssignableFrom(clazz) && element.getMethodName == "apply"
+          }
+          catch {
+            case _ => false
+          }
         }.isDefined
       }
       super.apply(event)

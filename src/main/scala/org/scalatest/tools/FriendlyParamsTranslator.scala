@@ -120,7 +120,8 @@ private[scalatest] class FriendlyParamsTranslator {
   }
   
   private[scalatest] def parseDashAndArgument(dash:String, replaceDeprecated:String, it:Iterator[String]):List[String] = {
-    println(dash + " is deprecated, use " + replaceDeprecated + " instead.")
+    // Do not show deprecated message for now, until the friendly dsl is really ready
+    //println(dash + " is deprecated, use " + replaceDeprecated + " instead.")
     val translatedList = new ListBuffer[String]()
     translatedList += dash
     if(it.hasNext)
@@ -130,7 +131,8 @@ private[scalatest] class FriendlyParamsTranslator {
   
   private[scalatest] def showDeprecated(inputString:String, replaceDeprecated:String):String = {
     // May be we can use a logger later
-    println(inputString + " is deprecated, use " + replaceDeprecated + " instead.")
+    // Do not show deprecated message for now, until the friendly dsl is really ready
+    //println(inputString + " is deprecated, use " + replaceDeprecated + " instead.")
     inputString
   }
   
