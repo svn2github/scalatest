@@ -161,6 +161,10 @@ class ShouldContainValueSpec extends Spec with ShouldMatchers with Checkers with
         }
         assert(caught3.getMessage === "Map(one -> 1, two -> 2) contained value 2, and Map(one -> 1, two -> 2) contained value 2")
       }
+
+      def `should work on parallel form` {
+        Map("one" -> 1, "two" -> 2).par should contain value (2)
+      }
     }
 
     object `on scala.collection.mutable.Map` {
@@ -311,6 +315,10 @@ class ShouldContainValueSpec extends Spec with ShouldMatchers with Checkers with
         }
         assert(caught3.getMessage === map3 + " contained value 2, and " + map3 + " contained value 2")
       }
+
+      def `should work on parallel form` {
+        mutable.Map("one" -> 1, "two" -> 2).par should contain value (2)
+      }
     }
 
     object `on scala.collection.Map` {
@@ -447,6 +455,10 @@ class ShouldContainValueSpec extends Spec with ShouldMatchers with Checkers with
           map should (not contain value (2) or not contain value (2))
         }
         assert(caught3.getMessage === "Map(one -> 1, two -> 2) contained value 2, and Map(one -> 1, two -> 2) contained value 2")
+      }
+
+      def `should work on parallel form` {
+        map.par should contain value (2)
       }
     }
 
@@ -599,6 +611,10 @@ class ShouldContainValueSpec extends Spec with ShouldMatchers with Checkers with
         //assert(caught3.getMessage === "Map(one -> 1, two -> 2) contained value 2, and Map(one -> 1, two -> 2) contained value 2")
         caught1.getMessage should fullyMatch regex ("Map(.*) contained value 2, and Map(.*) contained value 2")
       }
+
+      def `should work on parallel form` {
+        HashMap("one" -> 1, "two" -> 2).par should contain value (2)
+      }
     }
 
     object `on scala.collection.mutable.HashMap` {
@@ -748,6 +764,10 @@ class ShouldContainValueSpec extends Spec with ShouldMatchers with Checkers with
           map3 should (not contain value (2) or not contain value (2))
         }
         assert(caught3.getMessage === map3 + " contained value 2, and " + map3 + " contained value 2")
+      }
+
+      def `should work on parallel form` {
+        mutable.HashMap("one" -> 1, "two" -> 2).par should contain value (2)
       }
     }
 

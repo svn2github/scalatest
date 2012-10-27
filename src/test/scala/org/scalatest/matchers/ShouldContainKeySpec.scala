@@ -161,6 +161,10 @@ class ShouldContainKeySpec extends Spec with ShouldMatchers with Checkers with R
         }
         assert(caught3.getMessage === "Map(one -> 1, two -> 2) contained key \"two\", and Map(one -> 1, two -> 2) contained key \"two\"")
       }
+
+      def `should work on parallel form` {
+        Map("one" -> 1, "two" -> 2).par should contain key ("two")
+      }
     }
 
     object `on scala.collection.mutable.Map` {
@@ -309,6 +313,10 @@ class ShouldContainKeySpec extends Spec with ShouldMatchers with Checkers with R
         }
         assert(caught3.getMessage === map3 + " contained key \"two\", and " + map3 + " contained key \"two\"")
       }
+
+      def `should work on parallel form` {
+        mutable.Map("one" -> 1, "two" -> 2).par should contain key ("two")
+      }
     }
 
     object `on scala.collection.Map` {
@@ -445,6 +453,10 @@ class ShouldContainKeySpec extends Spec with ShouldMatchers with Checkers with R
           map should (not contain key ("two") or not contain key ("two"))
         }
         assert(caught3.getMessage === "Map(one -> 1, two -> 2) contained key \"two\", and Map(one -> 1, two -> 2) contained key \"two\"")
+      }
+
+      def `should work on parallel form` {
+        map.par should contain key ("two")
       }
     }
 
@@ -600,6 +612,10 @@ class ShouldContainKeySpec extends Spec with ShouldMatchers with Checkers with R
         //assert(caught3.getMessage === "Map(one -> 1, two -> 2) contained key \"two\", and Map(one -> 1, two -> 2) contained key \"two\"")
         caught1.getMessage should fullyMatch regex ("Map(.*) contained key \"two\", and Map(.*) contained key \"two\"")
       }
+
+      def `should work on parallel form` {
+        HashMap("one" -> 1, "two" -> 2).par should contain key ("two")
+      }
     }
 
     object `on scala.collection.mutable.HashMap` {
@@ -747,6 +763,10 @@ class ShouldContainKeySpec extends Spec with ShouldMatchers with Checkers with R
           map3 should (not contain key ("two") or not contain key ("two")))
         }
         assert(caught3.getMessage === map3 + " contained key \"two\", and " + map3 + " contained key \"two\"")
+      }
+
+      def `should work on parallel form` {
+        mutable.HashMap("one" -> 1, "two" -> 2).par should contain key ("two")
       }
     }
 

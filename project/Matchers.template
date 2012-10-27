@@ -25,6 +25,9 @@ import Helper.transformOperatorChars
 import scala.collection.Traversable
 import Assertions.areEqualComparingArraysStructurally
 import org.scalatest.exceptions.TestFailedException
+import scala.collection.GenTraversable
+import scala.collection.GenSeq
+import scala.collection.GenMap
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -316,7 +319,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                     ^
        * </pre>
        */
-      def apply[U](expectedElement: U): Matcher[T with Traversable[U]] = matchersWrapper.and(matchers.contain(expectedElement))
+      def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = matchersWrapper.and(matchers.contain(expectedElement))
       // def element[T](expectedElement: T) = matchersWrapper.and(matchers.contain.apply(expectedElement))
 
       /**
@@ -327,7 +330,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                     ^
        * </pre>
        */
-      def key[U](expectedElement: U): Matcher[T with scala.collection.Map[U, Any]] = matchersWrapper.and(matchers.contain.key(expectedElement))
+      def key[U](expectedElement: U): Matcher[T with scala.collection.GenMap[U, Any]] = matchersWrapper.and(matchers.contain.key(expectedElement))
 
       /**
        * This method enables the following syntax:
@@ -337,7 +340,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                   ^
        * </pre>
        */
-      def value[U](expectedValue: U): Matcher[T with scala.collection.Map[K, U] forSome { type K }] = matchersWrapper.and(matchers.contain.value(expectedValue))
+      def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = matchersWrapper.and(matchers.contain.value(expectedValue))
     }
 
     /**
@@ -928,7 +931,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                     ^
        * </pre>
        */
-      def contain[U](expectedElement: U): Matcher[T with Traversable[U]] =
+      def contain[U](expectedElement: U): Matcher[T with GenTraversable[U]] =
         matchersWrapper.and(matchers.not.contain(expectedElement))
 
       /**
@@ -939,7 +942,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                      ^
        * </pre>
        */
-      def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): Matcher[T with scala.collection.Map[U, Any]] =
+      def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): Matcher[T with scala.collection.GenMap[U, Any]] =
         matchersWrapper.and(matchers.not.contain(resultOfKeyWordApplication))
 
       /**
@@ -950,7 +953,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                   ^
        * </pre>
        */
-      def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): Matcher[T with scala.collection.Map[K, U] forSome { type K }] =
+      def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] =
         matchersWrapper.and(matchers.not.contain(resultOfValueWordApplication))
     }
 
@@ -1067,7 +1070,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                            ^
        * </pre>
        */
-      def apply[U](expectedElement: U): Matcher[T with Traversable[U]] = matchersWrapper.or(matchers.contain(expectedElement))
+      def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = matchersWrapper.or(matchers.contain(expectedElement))
       // def element[T](expectedElement: T) = matchersWrapper.or(matchers.contain.apply(expectedElement))
 
       /**
@@ -1078,7 +1081,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                    ^
        * </pre>
        */
-      def key[U](expectedKey: U): Matcher[T with scala.collection.Map[U, Any]] = matchersWrapper.or(matchers.contain.key(expectedKey))
+      def key[U](expectedKey: U): Matcher[T with scala.collection.GenMap[U, Any]] = matchersWrapper.or(matchers.contain.key(expectedKey))
 
       /**
        * This method enables the following syntax:
@@ -1088,7 +1091,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                  ^
        * </pre>
        */
-      def value[U](expectedValue: U): Matcher[T with scala.collection.Map[K, U] forSome { type K }] = matchersWrapper.or(matchers.contain.value(expectedValue))
+      def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = matchersWrapper.or(matchers.contain.value(expectedValue))
     }
 
     /**
@@ -1679,7 +1682,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                            ^
        * </pre>
        */
-      def contain[U](expectedElement: U): Matcher[T with Traversable[U]] =
+      def contain[U](expectedElement: U): Matcher[T with GenTraversable[U]] =
         matchersWrapper.or(matchers.not.contain(expectedElement))
 
       /**
@@ -1690,7 +1693,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                    ^
        * </pre>
        */
-      def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): Matcher[T with scala.collection.Map[U, Any]] =
+      def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): Matcher[T with scala.collection.GenMap[U, Any]] =
         matchersWrapper.or(matchers.not.contain(resultOfKeyWordApplication))
 
       /**
@@ -1701,7 +1704,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                  ^
        * </pre>
        */
-      def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): Matcher[T with scala.collection.Map[K, U] forSome { type K }] =
+      def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] =
         matchersWrapper.or(matchers.not.contain(resultOfValueWordApplication))
     }
 
@@ -1742,7 +1745,7 @@ trait ClassicMatchers extends Assertions { matchers =>
    *
    * @author Bill Venners
    */
-  final class ResultOfContainWordForMap[K, V](left: scala.collection.Map[K, V], shouldBeTrue: Boolean) {
+  final class ResultOfContainWordForMap[K, V](left: scala.collection.GenMap[K, V], shouldBeTrue: Boolean) {
 
     /**
      * This method enables the following syntax:
@@ -1753,7 +1756,7 @@ trait ClassicMatchers extends Assertions { matchers =>
      * </pre>
      */
     def key(expectedKey: K) {
-      if (left.contains(expectedKey) != shouldBeTrue)
+      if (left.exists(_._1 == expectedKey) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainKey" else "containedKey",
@@ -1772,7 +1775,7 @@ trait ClassicMatchers extends Assertions { matchers =>
      */
     def value(expectedValue: V) {
       // if (left.values.contains(expectedValue) != shouldBeTrue) CHANGING FOR 2.8.0 RC1
-      if (left.values.exists(expectedValue == _) != shouldBeTrue)
+      if (left.exists(expectedValue == _._2) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainValue" else "containedValue",
@@ -1834,10 +1837,10 @@ trait ClassicMatchers extends Assertions { matchers =>
    * javaColl should contain ("two")
    * </pre>
    *
-   * The <code>(contain ("two"))</code> expression will result in a <code>Matcher[Traversable[String]]</code>. This
+   * The <code>(contain ("two"))</code> expression will result in a <code>Matcher[GenTraversable[String]]</code>. This
    * implicit conversion method will convert that matcher to a <code>Matcher[java.util.Collection[String]]</code>.
    */
-  implicit def convertTraversableMatcherToJavaCollectionMatcher[T](traversableMatcher: Matcher[Traversable[T]]): Matcher[java.util.Collection[T]] =
+  implicit def convertTraversableMatcherToJavaCollectionMatcher[T](traversableMatcher: Matcher[GenTraversable[T]]): Matcher[java.util.Collection[T]] =
     new Matcher[java.util.Collection[T]] {
       def apply(left: java.util.Collection[T]): MatchResult = {
         val traversable = new Traversable[T] {
@@ -1859,10 +1862,10 @@ trait ClassicMatchers extends Assertions { matchers =>
    * Array(1, 2) should (not contain (3) and not contain (2))
    * </pre>
    *
-   * The <code>(not contain ("two"))</code> expression will result in a <code>Matcher[Traversable[String]]</code>. This
+   * The <code>(not contain ("two"))</code> expression will result in a <code>Matcher[GenTraversable[String]]</code>. This
    * implicit conversion method will convert that matcher to a <code>Matcher[Array[String]]</code>.
   */
-  implicit def convertTraversableMatcherToArrayMatcher[T](traversableMatcher: Matcher[Traversable[T]]): Matcher[Array[T]] =
+  implicit def convertTraversableMatcherToArrayMatcher[T](traversableMatcher: Matcher[GenTraversable[T]]): Matcher[Array[T]] =
     new Matcher[Array[T]] {
       def apply(left: Array[T]): MatchResult = {
         val traversable = new Traversable[T] {
@@ -1888,10 +1891,10 @@ trait ClassicMatchers extends Assertions { matchers =>
    * javaMap should (contain key ("two"))
    * </pre>
    *
-   * The <code>(contain key ("two"))</code> expression will result in a <code>Matcher[scala.collection.Map[String, Any]]</code>. This
+   * The <code>(contain key ("two"))</code> expression will result in a <code>Matcher[scala.collection.GenMap[String, Any]]</code>. This
    * implicit conversion method will convert that matcher to a <code>Matcher[java.util.Map[String, Any]]</code>.
    */
-  implicit def convertMapMatcherToJavaMapMatcher[K, V](mapMatcher: Matcher[scala.collection.Map[K, V]]): Matcher[java.util.Map[K, V]] =
+  implicit def convertMapMatcherToJavaMapMatcher[K, V](mapMatcher: Matcher[scala.collection.GenMap[K, V]]): Matcher[java.util.Map[K, V]] =
     new Matcher[java.util.Map[K, V]] {
       def apply(left: java.util.Map[K, V]): MatchResult = {
         // Even though the java map is mutable I just wrap it it to a plain old Scala map, because
@@ -1948,9 +1951,9 @@ trait ClassicMatchers extends Assertions { matchers =>
      *                             ^
      * </pre>
      */
-    def apply[T](expectedElement: T): Matcher[Traversable[T]] =
-      new Matcher[Traversable[T]] {
-        def apply(left: Traversable[T]): MatchResult =
+    def apply[T](expectedElement: T): Matcher[GenTraversable[T]] =
+      new Matcher[GenTraversable[T]] {
+        def apply(left: GenTraversable[T]): MatchResult =
           MatchResult(
             left.exists(_ == expectedElement), 
             FailureMessages("didNotContainExpectedElement", left, expectedElement),
@@ -1962,7 +1965,7 @@ trait ClassicMatchers extends Assertions { matchers =>
     // This key method is called when "contain" is used in a logical expression, such as:
     // map should { contain key 1 and equal (Map(1 -> "Howdy")) }. It results in a matcher
     // that remembers the key value. By making the value type Any, it causes overloaded shoulds
-    // to work, because for example a Matcher[Map[Int, Any]] is a subtype of Matcher[Map[Int, String]],
+    // to work, because for example a Matcher[GenMap[Int, Any]] is a subtype of Matcher[GenMap[Int, String]],
     // given Map is covariant in its V (the value type stored in the map) parameter and Matcher is
     // contravariant in its lone type parameter. Thus, the type of the Matcher resulting from contain key 1
     // is a subtype of the map type that has a known value type parameter because its that of the map
@@ -1985,11 +1988,11 @@ trait ClassicMatchers extends Assertions { matchers =>
      * This will enable the matcher returned by this method to be used against any <code>Map</code> that has
      * the inferred key type.
      */
-    def key[K](expectedKey: K): Matcher[scala.collection.Map[K, Any]] =
-      new Matcher[scala.collection.Map[K, Any]] {
-        def apply(left: scala.collection.Map[K, Any]): MatchResult =
+    def key[K](expectedKey: K): Matcher[scala.collection.GenMap[K, Any]] =
+      new Matcher[scala.collection.GenMap[K, Any]] {
+        def apply(left: scala.collection.GenMap[K, Any]): MatchResult =
           MatchResult(
-            left.contains(expectedKey),
+            left.exists(_._1 == expectedKey),
             FailureMessages("didNotContainKey", left, expectedKey),
             FailureMessages("containedKey", left, expectedKey)
           )
@@ -2023,12 +2026,12 @@ trait ClassicMatchers extends Assertions { matchers =>
      * the inferred value type.
      *
      */
-    def value[V](expectedValue: V): Matcher[scala.collection.Map[K, V] forSome { type K }] =
-      new Matcher[scala.collection.Map[K, V] forSome { type K }] {
-        def apply(left: scala.collection.Map[K, V] forSome { type K }): MatchResult =
+    def value[V](expectedValue: V): Matcher[scala.collection.GenMap[K, V] forSome { type K }] =
+      new Matcher[scala.collection.GenMap[K, V] forSome { type K }] {
+        def apply(left: scala.collection.GenMap[K, V] forSome { type K }): MatchResult =
           MatchResult(
             // left.values.contains(expectedValue), CHANGING FOR 2.8.0 RC1
-            left.values.exists(expectedValue == _),
+            left.exists(expectedValue == _._2),
             FailureMessages("didNotContainValue", left, expectedValue),
             FailureMessages("containedValue", left, expectedValue)
           )
@@ -2681,7 +2684,7 @@ trait ClassicMatchers extends Assertions { matchers =>
                 FailureMessages("didNotHaveExpectedLength", left, expectedLength),
                 FailureMessages("hadExpectedLength", left, expectedLength)
               )
-            case leftSeq: Seq[_] =>
+            case leftSeq: GenSeq[_] =>
               MatchResult(
                 leftSeq.length == expectedLength, 
                 FailureMessages("didNotHaveExpectedLength", left, expectedLength),
@@ -2743,7 +2746,7 @@ trait ClassicMatchers extends Assertions { matchers =>
                 FailureMessages("didNotHaveExpectedSize", left, expectedSize),
                 FailureMessages("hadExpectedSize", left, expectedSize)
               )
-            case leftTrav: Traversable[_] =>
+            case leftTrav: GenTraversable[_] =>
               MatchResult(
                 leftTrav.size == expectedSize, 
                 FailureMessages("didNotHaveExpectedSize", left, expectedSize),
@@ -2873,7 +2876,7 @@ trait ClassicMatchers extends Assertions { matchers =>
    *
    * @author Bill Venners
    */
-  sealed class ResultOfHaveWordForTraversable[T](left: Traversable[T], shouldBeTrue: Boolean) {
+  sealed class ResultOfHaveWordForTraversable[T](left: GenTraversable[T], shouldBeTrue: Boolean) {
 
     /**
      * This method enables the following syntax:
@@ -2954,7 +2957,7 @@ trait ClassicMatchers extends Assertions { matchers =>
    *
    * @author Bill Venners
    */
-  final class ResultOfHaveWordForSeq[T](left: Seq[T], shouldBeTrue: Boolean) extends ResultOfHaveWordForTraversable[T](left, shouldBeTrue) {
+  final class ResultOfHaveWordForSeq[T](left: GenSeq[T], shouldBeTrue: Boolean) extends ResultOfHaveWordForTraversable[T](left, shouldBeTrue) {
 
     /**
      * This method enables the following syntax:
@@ -3026,7 +3029,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  sealed class ResultOfNotWordForTraversable[E, T <: Traversable[E]](left: T, shouldBeTrue: Boolean)
+  sealed class ResultOfNotWordForTraversable[E, T <: GenTraversable[E]](left: T, shouldBeTrue: Boolean)
       extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
 
     /**
@@ -3130,8 +3133,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForMap[K, V](left: scala.collection.Map[K, V], shouldBeTrue: Boolean)
-      extends ResultOfNotWordForTraversable[(K, V), scala.collection.Map[K, V]](left, shouldBeTrue) {
+  final class ResultOfNotWordForMap[K, V](left: scala.collection.GenMap[K, V], shouldBeTrue: Boolean)
+      extends ResultOfNotWordForTraversable[(K, V), scala.collection.GenMap[K, V]](left, shouldBeTrue) {
 
 
     /**
@@ -3144,7 +3147,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def contain(resultOfKeyWordApplication: ResultOfKeyWordApplication[K]) {
       val right = resultOfKeyWordApplication.expectedKey
-      if ((left.contains(right)) != shouldBeTrue) {
+      if ((left.exists(_._1 == right)) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainKey" else "containedKey",
@@ -3165,7 +3168,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def contain(resultOfValueWordApplication: ResultOfValueWordApplication[V]) {
       val right = resultOfValueWordApplication.expectedValue
-      if ((left.values.exists(_ == right)) != shouldBeTrue) {
+      if ((left.exists(_._2 == right)) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainValue" else "containedValue",
@@ -3235,7 +3238,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForSeq[E, T <: Seq[E]](left: T, shouldBeTrue: Boolean)
+  final class ResultOfNotWordForSeq[E, T <: GenSeq[E]](left: T, shouldBeTrue: Boolean)
       extends ResultOfNotWordForTraversable[E, T](left, shouldBeTrue) {
 
     /**
@@ -5869,9 +5872,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                         ^
      * </pre>
      */
-    def contain[T](expectedElement: T): Matcher[Traversable[T]] = {
-      new Matcher[Traversable[T]] {
-        def apply(left: Traversable[T]): MatchResult = {
+    def contain[T](expectedElement: T): Matcher[GenTraversable[T]] = {
+      new Matcher[GenTraversable[T]] {
+        def apply(left: GenTraversable[T]): MatchResult = {
           MatchResult(
             !(left.exists(_ == expectedElement)),
             FailureMessages("containedExpectedElement", left, expectedElement),
@@ -5889,12 +5892,12 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                                         ^
      * </pre>
      */
-    def contain[K](resultOfKeyWordApplication: ResultOfKeyWordApplication[K]): Matcher[scala.collection.Map[K, Any]] = {
+    def contain[K](resultOfKeyWordApplication: ResultOfKeyWordApplication[K]): Matcher[scala.collection.GenMap[K, Any]] = {
       val expectedKey = resultOfKeyWordApplication.expectedKey
-      new Matcher[scala.collection.Map[K, Any]] {
-        def apply(left: scala.collection.Map[K, Any]): MatchResult = {
+      new Matcher[scala.collection.GenMap[K, Any]] {
+        def apply(left: scala.collection.GenMap[K, Any]): MatchResult = {
           MatchResult(
-            !(left.contains(expectedKey)),
+            !(left.exists(_._1 == expectedKey)),
             FailureMessages("containedKey", left, expectedKey),
             FailureMessages("didNotContainKey", left, expectedKey)
           )
@@ -5910,12 +5913,12 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                                         ^
      * </pre>
      */
-    def contain[K, V](resultOfValueWordApplication: ResultOfValueWordApplication[V]): Matcher[scala.collection.Map[K, V] forSome { type K }] = {
+    def contain[K, V](resultOfValueWordApplication: ResultOfValueWordApplication[V]): Matcher[scala.collection.GenMap[K, V] forSome { type K }] = {
       val expectedValue = resultOfValueWordApplication.expectedValue
-      new Matcher[scala.collection.Map[K, V] forSome { type K }] {
-        def apply(left: scala.collection.Map[K, V] forSome { type K }): MatchResult = {
+      new Matcher[scala.collection.GenMap[K, V] forSome { type K }] {
+        def apply(left: scala.collection.GenMap[K, V] forSome { type K }): MatchResult = {
           MatchResult(
-            !(left.values.exists(_ == expectedValue)),
+            !(left.exists(_._2 == expectedValue)),
             FailureMessages("containedValue", left, expectedValue),
             FailureMessages("didNotContainValue", left, expectedValue)
           )

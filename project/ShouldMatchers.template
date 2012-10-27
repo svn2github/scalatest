@@ -18,7 +18,9 @@ package org.scalatest.matchers
 import org.scalatest._
 import scala.reflect.Manifest
 import org.scalatest.verb.ShouldVerb
-import scala.collection.Traversable
+import scala.collection.GenTraversable
+import scala.collection.GenSeq
+import scala.collection.GenMap
 import Assertions.areEqualComparingArraysStructurally
 
 /**
@@ -1477,12 +1479,12 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * <p>
    * This class is used in conjunction with an implicit conversion to enable <code>should</code> methods to
-   * be invoked on objects of type <code>scala.collection.Map[K, V]</code>.
+   * be invoked on objects of type <code>scala.collection.GenMap[K, V]</code>.
    * </p>
    *
    * @author Bill Venners
    */
-  final class MapShouldWrapper[K, V](left: scala.collection.Map[K, V]) {
+  final class MapShouldWrapper[K, V](left: scala.collection.GenMap[K, V]) {
 
     /**
      * This method enables syntax such as the following:
@@ -1492,7 +1494,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[scala.collection.Map[K, V]]) {
+    def should(rightMatcher: Matcher[scala.collection.GenMap[K, V]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcher)
     }
 
@@ -1504,7 +1506,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(beWord: BeWord): ResultOfBeWordForAnyRef[scala.collection.Map[K, V]] = new ResultOfBeWordForAnyRef(left, true)
+    def should(beWord: BeWord): ResultOfBeWordForAnyRef[scala.collection.GenMap[K, V]] = new ResultOfBeWordForAnyRef(left, true)
 
     /**
      * This method enables syntax such as the following:
@@ -1659,7 +1661,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * @author Bill Venners
    */
-  final class TraversableShouldWrapper[T](left: Traversable[T]) {
+  final class TraversableShouldWrapper[T](left: GenTraversable[T]) {
 
     /**
      * This method enables syntax such as the following:
@@ -1669,7 +1671,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *             ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[Traversable[T]]) {
+    def should(rightMatcher: Matcher[GenTraversable[T]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcher)
     }
 
@@ -1692,7 +1694,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *             ^
      * </pre>
      */
-    def should(beWord: BeWord): ResultOfBeWordForAnyRef[Traversable[T]] = new ResultOfBeWordForAnyRef(left, true)
+    def should(beWord: BeWord): ResultOfBeWordForAnyRef[GenTraversable[T]] = new ResultOfBeWordForAnyRef(left, true)
 
     /**
      * This method enables syntax such as the following:
@@ -1702,7 +1704,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *             ^
      * </pre>
      */
-    def should(notWord: NotWord): ResultOfNotWordForTraversable[T, Traversable[T]] =
+    def should(notWord: NotWord): ResultOfNotWordForTraversable[T, GenTraversable[T]] =
       new ResultOfNotWordForTraversable(left, false)
   }
 
@@ -1842,12 +1844,12 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * <p>
    * This class is used in conjunction with an implicit conversion to enable <code>should</code> methods to
-   * be invoked on objects of type <code>scala.Seq[T]</code>.
+   * be invoked on objects of type <code>GenSeq[T]</code>.
    * </p>
    *
    * @author Bill Venners
    */
-  final class SeqShouldWrapper[T](left: Seq[T]) {
+  final class SeqShouldWrapper[T](left: GenSeq[T]) {
  
     /**
      * This method enables syntax such as the following:
@@ -1857,7 +1859,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[Seq[T]]) {
+    def should(rightMatcher: Matcher[GenSeq[T]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcher)
     }
 
@@ -1884,7 +1886,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(notWord: NotWord): ResultOfNotWordForAnyRef[Seq[T]] =
+    def should(notWord: NotWord): ResultOfNotWordForAnyRef[GenSeq[T]] =
       new ResultOfNotWordForAnyRef(left, false)
 
     /**
@@ -1895,7 +1897,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(beWord: BeWord): ResultOfBeWordForAnyRef[Seq[T]] = new ResultOfBeWordForAnyRef(left, true)
+    def should(beWord: BeWord): ResultOfBeWordForAnyRef[GenSeq[T]] = new ResultOfBeWordForAnyRef(left, true)
   }
 
   /**
@@ -2173,13 +2175,13 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    * Implicitly converts an object of type <code>scala.Collection[T]</code> to a <code>CollectionShouldWrapper</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToTraversableShouldWrapper[T](o: Traversable[T]): TraversableShouldWrapper[T] = new TraversableShouldWrapper[T](o)
+  implicit def convertToTraversableShouldWrapper[T](o: GenTraversable[T]): TraversableShouldWrapper[T] = new TraversableShouldWrapper[T](o)
 
   /**
-   * Implicitly converts an object of type <code>scala.Seq[T]</code> to a <code>SeqShouldWrapper[T]</code>,
+   * Implicitly converts an object of type <code>GenSeq[T]</code> to a <code>SeqShouldWrapper[T]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToSeqShouldWrapper[T](o: Seq[T]): SeqShouldWrapper[T] = new SeqShouldWrapper[T](o)
+  implicit def convertToSeqShouldWrapper[T](o: GenSeq[T]): SeqShouldWrapper[T] = new SeqShouldWrapper[T](o)
 
   /**
    * Implicitly converts an object of type <code>scala.Array[T]</code> to a <code>ArrayShouldWrapper[T]</code>,
@@ -2194,10 +2196,10 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
   implicit def convertToListShouldWrapper[T](o: List[T]): ListShouldWrapper[T] = new ListShouldWrapper[T](o)
 
   /**
-   * Implicitly converts an object of type <code>scala.collection.Map[K, V]</code> to a <code>MapShouldWrapper[K, V]</code>,
+   * Implicitly converts an object of type <code>scala.collection.GenMap[K, V]</code> to a <code>MapShouldWrapper[K, V]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToMapShouldWrapper[K, V](o: scala.collection.Map[K, V]): MapShouldWrapper[K, V] = new MapShouldWrapper[K, V](o)
+  implicit def convertToMapShouldWrapper[K, V](o: scala.collection.GenMap[K, V]): MapShouldWrapper[K, V] = new MapShouldWrapper[K, V](o)
 
   /**
    * Implicitly converts an object of type <code>java.lang.String</code> to a <code>StringShouldWrapper</code>,

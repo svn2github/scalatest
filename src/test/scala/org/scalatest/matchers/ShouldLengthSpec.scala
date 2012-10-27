@@ -289,6 +289,10 @@ class ShouldLengthSpec extends Spec with ShouldMatchers with Checkers with Retur
         }
         assert(caught3.getMessage === "Array(1, 2) had length 2, and Array(1, 2) had length 2")
       }
+
+      def `should work on parallel form` {
+        Array(1, 2).par should have length (2)
+      }
     }
 
     object `on scala.List` {
@@ -412,6 +416,10 @@ class ShouldLengthSpec extends Spec with ShouldMatchers with Checkers with Retur
           List(1, 2) should (not have length (2) or not have length (2))
         }
         assert(caught3.getMessage === "List(1, 2) had length 2, and List(1, 2) had length 2")
+      }
+
+      def `should work on parallel form` {
+        List(1, 2).par should have length (2)
       }
     }
 

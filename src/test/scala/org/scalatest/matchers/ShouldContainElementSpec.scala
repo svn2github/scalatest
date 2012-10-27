@@ -156,6 +156,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
         }
         assert(caught3.getMessage === "Array(1, 2) contained element 2, and Array(1, 2) contained element 2")
       }
+
+      def `should work on parallel form` {
+        Array(1, 2).par should contain (2)
+      }
     }
 
     object `on scala.collection.immutable.Set ` {
@@ -279,6 +283,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
           Set(1, 2) should (not contain (2) or not contain (2))
         }
         assert(caught3.getMessage === "Set(1, 2) contained element 2, and Set(1, 2) contained element 2")
+      }
+
+      def `should work on parallel form` {
+        Set(1, 2).par should contain (2)
       }
     }
 
@@ -415,6 +423,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
         }
         assert(caught3.getMessage === set3 + " contained element 2, and " + set3 + " contained element 2")
       }
+
+      def `should work on parallel form` {
+        mutable.Set(1, 2).par should contain (2)
+      }
     }
 
     object `on scala.collection.Set ` {
@@ -541,6 +553,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
         }
         assert(caught3.getMessage === "Set(1, 2) contained element 2, and Set(1, 2) contained element 2")
       }
+
+      def `should work on parallel form` {
+        set.par should contain (2)
+      }
     }
 
     object `on scala.collection.immutable.HashSet ` {
@@ -666,6 +682,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
           HashSet(1, 2) should (not contain (2) or not contain (2))
         }
         assert(caught3.getMessage === "Set(1, 2) contained element 2, and Set(1, 2) contained element 2")
+      }
+
+      def `should work on parallel form` {
+        HashSet(1, 2).par should contain (2)
       }
     }
 
@@ -802,6 +822,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
         }
         assert(caught3.getMessage === set3 + " contained element 2, and " + set3 + " contained element 2")
       }
+
+      def `should work on parallel form` {
+        mutable.HashSet(1, 2).par should contain (2)
+      }
     }
 
     object `on List` {
@@ -932,6 +956,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
           List(1, 2) should (not contain (2) or not contain (2))
         }
         assert(caught3.getMessage === "List(1, 2) contained element 2, and List(1, 2) contained element 2")
+      }
+
+      def `should work on parallel form` {
+        List(1, 2).par should contain (2)
       }
     }
 
@@ -1198,6 +1226,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
         }
         assert(caught3.getMessage === "Map(one -> 1, two -> 2) contained element (two,2), and Map(one -> 1, two -> 2) contained element (two,2)")
       }
+
+      def `should work on parallel form` {
+        Map("one" -> 1, "two" -> 2).par should contain ("two" -> 2)
+      }
     }
 
     object `on scala.collection.mutable.Map ` {
@@ -1347,6 +1379,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
         }
         assert(caught3.getMessage === map3 + " contained element (two,2), and " + map3 + " contained element (two,2)")
       }
+
+      def `should work on parallel form` {
+        mutable.Map("one" -> 1, "two" -> 2).par should contain ("two" -> 2)
+      }
     }
 
     object `on scala.collection.Map ` {
@@ -1484,6 +1520,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
           map should (not contain ("two" -> 2) or not contain ("two" -> 2))
         }
         assert(caught3.getMessage === "Map(one -> 1, two -> 2) contained element (two,2), and Map(one -> 1, two -> 2) contained element (two,2)")
+      }
+
+      def `should work on parallel form` {
+        map.par should contain ("two" -> 2)
       }
     }
 
@@ -1658,6 +1698,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
         assert(caught1.getMessage.contains(" contained element (two,2), and Map("))
         assert(caught1.getMessage.endsWith(") contained element (two,2)"))
       }
+
+      def `should work on parallel form` {
+        HashMap("one" -> 1, "two" -> 2).par should contain ("two" -> 2)
+      }
     }
 
     object `on scala.collection.mutable.HashMap ` {
@@ -1806,6 +1850,10 @@ class ShouldContainElementSpec extends Spec with ShouldMatchers with Checkers wi
           map3 should (not contain ("two" -> 2) or not contain ("two" -> 2))
         }
         assert(caught3.getMessage === map3 + " contained element (two,2), and " + map3 + " contained element (two,2)")
+      }
+
+      def `should work on parallel form` {
+        mutable.HashMap("one" -> 1, "two" -> 2).par should contain ("two" -> 2)
       }
     }
 

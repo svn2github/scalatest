@@ -153,6 +153,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
         }
         assert(caught3.getMessage === "Array(1, 2) had size 2, and Array(1, 2) had size 2")
       }
+
+      def `should work on parallel form` {
+        Array(1, 2).par should have size (2)
+      }
     }
 
     object `on scala.collection.immutable.Set` {
@@ -279,6 +283,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
           Set(1, 2) should (not have size (2) or not have size (2))
         }
         assert(caught3.getMessage === "Set(1, 2) had size 2, and Set(1, 2) had size 2")
+      }
+
+      def `should work on parallel form` {
+        Set(1, 2).par should have size (2)
       }
     }
 
@@ -420,6 +428,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
         }
         assert(caught3.getMessage === set3 + " had size 2, and " + set3 + " had size 2")
       }
+
+      def `should work on parallel form` {
+        mutable.Set(1, 2).par should have size (2)
+      }
     }
 
     object `on scala.collection.Set` {
@@ -549,6 +561,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
         }
         assert(caught3.getMessage === "Set(1, 2) had size 2, and Set(1, 2) had size 2")
       }
+
+      def `should work on parallel form` {
+        set.par should have size (2)
+      }
     }
 
     object `on scala.collection.immutable.HashSet` {
@@ -677,6 +693,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
           HashSet(1, 2) should (not have size (2) or not have size (2))
         }
         assert(caught3.getMessage === "Set(1, 2) had size 2, and Set(1, 2) had size 2")
+      }
+
+      def `should work on parallel form` {
+        HashSet(1, 2).par should have size (2)
       }
     }
 
@@ -818,6 +838,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
         }
         assert(caught3.getMessage === set3 + " had size 2, and " + set3 + " had size 2")
       }
+
+      def `should work on parallel form` {
+        mutable.HashSet(1, 2).par should have size (2)
+      }
     }
 
     object `on scala.List` {
@@ -943,6 +967,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
           List(1, 2) should (not have size (2) or not have size (2))
         }
         assert(caught3.getMessage === "List(1, 2) had size 2, and List(1, 2) had size 2")
+      }
+
+      def `should work on parallel form` {
+        List(1, 2).par should have size (2)
       }
     }
 
@@ -1201,6 +1229,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
         }
         assert(caught3.getMessage === "Map(one -> 1, two -> 2) had size 2, and Map(one -> 1, two -> 2) had size 2")
       }
+
+      def `should work on parallel form` {
+        Map("one" -> 1, "two" -> 2).par should have size (2)
+      }
     }
 
     object `on scala.collection.mutable.Map` {
@@ -1340,6 +1372,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
         }
         assert(caught3.getMessage === map3 + " had size 2, and " + map3 + " had size 2")
       }
+
+      def `should work on parallel form` {
+        mutable.Map("one" -> 1, "two" -> 2).par should have size (2)
+      }
     }
 
     object `on scala.collection.Map` {
@@ -1468,6 +1504,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
           map should (not have size (2) or not have size (2))
         }
         assert(caught3.getMessage === "Map(one -> 1, two -> 2) had size 2, and Map(one -> 1, two -> 2) had size 2")
+      }
+
+      def `should work on parallel form` {
+        map.par should have size (2)
       }
     }
 
@@ -1621,6 +1661,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
         assert(caught3.getMessage contains ") had size 2, and Map(")
         assert(caught3.getMessage endsWith ") had size 2")
       }
+
+      def `should work on parallel form` {
+        HashMap("one" -> 1, "two" -> 2).par should have size (2)
+      }
     }
 
     object `on scala.collection.mutable.HashMap` {
@@ -1759,6 +1803,10 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
           map3 should (not have size (2) or not have size (2))
         }
         assert(caught3.getMessage === map3 + " had size 2, and " + map3 + " had size 2")
+      }
+
+      def `should work on parallel form` {
+        mutable.HashMap("one" -> 1, "two" -> 2).par should have size (2)
       }
     }
 
