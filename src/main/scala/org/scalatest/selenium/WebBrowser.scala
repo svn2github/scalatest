@@ -57,6 +57,9 @@ import org.scalatest.Resources
  * implicit driver is to declare one as a member of your test class, like this:
  * 
  * <pre class="stHighlight">
+ * import org.scalatest._
+ * import selenium._
+ *
  * class BlogSpec extends FlatSpec with ShouldMatchers with WebBrowser {
  *
  *   implicit val webDriver: WebDriver = new HtmlUnitDriver
@@ -76,6 +79,9 @@ import org.scalatest.Resources
  * </p>
  * 
  * <pre class="stHighlight">
+ * import org.scalatest._
+ * import selenium._
+ *
  * class BlogSpec extends FlatSpec with ShouldMatchers with HtmlUnit {
  *
  *   "The blog app home page" should "have the correct title" in {
