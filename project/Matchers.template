@@ -2263,254 +2263,41 @@ trait ClassicMatchers extends Assertions { matchers =>
 // it's a Scala field and there a Java field: a val getLength is a 
 // perfectly valid Scala way to get a JavaBean property Java method in the bytecodes.
 
+  // TODO: ScalaDoc
+  sealed trait Extent[T] {
+    def extentOf(o: T): Long
+  }
+
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
    * the matchers DSL.
    *
    * <p>
+   * TODO: Fix this scaladoc.
    * Subclasses of this abstract class are used as the result of implicit conversions from the various structural types that
    * are considered to represent length: <code>length</code> or <code>getLength</code> methods or fields that return <code>Int</code>
    * or <code>Long</code>. This enables the <code>have length (7)</code> syntax to be used with any object that has a length.
-   * The implicit conversion methods that result in this type are:
    * </p>
-   *
-   * <ul>
-   * <li><code>convertLengthFieldToIntLengthWrapper</code></li>
-   * <li><code>convertLengthMethodToIntLengthWrapper</code></li>
-   * <li><code>convertGetLengthFieldToIntLengthWrapper</code></li>
-   * <li><code>convertGetLengthMethodToIntLengthWrapper</code></li>
-   * <li><code>convertLengthFieldToLongLengthWrapper</code></li>
-   * <li><code>convertLengthFieldToLongLengthWrapper</code></li>
-   * <li><code>convertGetLengthFieldToLongLengthWrapper</code></li>
-   * <li><code>convertGetLengthMethodToLongLengthWrapper</code></li>
-   * </ul>
    *
    * @author Bill Venners
    */
-  abstract class LengthWrapper {
-    def length: Long
-  }
-
-  /**
-   * This implicit conversion method converts an object with a <code>length</code> field of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   */
-  implicit def convertLengthFieldToIntLengthWrapper(o: { val length: Int }): LengthWrapper =
-    new LengthWrapper {
-      def length: Long = o.length
-    }
-
-  /**
-   * This implicit conversion method converts an object with a <code>length</code> method of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   */
-  implicit def convertLengthMethodToIntLengthWrapper(o: { def length(): Int }): LengthWrapper =
-    new LengthWrapper {
-      def length: Long = o.length()
-    }
-
-  /**
-   * This implicit conversion method converts an object with a parameterless <code>length</code> method of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   */
-  implicit def convertLengthParameterlessMethodToIntLengthWrapper(o: { def length: Int }): LengthWrapper = new LengthWrapper { def length: Long = o.length }
-
-  /**
-   * This implicit conversion method converts an object with a <code>getLength</code> field of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   */
-  implicit def convertGetLengthFieldToIntLengthWrapper(o: { val getLength: Int }): LengthWrapper =
-    new LengthWrapper {
-      def length: Long = o.getLength
-    }
-
-  /**
-   * This implicit conversion method converts an object with a <code>getLength</code> method of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   */
-  implicit def convertGetLengthMethodToIntLengthWrapper(o: { def getLength(): Int }): LengthWrapper =
-    new LengthWrapper {
-      def length: Long = o.getLength()
-    }
-
-  /**
-   * This implicit conversion method converts an object with a parameterless <code>getLength</code> method of type <code>Int</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   * */
-  implicit def convertGetLengthParameterlessMethodToIntLengthWrapper(o: { def getLength: Int }): LengthWrapper = new LengthWrapper { def length: Long = o.getLength }
-
-  /**
-   * This implicit conversion method converts an object with a <code>length</code> field of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   */
-  implicit def convertLengthFieldToLongLengthWrapper(o: { val length: Long }): LengthWrapper =
-    new LengthWrapper {
-      def length: Long = o.length
-    }
-
-  /**
-   * This implicit conversion method converts an object with a <code>length</code> method of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   */
-  implicit def convertLengthMethodToLongLengthWrapper(o: { def length(): Long }): LengthWrapper =
-    new LengthWrapper {
-      def length: Long = o.length()
-    }
-
-  /**
-   * This implicit conversion method converts an object with a parameterless <code>length</code> method of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   * */
-  implicit def convertLengthParameterlessMethodToLongLengthWrapper(o: { def length: Long }): LengthWrapper = new LengthWrapper { def length: Long = o.length }
-
-  /**
-   * This implicit conversion method converts an object with a <code>getLength</code> field of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   */
-  implicit def convertGetLengthFieldToLongLengthWrapper(o: { val getLength: Long }): LengthWrapper =
-    new LengthWrapper {
-      def length = o.getLength
-    }
-
-  /**
-   * This implicit conversion method converts an object with a <code>getLength</code> method of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   */
-  implicit def convertGetLengthMethodToLongLengthWrapper(o: { def getLength(): Long }): LengthWrapper =
-    new LengthWrapper {
-      def length: Long = o.getLength()
-    }
-
-  /**
-   * This implicit conversion method converts an object with a parameterless <code>getLength</code> method of type <code>Long</code> to a
-   * <code>LengthWrapper</code>, to enable that object to be used with the <code>have length (7)</code> syntax.
-   * */
-  implicit def convertGetLengthParameterlessMethodToLongLengthWrapper(o: { def getLength: Long }): LengthWrapper = new LengthWrapper { def length: Long = o.getLength }
+  trait Length[T] extends Extent[T] // TODO: Fix the ScalaDoc
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
    * the matchers DSL.
    *
    * <p>
+   * TODO: Fix this scaladoc
    * Subclasses of this abstract class are used as the result of implicit conversions from the various structural types that
    * are considered to represent size: <code>size</code> or <code>getSize</code> methods or fields that return <code>Int</code>
    * or <code>Long</code>. This enables the <code>have size (7)</code> syntax to be used with any object that has a size.
-   * The implicit conversion methods that result in this type are:
    * </p>
-   *
-   * <ul>
-   * <li><code>convertSizeFieldToIntSizeWrapper</code></li>
-   * <li><code>convertSizeMethodToIntSizeWrapper</code></li>
-   * <li><code>convertGetSizeFieldToIntSizeWrapper</code></li>
-   * <li><code>convertGetSizeMethodToIntSizeWrapper</code></li>
-   * <li><code>convertSizeFieldToLongSizeWrapper</code></li>
-   * <li><code>convertSizeFieldToLongSizeWrapper</code></li>
-   * <li><code>convertGetSizeFieldToLongSizeWrapper</code></li>
-   * <li><code>convertGetSizeMethodToLongSizeWrapper</code></li>
-   * </ul>
    *
    * @author Bill Venners
    */
-  abstract class SizeWrapper {
-    def size: Long
-  }
+  trait Size[T] extends Extent[T] // TODO Fix the scaladoc
 
-  /**
-   * This implicit conversion method converts an object with a <code>size</code> field of type <code>Int</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   */
-  implicit def convertSizeFieldToIntSizeWrapper(o: { val size: Int }): SizeWrapper =
-    new SizeWrapper {
-      def size: Long = o.size
-    }
-
-  /**
-   * This implicit conversion method converts an object with a <code>size</code> method of type <code>Int</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   */
-  implicit def convertSizeMethodToIntSizeWrapper(o: { def size(): Int }): SizeWrapper =
-    new SizeWrapper {
-      def size: Long = o.size()
-    }
-
-  /**
-   * This implicit conversion method converts an object with a parameterless <code>size</code> method of type <code>Int</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   * */
-  implicit def convertSizeParameterlessMethodToIntSizeWrapper(o: { def size: Int }): SizeWrapper = new SizeWrapper { def size: Long = o.size }
-
-  /**
-   * This implicit conversion method converts an object with a <code>getSize</code> field of type <code>Int</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   */
-  implicit def convertGetSizeFieldToIntSizeWrapper(o: { val getSize: Int }): SizeWrapper =
-    new SizeWrapper {
-      def size: Long = o.getSize
-    }
-
-  /**
-   * This implicit conversion method converts an object with a <code>getSize</code> method of type <code>Int</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   */
-  implicit def convertGetSizeMethodToIntSizeWrapper(o: { def getSize(): Int }): SizeWrapper =
-    new SizeWrapper {
-      def size: Long = o.getSize()
-    }
-
-  /**
-   * This implicit conversion method converts an object with a parameterless <code>getSize</code> method of type <code>Int</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   * */
-  implicit def convertGetSizeParameterlessMethodToIntSizeWrapper(o: { def getSize: Int }): SizeWrapper = new SizeWrapper { def size: Long = o.getSize }
-
-  /**
-   * This implicit conversion method converts an object with a <code>size</code> field of type <code>Long</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   */
-  implicit def convertSizeFieldToLongSizeWrapper(o: { val size: Long }): SizeWrapper =
-    new SizeWrapper {
-      def size: Long = o.size
-    }
-
-  /**
-   * This implicit conversion method converts an object with a <code>size</code> method of type <code>Long</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   */
-  implicit def convertSizeMethodToLongSizeWrapper(o: { def size(): Long }): SizeWrapper =
-    new SizeWrapper {
-      def size: Long = o.size()
-    }
-
-  /**
-   * This implicit conversion method converts an object with a parameterless <code>size</code> method of type <code>Long</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   * */
-  implicit def convertSizeParameterlessMethodToLongSizeWrapper(o: { def size: Long }): SizeWrapper = new SizeWrapper { def size: Long = o.size }
-
-  /**
-   * This implicit conversion method converts an object with a <code>getSize</code> field of type <code>Long</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   */
-  implicit def convertGetSizeFieldToLongSizeWrapper(o: { val getSize: Long }): SizeWrapper =
-    new SizeWrapper {
-      def size: Long = o.getSize
-    }
-
-  /**
-   * This implicit conversion method converts an object with a <code>getSize</code> method of type <code>Long</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   */
-  implicit def convertGetSizeMethodToLongSizeWrapper(o: { def getSize(): Long }): SizeWrapper =
-    new SizeWrapper {
-      def size: Long = o.getSize()
-    }
-
-  /**
-   * This implicit conversion method converts an object with a parameterless <code>getSize</code> method of type <code>Long</code> to a
-   * <code>SizeWrapper</code>, to enable that object to be used with the <code>have size (7)</code> syntax.
-   * */
-  implicit def convertGetSizeParameterlessMethodToLongSizeWrapper(o: { def getSize: Long }): SizeWrapper = new SizeWrapper { def size: Long = o.getSize }
- 
   // This guy is generally done through an implicit conversion from a symbol. It takes that symbol, and 
   // then represents an object with an apply method. So it gives an apply method to symbols.
   // book should have ('author ("Gibson"))
@@ -6669,7 +6456,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForSizeWrapper[A <: AnyRef <% SizeWrapper](left: A, shouldBeTrue: Boolean)
+  final class ResultOfNotWordForSize[A <: AnyRef : Size](left: A, shouldBeTrue: Boolean)
       extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
 
 /*  I just added this whole thing in here for completeness when doing SizeShouldWrapper. Write some tests to prove it is needed.
@@ -6695,7 +6482,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForLengthWrapper[A <: AnyRef <% LengthWrapper](left: A, shouldBeTrue: Boolean)
+  final class ResultOfNotWordForLength[A <: AnyRef : Length](left: A, shouldBeTrue: Boolean)
       extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
 
 /* TODO What's going on? Why can I drop this and still get a compile
@@ -6721,7 +6508,121 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfHaveWordForLengthWrapper[A <% LengthWrapper](left: A, shouldBeTrue: Boolean) {
+  final class ResultOfHaveWordForExtent[A : Extent](left: A, shouldBeTrue: Boolean) {
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * obj should have length (2)
+     *                      ^
+     * </pre>
+     *
+     * <p>
+     * This method is ultimately invoked for objects that have a <code>length</code> property structure
+     * of type <code>Int</code>,
+     * but is of a type that is not handled by implicit conversions from nominal types such as
+     * <code>scala.Seq</code>, <code>java.lang.String</code>, and <code>java.util.List</code>.
+     * </p>
+     */
+    def length[A : Length](expectedLength: Int) {
+      val len = implicitly[Length[A]]
+      if ((len.extentOf(left.asInstanceOf[A]) == expectedLength) != shouldBeTrue)
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "didNotHaveExpectedLength" else "hadExpectedLength",
+            left,
+            expectedLength)
+        )
+    }
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * obj should have length (2L)
+     *                      ^
+     * </pre>
+     *
+     * <p>
+     * This method is ultimately invoked for objects that have a <code>length</code> property structure
+     * of type <code>Long</code>,
+     * but is of a type that is not handled by implicit conversions from nominal types such as
+     * <code>scala.Seq</code>, <code>java.lang.String</code>, and <code>java.util.List</code>.
+     * </p>
+     */
+    def length[A : Length](expectedLength: Long) {
+      val len = implicitly[Length[A]]
+      if ((len.extentOf(left.asInstanceOf[A]) == expectedLength) != shouldBeTrue)
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "didNotHaveExpectedLength" else "hadExpectedLength",
+            left,
+            expectedLength)
+        )
+    }
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * obj should have size (2)
+     *                 ^
+     * </pre>
+     *
+     * <p>
+     * This method is ultimately invoked for objects that have a <code>size</code> property structure
+     * of type <code>Int</code>,
+     * but is of a type that is not handled by implicit conversions from nominal types such as
+     * <code>Traversable</code> and <code>java.util.Collection</code>.
+     * </p>
+     */
+    def size[A : Size](expectedSize: Int) {
+      val sz = implicitly[Size[A]]
+      if ((sz.extentOf(left.asInstanceOf[A]) == expectedSize) != shouldBeTrue)
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "didNotHaveExpectedSize" else "hadExpectedSize",
+            left,
+            expectedSize)
+        )
+    }
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * obj should have size (2L)
+     *                 ^
+     * </pre>
+     *
+     * <p>
+     * This method is ultimately invoked for objects that have a <code>size</code> property structure
+     * of type <code>Long</code>,
+     * but is of a type that is not handled by implicit conversions from nominal types such as
+     * <code>Traversable</code> and <code>java.util.Collection</code>.
+     * </p>
+     */
+    def size[A : Size](expectedSize: Long) {
+      val sz = implicitly[Size[A]]
+      if ((sz.extentOf(left.asInstanceOf[A]) == expectedSize) != shouldBeTrue)
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "didNotHaveExpectedSize" else "hadExpectedSize",
+            left,
+            expectedSize)
+        )
+    }
+  }
+
+/*
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class ResultOfHaveWordForLength[A : Length](left: A, shouldBeTrue: Boolean) {
 
     /**
      * This method enables the following syntax:
@@ -6739,7 +6640,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </p>
      */
     def length(expectedLength: Int) {
-      if ((left.length == expectedLength) != shouldBeTrue)
+      val len = implicitly[Length[A]]
+      if ((len.extentOf(left) == expectedLength) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotHaveExpectedLength" else "hadExpectedLength",
@@ -6764,7 +6666,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </p>
      */
     def length(expectedLength: Long) {
-      if ((left.length == expectedLength) != shouldBeTrue)
+      val len = implicitly[Length[A]]
+      if ((len.extentOf(left) == expectedLength) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotHaveExpectedLength" else "hadExpectedLength",
@@ -6780,7 +6683,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfHaveWordForSizeWrapper[A <% SizeWrapper](left: A, shouldBeTrue: Boolean) {
+  final class ResultOfHaveWordForSize[A : Size](left: A, shouldBeTrue: Boolean) {
 
     /**
      * This method enables the following syntax:
@@ -6798,7 +6701,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </p>
      */
     def size(expectedSize: Int) {
-      if ((left.size == expectedSize) != shouldBeTrue)
+      val sz = implicitly[Size[A]]
+      if ((sz.extentOf(left) == expectedSize) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotHaveExpectedSize" else "hadExpectedSize",
@@ -6823,7 +6727,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </p>
      */
     def size(expectedSize: Long) {
-      if ((left.size == expectedSize) != shouldBeTrue)
+      val sz = implicitly[Size[A]]
+      if ((sz.extentOf(left) == expectedSize) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotHaveExpectedSize" else "hadExpectedSize",
@@ -6832,6 +6737,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         )
     }
   }
+*/
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
