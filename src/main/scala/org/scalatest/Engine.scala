@@ -340,7 +340,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
         }
       }
     }
-    new CompositeStatus(statusList.toIndexedSeq)
+    new CompositeStatus(Set.empty ++ statusList)
   }
 
   def prependChildPrefix(branch: Branch, testText: String): String =
@@ -393,7 +393,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
         }
       case None => statusBuffer += runTestsInBranch(theSuite, Trunk, newArgs, includeIcon, runTest)
     }
-    new CompositeStatus(statusBuffer.toIndexedSeq)
+    new CompositeStatus(Set.empty ++ statusBuffer)
   }
 
   def runImpl(

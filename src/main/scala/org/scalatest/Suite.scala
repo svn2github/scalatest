@@ -1350,7 +1350,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
           }
       }
     }
-    new CompositeStatus(statusBuffer.toIndexedSeq)
+    new CompositeStatus(Set.empty ++ statusBuffer)
   }
 
   /**
@@ -1543,7 +1543,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
             statusBuffer += distribute(nestedSuite, args.copy(tracker = tracker.nextTracker))
       }
     }
-    new CompositeStatus(statusBuffer.toIndexedSeq)
+    new CompositeStatus(Set.empty ++ statusBuffer)
   }
 
   /**

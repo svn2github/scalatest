@@ -139,7 +139,7 @@ println("&&&&&&&&&&&")
         statusBuffer += suite.run(None, args)
         println("Send SuiteCompleted or Aborted ...")
     }
-    new CompositeStatus(statusBuffer.toIndexedSeq)
+    new CompositeStatus(Set.empty ++ statusBuffer)
   }
 
   private[scalatest] def getSnippets(text: String): Vector[Snippet] = {
