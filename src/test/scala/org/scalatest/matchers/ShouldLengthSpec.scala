@@ -2193,7 +2193,6 @@ class ShouldLengthSpec extends Spec with ShouldMatchers with Checkers with Retur
 
     object `on an arbitrary object that has both parameterless Int length and parameterless Int size methods` {
 
-println("GOT HERE TOO")
       class Lengthy(len: Int) {
         def length: Int = len
         def size: Int = len  
@@ -2207,7 +2206,6 @@ println("GOT HERE TOO")
         }
 
       def `should do nothing if object length or size matches specified length` {
-println("GOT HERE")
         obj should have length (2)
         obj should have size (2)
       }

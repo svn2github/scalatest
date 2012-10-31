@@ -46,10 +46,7 @@ object GenMatchers {
     try {
       val lines = Source.fromFile(new File("project/Matchers.template")).getLines.toList
       for (line <- lines) {
-        if (!scalaVersion.startsWith("2.10") && line.toLowerCase.indexOf("parameterless") >= 0 && line.trim.startsWith("implicit def "))
-          matchersWriter.write("//" + line)
-        else
-          matchersWriter.write(line)
+        matchersWriter.write(line)
         matchersWriter.newLine()
       }
     }
@@ -64,10 +61,7 @@ object GenMatchers {
     try {
       val lines = Source.fromFile(new File("project/ShouldMatchers.template")).getLines.toList
       for (line <- lines) {
-        if (!scalaVersion.startsWith("2.10") && line.toLowerCase.indexOf("parameterless") >= 0 && line.trim.startsWith("implicit def "))
-          shouldMatchersWriter.write("//" + line)
-        else
-          shouldMatchersWriter.write(line)
+        shouldMatchersWriter.write(line)
         shouldMatchersWriter.newLine()
       }
     }
@@ -83,10 +77,7 @@ object GenMatchers {
       val lines = Source.fromFile(new File("project/ShouldMatchers.template")).getLines.toList
       for (line <- lines) {
         val mustLine = translateShouldToMust(line)
-        if (!scalaVersion.startsWith("2.10") && mustLine.toLowerCase.indexOf("parameterless") >= 0 && mustLine.trim.startsWith("implicit def "))
-          mustMatchersWriter.write("//" + mustLine)
-        else
-          mustMatchersWriter.write(mustLine)
+        mustMatchersWriter.write(mustLine)
         mustMatchersWriter.newLine()
       }
     }

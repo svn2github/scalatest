@@ -8,12 +8,13 @@
 
     <!-- set global properties for this build -->
 <!--
-    <property name="scala.version" value="2.10.0-M6" />
-	<property name="for.scala" value="2.10.0-M6" />
+    <property name="scala.version" value="2.10.0-RC1" />
+	<property name="for.scala" value="2.10.0-RC1" />
 -->
+
     <property name="scala.version" value="2.9.0" />
 	<property name="for.scala" value="2.9.x" />
-        <property name="release" value="2.0.M5" />
+    <property name="release" value="2.0.M5" />
 
     <property name="scalasrc" value="src/main/scala" />
     <property name="javasrc" value="src/main/java" />
