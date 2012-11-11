@@ -247,6 +247,11 @@ trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
    * If <code>super.run</code> returns normally, but <code>afterAll</code> completes abruptly with an
    * exception, this method will complete abruptly with the same exception.
    * </p>
+   *
+   * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
+   *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
+   * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when the test started by this method has completed, and whether or not it failed .
   */
   abstract override def run(testName: Option[String], args: Args): Status = {
     var thrownException: Option[Throwable] = None

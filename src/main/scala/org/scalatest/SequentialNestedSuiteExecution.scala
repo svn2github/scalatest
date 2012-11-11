@@ -30,6 +30,7 @@ trait SequentialNestedSuiteExecution extends SuiteMixin { this: Suite =>
    * passing in <code>None</code> for the <code>Distributor</code>.
    *
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all nested suites started by this method have completed, and whether or not a failure occurred.
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */

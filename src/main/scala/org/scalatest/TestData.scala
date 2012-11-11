@@ -66,7 +66,7 @@ package org.scalatest
  *
  * <ul>
  * <li><code>name</code>: <code>"A Stack when empty should have size 0"</code></li>
- * <li><code>scopes</code>: <code>IndexedSeq("A Stack", "when empty")</code></li>
+ * <li><code>scopes</code>: <code>collection.immutable.IndexedSeq("A Stack", "when empty")</code></li>
  * <li><code>text</code>: <code>"should have size 0"</code></li>
  * </ul>
  *
@@ -92,7 +92,7 @@ trait TestData {
   val name: String
 
   /**
-   * An <code>IndexedSeq</code> containing the text for any "scopes" enclosing this test, in order
+   * An immutable <code>IndexedSeq</code> containing the text for any "scopes" enclosing this test, in order
    * from outermost to innermost scope.
    *
    * <p>
@@ -100,7 +100,7 @@ trait TestData {
    * and <code>scopes</code>. If a test has no surrounding scopes, this field will contain an empty <code>IndexedSeq</code>.
    * </p>
    */
-  val scopes: IndexedSeq[String]
+  val scopes: collection.immutable.IndexedSeq[String]
 
   /**
    * The "text" for this test.

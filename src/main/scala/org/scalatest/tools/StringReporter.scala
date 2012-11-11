@@ -536,7 +536,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
     }
   }
   
-  private def handleRecordedEvents(recordedEvents: IndexedSeq[RecordableEvent], ansiColor: String = ansiGreen) {
+  private def handleRecordedEvents(recordedEvents: collection.immutable.IndexedSeq[RecordableEvent], ansiColor: String = ansiGreen) {
     recordedEvents.foreach { e =>
       e match {
         case ipEvent: InfoProvided => handleInfoProvided(ipEvent, ansiColor)

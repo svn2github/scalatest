@@ -138,7 +138,7 @@ private[scalatest] class MessageRecorder(dispatch: Reporter) extends ThreadAware
       dispatch(eventFun(message, payload, false, false, false, location)) // Fire the info provided event using the passed function
   }
 
-  def recordedEvents(testWasPending: Boolean, testWasCanceled: Boolean): IndexedSeq[RecordableEvent] = {
+  def recordedEvents(testWasPending: Boolean, testWasCanceled: Boolean): collection.immutable.IndexedSeq[RecordableEvent] = {
     Vector.empty ++ recordedMessages.map { case (message, payload, eventFun, location) =>
       eventFun(message, payload, true, testWasPending, testWasCanceled, location)
     }
@@ -212,7 +212,7 @@ private[scalatest] class PathMessageRecordingInformer(eventFun: (String, Option[
     record(message, payload)
   }
 
-  def recordedEvents(testWasPending: Boolean, theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, indentation: Int, includeIcon: Boolean): IndexedSeq[RecordableEvent] = {
+  def recordedEvents(testWasPending: Boolean, theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, indentation: Int, includeIcon: Boolean): collection.immutable.IndexedSeq[RecordableEvent] = {
     Vector.empty ++ messages.map { case (message, payload, thread, wasConstructingThread) =>
       eventFun(message, payload, wasConstructingThread, testWasPending, theSuite, report, tracker, testName, indentation, includeIcon, thread)
     }

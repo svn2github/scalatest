@@ -227,7 +227,7 @@
     	</java>
     </target>
 
-    <target name="compile" depends="compile-main, compile-tests, compile-examples"/>
+    <target name="compile" depends="compile-main, compile-tests"/>
 
     <!--<target name="compile-main" depends="init">-->
     <target name="compile-main" depends="init, gentables, genmatchers, gengen">

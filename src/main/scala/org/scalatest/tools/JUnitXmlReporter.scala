@@ -251,7 +251,7 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
     (startIndex, endIndex)
   }
 
-  private def idxAdjustmentForRecordedEvents(recordedEvents: IndexedSeq[RecordableEvent]) =
+  private def idxAdjustmentForRecordedEvents(recordedEvents: collection.immutable.IndexedSeq[RecordableEvent]) =
     recordedEvents.filter(e => e.isInstanceOf[InfoProvided] || e.isInstanceOf[MarkupProvided]).size
   
   //

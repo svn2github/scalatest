@@ -33,7 +33,7 @@ private[scalatest] class DiscoverySuite(path: String, accessibleSuites: Set[Stri
 
   override val suiteId = getClass.getName + "-" + UUID.randomUUID.toString
     
-  override val nestedSuites: IndexedSeq[Suite] =
+  override val nestedSuites: collection.immutable.IndexedSeq[Suite] =
     for (suiteClassName <- DiscoverySuite.nestedSuiteNames(path, accessibleSuites, wildcard))
       yield {
         try {
@@ -76,7 +76,7 @@ private[scalatest] object DiscoverySuite {
     for (name <- wildcardList(path, accessibleSuites); if name.length > path.length && !name.substring(path.length + 1).contains('.'))
       yield name
 
-  private[scalatest] def nestedSuiteNames(path: String, accessibleSuites: Set[String], wildcard: Boolean): IndexedSeq[String] =
+  private[scalatest] def nestedSuiteNames(path: String, accessibleSuites: Set[String], wildcard: Boolean): collection.immutable.IndexedSeq[String] =
     if (wildcard)
       Vector.empty ++ wildcardList(path, accessibleSuites)
     else

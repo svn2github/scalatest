@@ -463,7 +463,7 @@ import org.scalatest.Resources
  * </pre>
  * 
  * <p>
- * You can access the current selections with <code>values</code>, which returns an <code>IndexedSeq[String]</code>:
+ * You can access the current selections with <code>values</code>, which returns an immutable <code>IndexedSeq[String]</code>:
  * </p>
  * 
  * <pre class="stHighlight">
@@ -840,14 +840,14 @@ import org.scalatest.Resources
  *
  * <p>
  * You can query for arbitrary elements via <code>find</code> and <code>findAll</code>. The <code>find</code> method returns the first matching element, wrapped in a <code>Some</code>,
- * or <code>None</code> if no element is found. The <code>findAll</code> method returns an <code>IndexedSeq</code> of all matching elements. If no elements match the query, <code>findAll</code>
+ * or <code>None</code> if no element is found. The <code>findAll</code> method returns an immutable <code>IndexedSeq</code> of all matching elements. If no elements match the query, <code>findAll</code>
  * returns an empty <code>IndexedSeq</code>. These methods allow you to perform rich queries using <code>for</code> expressions. Here are some examples:
  * </p>
  *
  * <pre class="stHighlight">
  * val ele: Option[Element] = find("q")
  *
- * val eles: IndexedSeq[Element] = findAll(className("small"))
+ * val eles: colection.immutable.IndexedSeq[Element] = findAll(className("small"))
  * for (e <- eles; if e.tagName != "input")
  *   e should be ('displayed)
  * val textFields = eles filter { tf.isInstanceOf[TextField] }
@@ -1793,7 +1793,7 @@ trait WebBrowser {
    *
    * <p>
    * Instances of this class are returned from the <code>values</code> method of <code>MultiSel</code>.
-   * <code>MultiSelOptionSeq</code> is an <code>IndexedSeq[String]</code> that wraps an underlying <code>IndexedSeq[String]</code> and adds two
+   * <code>MultiSelOptionSeq</code> is an immutable <code>IndexedSeq[String]</code> that wraps an underlying immutable <code>IndexedSeq[String]</code> and adds two
    * methods, <code>+</code> and <code>-</code>, to facilitate the <code>+=</code> syntax for setting additional options
    * of the <code>MultiSel</code>. The Scala compiler will rewrite:
    * </p>
@@ -1825,13 +1825,13 @@ trait WebBrowser {
    * </pre>
    *
    */
-  class MultiSelOptionSeq(underlying: IndexedSeq[String]) extends IndexedSeq[String] {
+  class MultiSelOptionSeq(underlying: collection.immutable.IndexedSeq[String]) extends collection.immutable.IndexedSeq[String] {
 
     /**
      * Selects an element by its index in the sequence.
      *
      * <p>
-     * This method invokes <code>apply</code> on the underlying <code>IndexedSeq[String]</code>, passing in <code>idx</code>, and returns the result.
+     * This method invokes <code>apply</code> on the underlying immutable <code>IndexedSeq[String]</code>, passing in <code>idx</code>, and returns the result.
      * </p>
      *
      * @param idx the index to select
@@ -1843,7 +1843,7 @@ trait WebBrowser {
      * The length of this sequence.
      *
      * <p>
-     * This method invokes <code>length</code> on the underlying <code>IndexedSeq[String]</code> and returns the result.
+     * This method invokes <code>length</code> on the underlying immutable <code>IndexedSeq[String]</code> and returns the result.
      * </p>
      *
      * @return the number of elements in this sequence
@@ -2027,7 +2027,7 @@ trait WebBrowser {
     }
 
     /**
-     * Clears any existing selections then sets all values contained in the passed <code>Seq[String]</code>.
+     * Clears any existing selections then sets all values contained in the passed <code>collection.Seq[String]</code>.
      *
      * <p>
      * In other words, the <code>values_=</code> method <em>replaces</em> the current selections, if any, with
@@ -2038,7 +2038,7 @@ trait WebBrowser {
      * @throws TestFailedException if a value contained in the passed <code>Seq[String]</code> is not
      *         among this multiple selection list's values.
      */
-    def values_=(values: Seq[String]) {
+    def values_=(values: collection.Seq[String]) {
       try {
         clearAll()
         values.foreach(select.selectByValue(_))

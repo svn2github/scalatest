@@ -322,7 +322,7 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
     new TestData {
       val configMap = theConfigMap 
       val name = testName
-      val scopes = IndexedSeq.empty
+      val scopes = Vector.empty
       val text = testName
       val tags = Set.empty[String]
     }

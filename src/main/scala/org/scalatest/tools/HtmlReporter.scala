@@ -827,7 +827,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
     "};\n" + 
     "applyFilter();"
 
-  case class SuiteResult(suiteId: String, suiteName: String, suiteClassName: Option[String], duration: Option[Long], startEvent: SuiteStarting, endEvent: Event, eventList: IndexedSeq[Event], 
+  case class SuiteResult(suiteId: String, suiteName: String, suiteClassName: Option[String], duration: Option[Long], startEvent: SuiteStarting, endEvent: Event, eventList: collection.immutable.IndexedSeq[Event], 
                           testsSucceededCount: Int, testsFailedCount: Int, testsIgnoredCount: Int, testsPendingCount: Int, testsCanceledCount: Int, isCompleted: Boolean)
     
   private var eventList = new ListBuffer[Event]()
@@ -855,7 +855,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         val sortedSuiteEvents = suiteEvents.sorted
         sortedSuiteEvents.head match {
           case suiteStarting: SuiteStarting => 
-            val suiteResult = sortedSuiteEvents.foldLeft(SuiteResult(suiteId, suiteName, suiteClassName, duration, suiteStarting, event, sortedSuiteEvents.tail.toIndexedSeq, 0, 0, 0, 0, 0, true)) { case (r, e) => 
+            val suiteResult = sortedSuiteEvents.foldLeft(SuiteResult(suiteId, suiteName, suiteClassName, duration, suiteStarting, event, Vector.empty ++ sortedSuiteEvents.tail, 0, 0, 0, 0, 0, true)) { case (r, e) => 
               e match {
                 case testSucceeded: TestSucceeded => r.copy(testsSucceededCount = r.testsSucceededCount + 1)
                 case testFailed: TestFailed => r.copy(testsFailedCount = r.testsFailedCount + 1)
@@ -877,7 +877,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         val sortedSuiteEvents = suiteEvents.sorted
         sortedSuiteEvents.head match {
           case suiteStarting: SuiteStarting => 
-            val suiteResult = sortedSuiteEvents.foldLeft(SuiteResult(suiteId, suiteName, suiteClassName, duration, suiteStarting, event, sortedSuiteEvents.tail.toIndexedSeq, 0, 0, 0, 0, 0, false)) { case (r, e) => 
+            val suiteResult = sortedSuiteEvents.foldLeft(SuiteResult(suiteId, suiteName, suiteClassName, duration, suiteStarting, event, Vector.empty ++ sortedSuiteEvents.tail, 0, 0, 0, 0, 0, false)) { case (r, e) => 
               e match {
                 case testSucceeded: TestSucceeded => r.copy(testsSucceededCount = r.testsSucceededCount + 1)
                 case testFailed: TestFailed => r.copy(testsFailedCount = r.testsFailedCount + 1)

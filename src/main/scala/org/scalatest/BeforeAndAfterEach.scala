@@ -258,6 +258,10 @@ trait BeforeAndAfterEach extends SuiteMixin {
    * If <code>super.runTest</code> returns normally, but <code>afterEach</code> completes abruptly with an
    * exception, this method will complete abruptly with the exception thrown by <code>afterEach</code>.
    * </p>
+   *
+   * @param testName the name of one test to run.
+   * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when the test started by this method has completed, and whether or not it failed .
   */
   abstract protected override def runTest(testName: String, args: Args): Status = {
 

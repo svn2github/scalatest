@@ -1376,6 +1376,7 @@ trait Spec extends Suite { thisSuite =>
    *
    * @param testName the name of one test to execute.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when the test started by this method has completed, and whether or not it failed .
    *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, or <code>configMap</code>
    *     is <code>null</code>.
@@ -1434,6 +1435,7 @@ trait Spec extends Suite { thisSuite =>
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all tests started by this method have completed, and whether or not a failure occurred.
    *
    * @throws NullPointerException if any of the passed parameters is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name

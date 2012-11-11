@@ -2263,36 +2263,134 @@ trait ClassicMatchers extends Assertions { matchers =>
 // it's a Scala field and there a Java field: a val getLength is a 
 // perfectly valid Scala way to get a JavaBean property Java method in the bytecodes.
 
-  // TODO: ScalaDoc
+  /**
+   * Sealed supertrait for <code>Length</code> and <code>Size</code> type classes.
+   *
+   * <p>
+   * These traits enable you to use ScalaTest matchers' &ldquo;<code>have length</code>&rdquo; and
+   * &ldquo;<code>have size</code>&rdquo; syntax to be used with arbitrary objects. As an example, consider
+   * <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
+   * can't be used with ScalaTest's <code>have length</code> syntax. 
+   * </p>
+   *
+   * <pre>
+   * scala> import java.net.DatagramPacket
+   * import java.net.DatagramPacket
+   * 
+   * scala> import org.scalatest.matchers.ShouldMatchers._
+   * import org.scalatest.matchers.ShouldMatchers._
+   *
+   * scala> val dp = new DatagramPacket(Array(0x0, 0x1, 0x2, 0x3), 4)
+   * dp: java.net.DatagramPacket = java.net.DatagramPacket@54906181
+   * 
+   * scala> dp.getLength
+   * res0: Int = 4
+   *
+   * scala> dp should have length 4
+   * <console>:13: error: could not find implicit value for parameter ev: org.scalatest.matchers.ShouldMatchers.Extent[java.net.DatagramPacket]
+   *          dp should have length 4
+   *             ^
+   *
+   * scala> implicit val lengthOfDatagramPacket =
+   *     |   new Length[DatagramPacket] {
+   *     |     def extentOf(dp: DatagramPacket): Long = dp.getLength
+   *     |   }
+   * lengthOfDatagramPacket: java.lang.Object with org.scalatest.matchers.ShouldMatchers.Length[java.net.DatagramPacket] = $anon$1@550c6b37
+   *
+   * scala> dp should have length 4
+   *
+   * scala> dp should have length 3
+   * org.scalatest.exceptions.TestFailedException:  java.net.DatagramPacket@54906181 had length 4, not length 3
+   * </pre>
+   *
+   * @author Bill Venners
+   */
   sealed trait Extent[T] {
     def extentOf(o: T): Long
   }
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
+   * Supertrait for <code>Length</code> type classes.
    *
    * <p>
-   * TODO: Fix this scaladoc.
-   * Subclasses of this abstract class are used as the result of implicit conversions from the various structural types that
-   * are considered to represent length: <code>length</code> or <code>getLength</code> methods or fields that return <code>Int</code>
-   * or <code>Long</code>. This enables the <code>have length (7)</code> syntax to be used with any object that has a length.
+   * This traits enable you to use ScalaTest matchers' &ldquo;<code>have length</code>&rdquo; 
+   * syntax to be used with arbitrary objects. As an example, consider
+   * <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
+   * can't be used with ScalaTest's <code>have length</code> syntax. 
    * </p>
+   *
+   * <pre>
+   * scala> import java.net.DatagramPacket
+   * import java.net.DatagramPacket
+   * 
+   * scala> import org.scalatest.matchers.ShouldMatchers._
+   * import org.scalatest.matchers.ShouldMatchers._
+   *
+   * scala> val dp = new DatagramPacket(Array(0x0, 0x1, 0x2, 0x3), 4)
+   * dp: java.net.DatagramPacket = java.net.DatagramPacket@54906181
+   * 
+   * scala> dp.getLength
+   * res0: Int = 4
+   *
+   * scala> dp should have length 4
+   * <console>:13: error: could not find implicit value for parameter ev: org.scalatest.matchers.ShouldMatchers.Extent[java.net.DatagramPacket]
+   *          dp should have length 4
+   *             ^
+   *
+   * scala> implicit val lengthOfDatagramPacket =
+   *     |   new Length[DatagramPacket] {
+   *     |     def extentOf(dp: DatagramPacket): Long = dp.getLength
+   *     |   }
+   * lengthOfDatagramPacket: java.lang.Object with org.scalatest.matchers.ShouldMatchers.Length[java.net.DatagramPacket] = $anon$1@550c6b37
+   *
+   * scala> dp should have length 4
+   *
+   * scala> dp should have length 3
+   * org.scalatest.exceptions.TestFailedException:  java.net.DatagramPacket@54906181 had length 4, not length 3
+   * </pre>
    *
    * @author Bill Venners
    */
   trait Length[T] extends Extent[T] // TODO: Fix the ScalaDoc
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
+   * Supertrait for <code>Size</code> type classes.
    *
    * <p>
-   * TODO: Fix this scaladoc
-   * Subclasses of this abstract class are used as the result of implicit conversions from the various structural types that
-   * are considered to represent size: <code>size</code> or <code>getSize</code> methods or fields that return <code>Int</code>
-   * or <code>Long</code>. This enables the <code>have size (7)</code> syntax to be used with any object that has a size.
+   * This traits enable you to use ScalaTest matchers' &ldquo;<code>have size</code>&rdquo; 
+   * syntax to be used with arbitrary objects. As an example, consider
+   * <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
+   * can't be used with ScalaTest's <code>have length</code> syntax. 
    * </p>
+   *
+   * <pre>
+   * scala> import java.awt.image.DataBufferByte
+   * import java.awt.image.DataBufferByte
+   * 
+   * scala> import org.scalatest.matchers.ShouldMatchers._
+   * import org.scalatest.matchers.ShouldMatchers._
+   *
+   * scala> val db = new DataBufferByte(4)
+   * db: java.awt.image.DataBufferByte = java.awt.image.DataBufferByte@33d5e94f
+   * 
+   * scala> db.getSize
+   * res0: Int = 4
+   *
+   * scala> db should have size 4
+   * <console>:17: error: could not find implicit value for parameter ev: org.scalatest.matchers.ShouldMatchers.Extent[java.awt.image.DataBufferByte]
+   *               db should have size 4
+   *                  ^
+   * scala> implicit val sizeOfDataBufferByte =
+   *      |   new Size[DataBufferByte] {
+   *      |     def extentOf(db: DataBufferByte): Long = db.getSize
+   *      |   }
+   * sizeOfDataBufferByte: java.lang.Object with org.scalatest.matchers.ShouldMatchers.Size[java.awt.image.DataBufferByte] = $anon$1@4c69bdf8
+   *
+   * scala> db should have size 4
+   *
+   * scala> db should have size 3
+   * org.scalatest.exceptions.TestFailedException:  java.awt.image.DataBufferByte@33d5e94f had size 4, not size 3
+   * </pre>
    *
    * @author Bill Venners
    */
@@ -6525,9 +6623,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * <code>scala.Seq</code>, <code>java.lang.String</code>, and <code>java.util.List</code>.
      * </p>
      */
-    def length[A : Length](expectedLength: Int) {
-      val len = implicitly[Length[A]]
-      if ((len.extentOf(left.asInstanceOf[A]) == expectedLength) != shouldBeTrue)
+    def length(expectedLength: Int)(implicit len: Length[A]) {
+      // val len = implicitly[Length[A]]
+      // if ((len.extentOf(left.asInstanceOf[A]) == expectedLength) != shouldBeTrue)
+      if ((len.extentOf(left) == expectedLength) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotHaveExpectedLength" else "hadExpectedLength",
@@ -6551,9 +6650,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * <code>scala.Seq</code>, <code>java.lang.String</code>, and <code>java.util.List</code>.
      * </p>
      */
-    def length[A : Length](expectedLength: Long) {
-      val len = implicitly[Length[A]]
-      if ((len.extentOf(left.asInstanceOf[A]) == expectedLength) != shouldBeTrue)
+    def length(expectedLength: Long)(implicit len: Length[A]) {
+      // val len = implicitly[Length[A]]
+      // if ((len.extentOf(left.asInstanceOf[A]) == expectedLength) != shouldBeTrue)
+      if ((len.extentOf(left) == expectedLength) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotHaveExpectedLength" else "hadExpectedLength",
@@ -6577,9 +6677,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * <code>Traversable</code> and <code>java.util.Collection</code>.
      * </p>
      */
-    def size[A : Size](expectedSize: Int) {
-      val sz = implicitly[Size[A]]
-      if ((sz.extentOf(left.asInstanceOf[A]) == expectedSize) != shouldBeTrue)
+    def size(expectedSize: Int)(implicit sz: Size[A]) {
+      // val sz = implicitly[Size[T]]
+      // if ((sz.extentOf(left.asInstanceOf[T]) == expectedSize) != shouldBeTrue)
+      if ((sz.extentOf(left) == expectedSize) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotHaveExpectedSize" else "hadExpectedSize",
@@ -6603,9 +6704,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * <code>Traversable</code> and <code>java.util.Collection</code>.
      * </p>
      */
-    def size[A : Size](expectedSize: Long) {
-      val sz = implicitly[Size[A]]
-      if ((sz.extentOf(left.asInstanceOf[A]) == expectedSize) != shouldBeTrue)
+    def size(expectedSize: Long)(implicit sz: Size[A]) {
+      // val sz = implicitly[Size[T]]
+      // if ((sz.extentOf(left.asInstanceOf[T]) == expectedSize) != shouldBeTrue)
+      if ((sz.extentOf(left) == expectedSize) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotHaveExpectedSize" else "hadExpectedSize",

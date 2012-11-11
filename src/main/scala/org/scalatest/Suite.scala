@@ -572,10 +572,10 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   }
 
   /**
-  * A <code>List</code> of this <code>Suite</code> object's nested <code>Suite</code>s. If this <code>Suite</code> contains no nested <code>Suite</code>s,
-  * this method returns an empty <code>List</code>. This trait's implementation of this method returns an empty <code>List</code>.
+  * An immutable <code>IndexedSeq</code> of this <code>Suite</code> object's nested <code>Suite</code>s. If this <code>Suite</code> contains no nested <code>Suite</code>s,
+  * this method returns an empty <code>IndexedSeq</code>. This trait's implementation of this method returns an empty <code>List</code>.
   */
-  def nestedSuites: IndexedSeq[Suite] = Vector.empty
+  def nestedSuites: collection.immutable.IndexedSeq[Suite] = Vector.empty
 
   /**
    * Executes one or more tests in this <code>Suite</code>, printing results to the standard output.
@@ -1135,6 +1135,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    *
    * @param testName the name of one test to run.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when the test started by this method has completed, and whether or not it failed .
    *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>configMap</code>
    *     or <code>tracker</code> is <code>null</code>.
@@ -1296,6 +1297,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all tests started by this method have completed, and whether or not a failure occurred.
    *
    * @throws NullPointerException if any of the passed parameters is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
@@ -1398,6 +1400,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all tests and nested suites started by this method have completed, and whether or not a failure occurred.
    *         
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name
@@ -1430,7 +1433,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   }
 
   // TODO see if I can take away the [scalatest] from the private
-  private[scalatest] def handleFailedTest(throwable: Throwable, testName: String, recordedEvents: IndexedSeq[RecordableEvent], report: Reporter, tracker: Tracker, formatter: Formatter, duration: Long) {
+  private[scalatest] def handleFailedTest(throwable: Throwable, testName: String, recordedEvents: collection.immutable.IndexedSeq[RecordableEvent], report: Reporter, tracker: Tracker, formatter: Formatter, duration: Long) {
 
     val message = getMessageForException(throwable)
     //val formatter = getEscapedIndentedTextForTest(testName, 1, true)
@@ -1471,6 +1474,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * </p>
    *
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all nested suites started by this method have completed, and whether or not a failure occurred.
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
@@ -1766,7 +1770,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     new TestData {
       val configMap = theConfigMap 
       val name = testName
-      val scopes = IndexedSeq.empty
+      val scopes = Vector.empty
       val text = testName
       val tags = Set.empty ++ suiteTags ++ testTags
     }
@@ -2081,7 +2085,7 @@ used for test events like succeeded/failed, etc.
   def indentation(level: Int) = "  " * level
 
   def reportTestFailed(theSuite: Suite, report: Reporter, throwable: Throwable, testName: String, testText: String,
-                       recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, formatter: Formatter, location: Option[Location]) {
+                       recordedEvents: collection.immutable.IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, formatter: Formatter, location: Option[Location]) {
 
     val message = getMessageForException(throwable)
     //val formatter = getEscapedIndentedTextForTest(testText, level, includeIcon)
@@ -2102,7 +2106,7 @@ used for test events like succeeded/failed, etc.
       location, rerunnable))
   }
 
-  def reportTestPending(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, recordedEvents: IndexedSeq[RecordableEvent], duration: Long, formatter: Formatter, location: Option[Location]) {
+  def reportTestPending(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, recordedEvents: collection.immutable.IndexedSeq[RecordableEvent], duration: Long, formatter: Formatter, location: Option[Location]) {
     report(TestPending(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), testName, testText, recordedEvents, Some(duration), Some(formatter),
       location))
   }
@@ -2116,14 +2120,14 @@ used for test events like succeeded/failed, etc.
 */
 
   def reportTestCanceled(theSuite: Suite, report: Reporter, throwable: Throwable, testName: String, testText: String,
-      recordedEvents: IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, formatter: Formatter, location: Option[Location]) {
+      recordedEvents: collection.immutable.IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, formatter: Formatter, location: Option[Location]) {
 
     val message = getMessageForException(throwable)
     //val formatter = getEscapedIndentedTextForTest(testText, level, includeIcon)
     report(TestCanceled(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), testName, testText, recordedEvents, Some(throwable), Some(duration), Some(formatter), location, rerunnable))
   }
 
-  def reportTestSucceeded(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, recordedEvents: IndexedSeq[RecordableEvent], duration: Long, formatter: Formatter, rerunnable: Option[String], location: Option[Location]) {
+  def reportTestSucceeded(theSuite: Suite, report: Reporter, tracker: Tracker, testName: String, testText: String, recordedEvents: collection.immutable.IndexedSeq[RecordableEvent], duration: Long, formatter: Formatter, rerunnable: Option[String], location: Option[Location]) {
     report(TestSucceeded(tracker.nextOrdinal(), theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), testName, testText, recordedEvents, Some(duration), Some(formatter),
       location, rerunnable))
   }

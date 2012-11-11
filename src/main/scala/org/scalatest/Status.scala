@@ -211,7 +211,6 @@ final class StatefulStatus extends Status {
  * @param status the <code>Status</code>es out of which this status is composed.
  */
 final class CompositeStatus(statuses: Set[Status]) extends Status {
-  // private val theStatuses = statusSeq.toIndexedSeq
   
   /**
    * Blocking call that waits until all composite <code>Status</code>es have completed, then returns

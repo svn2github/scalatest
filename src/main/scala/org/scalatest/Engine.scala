@@ -637,9 +637,9 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     Set.empty ++ suiteTags ++ testTagSet
   }
   
-  private[scalatest] def testScopes(testName: String): IndexedSeq[String] = {
+  private[scalatest] def testScopes(testName: String): collection.immutable.IndexedSeq[String] = {
     @tailrec
-    def testScopesAcc(branch: Branch, acc: IndexedSeq[String]): IndexedSeq[String] = {
+    def testScopesAcc(branch: Branch, acc: collection.immutable.IndexedSeq[String]): collection.immutable.IndexedSeq[String] = {
       branch match {
         case Trunk => acc.reverse
         case DescriptionBranch(parent, descriptionText, childPrefix, lineInFile) =>
@@ -654,7 +654,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     val theTestOpt = atomic.get.testsMap.get(testName)
     theTestOpt match {
       case Some(theTest) =>
-        testScopesAcc(theTest.parent, IndexedSeq.empty)
+        testScopesAcc(theTest.parent, collection.immutable.IndexedSeq.empty)
       case None => 
         throw new IllegalArgumentException("Test name '" + testName + "' not found.")
     }

@@ -2435,5 +2435,23 @@ class ShouldLengthSpec extends Spec with ShouldMatchers with Checkers with Retur
       val lengthMatcher2 = have length (2)
       lengthMatcher2.apply(obj)
     }
+
+    def `should allow multiple implicits of the same type class (such as Length) to be resolve so long as the type param is not ambiguous` {
+      import java.net.DatagramPacket
+      val dp = new DatagramPacket(Array(0x0, 0x1, 0x2, 0x3), 4)
+      dp.getLength
+      implicit val lengthOfDatagramPacket =
+        new Length[DatagramPacket] {
+          def extentOf(dp: DatagramPacket): Long = dp.getLength
+        }
+      dp should have length 4
+      import java.awt.image.DataBufferByte
+      val db = new DataBufferByte(4)
+      implicit val sizeOfDataBufferByte =
+        new Length[DataBufferByte] {
+          def extentOf(db: DataBufferByte): Long = db.getSize
+        }
+      db should have length 4
+    }
   }
 }

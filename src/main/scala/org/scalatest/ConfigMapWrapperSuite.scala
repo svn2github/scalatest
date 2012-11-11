@@ -96,7 +96,7 @@ final class ConfigMapWrapperSuite(clazz: Class[_ <: Suite]) extends Suite {
    *
    * @return the result of invoking <code>nestedSuites</code> on an instance of wrapped suite
    */
-  override def nestedSuites: IndexedSeq[Suite] = wrappedSuite.nestedSuites
+  override def nestedSuites: collection.immutable.IndexedSeq[Suite] = wrappedSuite.nestedSuites
 
   /**
    * Returns the result obtained from invoking <code>tags</code> on an instance of the wrapped
@@ -114,6 +114,7 @@ final class ConfigMapWrapperSuite(clazz: Class[_ <: Suite]) extends Suite {
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all tests and nested suites started by this method have completed, and whether or not a failure occurred.
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    * @throws IllegalArgumentException if <code>testName</code> is defined, but no test with the specified test name

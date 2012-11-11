@@ -77,7 +77,7 @@ import Assertions.areEqualComparingArraysStructurally
  * </pre>
  * 
  * <p>
- *Size is similar:
+ * Size is similar:
  * </p>
  * 
  * <pre class="stHighlight">
@@ -85,12 +85,14 @@ import Assertions.areEqualComparingArraysStructurally
  * </pre>
  * 
  * <p>
- * The <code>length</code> syntax can be used with any object that has a field or method named <code>length</code>
- * or a method named <code>getLength</code>.   Similarly, the <code>size</code> syntax can be used with any
- * object that has a field or method named <code>size</code> or a method named <code>getSize</code>.
- * The type of a <code>length</code> or <code>size</code> field, or return type of a method, must be either <code>Int</code>
- * or <code>Long</code>. Any such method must take no parameters. (The Scala compiler will ensure at compile time that
- * the object on which <code>should</code> is being invoked has the appropriate structure.)
+ * The <code>length</code> syntax can be used with <code>String</code>, <code>Array</code>, any <code>scala.collection.GenSeq</code>,
+ * any <code>java.util.List</code>, and any type <code>T</code> for which an implicit <code>Length[T]</code> type class is 
+ * available in scope.
+ * Similarly, the <code>size</code> syntax can be used with <code>Array</code>, any <code>scala.collection.GenTraversable</code>,
+ * any <code>java.util.List</code>, and any type <code>T</code> for which an implicit <code>Size[T]</code> type class is 
+ * available in scope. You can enable the <code>length</code> or <code>size</code> syntax for your own arbitrary types, therefore,
+ * by defining <a href="ClassicMatchers$Length.html"><code>Length</code></a> or <a href="ClassicMatchers$Size.html"><code>Size</code></a> type
+ * classes for those types.
  * </p>
  * 
  * <h2>Checking strings</h2>

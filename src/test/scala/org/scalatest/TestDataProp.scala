@@ -61,7 +61,7 @@ class ExampleTestDataSuite extends Suite with TestDataFixtureServices {
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "testMethod1"
-    val scopes = IndexedSeq.empty
+    val scopes = Vector.empty
     val text = "testMethod1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.SlowAsMolasses")
   }
@@ -79,7 +79,7 @@ class ExampleTestDataFixtureSuite extends fixture.Suite with TestDataFixtureServ
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "testMethod1(FixtureParam)"
-    val scopes = IndexedSeq.empty
+    val scopes = Vector.empty
     val text = "testMethod1(FixtureParam)"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.SlowAsMolasses")
   }
@@ -97,7 +97,7 @@ class ExampleTestDataSpec extends Spec with TestDataFixtureServices {
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
-    val scopes = IndexedSeq("Scope 1", "Scope 2")
+    val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.SlowAsMolasses")
   }
@@ -120,7 +120,7 @@ class ExampleTestDataFixtureSpec extends fixture.Spec with TestDataFixtureServic
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
-    val scopes = IndexedSeq("Scope 1", "Scope 2")
+    val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.SlowAsMolasses")
   }
@@ -143,7 +143,7 @@ class ExampleTestDataJUnit3Suite extends JUnit3Suite with TestDataFixtureService
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "testMethod1"
-    val scopes = IndexedSeq.empty
+    val scopes = Vector.empty
     val text = "testMethod1"
     val tags = Set.empty[String]
   }
@@ -157,7 +157,7 @@ class ExampleTestDataJUnitSuite extends JUnitSuite with TestDataFixtureServices 
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "testMethod1"
-    val scopes = IndexedSeq.empty
+    val scopes = Vector.empty
     val text = "testMethod1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.Ignore")
   }
@@ -174,7 +174,7 @@ class ExampleTestDataTestNGSuite extends TestNGSuite with TestDataFixtureService
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "testMethod1"
-    val scopes = IndexedSeq.empty
+    val scopes = Vector.empty
     val text = "testMethod1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.Ignore")
   }
@@ -189,7 +189,7 @@ class ExampleTestDataFunSuite extends FunSuite with TestDataFixtureServices {
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Test 1"
-    val scopes = IndexedSeq.empty
+    val scopes = Vector.empty
     val text = "Test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -206,7 +206,7 @@ class ExampleTestDataFixtureFunSuite extends fixture.FunSuite with TestDataFixtu
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Test 1"
-    val scopes = IndexedSeq.empty
+    val scopes = Vector.empty
     val text = "Test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -223,7 +223,7 @@ class ExampleTestDataFunSpec extends FunSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
-    val scopes = IndexedSeq("Scope 1", "Scope 2")
+    val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -244,7 +244,7 @@ class ExampleTestDataFixtureFunSpec extends fixture.FunSpec with TestDataFixture
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
-    val scopes = IndexedSeq("Scope 1", "Scope 2")
+    val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -265,7 +265,7 @@ class ExampleTestDataFeatureSpec extends FeatureSpec with TestDataFixtureService
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Feature: Feature 1 Scenario: Scenario 1"
-    val scopes = IndexedSeq("Feature: Feature 1")
+    val scopes = Vector("Feature: Feature 1")
     val text = "Scenario: Scenario 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -284,7 +284,7 @@ class ExampleTestDataFixtureFeatureSpec extends fixture.FeatureSpec with TestDat
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Feature: Feature 1 Scenario: Scenario 1"
-    val scopes = IndexedSeq("Feature: Feature 1")
+    val scopes = Vector("Feature: Feature 1")
     val text = "Scenario: Scenario 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -303,7 +303,7 @@ class ExampleTestDataFlatSpec extends FlatSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 should test 1"
-    val scopes = IndexedSeq("Scope 1")
+    val scopes = Vector("Scope 1")
     val text = "should test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -320,7 +320,7 @@ class ExampleTestDataFixtureFlatSpec extends fixture.FlatSpec with TestDataFixtu
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 should test 1"
-    val scopes = IndexedSeq("Scope 1")
+    val scopes = Vector("Scope 1")
     val text = "should test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -337,7 +337,7 @@ class ExampleTestDataFreeSpec extends FreeSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
-    val scopes = IndexedSeq("Scope 1", "Scope 2")
+    val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -358,7 +358,7 @@ class ExampleTestDataFixtureFreeSpec extends fixture.FreeSpec with TestDataFixtu
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
-    val scopes = IndexedSeq("Scope 1", "Scope 2")
+    val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -379,7 +379,7 @@ class ExampleTestDataPropSpec extends PropSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Test 1"
-    val scopes = IndexedSeq.empty
+    val scopes = Vector.empty
     val text = "Test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -396,7 +396,7 @@ class ExampleTestDataFixturePropSpec extends fixture.PropSpec with TestDataFixtu
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Test 1"
-    val scopes = IndexedSeq.empty
+    val scopes = Vector.empty
     val text = "Test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -413,7 +413,7 @@ class ExampleTestDataWordSpec extends WordSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 should Scope 2 should test 1"
-    val scopes = IndexedSeq("Scope 1 should", "Scope 2 should")
+    val scopes = Vector("Scope 1 should", "Scope 2 should")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -434,7 +434,7 @@ class ExampleTestDataFixtureWordSpec extends fixture.WordSpec with TestDataFixtu
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 should Scope 2 should test 1"
-    val scopes = IndexedSeq("Scope 1 should", "Scope 2 should")
+    val scopes = Vector("Scope 1 should", "Scope 2 should")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -455,7 +455,7 @@ class ExampleTestDataPathFreeSpec extends path.FreeSpec with TestDataFixtureServ
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
-    val scopes = IndexedSeq("Scope 1", "Scope 2")
+    val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
@@ -472,7 +472,7 @@ class ExampleTestDataPathFunSpec extends path.FunSpec with TestDataFixtureServic
   val expectedTestData = new TestData {
     val configMap = Map("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
-    val scopes = IndexedSeq("Scope 1", "Scope 2")
+    val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }

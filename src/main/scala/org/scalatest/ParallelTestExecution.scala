@@ -75,6 +75,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all tests started by this method have completed, and whether or not a failure occurred.
    */
   protected abstract override def runTests(testName: Option[String], args: Args): Status = {
     val newArgs =
@@ -143,6 +144,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    *
    * @param testName the name of one test to execute.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when the test started by this method has completed, and whether or not it failed .
    */
   final protected abstract override def runTest(testName: String, args: Args): Status = {
 
@@ -249,6 +251,7 @@ trait ParallelTestExecution extends OneInstancePerTest { this: Suite =>
    * @param testName an optional name of one test to execute. If <code>None</code>, all relevant tests should be executed.
    *                 I.e., <code>None</code> acts like a wildcard that means execute all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all tests and nested suites started by this method have completed, and whether or not a failure occurred.
    */
   abstract override def run(testName: Option[String], args: Args): Status = {
     (testName, args.distributedTestSorter) match {

@@ -50,7 +50,7 @@ class BigSuite(nestedSuiteCount: Option[Int]) extends Suite { thisSuite =>
 
   //def this() = this(None)
   
-  override def nestedSuites: IndexedSeq[Suite] = {
+  override def nestedSuites: collection.immutable.IndexedSeq[Suite] = {
 
     def makeList(remaining: Int, soFar: List[Suite], nestedCount: Int): List[Suite] = {
       if (remaining == 0) soFar

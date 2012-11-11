@@ -251,7 +251,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
     new TestData {
       val configMap = theConfigMap 
       val name = testName
-      val scopes = IndexedSeq.empty
+      val scopes = Vector.empty
       val text = testName
       val tags = Set.empty ++ suiteTags ++ testTags
     }

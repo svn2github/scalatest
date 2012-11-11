@@ -55,10 +55,10 @@ class Specs(specsToNest: Suite*) extends Suite {
   }
 
   /**
-   * Returns a list containing the suites passed to the constructor in
+   * Returns an immutable <code>IndexedSeq</code> containing the suites passed to the constructor in
    * the order they were passed.
    */
-  override val nestedSuites: IndexedSeq[Suite] = Vector.empty ++ specsToNest
+  override val nestedSuites: collection.immutable.IndexedSeq[Suite] = Vector.empty ++ specsToNest
 }
 
 /**

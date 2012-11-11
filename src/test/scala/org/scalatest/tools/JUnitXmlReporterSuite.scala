@@ -135,7 +135,7 @@ class JUnitXmlReporterSuite extends FunSuite {
       suiteClassName = Some("Suite3Class"),
       testName = "a pass test",
       testText = "a pass test text",
-      recordedEvents = Array[RecordableEvent]())
+      recordedEvents = Vector.empty[RecordableEvent])
       
   val ignoreTest1 =
     TestIgnored (
@@ -164,7 +164,7 @@ class JUnitXmlReporterSuite extends FunSuite {
       suiteClassName = Some("Suite3Class"),
       testName = "a fail test",
       testText = "a fail test text",
-      recordedEvents = Array[RecordableEvent]())
+      recordedEvents = Vector.empty[RecordableEvent])
 
   val startTest3 =
     TestStarting(
@@ -183,7 +183,7 @@ class JUnitXmlReporterSuite extends FunSuite {
       suiteClassName = Some("Suite3Class"),
       testName = "a pending test",
       testText = "a pending test text",
-      recordedEvents = Array[RecordableEvent]())
+      recordedEvents = Vector.empty[RecordableEvent])
 
   val startTest4 =
     TestStarting(
@@ -203,7 +203,7 @@ class JUnitXmlReporterSuite extends FunSuite {
       suiteClassName = Some("Suite3Class"),
       testName = "a canceled test",
       testText = "a canceled test text",
-      recordedEvents = Array[RecordableEvent]())
+      recordedEvents = Vector.empty[RecordableEvent])
 
   val complete3 =
     SuiteCompleted(

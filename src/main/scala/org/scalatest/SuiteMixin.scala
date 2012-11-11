@@ -65,6 +65,7 @@ trait SuiteMixin { this: Suite =>
    * @param testName an optional name of one test to execute. If <code>None</code>, all relevant tests should be executed.
    *                 I.e., <code>None</code> acts like a wildcard that means execute all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all tests and nested suites started by this method have completed, and whether or not a failure occurred.
    *
    * @throws NullPointerException if any passed parameter is <code>null</code>.
    */
@@ -74,6 +75,7 @@ trait SuiteMixin { this: Suite =>
    * Runs zero to many of this suite's nested suites.
    *
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all nested suites started by this method have completed, and whether or not a failure occurred.
    *
    * @throws NullPointerException if <code>args</code> is <code>null</code>.
    */
@@ -85,6 +87,7 @@ trait SuiteMixin { this: Suite =>
    * @param testName an optional name of one test to run. If <code>None</code>, all relevant tests should be run.
    *                 I.e., <code>None</code> acts like a wildcard that means run all relevant tests in this <code>Suite</code>.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when all tests started by this method have completed, and whether or not a failure occurred.
    *
    * @throws NullPointerException if either <code>testName</code> or <code>args</code> is <code>null</code>.
    */
@@ -95,6 +98,7 @@ trait SuiteMixin { this: Suite =>
    *
    * @param testName the name of one test to execute.
    * @param args the <code>Args</code> for this run
+   * @return a <code>Status</code> object that indicates when the test started by this method has completed, and whether or not it failed .
    *
    * @throws NullPointerException if any of <code>testName</code>, <code>reporter</code>, <code>stopper</code>, <code>configMap</code>,
    *     or <code>tracker</code> is <code>null</code>.
@@ -116,10 +120,10 @@ trait SuiteMixin { this: Suite =>
   def testNames: Set[String]
 
   /**
-  * An <code>IndexedSeq</code> of this <code>Suite</code> object's nested <code>Suite</code>s. If this <code>Suite</code> contains no nested <code>Suite</code>s,
+  * An immutable <code>IndexedSeq</code> of this <code>SuiteMixin</code> object's nested <code>Suite</code>s. If this <code>SuiteMixin</code> contains no nested <code>Suite</code>s,
   * this method returns an empty <code>IndexedSeq</code>.
   */
-  def nestedSuites: IndexedSeq[Suite]
+  def nestedSuites: collection.immutable.IndexedSeq[Suite]
 
   /**
    * A <code>Map</code> whose keys are <code>String</code> tag names with which tests in this <code>Suite</code> are marked, and
