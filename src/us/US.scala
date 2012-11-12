@@ -11,7 +11,7 @@ class UnitedStates extends Suite {
   import UnitedStates.allStates
   import UnitedStates.nestedSuiteCount
 
-  override def nestedSuites: IndexedSeq[Suite] = allStates.take(nestedSuiteCount).toIndexedSeq
+  override def nestedSuites: collection.immutable.IndexedSeq[Suite] = allStates.take(nestedSuiteCount).toIndexedSeq
 
   override def run(testName: Option[String], args: Args): org.scalatest.Status = {
 
