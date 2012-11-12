@@ -454,8 +454,8 @@ import Suite.autoTagClassAnnotations
  * <span class="stGreen">SetSpec:
  * A Set
  *   when empty</span>
- * <span class="stYellow">  - have size 0 !!! IGNORED !!!</span>
- * <span class="stYellow">  - produce NoSuchElementException when head is invoked !!! IGNORED !!!</span>
+ * <span class="stYellow">  - should have size 0 !!! IGNORED !!!</span>
+ * <span class="stYellow">  - should produce NoSuchElementException when head is invoked !!! IGNORED !!!</span>
  * </pre>
  *
  * <p>
@@ -994,8 +994,9 @@ import Suite.autoTagClassAnnotations
  * <pre class="stREPL">
  * scala&gt; new ExampleSuite execute
  * <span class="stGreen">ExampleSuite:
- * - this test should succeed
- * <span class="stRed">- this test should fail *** FAILED ***
+ * This test
+ * - should succeed
+ * <span class="stRed">- should fail *** FAILED ***
  *   2 did not equal 3 (<console>:33)
  *   + Dir snapshot: hello.txt, world.txt </span>
  * </pre>
