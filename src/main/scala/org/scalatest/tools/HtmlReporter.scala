@@ -48,14 +48,28 @@ import java.text.DecimalFormat
 private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations: Boolean,
         presentInColor: Boolean, presentStackTraces: Boolean, presentFullStackTraces: Boolean, cssUrl: Option[URL]) extends ResourcefulReporter {
 
-  private val directory = new File(directoryPath)
-  if (!directory.exists)
-    directory.mkdirs()
+  private val specIndent = 15
+  private val targetDir = new File(directoryPath)
+  private val imagesDir = new File(targetDir, "images")
+  private val jsDir = new File(targetDir, "js")
+  private val cssDir = new File(targetDir, "css")
+  
+  if (!targetDir.exists)
+    targetDir.mkdirs()
     
-  private def copyResource(url: URL, targetFileName: String) {
+  if (!imagesDir.exists)
+    imagesDir.mkdirs()
+    
+  if (!jsDir.exists)
+    jsDir.mkdirs()
+    
+  if (!cssDir.exists)
+    cssDir.mkdirs()
+    
+  private def copyResource(url: URL, toDir: File, targetFileName: String) {
     val inputStream = url.openStream
     try {
-      val outputStream = new FileOutputStream(new File(directory, targetFileName))
+      val outputStream = new FileOutputStream(new File(toDir, targetFileName))
       try {
         outputStream getChannel() transferFrom(Channels.newChannel(inputStream), 0, Long.MaxValue)
       }
@@ -69,13 +83,23 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
     }
   }
   
+  private def getResource(resourceName: String): URL = 
+    classOf[Suite].getClassLoader.getResource(resourceName)
+  
   cssUrl match {
-    case Some(cssUrl) => copyResource(cssUrl, "custom.css")
+    case Some(cssUrl) => copyResource(cssUrl, cssDir, "custom.css")
     case None => // Do nothing.
   }
-  copyResource(classOf[Suite].getClassLoader.getResource("org/scalatest/HtmlReporter.css"), "styles.css")
-  copyResource(classOf[Suite].getClassLoader.getResource("org/scalatest/sorttable.js"), "sorttable.js")
-  copyResource(classOf[Suite].getClassLoader.getResource("org/scalatest/d3.v2.min.js"), "d3.v2.min.js")
+  copyResource(getResource("org/scalatest/HtmlReporter.css"), cssDir, "styles.css")
+  copyResource(getResource("org/scalatest/sorttable.js"), jsDir, "sorttable.js")
+  copyResource(getResource("org/scalatest/d3.v2.min.js"), jsDir, "d3.v2.min.js")
+  
+  copyResource(getResource("images/greenbullet.gif"), imagesDir, "testsucceeded.gif")
+  copyResource(getResource("images/redbullet.gif"), imagesDir, "testfailed.gif")
+  copyResource(getResource("images/yellowbullet.gif"), imagesDir, "testignored.gif")
+  copyResource(getResource("images/yellowbullet.gif"), imagesDir, "testcanceled.gif")
+  copyResource(getResource("images/yellowbullet.gif"), imagesDir, "testpending.gif")
+  copyResource(getResource("images/graybullet.gif"), imagesDir, "infoprovided.gif")
   
   private val pegDown = new PegDownProcessor
 
@@ -95,8 +119,8 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
     formatter: Option[Formatter], suiteName: Option[String], testName: Option[String], duration: Option[Long]): String = {
 
     formatter match {
-      case Some(IndentedText(formattedText, _, _)) =>
-        Resources("specTextAndNote", formattedText, Resources(noteResourceName))
+      case Some(IndentedText(_, rawText, _)) =>
+        Resources("specTextAndNote", rawText, Resources(noteResourceName))
       case _ =>
         // Deny MotionToSuppress directives in error events, because error info needs to be seen by users
           suiteName match {
@@ -117,14 +141,14 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   private def stringToPrintWhenNoError(resourceName: String, formatter: Option[Formatter], suiteName: String, testName: Option[String], duration: Option[Long]): Option[String] = {
 
     formatter match {
-      case Some(IndentedText(formattedText, _, _)) =>
+      case Some(IndentedText(_, rawText, _)) =>
         duration match {
           case Some(milliseconds) =>
             if (presentAllDurations)
-              Some(Resources("withDuration", formattedText, makeDurationString(milliseconds)))
+              Some(Resources("withDuration", rawText, makeDurationString(milliseconds)))
             else
-              Some(formattedText)
-          case None => Some(formattedText)
+              Some(rawText)
+          case None => Some(rawText)
         }
       case Some(MotionToSuppress) => None
       case _ =>
@@ -161,16 +185,14 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   private def makeSuiteFile(suiteResult: SuiteResult) {
     val name = getSuiteFileName(suiteResult)
     
-    val pw = new PrintWriter(new BufferedOutputStream(new FileOutputStream(new File(directory, name + ".html")), BufferSize))
+    val pw = new PrintWriter(new BufferedOutputStream(new FileOutputStream(new File(targetDir, name + ".html")), BufferSize))
     try {
       pw.println {
-        """
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-        
-        """ + getSuiteHtml(name, suiteResult) 
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "\n" + 
+        "<!DOCTYPE html" + "\n" + 
+        "  PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"" + "\n" + 
+        "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" + "\n" + 
+        getSuiteHtml(name, suiteResult) 
       }
     }
     finally {
@@ -187,6 +209,9 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
     else
       name + "_passed_all"
   
+  private def transformStringForResult(s: String, suiteResult: SuiteResult): String =
+    s + (if (suiteResult.testsFailedCount > 0) "_failed" else "_passed")
+
   private def getSuiteHtml(name: String, suiteResult: SuiteResult) = 
     <html>
       <head>
@@ -194,47 +219,41 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Expires" content="-1" />
         <meta http-equiv="Pragma" content="no-cache" />
-        <link href="styles.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
         { 
           cssUrl match {
             case Some(cssUrl) => 
-              <link href="custom.css" rel="stylesheet" />
+              <link href="css/custom.css" rel="stylesheet" />
             case None => NodeSeq.Empty
           }
         }
         <script type="text/javascript">
-          { PCDATA("""
-            function toggleDetails(contentId, linkId) {
-              var ele = document.getElementById(contentId);
-              var text = document.getElementById(linkId);
-              if(ele.style.display == "block") {
-                ele.style.display = "none";
-                text.innerHTML = "Show Details";
-              }
-              else {
-                ele.style.display = "block";
-                text.innerHTML = "Hide Details";
-              }
-            }
-            """)
+          { PCDATA(
+            "function toggleDetails(contentId, linkId) {" + "\n" + 
+            "  var ele = document.getElementById(contentId);" + "\n" + 
+            "  var text = document.getElementById(linkId);" + "\n" + 
+            "  if(ele.style.display == \"block\") {" + "\n" + 
+            "    ele.style.display = \"none\";" + "\n" + 
+            "    text.innerHTML = \"(Show Details)\";" + "\n" + 
+            "  }" + "\n" + 
+            "  else {" + "\n" + 
+            "    ele.style.display = \"block\";" + "\n" + 
+            "    text.innerHTML = \"(Hide Details)\";" + "\n" + 
+            "  }" + "\n" + 
+            "}" + "\n" + 
+            "function hideOpenInNewTabIfRequired() {" + "\n" + 
+            "  if (top === self) { document.getElementById('printlink').style.display = 'none'; }" + "\n" + 
+            "}" + "\n")
           }
         </script>
       </head>
-      <body>
-        <table id="suite_header">
-          <tr id="suite_header_id">
-            <td id={ appendCombinedStatus("suite_header_id_label", suiteResult) }>Suite ID</td>
-            <td id={ appendCombinedStatus("suite_header_id_value", suiteResult) } colspan="3">{ suiteResult.suiteId }</td>
-          </tr>
-          <tr id="suite_header_name">
-            <td id={ appendCombinedStatus("suite_header_name_label", suiteResult) }>Suite Name</td>
-            <td id={ appendCombinedStatus("suite_header_name_value", suiteResult) } colspan="3">{ suiteResult.suiteName }</td>
-          </tr>
-          <tr id="suite_header_class">
-            <td id={ appendCombinedStatus("suite_header_class_label", suiteResult) }>Class Name</td>
-            <td id={ appendCombinedStatus("suite_header_class_value", suiteResult) } colspan="3">{ suiteResult.suiteClassName.getOrElse("-") }</td>
-          </tr>
-        </table>
+      <body class="specification">
+        <div id="suite_header_name">{ suiteResult.suiteName }</div>
+        <div id={ transformStringForResult("suite_header_statistic", suiteResult) }>
+          { "Tests: total " + (suiteResult.testsSucceededCount + suiteResult.testsFailedCount + suiteResult.testsCanceledCount + suiteResult.testsIgnoredCount + suiteResult.testsPendingCount) + ", succeeded " + 
+            suiteResult.testsSucceededCount + ", failed " + suiteResult.testsFailedCount + ", canceled " + suiteResult.testsCanceledCount + ", ignored " + suiteResult.testsIgnoredCount + ", pending " + 
+            suiteResult.testsPendingCount }
+        </div>
         {
           val scopeStack = new collection.mutable.Stack[String]()
           suiteResult.eventList.map { e => 
@@ -282,7 +301,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
 
                 val stringToPrint =
                   formatter match {
-                    case Some(IndentedText(formattedText, _, _)) => Some(Resources("specTextAndNote", formattedText, Resources("ignoredNote")))
+                    case Some(IndentedText(_, rawText, _)) => Some(Resources("specTextAndNote", rawText, Resources("ignoredNote")))
                     case Some(MotionToSuppress) => None
                     case _ => Some(Resources("testIgnored", suiteName + ": " + testName))
                   }
@@ -299,7 +318,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
 
                 val stringToPrint =
                   formatter match {
-                    case Some(IndentedText(formattedText, _, _)) => Some(Resources("specTextAndNote", formattedText, Resources("pendingNote")))
+                    case Some(IndentedText(_, rawText, _)) => Some(Resources("specTextAndNote", rawText, Resources("pendingNote")))
                     case Some(MotionToSuppress) => None
                     case _ => Some(Resources("testPending", suiteName + ": " + testName))
                   }
@@ -334,7 +353,32 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
             }
           }
         }
+        <table id="suite_footer">
+          <tr id="suite_footer_id">
+            <td id={ transformStringForResult("suite_footer_id_label", suiteResult) }>Suite ID</td>
+            <td id="suite_footer_id_value" colspan="5">{ suiteResult.suiteId }</td>
+          </tr>
+          <tr id="suite_footer_class">
+            <td id={ transformStringForResult("suite_footer_class_label", suiteResult) }>Class name</td>
+            <td id="suite_footer_class_value" colspan="5">{ suiteResult.suiteClassName.getOrElse("-") }</td>
+          </tr>
+          <tr id="suite_footer_duration">
+            <td id={ transformStringForResult("suite_footer_duration_label", suiteResult) }>Total duration</td>
+            <td id="suite_footer_duration_value" colspan="2">
+              { 
+                suiteResult.duration match {
+                  case Some(duration) => duration + " milliseconds"
+                  case None => "-"
+                } 
+              }
+              </td>
+          </tr>
+        </table>
+           <div id="printlink">(<a href={ getSuiteFileName(suiteResult) + ".html" } target="_blank">Open { suiteResult.suiteName } in new tab</a>)</div>
       </body>
+      <script type="text/javascript">
+        { PCDATA("hideOpenInNewTabIfRequired();") }
+      </script>
     </html>
         
   private def processInfoMarkupProvided(event: Event) = {
@@ -365,16 +409,14 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   }
   
   private def makeIndexFile(resourceName: String, duration: Option[Long]) {
-    val pw = new PrintWriter(new BufferedOutputStream(new FileOutputStream(new File(directory, "index.html")), BufferSize))
+    val pw = new PrintWriter(new BufferedOutputStream(new FileOutputStream(new File(targetDir, "index.html")), BufferSize))
     try {
       pw.println {
-        """
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-        
-        """ + getIndexHtml(resourceName, duration) 
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<!DOCTYPE html\n" + 
+        "PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n" +
+        "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" + 
+        getIndexHtml(resourceName, duration) 
       }
     }
     finally {
@@ -397,55 +439,47 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   private def getPieChartScript(summary: Summary) = {
     import summary._
     
-    """
-    /* modified from http://www.permadi.com/tutorial/cssGettingBackgroundColor/index.html - */
-    function getBgColor(elementId) 
-    {
-      var element = document.getElementById(elementId);
-      if (element.currentStyle)
-        return element.currentStyle.backgroundColor;
-      if (window.getComputedStyle)
-      {
-        var elementStyle=window.getComputedStyle(element,"");
-        if (elementStyle)
-          return elementStyle.getPropertyValue("background-color");
-      }
-      // Return 0 if both methods failed.  
-      return 0;
-    }
-    
-    """ + 
-    "var data = [" + testsSucceededCount + ", " + testsFailedCount + ", " + testsIgnoredCount + ", " + testsPendingCount + ", " + testsCanceledCount + "];" + 
-    "var color = [getBgColor('summary_view_row_1_legend_succeeded_label'), " + 
-    "             getBgColor('summary_view_row_1_legend_failed_label'), " + 
-    "             getBgColor('summary_view_row_1_legend_ignored_label'), " + 
-    "             getBgColor('summary_view_row_1_legend_pending_label'), " +
-    "             getBgColor('summary_view_row_1_legend_canceled_label')" + 
-    "            ];" + 
-    """
-    var width = document.getElementById('chart_div').offsetWidth,
-        height = document.getElementById('chart_div').offsetHeight,
-        outerRadius = Math.min(width, height) / 2,
-        innerRadius = 0,
-        donut = d3.layout.pie(),
-        arc = d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius);
-    
-    var vis = d3.select("#chart_div")
-                .append("svg")
-                .data([data])
-                .attr("width", width)
-                .attr("height", height);
-    
-    var arcs = vis.selectAll("g.arc")
-                  .data(donut)
-                  .enter().append("g")
-                  .attr("class", "arc")
-                  .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
-    
-    arcs.append("path")
-        .attr("fill", function(d, i) { return color[i]; })
-        .attr("d", arc);
-    """
+    "/* modified from http://www.permadi.com/tutorial/cssGettingBackgroundColor/index.html - */" + "\n" + 
+    "function getBgColor(elementId)" +  "\n" + 
+    "{" + "\n" + 
+    "  var element = document.getElementById(elementId);" + "\n" + 
+    "  if (element.currentStyle)" + "\n" + 
+    "    return element.currentStyle.backgroundColor;" + "\n" + 
+    "  if (window.getComputedStyle)" + "\n" + 
+    "  {" + "\n" + 
+    "    var elementStyle=window.getComputedStyle(element,\"\");" + "\n" + 
+    "    if (elementStyle)" + "\n" + 
+    "      return elementStyle.getPropertyValue(\"background-color\");" + "\n" + 
+    "  }" + "\n" + 
+    "  // Return 0 if both methods failed." + "\n" + 
+    "  return 0;" + "\n" + 
+    "}" + "\n" + 
+    "var data = [" + testsSucceededCount + ", " + testsFailedCount + ", " + testsIgnoredCount + ", " + testsPendingCount + ", " + testsCanceledCount + "];" + "\n" +  
+    "var color = [getBgColor('summary_view_row_1_legend_succeeded_label'), " + "\n" + 
+    "             getBgColor('summary_view_row_1_legend_failed_label'), " + "\n" + 
+    "             getBgColor('summary_view_row_1_legend_ignored_label'), " + "\n" + 
+    "             getBgColor('summary_view_row_1_legend_pending_label'), " + "\n" + 
+    "             getBgColor('summary_view_row_1_legend_canceled_label')" +  "\n" + 
+    "            ];" + "\n" + 
+    "var width = document.getElementById('chart_div').offsetWidth," + "\n" + 
+    "    height = document.getElementById('chart_div').offsetHeight," + "\n" + 
+    "    outerRadius = Math.min(width, height) / 2," + "\n" + 
+    "    innerRadius = 0," + "\n" + 
+    "    donut = d3.layout.pie()," + "\n" +  
+    "    arc = d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius);" + "\n" +  
+    "var vis = d3.select(\"#chart_div\")" + "\n" + 
+    "            .append(\"svg\")" + "\n" + 
+    "            .data([data])" + "\n" + 
+    "            .attr(\"width\", width)" + "\n" + 
+    "            .attr(\"height\", height);" + "\n" + 
+    "var arcs = vis.selectAll(\"g.arc\")" + "\n" + 
+    "              .data(donut)" + "\n" + 
+    "              .enter().append(\"g\")" + "\n" + 
+    "              .attr(\"class\", \"arc\")" + "\n" + 
+    "              .attr(\"transform\", \"translate(\" + outerRadius + \",\" + outerRadius + \")\");" + "\n" + 
+    "arcs.append(\"path\")" + "\n" + 
+    "    .attr(\"fill\", function(d, i) { return color[i]; })" + "\n" +  
+    "    .attr(\"d\", arc);\n"
   }
   
   private def getIndexHtml(resourceName: String, duration: Option[Long]) = {
@@ -459,65 +493,59 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Expires" content="-1" />
         <meta http-equiv="Pragma" content="no-cache" />
-        <link href="styles.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
         { 
           cssUrl match {
             case Some(cssUrl) => 
-              <link href="custom.css" rel="stylesheet" />
+              <link href="css/custom.css" rel="stylesheet" />
             case None => NodeSeq.Empty
           }
         }
-        <script type="text/javascript" src="d3.v2.min.js"></script>
-        <script type="text/javascript" src="sorttable.js"></script>
+        <script type="text/javascript" src="js/d3.v2.min.js"></script>
+        <script type="text/javascript" src="js/sorttable.js"></script>
         <script type="text/javascript">
-          { PCDATA("""
-            var tagMap = {};    
-            
-            var SUCCEEDED_BIT = 1;
-            var FAILED_BIT = 2;
-            var IGNORED_BIT = 4;
-            var PENDING_BIT = 8;
-            var CANCELED_BIT = 16;
-              
-            function applyFilter() {
-              var mask = 0;
-              if (document.getElementById('succeeded_checkbox').checked)
-                mask |= SUCCEEDED_BIT; 
-              if (document.getElementById('failed_checkbox').checked)
-                mask |= FAILED_BIT;
-              if (document.getElementById('ignored_checkbox').checked)
-                mask |= IGNORED_BIT;
-              if (document.getElementById('pending_checkbox').checked)
-                mask |= PENDING_BIT;
-              if (document.getElementById('canceled_checkbox').checked)
-                mask |= CANCELED_BIT;
-
-              for (var key in tagMap) {
-                if (tagMap.hasOwnProperty(key)) {
-                  var bitSet = tagMap[key];
-                  var element = document.getElementById(key);
-                  if ((bitSet & mask) != 0) 
-                    element.style.display = "table-row";
-                  else 
-                    element.style.display = "none";
-                }
-              }
-            }
-              
-            function showDetails(suiteName) {
-              document.getElementById('details_view').innerHTML = "<iframe src='" + suiteName + ".html' width='100%' height='100%'></iframe>";
-            }
-              
-            function resizeDetailsView() {
-              var headerView = document.getElementById('scalatest-header');
-              var detailsView = document.getElementById('details_view');
-              var summaryView = document.getElementById('summary_view');
-              var left = summaryView.offsetWidth + 30;
-              detailsView.style.left = left + "px";
-              detailsView.style.width = (window.innerWidth - left - 30) + "px";
-              detailsView.style.height = (window.innerHeight - headerView.offsetHeight - 20) + "px";
-            }
-          """) }
+          { PCDATA(
+            "var tagMap = {};" + "\n" +     
+            "var SUCCEEDED_BIT = 1;" + "\n" + 
+            "var FAILED_BIT = 2;" + "\n" + 
+            "var IGNORED_BIT = 4;" + "\n" + 
+            "var PENDING_BIT = 8;" + "\n" + 
+            "var CANCELED_BIT = 16;" + "\n" + 
+            "function applyFilter() {" + "\n" + 
+            "  var mask = 0;" + "\n" + 
+            "  if (document.getElementById('succeeded_checkbox').checked)" + "\n" + 
+            "    mask |= SUCCEEDED_BIT;" + "\n" +  
+            "  if (document.getElementById('failed_checkbox').checked)" + "\n" + 
+            "    mask |= FAILED_BIT;" + "\n" + 
+            "  if (document.getElementById('ignored_checkbox').checked)" + "\n" + 
+            "    mask |= IGNORED_BIT;" + "\n" + 
+            "  if (document.getElementById('pending_checkbox').checked)" + "\n" + 
+            "    mask |= PENDING_BIT;" + "\n" + 
+            "  if (document.getElementById('canceled_checkbox').checked)" + "\n" + 
+            "    mask |= CANCELED_BIT;" + "\n" + 
+            "  for (var key in tagMap) {" + "\n" + 
+            "    if (tagMap.hasOwnProperty(key)) {" + "\n" + 
+            "      var bitSet = tagMap[key];" + "\n" + 
+            "      var element = document.getElementById(key);" + "\n" + 
+            "      if ((bitSet & mask) != 0)" + "\n" +  
+            "        element.style.display = \"table-row\";" + "\n" + 
+            "      else " + "\n" +  
+            "        element.style.display = \"none\";" + "\n" + 
+            "    }" + "\n" + 
+            "  }" + "\n" + 
+            "}" + "\n" + 
+            "function showDetails(suiteName) {" + "\n" + 
+            "  document.getElementById('details_view').innerHTML = \"<iframe src='\" + suiteName + \".html' width='100%' height='100%'></iframe>\";" + "\n" + 
+            "}" + "\n" + 
+            "function resizeDetailsView() {" + "\n" + 
+            "  var headerView = document.getElementById('scalatest-header');" + "\n" + 
+            "  var detailsView = document.getElementById('details_view');" + "\n" + 
+            "  var summaryView = document.getElementById('summary_view');" + "\n" + 
+            "  var left = summaryView.offsetWidth + 30;" + "\n" + 
+            "  detailsView.style.left = left + \"px\";" + "\n" + 
+            "  detailsView.style.width = (window.innerWidth - left - 30) + \"px\";" + "\n" + 
+            "  detailsView.style.height = (window.innerHeight - headerView.offsetHeight - 20) + \"px\";" + "\n" + 
+            "}\n") }
         </script>
       </head>
       <body onresize="resizeDetailsView()">
@@ -540,6 +568,11 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
                     <td id="summary_view_row_1_legend_failed_count">{ testsFailedCount }</td>
                     <td id="summary_view_row_1_legend_failed_percent">({ decimalFormat.format(testsFailedCount * 100.0 / totalTestsCount) }%)</td>
                   </tr>
+                  <tr id="summary_view_row_1_legend_table_row_canceled">
+                    <td id="summary_view_row_1_legend_canceled_label">Canceled</td>
+                    <td id="summary_view_row_1_legend_canceled_count">{ testsCanceledCount }</td>
+                    <td id="summary_view_row_1_legend_canceled_percent">({ decimalFormat.format(testsCanceledCount * 100.0 / totalTestsCount) }%)</td>
+                  </tr>
                   <tr id="summary_view_row_1_legend_table_row_ignored">
                     <td id="summary_view_row_1_legend_ignored_label">Ignored</td>
                     <td id="summary_view_row_1_legend_ignored_count">{ testsIgnoredCount }</td>
@@ -550,20 +583,19 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
                     <td id="summary_view_row_1_legend_pending_count">{ testsPendingCount }</td>
                     <td id="summary_view_row_1_legend_pending_percent">({ decimalFormat.format(testsPendingCount * 100.0 / totalTestsCount) }%)</td>
                   </tr>
-                  <tr id="summary_view_row_1_legend_table_row_canceled">
-                    <td id="summary_view_row_1_legend_canceled_label">Canceled</td>
-                    <td id="summary_view_row_1_legend_canceled_count">{ testsCanceledCount }</td>
-                    <td id="summary_view_row_1_legend_canceled_percent">({ decimalFormat.format(testsCanceledCount * 100.0 / totalTestsCount) }%)</td>
-                  </tr>
                 </table>
               </td>
             </tr>
             <tr id="summary_view_row_2">
-              <td id="summary_view_row_2_results" colspan="2">{ suiteResults }</td>
+              <td id="summary_view_row_2_results" colspan="2">
+                { getStatistic(summary) }
+                { suiteResults }
+              </td>
             </tr>
           </table>
           <div id="details_view">
-            Click on suite name to view details.
+            <span id="click_suite_hint">Click on suite name to view details.</span> <br />
+            <span id="click_column_hint">Click on column name to sort.</span>
           </div>
         </div>
         <script type="text/javascript">
@@ -573,35 +605,33 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
           { PCDATA(tagMapScript) }
         </script>
         <script type="text/javascript">
-          { PCDATA("""
-              resizeDetailsView();
-            """)
-          }
+          { PCDATA("resizeDetailsView();") }
         </script>
       </body>
     </html>
   }      
           
+  // TODO: This needs to be internationalized
   private def getStatistic(summary: Summary) = 
     <div id="display-filters">
-      <input id="succeeded_checkbox" name="succeeded_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label for="passed_checkbox">Succeeded: { summary.testsSucceededCount }</label>
-      <input id="failed_checkbox" name="failed_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label for="failed_checkbox">Failed: { summary.testsFailedCount }</label>
-      <input id="ignored_checkbox" name="ignored_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label for="ignored_checkbox">Ignored: { summary.testsIgnoredCount }</label>
-      <input id="pending_checkbox" name="pending_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label for="pending_checkbox">Pending: { summary.testsPendingCount }</label>
-      <input id="canceled_checkbox" name="canceled_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label for="canceled_checkbox">Canceled: { summary.testsCanceledCount }</label>
+      <input id="succeeded_checkbox" name="succeeded_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label id="succeeded_checkbox_label" for="passed_checkbox">Succeeded</label>
+      <input id="failed_checkbox" name="failed_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label id="failed_checkbox_label" for="failed_checkbox">Failed</label>
+      <input id="canceled_checkbox" name="canceled_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label id="canceled_checkbox_label" for="canceled_checkbox">Canceled</label>
+      <input id="ignored_checkbox" name="ignored_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label id="ignored_checkbox_label" for="ignored_checkbox">Ignored</label>
+      <input id="pending_checkbox" name="pending_checkbox" type="checkbox" checked="checked" onchange="applyFilter()" /> <label id="pending_checkbox_label" for="pending_checkbox">Pending</label>
     </div>
   
   private def header(resourceName: String, duration: Option[Long], summary: Summary) = 
     <div id="scalatest-header" class={ getHeaderStatusColor(summary) }>
       <div id="title">
         ScalaTest Results
-        { getStatistic(summary) }
       </div>
 
       <div id="summary">
         <p id="duration">{ getDuration(resourceName, duration) }</p>    
         <p id="totalTests">{ getTotalTests(summary) }</p>
         <p id="suiteSummary">{ getSuiteSummary(summary) }</p>
+        <p id="testSummary">{ getTestSummary(summary) }</p>
       </div>
     </div>
         
@@ -623,15 +653,27 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         <td>Duration (ms.)</td>
         <td>Succeeded</td>
         <td>Failed</td>
+        <td>Canceled</td>
         <td>Ignored</td>
         <td>Pending</td>
-        <td>Canceled</td>
         <td>Total</td>
       </tr>
     {
       val sortedSuiteList = suiteList.sortWith { (a, b) => 
-        if (a.testsFailedCount == b.testsFailedCount)
-          a.startEvent.suiteName < b.startEvent.suiteName
+        if (a.testsFailedCount == b.testsFailedCount) { 
+          if (a.testsCanceledCount == b.testsCanceledCount) {
+            if (a.testsIgnoredCount == b.testsIgnoredCount) {
+              if (a.testsPendingCount == b.testsPendingCount)
+                a.startEvent.suiteName < b.startEvent.suiteName
+              else
+                a.testsPendingCount > b.testsPendingCount
+            }
+            else
+              a.testsIgnoredCount > b.testsIgnoredCount
+          }
+          else
+            a.testsCanceledCount > b.testsCanceledCount
+        }
         else
           a.testsFailedCount > b.testsFailedCount
       }.toArray
@@ -669,27 +711,32 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
       <td class={ appendCombinedStatus("duration", suiteResult) }>{ durationDisplay(duration) }</td>
       <td class={ countStyle("succeeded", testsSucceededCount) }>{ testsSucceededCount }</td>
       <td class={ countStyle("failed", testsFailedCount) }>{ testsFailedCount }</td>
+      <td class={ countStyle("canceled", testsCanceledCount) }>{ testsCanceledCount }</td>
       <td class={ countStyle("ignored", testsIgnoredCount) }>{ testsIgnoredCount }</td>
       <td class={ countStyle("pending", testsPendingCount) }>{ testsPendingCount }</td>
-      <td class={ countStyle("canceled", testsCanceledCount) }>{ testsCanceledCount }</td>
       <td class={ appendCombinedStatus("total", suiteResult) }>{ testsSucceededCount + testsFailedCount + testsIgnoredCount + testsPendingCount + testsCanceledCount }</td>
     </tr>
   }
         
-  private def suite(elementId: String, suiteName: String, indentLevel: Int) = 
-    <div id={ elementId } class="suite" style={ "margin-left: " + (20 * indentLevel) + "px;" }>
-      <dl>
-        <dt>{ suiteName }</dt>
-      </dl>
-    </div>
-        
+  private def twoLess(indentLevel: Int): Int =
+    indentLevel - 2 match {
+      case lev if lev < 0 => 0
+      case lev => lev
+    }
+
+  private def oneLess(indentLevel: Int): Int =
+    indentLevel - 1 match {
+      case lev if lev < 0 => 0
+      case lev => lev
+    }
+
   private def scope(elementId: String, message: String, indentLevel: Int) = 
-    <div id={ elementId } class="scope" style={ "margin-left: " + (20 * indentLevel) + "px;" }>
+    <div id={ elementId } class="scope" style={ "margin-left: " + (specIndent * oneLess(indentLevel)) + "px;" }>
       { message }
     </div>
       
   private def test(elementId: String, lines: List[String], indentLevel: Int, styleName: String) = 
-    <div id={ elementId } class={ styleName } style={ "margin-left: " + (20 * indentLevel) + "px;" }>
+    <div id={ elementId } class={ styleName } style={ "margin-left: " + (specIndent * twoLess(indentLevel)) + "px;" }>
       <dl>
         {
           lines.map { line => 
@@ -701,7 +748,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   
   private def testWithDetails(elementId: String, lines: List[String], message: String, throwable: Option[Throwable], indentLevel: Int, styleName: String) = {
     def getHTMLForStackTrace(stackTraceList: List[StackTraceElement]) =
-              stackTraceList.map((ste: StackTraceElement) => <span>{ ste.toString }</span><br />)
+              stackTraceList.map((ste: StackTraceElement) => <div>{ ste.toString }</div>)
     
     def getHTMLForCause(throwable: Throwable): scala.xml.NodeBuffer = {
       val cause = throwable.getCause
@@ -756,7 +803,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
     
     val linkId = UUID.randomUUID.toString
     val contentId = UUID.randomUUID.toString
-    <div id={ elementId } class={ styleName } style={ "margin-left: " + (20 * indentLevel) + "px;" }>
+    <div id={ elementId } class={ styleName } style={ "margin-left: " + (specIndent * twoLess(indentLevel)) + "px;" }>
       <dl>
         {
           lines.map { line => 
@@ -764,13 +811,15 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
           }
         }
       </dl>
-      <a id={ linkId } href={ "javascript:toggleDetails('" + contentId + "', '" + linkId + "');" }>Show Details</a>
+      <div class="detailstoggle">
+      <a id={ linkId } href={ "javascript:toggleDetails('" + contentId + "', '" + linkId + "');" }>(Show Details)</a>
+      </div>
       <div id={ contentId } style="display: none">
         <table>
           {
             //if (mainMessage.isDefined) {
               <tr valign="top"><td align="left"><span class="label">{ Resources("DetailsMessage") + ":" }</span></td><td align="left">
-                <span class="dark">
+                <span>
                 { 
                   // Put <br>'s in for line returns at least, so property check failure messages look better
                   val messageLines = message.split("\n")
@@ -787,7 +836,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
           {
             fileAndLineOption match {
               case Some(fileAndLine) =>
-                <tr valign="top"><td align="left"><span class="label">{ Resources("LineNumber") + ":" }</span></td><td align="left"><span class="dark">{ "(" + fileAndLine + ")" }</span></td></tr>
+                <tr valign="top"><td align="left"><span class="label">{ Resources("LineNumber") + ":" }</span></td><td align="left"><span>{ "(" + fileAndLine + ")" }</span></td></tr>
               case None =>
             }
           }
@@ -801,8 +850,8 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         </table>
         <table>
           <tr valign="top"><td align="left" colspan="2">
-            { grayStackTraceElements.map((ste: StackTraceElement) => <span class="gray">{ ste.toString }</span><br />) }
-            { blackStackTraceElements.map((ste: StackTraceElement) => <span class="dark">{ ste.toString }</span><br />) }
+            { grayStackTraceElements.map((ste: StackTraceElement) => <div class="gray">{ ste.toString }</div>) }
+            { blackStackTraceElements.map((ste: StackTraceElement) => <div>{ ste.toString }</div>) }
             </td>
           </tr>
         </table>
@@ -817,7 +866,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   }
         
   private def markup(elementId: String, text: String, indentLevel: Int, styleName: String) = 
-    <div id={ elementId } class={ styleName } style={ "margin-left: " + (20 * indentLevel) + "px;" }>
+    <div id={ elementId } class={ styleName } style={ "margin-left: " + (specIndent * oneLess(indentLevel)) + "px;" }>
        { XML.loadString(pegDown.markdownToHtml(text)) }
     </div>
        
@@ -958,8 +1007,14 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   private def getTotalTests(summary: Summary) = 
     Resources("totalNumberOfTestsRun", summary.testsCompletedCount.toString)    
     
+  // Suites: completed {0}, aborted {1}
   private def getSuiteSummary(summary: Summary) = 
     Resources("suiteSummary", summary.suitesCompletedCount.toString, summary.suitesAbortedCount.toString)
+
+  // Tests: succeeded {0}, failed {1}, canceled {4}, ignored {2}, pending {3}
+  private def getTestSummary(summary: Summary) = 
+    Resources("testSummary", summary.testsSucceededCount.toString, summary.testsFailedCount.toString, summary.testsCanceledCount.toString, summary.testsIgnoredCount.toString,
+      summary.testsPendingCount.toString)
 
   // We subtract one from test reports because we add "- " in front, so if one is actually zero, it will come here as -1
   // private def indent(s: String, times: Int) = if (times <= 0) s else ("  " * times) + s

@@ -105,16 +105,58 @@ sorttable = {
             return;
           }
           if (this.className.search(/\bsorttable_sorted_reverse\b/) != -1) {
-            // if we're already sorted by this column in reverse, just 
-            // re-reverse the table, which is quicker
-            sorttable.reverse(this.sorttable_tbody);
-            this.className = this.className.replace('sorttable_sorted_reverse',
-                                                    'sorttable_sorted');
-            this.removeChild(document.getElementById('sorttable_sortrevind'));
-            sortfwdind = document.createElement('span');
-            sortfwdind.id = "sorttable_sortfwdind";
-            sortfwdind.innerHTML = stIsIE ? '&nbsp<font face="webdings">6</font>' : '&nbsp;&#x25BE;';
-            this.appendChild(sortfwdind);
+            // if we're already sorted by this column in reverse, just sort it back to default sorting
+            
+            theadrow = this.parentNode;
+            forEach(theadrow.childNodes, function(cell) {
+              if (cell.nodeType == 1) { // an element
+                cell.className = cell.className.replace('sorttable_sorted_reverse','');
+                cell.className = cell.className.replace('sorttable_sorted','');
+              }
+            });
+            sortfwdind = document.getElementById('sorttable_sortfwdind');
+            if (sortfwdind) { sortfwdind.parentNode.removeChild(sortfwdind); }
+            sortrevind = document.getElementById('sorttable_sortrevind');
+            if (sortrevind) { sortrevind.parentNode.removeChild(sortrevind); }
+            
+            row_array = [];
+	        rows = this.sorttable_tbody.rows;
+	        for (var j=0; j<rows.length; j++) {
+	          //row_array[row_array.length] = [sorttable.getInnerText(rows[j].cells[col]), rows[j]];
+	          row_array[row_array.length] = {
+	            suiteName : sorttable.getInnerText(rows[j].cells[0]), 
+	            testSucceededCount : sorttable.getInnerText(rows[j].cells[2]),
+	            testFailedCount : sorttable.getInnerText(rows[j].cells[3]), 
+	            testCanceledCount : sorttable.getInnerText(rows[j].cells[4]), 
+	            testIgnoredCount : sorttable.getInnerText(rows[j].cells[5]), 
+	            testPendingCount : sorttable.getInnerText(rows[j].cells[6]), 
+	            row : rows[j]
+	          };
+	        }
+	        
+	        row_array.sort(function(a, b) {
+	          if (sorttable.equal_numeric(a.testFailedCount, b.testFailedCount)) { 
+                if (sorttable.equal_numeric(a.testCanceledCount, b.testCanceledCount)) {
+                  if (sorttable.equal_numeric(a.testIgnoredCount, b.testIgnoredCount)) {
+                    if (sorttable.equal_numeric(a.testPendingCount, b.testPendingCount))
+                       return sorttable.sort_alpha([a.suiteName], [b.suiteName]); 
+                    else
+                      return sorttable.sort_numeric([b.testPendingCount], [a.testPendingCount]); 
+                  }
+                  else
+                    return sorttable.sort_numeric([b.testIgnoredCount], [a.testIgnoredCount]); 
+                }
+                else
+                  return sorttable.sort_numeric([b.testCanceledCount], [a.testCanceledCount]); 
+              }
+              else
+                return sorttable.sort_numeric([b.testFailedCount], [a.testFailedCount]); 
+	        });
+	        tb = this.sorttable_tbody;
+	        for (var j=0; j<row_array.length; j++) {
+	          tb.appendChild(row_array[j].row);
+	        }
+            
             return;
           }
           
@@ -169,7 +211,7 @@ sorttable = {
     for (var i=0; i<table.tBodies[0].rows.length; i++) {
       text = sorttable.getInnerText(table.tBodies[0].rows[i].cells[column]);
       if (text != '') {
-        if (text.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+        if (text.match(/^-?[ï¿½$ï¿½]?[\d,.]+%?$/)) {
           return sorttable.sort_numeric;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy 
@@ -254,7 +296,13 @@ sorttable = {
     }
     delete newrows;
   },
-  
+  equal_numeric: function(a, b) {
+    aa = parseFloat(a[0].replace(/[^0-9.-]/g,''));
+    if (isNaN(aa)) aa = 0;
+    bb = parseFloat(b[0].replace(/[^0-9.-]/g,'')); 
+    if (isNaN(bb)) bb = 0;
+    return aa == bb;
+  }, 
   /* sort functions
      each sort function takes two parameters, a and b
      you are comparing a[0] and b[0] */

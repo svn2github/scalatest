@@ -494,6 +494,7 @@ private[scalatest] class RunnerJFrame(
                               "testSummary",
                               summary.testsSucceededCount.toString,
                               summary.testsFailedCount.toString,
+                              summary.testsCanceledCount.toString,
                               summary.testsIgnoredCount.toString,
                               summary.testsPendingCount.toString
                             )
