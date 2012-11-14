@@ -2216,7 +2216,7 @@ object Runner {
     try {
       Thread.currentThread.setContextClassLoader(loader)
       try {
-        val dispatchReporter = ReporterFactory.getDispatchReporter(reporterSpecs, graphicReporter, passFailReporter, loader)
+        val dispatchReporter = ReporterFactory.getDispatchReporter(reporterSpecs, graphicReporter, passFailReporter, loader, None)
         try {
           f(loader, dispatchReporter)
         }

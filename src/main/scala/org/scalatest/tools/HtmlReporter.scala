@@ -46,7 +46,8 @@ import java.text.DecimalFormat
  * A <code>Reporter</code> that prints test status information in HTML format to a file.
  */
 private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations: Boolean,
-        presentInColor: Boolean, presentStackTraces: Boolean, presentFullStackTraces: Boolean, cssUrl: Option[URL]) extends ResourcefulReporter {
+        presentInColor: Boolean, presentStackTraces: Boolean, presentFullStackTraces: Boolean, 
+        cssUrl: Option[URL], resultHolder: Option[SuiteResultHolder]) extends ResourcefulReporter {
 
   private val specIndent = 15
   private val targetDir = new File(directoryPath)
@@ -101,6 +102,10 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   copyResource(getResource("images/yellowbullet.gif"), imagesDir, "testpending.gif")
   copyResource(getResource("images/graybullet.gif"), imagesDir, "infoprovided.gif")
   
+  private val results = resultHolder match {
+    case Some(holder) => holder
+    case None => new SuiteResultHolder()
+  }
   private val pegDown = new PegDownProcessor
 
   private def withPossibleLineNumber(stringToPrint: String, throwable: Option[Throwable]): String = {
@@ -428,14 +433,6 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   private def getHeaderStatusColor(summary: Summary) = 
     if (summary.testsFailedCount == 0) "scalatest-header-passed" else "scalatest-header-failed"
   
-  private def getRunSummary: Summary = {
-    val (succeeded, failed, ignored, pending, canceled) = suiteList.foldLeft((0, 0, 0, 0, 0)) { case ((succeeded, failed, ignored, pending, canceled), r) =>
-      (succeeded + r.testsSucceededCount, failed + r.testsFailedCount, ignored + r.testsIgnoredCount, 
-       pending + r.testsPendingCount, canceled + r.testsCanceledCount)
-    }
-    Summary(succeeded, failed, ignored, pending, canceled, suiteList.length, suiteList.filter(!_.isCompleted).length)
-  }
-  
   private def getPieChartScript(summary: Summary) = {
     import summary._
     
@@ -483,7 +480,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   }
   
   private def getIndexHtml(resourceName: String, duration: Option[Long]) = {
-    val summary = getRunSummary
+    val summary = results.summary
     import summary._
 
     val decimalFormat = new DecimalFormat("#.##")
@@ -659,7 +656,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         <td>Total</td>
       </tr>
     {
-      val sortedSuiteList = suiteList.sortWith { (a, b) => 
+      val sortedSuiteList = results.suiteList.sortWith { (a, b) => 
         if (a.testsFailedCount == b.testsFailedCount) { 
           if (a.testsCanceledCount == b.testsCanceledCount) {
             if (a.testsIgnoredCount == b.testsIgnoredCount) {
@@ -777,8 +774,8 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         case Some(throwable) =>
           val stackTraceElements = throwable.getStackTrace.toList
           throwable match {
-            case tfe: TestFailedException =>
-              (stackTraceElements.take(tfe.failedCodeStackDepth), stackTraceElements.drop(tfe.failedCodeStackDepth))
+            case sde: exceptions.StackDepthException =>
+              (stackTraceElements.take(sde.failedCodeStackDepth), stackTraceElements.drop(sde.failedCodeStackDepth))
             case _ => (List(), stackTraceElements)
           } 
         case None => (List(), List())
@@ -875,12 +872,8 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
       tagMap.map { case (elementId, bitSet) => "\"" + elementId + "\": " + bitSet }.mkString(", \n") + 
     "};\n" + 
     "applyFilter();"
-
-  case class SuiteResult(suiteId: String, suiteName: String, suiteClassName: Option[String], duration: Option[Long], startEvent: SuiteStarting, endEvent: Event, eventList: collection.immutable.IndexedSeq[Event], 
-                          testsSucceededCount: Int, testsFailedCount: Int, testsIgnoredCount: Int, testsPendingCount: Int, testsCanceledCount: Int, isCompleted: Boolean)
     
   private var eventList = new ListBuffer[Event]()
-  private val suiteList = new ListBuffer[SuiteResult]()
   private var runEndEvent: Option[Event] = None
         
   def apply(event: Event) {
@@ -914,7 +907,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
                 case _ => r
               }
             }
-            suiteList += suiteResult
+            results += suiteResult
             makeSuiteFile(suiteResult)
           case other => 
             throw new IllegalStateException("Expected SuiteStarting in the head of suite events, but we got: " + other.getClass.getName)
@@ -936,7 +929,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
                 case _ => r
               }
             }
-            suiteList += suiteResult
+            results += suiteResult
             makeSuiteFile(suiteResult)
           case other => 
             throw new IllegalStateException("Expected SuiteStarting in the head of suite events, but we got: " + other.getClass.getName)
@@ -989,10 +982,9 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
           case other =>
             throw new IllegalStateException("Expected run ending event only, but got: " + other.getClass.getName)
         }
-      case None => // If no run end event (e.g. when run in sbt), just use runCompleted
-        makeIndexFile("runCompleted", None)
+      case None => // If no run end event (e.g. when run in sbt), just use runCompleted with sum of suites' duration.
+        makeIndexFile("runCompleted", Some(results.totalDuration))
     }
-    
   }
   
   private def getDuration(resourceName: String, duration: Option[Long]) = {

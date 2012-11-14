@@ -120,7 +120,7 @@ private[scalatest] class ReporterFactory {
     new XmlReporter(directory)
   }
   
-  protected def createHtmlReporter(configSet: Set[ReporterConfigParam], directory: String, cssUrl: Option[URL]) = {
+  protected def createHtmlReporter(configSet: Set[ReporterConfigParam], directory: String, cssUrl: Option[URL], resultHolder: Option[SuiteResultHolder]) = {
     if (configSetMinusNonFilterParams(configSet).isEmpty)
       new HtmlReporter(
         directory,
@@ -128,7 +128,8 @@ private[scalatest] class ReporterFactory {
         !configSet.contains(PresentWithoutColor),
         configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
         configSet.contains(PresentFullStackTraces), // If they say both S and F, F overrules
-        cssUrl
+        cssUrl, 
+        resultHolder
       )
       else
         new FilterReporter(
@@ -138,7 +139,8 @@ private[scalatest] class ReporterFactory {
             !configSet.contains(PresentWithoutColor),
             configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
             configSet.contains(PresentFullStackTraces), // If they say both S and F, F overrules
-            cssUrl
+            cssUrl, 
+            resultHolder
           ),
           configSet
         )
@@ -164,7 +166,7 @@ private[scalatest] class ReporterFactory {
     new SocketReporter(host, port)
   }
   
-  private[scalatest] def getDispatchReporter(reporterSpecs: ReporterConfigurations, graphicReporter: Option[Reporter], passFailReporter: Option[Reporter], loader: ClassLoader) = {
+  private[scalatest] def getDispatchReporter(reporterSpecs: ReporterConfigurations, graphicReporter: Option[Reporter], passFailReporter: Option[Reporter], loader: ClassLoader, resultHolder: Option[SuiteResultHolder]) = {
 
     def getReporterFromConfiguration(configuration: ReporterConfiguration): Reporter =
 
@@ -175,7 +177,7 @@ private[scalatest] class ReporterFactory {
         case JunitXmlReporterConfiguration(configSet, directory) => createJunitXmlReporter(configSet, directory)
         case DashboardReporterConfiguration(configSet, directory, numFilesToArchive) => createDashboardReporter(configSet, directory, numFilesToArchive)
         case XmlReporterConfiguration(configSet, directory) => createXmlReporter(configSet, directory)
-        case HtmlReporterConfiguration(configSet, directory, cssFile) => createHtmlReporter(configSet, directory, cssFile)
+        case HtmlReporterConfiguration(configSet, directory, cssFile) => createHtmlReporter(configSet, directory, cssFile, resultHolder)
         case CustomReporterConfiguration(configSet, reporterClassName) => createCustomReporter(configSet, reporterClassName, loader) 
         case GraphicReporterConfiguration(configSet) => throw new RuntimeException("Should never happen.")
         case SocketReporterConfiguration(host, port) => createSocketReporter(host, port)

@@ -219,7 +219,8 @@ private[scalatest] class FriendlyParamsTranslator {
         repoArgs ++= parseDashAndArgument(s, "junitxml(directory=\"xxx\")", it)
       else if(s.startsWith("junitxml")) 
         repoArgs ++= translateKeyValue(s, "junitxml", "-u", List("directory"), Nil, "junitxml(directory=\"xxx\")", it)
-      else if (s.startsWith("-d")) 
+      // To be enabled when and if RunCompleted, RunAborted and RunStopped can be supported correctly in ScalaTestFramework
+      /*else if (s.startsWith("-d")) 
         repoArgs ++= parseDashAndArgument(s, "dashboard(directory=\"xxx\", archive=\"xxx\")", it)
       else if (s.startsWith("-a")) 
         repoArgs ++= parseDashAndArgument(s, "dashboard(directory=\"xxx\", archive=\"xxx\")", it)
@@ -234,20 +235,40 @@ private[scalatest] class FriendlyParamsTranslator {
         val archiveOpt:Option[String] = paramsMap.get("archive")
         archiveOpt match {
           case Some(archive) => 
+            if (archive.length == 0)
+              throw new IllegalArgumentException("dashboard archive value cannot be empty string, example: dashboard(directory=\"xxx\", archive=\"xxx\")")
             repoArgs += "-a"
             repoArgs += archive
           case None => 
         }
-      }
+      }*/
       // To be enabled when and if native scalatest xml reporter is available
       /*else if (s.startsWith("-x")) 
         repoArgs ++= parseDashAndArgument(s, "xml(directory=\"xxx\")", it)
       else if (s.startsWith("xml")) 
         repoArgs ++= translateKeyValue(s, "xml", "-x", List("directory"), Nil, "xml(directory=\"xxx\")", it)*/
       else if (s.startsWith("-h")) 
-        repoArgs ++= parseDashAndArgument(s, "html(filename=\"xxx\")", it)
-      else if (s.startsWith("html")) 
-        repoArgs ++= translateKeyValue(s, "html", "-h", List("filename"), List("config"), "html(filename=\"xxx\")", it)
+        repoArgs ++= parseDashAndArgument(s, "html(directory=\"xxx\", css=\"xxx\")", it)
+      else if (s.startsWith("-Y")) 
+        repoArgs ++= parseDashAndArgument(s, "html(directory=\"xxx\", css=\"xxx\")", it)
+      else if (s.startsWith("html")) {
+        repoArgs += "-h"
+        val paramsMap:Map[String, String] = parseParams(s.substring("html".length), it, Set("directory", "css"), "html(directory=\"xxx\", css=\"xxx\")")
+        val directoryOpt:Option[String] = paramsMap.get("directory")
+        directoryOpt match {
+          case Some(dir) => repoArgs += dir
+          case None => throw new IllegalArgumentException("html requires directory to be specified, example: html(directory=\"xxx\", css=\"xxx\")")
+        }
+        val cssOpt:Option[String] = paramsMap.get("css")
+        cssOpt match {
+          case Some(css) => 
+            if (css.length == 0)
+              throw new IllegalArgumentException("html's css value cannot be empty string, example: html(directory=\"xxx\", css=\"xxx\")")
+            repoArgs += "-Y"
+            repoArgs += css
+          case None => 
+        }
+      }
       else if (s.startsWith("-r")) 
         repoArgs ++= parseDashAndArgument(s, "reporterclass(classname=\"xxx\")", it)
       else if (s.startsWith("reporterclass")) {

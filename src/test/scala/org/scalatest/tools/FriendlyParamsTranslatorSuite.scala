@@ -232,7 +232,8 @@ class FriendlyParamsTranslatorSuite extends FunSuite {
     intercept[IllegalArgumentException] { getRepoArgsList("graphic(config=\"durations\")") }
   }
   
-  test("parse argument dashboard(directory=\"test\")") {
+  // To be enabled when dashboard is supported
+  /*test("parse argument dashboard(directory=\"test\")") {
     val repoArgsList = getRepoArgsList("dashboard(directory=\"test\")")
     assert(repoArgsList.length == 2)
     assert(repoArgsList(0) == "-d")
@@ -253,8 +254,8 @@ class FriendlyParamsTranslatorSuite extends FunSuite {
   }
   
   test("parse argument dashboard(directory=\"test\", archive=\"\") show fail with IllegalArgumentException") {
-    intercept[IllegalArgumentException] { getRepoArgsList("dashboard()") }
-  }
+    intercept[IllegalArgumentException] { getRepoArgsList("dashboard(directory=\"test\", archive=\"\")") }
+  }*/
   
   ignore("parse argument xml(directory=\"test\")") {
     val repoArgsList = getRepoArgsList("xml(directory=\"test\")")
@@ -267,22 +268,28 @@ class FriendlyParamsTranslatorSuite extends FunSuite {
     intercept[IllegalArgumentException] { getRepoArgsList("xml") }
   }
   
-  test("parse argument html(filename=\"test.html\")") {
-    val repoArgsList = getRepoArgsList("html(filename=\"test.html\")")
+  test("parse argument html(directory=\"test\")") {
+    val repoArgsList = getRepoArgsList("html(directory=\"test\")")
     assert(repoArgsList.length == 2)
     assert(repoArgsList(0) == "-h")
-    assert(repoArgsList(1) == "test.html")
+    assert(repoArgsList(1) == "test")
   }
   
-  test("parse argument html(filename=\"test.html\", config=\"nocolor fullstacks durations\")") {
-    val repoArgsList = getRepoArgsList("html(filename=\"test.html\", config=\"nocolor fullstacks durations\")")
-    assert(repoArgsList.length == 2)
-    assert(repoArgsList(0) == "-hWFD")
-    assert(repoArgsList(1) == "test.html")
+  test("parse argument html(directory=\"test\", css=\"5\")") {
+    val repoArgsList = getRepoArgsList("html(directory=\"test\", css=\"mystyles.css\")")
+    assert(repoArgsList.length == 4)
+    assert(repoArgsList(0) == "-h")
+    assert(repoArgsList(1) == "test")
+    assert(repoArgsList(2) == "-Y")
+    assert(repoArgsList(3) == "mystyles.css")
   }
   
-  test("parse argument html should fail with IllegalArgumentException") {
-    intercept[IllegalArgumentException] { getRepoArgsList("html") }
+  test("parse argument html() show fail with IllegalArgumentException") {
+    intercept[IllegalArgumentException] { getRepoArgsList("html()") }
+  }
+  
+  test("parse argument html(directory=\"test\", css=\"\") show fail with IllegalArgumentException") {
+    intercept[IllegalArgumentException] { getRepoArgsList("html(directory=\"test\", css=\"\")") }
   }
   
   test("parse argument reporterclass(classname=\"a.b.c\")") {

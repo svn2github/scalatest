@@ -108,6 +108,7 @@ class ScalaTestFramework extends Framework {
     private var reporterConfigs: ReporterConfigurations = null
     private var filter: Filter = null
     private var configMap: Map[String, String] = null
+    private val resultHolder = new SuiteResultHolder()
     
     def getConfigurations(args: Array[String], loggers: Array[Logger], eventHandler: EventHandler, testLoader: ClassLoader) = 
       synchronized {
@@ -151,7 +152,7 @@ class ScalaTestFramework extends Framework {
         }
         
         if (reporter == null || reporter.isDisposed)
-          reporter = SbtReporterFactory.getDispatchReporter(reporterConfigs, None, None, testLoader)
+          reporter = SbtReporterFactory.getDispatchReporter(reporterConfigs, None, None, testLoader, Some(resultHolder))
         
         (reporter, filter, configMap)
       }
