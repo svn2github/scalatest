@@ -1472,8 +1472,6 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      */
     def should(beWord: BeWord): ResultOfBeWordForAnyRef[T] = new ResultOfBeWordForAnyRef(left, true)
     
-// TODO: Put have on ResultOfNotWord
-
     /**
      * This method enables syntax such as the following:
      *
