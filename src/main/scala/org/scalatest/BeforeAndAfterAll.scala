@@ -150,11 +150,9 @@ package org.scalatest
  * </pre>
  *
  * <p>
- * <strong>Note: This trait does not currently ensure that the code in <code>afterAll</code> is executed after
- * all the tests and nested suites are executed if a <code>Distributor</code> is passed. The
- * plan is to do that eventually (in fact, in a soon-to-be-released 2.0 milestone), but in the meantime, be aware that <code>afterAll</code> is
- * guaranteed to be run after all the tests and nested suites only when they are run
- * sequentially.</strong>
+ * <strong>Note: As of 2.0.M5, this trait uses the newly added <code>Status</code> result of <code>Suite</code>'s "run" methods
+ * to ensure that the code in <code>afterAll</code> is executed after
+ * all the tests and nested suites are executed even if a <code>Distributor</code> is passed. Yay!</strong>
  * </p>
  *
  * @author Bill Venners
