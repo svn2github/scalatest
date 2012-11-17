@@ -2267,9 +2267,13 @@ trait ClassicMatchers extends Assertions { matchers =>
    * Sealed supertrait for <code>Length</code> and <code>Size</code> type classes.
    *
    * <p>
-   * These traits enable you to use ScalaTest matchers' &ldquo;<code>have length</code>&rdquo; and
-   * &ldquo;<code>have size</code>&rdquo; syntax to be used with arbitrary objects. As an example, consider
-   * <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
+   * This sealed trait has two subclasses, <code>Length[T]</code> and <code>Size[T]</code>.
+   * Objects of type T for which an implicit <code>Length[T]</code> is available can be used
+   * with the <code>should have length</code> syntax.
+   * Similarly, objects of type T for which an implicit <code>Size[T]</code> is available can be used
+   * with the <code>should have size</code> syntax.
+   * By creating an appropriate type class, therefore, you can enable the size and length checking syntax with arbitrary objects.
+   * As an example, consider <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
    * can't be used with ScalaTest's <code>have length</code> syntax. 
    * </p>
    *
@@ -2313,8 +2317,11 @@ trait ClassicMatchers extends Assertions { matchers =>
    * Supertrait for <code>Length</code> type classes.
    *
    * <p>
-   * This traits enable you to use ScalaTest matchers' &ldquo;<code>have length</code>&rdquo; 
-   * syntax to be used with arbitrary objects. As an example, consider
+   * Trait <code>Length</code> is a type class trait for objects that can be queried for length.
+   * Objects of type T for which an implicit <code>Length[T]</code> is available can be used
+   * with the <code>should have length</code> syntax.
+   * In other words, this trait enables you to use the length checking
+   * syntax with arbitrary objects. As an example, consider
    * <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
    * can't be used with ScalaTest's <code>have length</code> syntax. 
    * </p>
@@ -2351,14 +2358,17 @@ trait ClassicMatchers extends Assertions { matchers =>
    *
    * @author Bill Venners
    */
-  trait Length[T] extends Extent[T] // TODO: Fix the ScalaDoc
+  trait Length[T] extends Extent[T]
 
   /**
    * Supertrait for <code>Size</code> type classes.
    *
    * <p>
-   * This traits enable you to use ScalaTest matchers' &ldquo;<code>have size</code>&rdquo; 
-   * syntax to be used with arbitrary objects. As an example, consider
+   * Trait <code>Size</code> is a type class trait for objects that can be queried for size.
+   * Objects of type T for which an implicit <code>Size[T]</code> is available can be used
+   * with the <code>should have size</code> syntax.
+   * In other words, this trait enables you to use the size checking
+   * syntax with arbitrary objects. As an example, consider
    * <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
    * can't be used with ScalaTest's <code>have length</code> syntax. 
    * </p>
@@ -2394,7 +2404,7 @@ trait ClassicMatchers extends Assertions { matchers =>
    *
    * @author Bill Venners
    */
-  trait Size[T] extends Extent[T] // TODO Fix the scaladoc
+  trait Size[T] extends Extent[T]
 
   // This guy is generally done through an implicit conversion from a symbol. It takes that symbol, and 
   // then represents an object with an apply method. So it gives an apply method to symbols.
