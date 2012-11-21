@@ -42,6 +42,21 @@ class StatusSpec extends fixture.Spec {
       status.setCompleted()
       status.waitUntilCompleted()
     }
+    
+    def `should throw IllegalStateException when setFailed() is called after setCompleted() is set`(status: FixtureParam) {
+      status.setCompleted()
+      intercept[IllegalStateException] {
+        status.setFailed()
+      }
+    }
+    
+    def `should allow setCompleted() to be called multiple times`(status: FixtureParam) {
+      status.setCompleted()
+      assert(status.isCompleted)
+      status.setCompleted()
+      assert(status.isCompleted)
+      status.setCompleted()
+      assert(status.isCompleted)
+    }
   }
-  
 }
