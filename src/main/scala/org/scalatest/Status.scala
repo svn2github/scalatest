@@ -54,6 +54,7 @@ trait Status {
 /**
  * Singleton status that represents an already completed run with no tests failed and no suites aborted.
  */
+@serializable
 object SucceededStatus extends Status {
 
   /**
@@ -79,6 +80,7 @@ object SucceededStatus extends Status {
 /**
  * Singleton status that represents an already completed run with at least one failed test or aborted suite.
  */
+@serializable
 object FailedStatus extends Status {
 
   /**
@@ -102,6 +104,7 @@ object FailedStatus extends Status {
 }
 
 // Used internally in ScalaTest
+@serializable
 private[scalatest] final class ScalaTestStatefulStatus extends Status {
   private val latch = new CountDownLatch(1)
   @volatile private var succeeded = true
@@ -142,6 +145,7 @@ private[scalatest] final class ScalaTestStatefulStatus extends Status {
  * Instances of this class are thread safe.
  * </p>
  */
+@serializable
 final class StatefulStatus extends Status {
   private val latch = new CountDownLatch(1)
   @volatile private var succeeded = true
@@ -205,6 +209,7 @@ final class StatefulStatus extends Status {
  *
  * @param status the <code>Status</code>es out of which this status is composed.
  */
+@serializable
 final class CompositeStatus(statuses: Set[Status]) extends Status {
   
   /**
