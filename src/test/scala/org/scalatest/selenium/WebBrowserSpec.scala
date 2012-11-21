@@ -68,6 +68,35 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       text2.value should be ("value2")
     }
   }
+  
+  describe("pwdField") {
+    it("should throw TFE with valid stack depth if specified item not found") {
+      go to (host + "find-pwdfield.html")
+      val caught = intercept[TestFailedException] {
+        pwdField("unknown")
+      }
+      caught.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      caught.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+    }
+    it("should throw TFE with valid stack depth if specified is found but is not a password field") {
+      go to (host + "find-pwdfield.html")
+      val caught = intercept[TestFailedException] {
+        pwdField("area1")
+      }
+      caught.failedCodeLineNumber should be (Some(thisLineNumber - 2))
+      caught.failedCodeFileName should be (Some("WebBrowserSpec.scala"))
+    }
+    it("should, when a valid password field is found, return a PasswordField instance") {
+      go to (host + "find-pwdfield.html")
+      val secret1 = pwdField("secret1")
+      secret1.value should be ("pwd1")
+    }
+    it("should, when multiple matching password fields exist, return the first one") {
+      go to (host + "find-pwdfield.html")
+      val secret2 = pwdField("secret2")
+      secret2.value should be ("pwd2")
+    }
+  }
 
   describe("textArea") {
     it("should throw TFE with valid stack depth if specified item not found") {
@@ -387,6 +416,15 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           fail("Expected Some(textArea: TextArea), but got: " + other)
       }
     }
+    it("should return a defined Option[Element] containing an instance of PasswordField if specified item is found to be a password field") {
+      go to (host + "find-pwdfield.html")
+      find("secret1") match {
+        case Some(pwdField: PasswordField) =>
+          pwdField.value should be ("pwd1")
+        case other =>
+          fail("Expected Some(pwdField: PasswordField), but got: " + other)
+      }
+    }
     it("should return a defined Option[Element] containing an instance of RadioButton if specified item is found to be a radio button") {
       go to (host + "find-radio.html")
       find("group2") match {
@@ -459,6 +497,17 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           textArea.text should be ("value1")
         case other =>
           fail("Expected TextArea, but got: " + other)
+      }
+    }
+    it("should return a defined Iterator[Element] containing an instance of PasswordField if specified item is found to be a password field") {
+      go to (host + "find-pwdfield.html")
+      val secret1 = findAll("secret1")
+      secret1.hasNext should be (true)
+      secret1.next match {
+        case pwdField: PasswordField => 
+          pwdField.value should be ("pwd1")
+        case other => 
+          fail("Expected PasswordField, but got: " + other)
       }
     }
     it("should return a defined Iterator[Element] containing an instance of RadioButton if specified item is found to be a radio button") {
@@ -574,6 +623,24 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       textField("text2").value should be ("value 2")
       textField("text2").attribute("value") should be (Some("value 2"))
     }
+    
+    it("should get and set password field value correctly.") {
+      go to (host + "pwdfield.html")
+      pageTitle should be ("Password Field")
+
+      pwdField("secret1").value should be ("")                   
+
+      pwdField("secret1").attribute("value") should be (Some(""))
+      pwdField("secret1").value = "value 1"
+      pwdField("secret1").value should be ("value 1")
+      pwdField("secret1").attribute("value") should be (Some("value 1"))
+
+      pwdField("secret2").value should be ("")
+      pwdField("secret2").attribute("value") should be (Some(""))
+      pwdField("secret2").value = "value 2"
+      pwdField("secret2").value should be ("value 2")
+      pwdField("secret2").attribute("value") should be (Some("value 2"))
+    }
 
     it("should allow text to be entered in the active element if it is a text field.") {
 
@@ -598,7 +665,30 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       textField("text1").value should be ("first post! second post! third post!")                   
     }
     
-    it("should throw TestFailedException with correct stack depth when enter is called currently selected element is neither text field or text area.") {
+    it("should allow text to be entered in the active element if it is a password field.") {
+
+      go to (host + "pwdfield.html")
+      pageTitle should be ("Password Field")
+                                                                
+      pwdField("secret1").value should be ("")                   
+
+      click on "secret1"
+      enter("secret 1A")
+      pwdField("secret1").value should be ("secret 1A")                   
+      enter("secret 1B")
+      pwdField("secret1").value should be ("secret 1B")                   
+      enter("")
+      pwdField("secret1").value should be ("")                   
+
+      pressKeys("first secret!")
+      pwdField("secret1").value should be ("first secret!")                   
+      pressKeys(" second secret!")
+      pwdField("secret1").value should be ("first secret! second secret!")                   
+      pressKeys(" third secret!")
+      pwdField("secret1").value should be ("first secret! second secret! third secret!")                   
+    }
+    
+    it("should throw TestFailedException with correct stack depth when enter is called currently selected element is neither text field, text area or password field.") {
       go to (host + "checkbox.html")
       click on ("opt1")
       val e = intercept[TestFailedException] {
@@ -648,6 +738,20 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
 
       textArea("area1").clear()
       textArea("area1").value should be ("")
+    }
+    
+    it("should clear a password field.") {
+      go to (host + "pwdfield.html")
+      pageTitle should be ("Password Field")
+                                                                
+      pwdField("secret1").value = "value 1"                     
+      pwdField("secret1").value should be ("value 1")
+
+      pwdField("secret1").clear()
+      pwdField("secret1").value should be ("")                   
+
+      pwdField("secret1").value = "value 1"                     
+      pwdField("secret1").value should be ("value 1")
     }
     
     it("should allow text to be entered in the active element if it is a text area.") {

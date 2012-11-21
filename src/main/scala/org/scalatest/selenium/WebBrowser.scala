@@ -218,7 +218,7 @@ import org.scalatest.Resources
  * not of the requested type, an exception will immediately result causing the test to fail.
  * <p>
  *
- * <h3>Text fields and text areas</h3>
+ * <h3>Text fields, text areas, and password fields</h3>
  * 
  * <p>
  * You can change a text field's value by assigning it via the <code>=</code> operator, like this:
@@ -241,7 +241,7 @@ import org.scalatest.Resources
  * </p>
  * 
  * <p>
- * You can use the same syntax with text areas by replacing <code>textField</code> with <code>textArea</code>, as in:
+ * You can use the same syntax with text areas and password fields by replacing <code>textField</code> with <code>textArea</code> or <code>pwdField</code>, as in:
  * </p>
  * 
  * <pre class="stHighlight">
@@ -250,9 +250,18 @@ import org.scalatest.Resources
  * </pre>
  * 
  * <p>
- * An alternate way to enter data into a text field or text area is to use <code>enter</code> or <code>pressKeys</code>.
+ * or with a password field:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * pwdField("secret").value = "Don't tell anybody!"
+ * pwdField("secret").value should be ("Don't tell anybody!")
+ * </pre>
+ * 
+ * <p>
+ * An alternate way to enter data into a text field, text area, or password field is to use <code>enter</code> or <code>pressKeys</code>.
  * Although both of these send characters to the active element, <code>pressKeys</code> can be used on any kind of
- * element, whereas <code>enter</code> can only be used on text fields and text areas. Another difference is that <code>enter</code>
+ * element, whereas <code>enter</code> can only be used on text fields, text areas, and password fields. Another difference is that <code>enter</code>
  * will clear the text field or area before sending the characters, effectively replacing any currently existing text with the
  * new text passed to <code>enter</code>. By contrast, <code>pressKeys</code> does not do any clearing&#8212;it just appends
  * more characters to any existing text. You can backup with <code>pressKeys</code>, however, by sending explicit backspace
@@ -1505,6 +1514,9 @@ trait WebBrowser {
   
   private def isTextField(webElement: WebElement): Boolean = 
     webElement.getTagName.toLowerCase == "input" && webElement.getAttribute("type").toLowerCase == "text"
+      
+  private def isPasswordField(webElement: WebElement): Boolean = 
+    webElement.getTagName.toLowerCase == "input" && webElement.getAttribute("type").toLowerCase == "password"
 
   private def isTextArea(webElement: WebElement): Boolean = 
     webElement.getTagName.toLowerCase == "textarea"
@@ -1612,6 +1624,57 @@ trait WebBrowser {
 
     /**
      * Clears this text area.
+     */
+    def clear() { underlying.clear() }
+  }
+  
+  /**
+   * This class is part of ScalaTest's Selenium DSL. Please see the documentation for
+   * <a href="WebBrowser.html"><code>WebBrowser</code></a> for an overview of the Selenium DSL.
+   *
+   * <p>
+   * This class enables syntax such as the following:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * pwdField("q").value should be ("Cheese!")
+   * </pre>
+   *
+   * @param underlying the <code>WebElement</code> representing a password field
+   * @throws TestFailedExeption if the passed <code>WebElement</code> does not represent a password field
+   */
+  final class PasswordField(val underlying: WebElement) extends Element {
+    
+    if(!isPasswordField(underlying))
+      throw new TestFailedException(
+                     sde => Some("Element " + underlying + " is not password field."),
+                     None,
+                     getStackDepthFun("WebBrowser.scala", "this", 1)
+                   )
+    
+    /**
+     * Gets this password field's value.
+     *
+     * <p>
+     * This method invokes <code>getAttribute("value")</code> on the underlying <code>WebElement</code>.
+     * </p>
+     *
+     * @return the password field's value
+     */
+    def value: String = underlying.getAttribute("value")  
+    
+    /**
+     * Sets this password field's value.
+     *
+     * @param value the new value
+     */
+    def value_=(value: String) {
+      underlying.clear()
+      underlying.sendKeys(value)
+    }
+
+    /**
+     * Clears this text field.
      */
     def clear() { underlying.clear() }
   }
@@ -2587,6 +2650,8 @@ trait WebBrowser {
       new TextField(element)
     else if (isTextArea(element))
       new TextArea(element)
+    else if (isPasswordField(element))
+      new PasswordField(element)
     else if (isCheckBox(element))
       new Checkbox(element)
     else if (isRadioButton(element))
@@ -2749,6 +2814,29 @@ trait WebBrowser {
    */
   def textArea(queryString: String)(implicit driver: WebDriver): TextArea = 
     tryQueries(queryString)(q => new TextArea(q.webElement))
+    
+  /**
+   * Finds and returns the first <code>PasswordField</code> selected by the specified <code>Query</code>, throws <code>TestFailedException</code> 
+   * if element not found or the found element is not a <code>PasswordField</code>.
+   *
+   * @param query the <code>Query</code> with which to search
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   * @throws TestFailedException if element not found or found element is not a <code>PasswordField</code>
+   * @return the <code>PasswordField</code> selected by this query
+   */
+  def pwdField(query: Query)(implicit driver: WebDriver): PasswordField = new PasswordField(query.webElement)
+  
+  /**
+   * Finds and returns the first <code>PasswordField</code> selected by the specified string ID or name, throws <code>TestFailedException</code> 
+   * if element not found or the found element is not a <code>PasswordField</code>.
+   *
+   * @param queryString the string with which to search, first by ID then by name
+   * @param driver the <code>WebDriver</code> with which to drive the browser
+   * @throws TestFailedException if element not found or found element is not a <code>PasswordField</code>
+   * @return the <code>PasswordField</code> selected by this query
+   */
+  def pwdField(queryString: String)(implicit driver: WebDriver): PasswordField = 
+    tryQueries(queryString)(q => new PasswordField(q.webElement))
   
   /**
    * Finds and returns <code>RadioButtonGroup</code> selected by the specified group name, throws <code>TestFailedException</code> if 
@@ -3604,9 +3692,10 @@ trait WebBrowser {
     ae match {
       case tf: TextField => tf.value = value
       case ta: TextArea => ta.value = value
+      case pf: PasswordField => pf.value = value
       case _ => 
         throw new TestFailedException(
-                     sde => Some("Currently selected element is neither a text field nor a text area"),
+                     sde => Some("Currently selected element is neither a text field, text area nor password field"),
                      None,
                      getStackDepthFun("WebBrowser.scala", "switch", 1)
                    )
