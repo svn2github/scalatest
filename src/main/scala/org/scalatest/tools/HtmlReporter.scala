@@ -372,7 +372,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
             <td id="suite_footer_duration_value" colspan="2">
               { 
                 suiteResult.duration match {
-                  case Some(duration) => duration + " milliseconds"
+                  case Some(duration) => makeDurationString(duration)
                   case None => "-"
                 } 
               }
