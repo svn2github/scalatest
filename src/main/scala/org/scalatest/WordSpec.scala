@@ -17,7 +17,6 @@ package org.scalatest
 
 import verb.{CanVerb, ResultOfAfterWordApplication, ShouldVerb, BehaveWord,
   MustVerb, StringVerbBlockRegistration}
-import NodeFamily._
 import scala.collection.immutable.ListSet
 import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepth
 import java.util.concurrent.atomic.AtomicReference
