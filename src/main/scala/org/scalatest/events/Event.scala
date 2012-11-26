@@ -1517,7 +1517,7 @@ final case class RunAborted (
  * </p>
  *
  * <pre class="stHighlight">
- * report(InfoProvided(ordinal, message, Some(NameInfo(suiteName, Some(thisSuite.getClass.getName), Some(testName)))))
+ * report(InfoProvided(ordinal, message, Some(NameInfo(suiteName, suiteId, Some(thisSuite.getClass.getName), Some(testName)))))
  * </pre>
  *
  * <p>
@@ -1600,7 +1600,7 @@ final case class InfoProvided (
  * </p>
  *
  * <pre class="stHighlight">
- * report(MarkupProvided(ordinal, text, Some(NameInfo(suiteName, Some(thisSuite.getClass.getName), Some(testName)))))
+ * report(MarkupProvided(ordinal, text, Some(NameInfo(suiteName, suiteId, Some(thisSuite.getClass.getName), Some(testName)))))
  * </pre>
  *
  * <p>
@@ -1678,7 +1678,7 @@ final case class MarkupProvided (
  * </p>
  *
  * <pre class="stHighlight">
- * report(ScopeOpened(ordinal, message, Some(NameInfo(suiteName, Some(thisSuite.getClass.getName), Some(testName)))))
+ * report(ScopeOpened(ordinal, message, Some(NameInfo(suiteName, suiteId, Some(thisSuite.getClass.getName), Some(testName)))))
  * </pre>
  *
  * <p>
@@ -1754,7 +1754,7 @@ final case class ScopeOpened (
  * </p>
  *
  * <pre class="stHighlight">
- * report(ScopeClosed(ordinal, message, Some(NameInfo(suiteName, Some(thisSuite.getClass.getName), Some(testName)))))
+ * report(ScopeClosed(ordinal, message, Some(NameInfo(suiteName, suiteId, Some(thisSuite.getClass.getName), Some(testName)))))
  * </pre>
  *
  * <p>
