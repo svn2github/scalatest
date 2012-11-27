@@ -180,7 +180,7 @@ sealed abstract class Event extends Ordered[Event] with java.io.Serializable {
       nameInfoOption match {
         case Some(nameInfo) => 
           <suiteName>{ nameInfo.suiteName }</suiteName>
-          <suiteId>{ nameInfo.suiteID }</suiteId>
+          <suiteId>{ nameInfo.suiteId }</suiteId>
           <suiteClassName>{ stringOption(nameInfo.suiteClassName) }</suiteClassName>
           <testName>{ stringOption(nameInfo.testName) }</testName>
         case None => 

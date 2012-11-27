@@ -881,7 +881,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               if (testName.indexOf("must start with proper words") != -1)
                 reportHadCorrectTestName = true
               formatter match {
@@ -913,7 +913,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               if (testName.indexOf("must start with proper words") != -1)
                 reportHadCorrectTestName = true
               formatter match {
@@ -997,7 +997,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
                     infoReportHadCorrectFormattedSpecText = true
                 case _ =>
               }
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvoked)
               theOtherMethodHasBeenInvoked = true
@@ -1056,7 +1056,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
                     infoReportHadCorrectFormattedSpecText = true
                 case _ =>
               }
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvoked)
               theOtherMethodHasBeenInvoked = true
@@ -1191,7 +1191,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
                   case _ =>
                 }
               }
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               // scopeOpened should be invoked before the this method
               assert(scopeOpenedHasBeenInvokedTwice)
               theOtherMethodHasBeenInvoked = true
@@ -1309,7 +1309,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               if (testName.indexOf("this thing must start with proper words") != -1) {
                 testSucceededReportHadCorrectTestName = true
               }  
@@ -1418,7 +1418,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
                   if (rawText == "My spec text must have the proper words")
@@ -1445,7 +1445,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
                   if (rawText == "My short name must have the proper words")
@@ -1474,7 +1474,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       class MyReporter extends Reporter {
         def apply(event: Event) {
           event match {
-            case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
+            case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, testEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) =>
               formatter match {
                 case Some(IndentedText(formattedText, rawText, indentationLevel)) =>
                   if (rawText == "My short name must have the proper words")

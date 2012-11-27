@@ -279,7 +279,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
                 scopeStack.pop
                 NodeSeq.Empty
           
-              case TestSucceeded(ordinal, suiteName, suiteID, suiteClassName, testName, testText, recordedEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
+              case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, recordedEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
             
                 val stringToPrint = stringToPrintWhenNoError("testSucceeded", formatter, suiteName, Some(testName), duration)
 
@@ -294,7 +294,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
             
                 nodeSeq :: recordedEvents.map(processInfoMarkupProvided(_)).toList
             
-              case TestFailed(ordinal, message, suiteName, suiteID, suiteClassName, testName, testText, recordedEvents, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
+              case TestFailed(ordinal, message, suiteName, suiteId, suiteClassName, testName, testText, recordedEvents, throwable, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
 
                 val stringToPrint = stringsToPrintOnError("failedNote", "testFailed", message, throwable, formatter, Some(suiteName), Some(testName), duration)
                 val elementId = generateElementId
@@ -302,7 +302,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
             
                 nodeSeq :: recordedEvents.map(processInfoMarkupProvided(_)).toList
             
-              case TestIgnored(ordinal, suiteName, suiteID, suiteClassName, testName, testText, formatter, location, payload, threadName, timeStamp) => 
+              case TestIgnored(ordinal, suiteName, suiteId, suiteClassName, testName, testText, formatter, location, payload, threadName, timeStamp) => 
 
                 val stringToPrint =
                   formatter match {
@@ -319,7 +319,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
                     NodeSeq.Empty
                 }
               
-              case TestPending(ordinal, suiteName, suiteID, suiteClassName, testName, testText, recordedEvents, duration, formatter, location, payload, threadName, timeStamp) =>
+              case TestPending(ordinal, suiteName, suiteId, suiteClassName, testName, testText, recordedEvents, duration, formatter, location, payload, threadName, timeStamp) =>
 
                 val stringToPrint =
                   formatter match {
@@ -339,7 +339,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
             
                 nodeSeq :: recordedEvents.map(processInfoMarkupProvided(_)).toList
             
-              case TestCanceled(ordinal, message, suiteName, suiteID, suiteClassName, testName, testText, recordedEvents, throwable, duration, formatter, location, payload, threadName, timeStamp) =>
+              case TestCanceled(ordinal, message, suiteName, suiteId, suiteClassName, testName, testText, recordedEvents, throwable, duration, formatter, location, payload, threadName, timeStamp) =>
 
                 val stringToPrint = stringsToPrintOnError("canceledNote", "testCanceled", message, throwable, formatter, Some(suiteName), Some(testName), duration)
                 val elementId = generateElementId
@@ -950,17 +950,17 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
       case e: InfoProvided   => 
         e.nameInfo match {
           case Some(nameInfo) => 
-            nameInfo.suiteID == suiteId
+            nameInfo.suiteId == suiteId
           case None => false
         }
       case e: MarkupProvided => 
         e.nameInfo match {
           case Some(nameInfo) => 
-            nameInfo.suiteID == suiteId
+            nameInfo.suiteId == suiteId
           case None => false
         }
-      case e: ScopeOpened    => e.nameInfo.suiteID == suiteId
-      case e: ScopeClosed    => e.nameInfo.suiteID == suiteId
+      case e: ScopeOpened    => e.nameInfo.suiteId == suiteId
+      case e: ScopeClosed    => e.nameInfo.suiteId == suiteId
       case e: SuiteStarting  => e.suiteId == suiteId
       case _ => false
     }

@@ -14,7 +14,7 @@ private[scalatest] case class Durations(file: File) {
     val durationsXml = XML.loadFile(file)
 
     for (suiteXml <- durationsXml \ "suite") {
-      val suite = Suite("" + (suiteXml \ "@suiteID"),
+      val suite = Suite("" + (suiteXml \ "@suiteId"),
                         "" + (suiteXml \ "@suiteName"))
       suites += suite
 
@@ -44,7 +44,7 @@ private[scalatest] case class Durations(file: File) {
   //
   def addTests(run: String, runXml: NodeSeq) {
     for (suite <- runXml \\ "suite") {
-      val suiteID   = (suite \ "@id").toString
+      val suiteId   = (suite \ "@id").toString
       val suiteName = (suite \ "@name").toString
 
       for (test <- suite \ "test") {
@@ -54,7 +54,7 @@ private[scalatest] case class Durations(file: File) {
           val testName = (test \ "@name").toString
           val millis = (test \ "@duration").toString.toInt
 
-          addDuration(suiteID, suiteName, testName, run, millis)
+          addDuration(suiteId, suiteName, testName, run, millis)
         }
       }
     }
@@ -74,17 +74,17 @@ private[scalatest] case class Durations(file: File) {
                                    quoteReplacement(buf.toString))
   }
 
-  def addDuration(suiteID: String, suiteName: String, testName: String,
+  def addDuration(suiteId: String, suiteName: String, testName: String,
                   run: String, millis: Int)
   {
     def getSuite(): Suite = {
-      val suiteOption = suites.find(suite => suite.suiteID == suiteID)
+      val suiteOption = suites.find(suite => suite.suiteId == suiteId)
 
       if (suiteOption.isDefined) {
         suiteOption.get
       }
       else {
-        val newSuite = Suite(suiteID, suiteName)
+        val newSuite = Suite(suiteId, suiteName)
         suites += newSuite
         newSuite
       }
@@ -123,12 +123,12 @@ private[scalatest] case class Durations(file: File) {
     }
   }
 
-  case class Suite(suiteID: String, suiteName: String) {
+  case class Suite(suiteId: String, suiteName: String) {
     val tests = mutable.Set[Test]()
 
     def toXml: String = {
       val SuiteTemplate =
-        """|  <suite suiteID="$suiteID$" suiteName="$suiteName$">
+        """|  <suite suiteId="$suiteId$" suiteName="$suiteName$">
            |$tests$  </suite>
            |""".stripMargin
 
@@ -137,7 +137,7 @@ private[scalatest] case class Durations(file: File) {
       for (test <- tests) buf.append(test.toXml)
 
       SuiteTemplate.
-        replaceFirst("""\$suiteID\$""",   quoteReplacement(suiteID)).
+        replaceFirst("""\$suiteId\$""",   quoteReplacement(suiteId)).
         replaceFirst("""\$suiteName\$""", quoteReplacement(suiteName)).
         replaceFirst("""\$tests\$""",     quoteReplacement(buf.toString))
     }
