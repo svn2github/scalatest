@@ -1656,6 +1656,23 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       assert(myReporter.testPendingWasFired)
     }
     
+    it("should unwrap InvocationTargetException thrown from scope evaluation") {
+      
+      class ExampleSpec extends Spec with StringFixture {
+        object `A Scope` {
+          throw new IllegalArgumentException("boom!")
+          def `Test 1` {}
+          def `Test 2` {}
+          def `Test 3` {}
+        }
+      }
+      
+      val s = new ExampleSpec
+      intercept[IllegalArgumentException] {
+        s.run(None, Args(reporter = SilentReporter))
+      }
+    }
+    
     describe("the stopper") {
       
       it("should stop nested suites from being executed") {
