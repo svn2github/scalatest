@@ -17,6 +17,8 @@ package org.scalatest
 
 import org.scalatest.events._
 import java.util.concurrent.Executors
+import java.io.File
+import scala.annotation.tailrec
 
 trait SharedHelpers extends Assertions {
 
@@ -323,6 +325,36 @@ trait SharedHelpers extends Assertions {
      override def apply(suite: Suite, tracker: Tracker) {
        throw new UnsupportedOperationException("Please use apply with args.")
      }
+  }
+  
+  private val TEMP_DIR_ATTEMPTS = 10000
+  
+  // This is based on createTempDir here (Apache License): http://code.google.com/p/guava-libraries/source/browse/guava/src/com/google/common/io/Files.java
+  // java.nio.file.Files#createTempDirectory() exists in Java 7 should be preferred when we no longer support Java 5/6.
+  def createTempDirectory(): File = {
+    val baseDir = new File(System.getProperty("java.io.tmpdir"))
+    val baseName = System.currentTimeMillis + "-"
+    
+    @tailrec
+    def tryCreateTempDirectory(counter: Int): Option[File] = {
+      val tempDir = new File(baseDir, baseName + counter)
+      if (tempDir.mkdir())
+        Some(tempDir)
+      else if (counter < TEMP_DIR_ATTEMPTS)
+        tryCreateTempDirectory(counter + 1)
+      else
+        None
+    }
+    
+    tryCreateTempDirectory(0) match {
+      case Some(tempDir) => tempDir
+      case None => 
+        throw new IllegalStateException(
+            "Failed to create directory within " + 
+            TEMP_DIR_ATTEMPTS + " attempts (tried " + 
+            baseName + "0 to " + baseName +
+            (TEMP_DIR_ATTEMPTS - 1) + ')');
+    }
   }
 }
 
