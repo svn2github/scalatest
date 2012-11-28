@@ -1,70 +1,83 @@
 import sbt._
 import Keys._
+import java.net.{URL, URLClassLoader}
 
 object ScalatestBuild extends Build {
 
-   val scalaVersionToUse = "2.9.2"
+  val scalaVersionToUse = "2.9.2"
   
-   val includeTestPackageSet = Set("org.scalatest", 
-                                   "org.scalatest.fixture", 
-                                   "org.scalatest.concurrent", 
-                                   "org.scalatest.testng", 
-                                   "org.scalatest.junit", 
-                                   "org.scalatest.events", 
-                                   "org.scalatest.prop", 
-                                   "org.scalatest.tools", 
-                                   "org.scalatest.matchers", 
-                                   "org.scalatest.suiteprop", 
-                                   "org.scalatest.mock", 
-                                   "org.scalatest.path")
-
-   val excludedSuiteSet = Set("org.scalatest.BigSuite", 
-                              "org.scalatest.events.TestLocationJUnit3Suite", 
-                              "org.scalatest.events.TestLocationJUnitSuite", 
-                              "org.scalatest.events.TestLocationMethodJUnit3Suite", 
-                              "org.scalatest.events.TestLocationMethodJUnitSuite", 
-                              "org.scalatest.events.TestLocationMethodTestNGSuite", 
-                              "org.scalatest.events.TestLocationTestNGSuite", 
-                              "org.scalatest.tools.SomeApiClassRunner", 
-                              "org.scalatest.PackageAccessConstructorSuite", 
-                              "org.scalatest.TestColonEscapeExampleTestNGSuite", 
-                              "org.scalatest.TestColonEscapeExamplePathFunSpec", 
-                              "org.scalatest.ExampleClassTaggingJUnit3Suite", 
-                              "org.scalatest.TestColonEscapeExampleJUnit3Suite", 
-                              "org.scalatest.TestColonEscapeExamplePathFreeSpec", 
-                              "org.scalatest.TestColonEscapeExampleJUnitSuite", 
-                              "org.scalatest.NotAccessibleSuite", 
-                              "org.scalatest.ExampleStopOnFailureFlatSpec", 
-                              "org.scalatest.ExampleStopOnFailureFixtureFunSuite", 
-                              "org.scalatest.ExampleStopOnFailureFixtureSuite", 
-                              "org.scalatest.ExampleStopOnFailureFixtureSpec", 
-                              "org.scalatest.ExampleTestDataFixtureSuite", 
-                              "org.scalatest.ExampleStopOnFailureJUnit3Suite", 
-                              "org.scalatest.ExampleBeforeAndAfterAllPropJUnit3Suite", 
-                              "org.scalatest.ExampleStopOnFailureTestNGSuite", 
-                              "org.scalatest.ExampleStopOnFailureFixtureFlatSpec", 
-                              "org.scalatest.ExampleStopOnFailureWordSpec", 
-                              "org.scalatest.ExampleStopOnFailureJUnitSuite", 
-                              "org.scalatest.ExampleStopOnFailureFunSuite", 
-                              "org.scalatest.ExampleStopOnFailureFixtureWordSpec", 
-                              "org.scalatest.ExampleStopOnFailureFunSpec",
-                              "org.scalatest.ExampleStopOnFailureFixtureFeatureSpec", 
-                              "org.scalatest.ExampleStopOnFailureFreeSpec", 
-                              "org.scalatest.ExampleStopOnFailureSpec", 
-                              "org.scalatest.ExampleStopOnFailureFixturePropSpec", 
-                              "org.scalatest.ExampleStopOnFailureFixtureFunSpec", 
-                              "org.scalatest.ExampleStopOnFailurePropSpec", 
-                              "org.scalatest.ExampleStopOnFailureFixtureFreeSpec", 
-                              "org.scalatest.ExampleStopOnFailureFeatureSpec", 
-                              "org.scalatest.ExampleBeforeAndAfterAllPropJUnitSuite", 
-                              "org.scalatest.ExampleStopOnFailureSuite", 
-                              "org.scalatest.fixture.NotAccessibleSpec", 
-                              "org.scalatest.NotAccessibleSpec")
+  val includeTestPackageSet = Set("org.scalatest", 
+                                  "org.scalatest.fixture", 
+                                  "org.scalatest.concurrent", 
+                                  "org.scalatest.testng", 
+                                  "org.scalatest.junit", 
+                                  "org.scalatest.events", 
+                                  "org.scalatest.prop", 
+                                  "org.scalatest.tools", 
+                                  "org.scalatest.matchers", 
+                                  "org.scalatest.suiteprop", 
+                                  "org.scalatest.mock", 
+                                  "org.scalatest.path", 
+                                  "org.scalatest.selenium")
+                                                     
+  def isIncludedPackage(className: String) = {
+    try {
+      val packageName = className.substring(0, className.lastIndexOf("."))
+      includeTestPackageSet.contains(packageName)
+    }
+    catch {
+      case e: Exception => 
+        e.printStackTrace()
+        false
+    }
+  }
+   
+  def isRunnable(className: String, testLoader: ClassLoader): Boolean = {
+    val clazz = testLoader.loadClass(className)
+    clazz.getAnnotations.find(a => a.annotationType.getName == "org.scalatest.WrapWith") match {
+      case Some(wrapWithAnnotation) => 
+        val wrapperSuiteClazz = wrapWithAnnotation.getClass.getMethod("value").invoke(wrapWithAnnotation).asInstanceOf[Class[_]]
+        val constructorList = wrapperSuiteClazz.getDeclaredConstructors()
+        constructorList.exists { c => 
+          val types = c.getParameterTypes
+          types.length == 1 && types(0) == classOf[java.lang.Class[_]]
+        }
+      case None =>
+        false
+    }
+  }
+  
+  def isDiscoverableSuite(className: String, testLoader: ClassLoader): Boolean = {
+    val clazz = testLoader.loadClass(className)
+    !clazz.getAnnotations.exists(_.annotationType.getName == "org.scalatest.DoNotDiscover")
+  }
+  
+  val emptyClassArray = new Array[java.lang.Class[T] forSome { type T }](0)
+  
+  def isAccessibleSuite(className: String, testLoader: ClassLoader): Boolean = {
+    import java.lang.reflect.Modifier
+    try {
+      val clazz = testLoader.loadClass(className)
+      Modifier.isPublic(clazz.getModifiers) &&
+      !Modifier.isAbstract(clazz.getModifiers) &&
+      Modifier.isPublic(clazz.getConstructor(emptyClassArray: _*).getModifiers)
+    }
+    catch {
+      case nsme: NoSuchMethodException => false
+      case se: SecurityException => false
+    }
+  }
+                              
+  def isScalaTestSuite(className: String, testLoader: ClassLoader): Boolean = {
+    isIncludedPackage(className) &&
+    isDiscoverableSuite(className, testLoader) && 
+    (isAccessibleSuite(className, testLoader) || isRunnable(className, testLoader))
+  }
                               
    lazy val scalatest = Project("scalatest", file("."))
    .settings(
      organization := "org.scalatest",
-     version := "2.0.M4-SNAPSHOT",
+     version := "2.0.M5-SNAPSHOT",
      scalaVersion := scalaVersionToUse,
      libraryDependencies ++= simpledependencies,
      resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public",
@@ -79,13 +92,18 @@ object ScalatestBuild extends Build {
          (baseDirectory, sourceManaged in Compile) map genFiles("gentables", "GenTable.scala")(GenTable.genMain),
      sourceGenerators in Compile <+=
            (baseDirectory, sourceManaged in Compile) map genFiles("matchers", "MustMatchers.scala")(GenMatchers.genMain),
-     testOptions in Test := Seq(Tests.Filter(className => isIncludedTest(className)))
+     testOptions in Test <<= 
+         (fullClasspath in Test) map { classPathList =>
+           val urlList:Seq[URL] = classPathList map {attr => new File(attr.data.getAbsolutePath()).toURL }
+           val testLoader = new URLClassLoader(urlList.toArray)
+           Seq(Tests.Filter(className => isScalaTestSuite(className, testLoader)))
+         }
    ).aggregate("gentests")
    
    lazy val gentests = Project("gentests", file("gen"))
    .settings(
      organization := "org.scalatest",
-     version := "2.0.M4-SNAPSHOT",
+     version := "2.0.M5-SNAPSHOT",
      scalaVersion := scalaVersionToUse,
      libraryDependencies ++= simpledependencies,
      resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public",
@@ -97,20 +115,13 @@ object ScalatestBuild extends Build {
            (baseDirectory, sourceManaged in Test) map genFiles("matchers", "GenMatchers.scala")(GenMatchers.genTest),
      sourceGenerators in Test <+= 
          (baseDirectory, sourceManaged in Test) map genFiles("genthey", "GenTheyWord.scala")(GenTheyWord.genTest),
-     testOptions in Test := Seq(Tests.Filter(className => isIncludedTest(className)))
+     testOptions in Test <<= 
+         (fullClasspath in Test) map { classPathList =>
+           val urlList:Seq[URL] = classPathList map {attr => new File(attr.data.getAbsolutePath()).toURL }
+           val testLoader = new URLClassLoader(urlList.toArray)
+           Seq(Tests.Filter(className => isScalaTestSuite(className, testLoader)))
+         }
    ).dependsOn(scalatest  % "test->test")
-
-   def isIncludedTest(className: String) = {
-     try {
-       val packageName = className.substring(0, className.lastIndexOf("."))
-       includeTestPackageSet.contains(packageName) && !excludedSuiteSet.contains(className)
-     }
-     catch {
-       case e: Exception => 
-         e.printStackTrace()
-         false
-     }
-   }
 
    def simpledependencies = Seq(
      "org.scala-tools.testing" % "test-interface" % "0.5",  // TODO optional
