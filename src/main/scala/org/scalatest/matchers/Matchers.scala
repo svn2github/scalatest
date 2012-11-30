@@ -51,7 +51,7 @@ private[scalatest] object Helper {
   // 1           1            0                      Some(M)
   // 1           1            1                      Some(M) prefer a Scala style one of a Java style, such as when using BeanProperty annotation
   // 
-  def accessProperty(objectWithProperty: Any, propertySymbol: Symbol, isBooleanProperty: Boolean): Option[Any] = {
+  def accessProperty(objectWithProperty: AnyRef, propertySymbol: Symbol, isBooleanProperty: Boolean): Option[Any] = {
 
     // If 'title passed, propertyName would be "title"
     val propertyName = propertySymbol.name
@@ -159,7 +159,7 @@ trait ClassicMatchers extends Assertions { matchers =>
     }
   }
 
-  private[scalatest] def matchSymbolToPredicateMethod[S](left: S, right: Symbol, hasArticle: Boolean, articleIsA: Boolean): MatchResult = {
+  private[scalatest] def matchSymbolToPredicateMethod[S <: AnyRef](left: S, right: Symbol, hasArticle: Boolean, articleIsA: Boolean): MatchResult = {
 
     // If 'empty passed, rightNoTick would be "empty"
     val propertyName = right.name
