@@ -95,14 +95,14 @@ import org.scalatest.matchers.ShouldMatchers
  */
 trait ShouldMatchersForJUnit extends ShouldMatchers with AssertionsForJUnit {
   //private[scalatest] override def newTestFailedException(message: String): Throwable = new AssertionFailedError(message)
-  private[scalatest] override def newTestFailedException(message: String, optionalCause: Option[Throwable] = None): Throwable = {
+  private[scalatest] override def newTestFailedException(message: String, optionalCause: Option[Throwable] = None, stackDepthAdjustment: Int): Throwable = {
     val fileNames = List("Matchers.scala", "ShouldMatchers.scala", "MustMatchers.scala", "ShouldMatchersForJUnit.scala", "MustMatchersForJUnit.scala")
     val temp = new RuntimeException
     val stackDepth = temp.getStackTrace.takeWhile(stackTraceElement => fileNames.exists(_ == stackTraceElement.getFileName) || stackTraceElement.getMethodName == "newTestFailedException").length
 
     optionalCause match {
-      case Some(cause) => new JUnitTestFailedError(message, cause, stackDepth)
-      case None => new JUnitTestFailedError(message, stackDepth)
+      case Some(cause) => new JUnitTestFailedError(message, cause, stackDepth + stackDepthAdjustment)
+      case None => new JUnitTestFailedError(message, stackDepth + stackDepthAdjustment)
     }
   }
 }

@@ -284,7 +284,7 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
     if (possiblyEmptyMessageWithPossibleLineNumber.isEmpty)
       stringToPrintWithPossibleDuration :: getStackTrace(throwable)
     else
-      stringToPrintWithPossibleDuration :: (whiteSpace + possiblyEmptyMessageWithPossibleLineNumber) :: getStackTrace(throwable)
+      stringToPrintWithPossibleDuration :: possiblyEmptyMessageWithPossibleLineNumber.split("\n").toList.map(whiteSpace + _) ::: getStackTrace(throwable)
   }
 
   private def stringToPrintWhenNoError(resourceName: String, formatter: Option[Formatter], suiteName: String, testName: Option[String], message: Option[String]): Option[String] =
