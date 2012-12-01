@@ -233,6 +233,25 @@ trait TestNGSuite extends Suite { thisSuite =>
     }
 
     /**
+     * TestNG's onFinish maps cleanly to suiteCompleted.
+     * TODO: TestNG does have some extra info here. One thing we could do is map the info
+     * in the ITestContext object into ScalaTest Reports and fire InfoProvided
+     */
+    override def onFinish(itc: ITestContext) = {
+      val formatter = formatterForSuiteCompleted(thisSuite)
+      report(SuiteCompleted(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.getClass.getName, Some(thisSuite.getClass.getName), None, formatter, Some(TopOfClass(thisSuite.getClass.getName))))
+    }
+    
+    /**
+     * TestNG's onTestStart maps cleanly to TestStarting. Simply build a report 
+     * and pass it to the Reporter.
+     */
+    override def onTestStart(result: ITestResult) = {
+      report(TestStarting(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.getClass.getName, Some(thisSuite.getClass.getName), result.getName + params(result), result.getName + params(result),
+             Some(MotionToSuppress), getTopOfMethod(thisSuite.getClass.getName, result.getName), Some(className)))
+    }
+
+    /**
      * TestNG's onTestSuccess maps cleanly to TestSucceeded. Again, simply build
      * a report and pass it to the Reporter.
      */
