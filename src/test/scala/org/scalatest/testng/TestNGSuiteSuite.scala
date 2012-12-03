@@ -98,11 +98,11 @@ package org.scalatest.testng {
 
       // expect a single test should fail, followed by a single test being skipped
       expecting { e => import e._
-        one(reporter).apply(`with`(new IsAnything[SuiteStarting]))
+        never(reporter).apply(`with`(new IsAnything[SuiteStarting]))
         one(reporter).apply(`with`(new IsAnything[TestStarting]))
         one(reporter).apply(`with`(new IsAnything[TestFailed]))
         one(reporter).apply(`with`(new IsAnything[TestIgnored]))
-        one(reporter).apply(`with`(new IsAnything[SuiteCompleted]))
+        never(reporter).apply(`with`(new IsAnything[SuiteCompleted]))
       }
 
       // when runnning the suite with a test that should fail and a test that should be skipped

@@ -7,8 +7,8 @@ import org.scalatest.DoNotDiscover
 @DoNotDiscover
 class TestLocationTestNGSuite extends TestNGSuite with TestLocationServices {
   val suiteTypeName = "org.scalatest.events.TestLocationTestNGSuite"
-  val expectedSuiteStartingList = List(TopOfClassPair(suiteTypeName))
-  val expectedSuiteCompletedList = List(TopOfClassPair(suiteTypeName))
+  val expectedSuiteStartingList = Nil
+  val expectedSuiteCompletedList = Nil
   val expectedSuiteAbortedList = Nil
   val expectedTestSucceededList = Nil
   val expectedTestFailedList = List(SeeStackDepthExceptionPair("testFail"))

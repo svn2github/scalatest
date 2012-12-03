@@ -222,27 +222,6 @@ trait TestNGSuite extends Suite { thisSuite =>
     def getTopOfMethod(className: String, methodName: String) = Some(TopOfMethod(className, "public void " + className + "." + methodName + "()"))
 
     /**
-     * This method is called when TestNG starts, and maps to ScalaTest's suiteStarting. 
-     * @TODO TestNG doesn't seem to know how many tests are going to be executed.
-     * We are currently telling ScalaTest that 0 tests are about to be run. Investigate
-     * and/or chat with Cedric to determine if its possible to get this number from TestNG.
-     */
-    override def onStart(itc: ITestContext) = {
-      val formatter = formatterForSuiteStarting(thisSuite)
-      report(SuiteStarting(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.getClass.getName, Some(thisSuite.getClass.getName), formatter, Some(TopOfClass(thisSuite.getClass.getName))))
-    }
-
-    /**
-     * TestNG's onFinish maps cleanly to suiteCompleted.
-     * TODO: TestNG does have some extra info here. One thing we could do is map the info
-     * in the ITestContext object into ScalaTest Reports and fire InfoProvided
-     */
-    override def onFinish(itc: ITestContext) = {
-      val formatter = formatterForSuiteCompleted(thisSuite)
-      report(SuiteCompleted(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.getClass.getName, Some(thisSuite.getClass.getName), None, formatter, Some(TopOfClass(thisSuite.getClass.getName))))
-    }
-    
-    /**
      * TestNG's onTestStart maps cleanly to TestStarting. Simply build a report 
      * and pass it to the Reporter.
      */
