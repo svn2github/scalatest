@@ -754,6 +754,7 @@ final case class TestPending (
  *
  * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
  *        other events reported during the same run
+ * @param message a localized message suitable for presenting to the user
  * @param suiteName a localized name identifying the suite containing the test that was canceled, suitable for presenting to the user
  * @param suiteId a string ID for the suite containing the test that is starting, intended to be unique across all suites in a run
  * @param suiteClassName an optional fully qualifed <code>Suite</code> class name containing the test that was canceled
