@@ -15,6 +15,8 @@
  */
 package org.scalatest
 
+import org.scalautils._
+
 /**
  * Trait that can be mixed into a <code>Suite</code> to disable the lone implicit conversion provided by default in trait
  * <code>Assertions</code>, which trait <code>Suite</code> extends.
@@ -62,8 +64,18 @@ trait NonImplicitAssertions extends Assertions {
    * @param left the object whose type to convert to <code>Equalizer</code>.
    * @throws NullPointerException if <code>left</code> is <code>null</code>.
    */
-  override def convertToEqualizer(right: Any): Equalizer = super.convertToEqualizer(right)
-  // override def convertToEqualizer(right: Any): Equalizer = new Equalizer(right)
+  override def convertToEqualizer[T](left: T): Equalizer[T] = new Equalizer(left)
+  override def convertToLegacyEqualizer[T](left: T): LegacyEqualizer[T] = new LegacyEqualizer(left)
+  override def convertToCheckingEqualizer[T](left: T): CheckingEqualizer[T] = new CheckingEqualizer(left)
+  override def convertToLegacyCheckingEqualizer[T](left: T): LegacyCheckingEqualizer[T] = new LegacyCheckingEqualizer(left)
+
+  override def lowPriorityTypeCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], ev: A <:< B): EqualityConstraint[A, B] = new BasicEqualityConstraint[A, B](equalityOfA)
+  override def typeCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], ev: B <:< A): EqualityConstraint[A, B] = new BasicEqualityConstraint[A, B](equalityOfA)
+
+  override def lowPriorityConversionCheckedEqualityConstraint[A, B](implicit equalityOfB: Equality[B], cnv: A => B): EqualityConstraint[A, B] = new AToBEqualityConstraint[A, B](equalityOfB, cnv)
+  override def conversionCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], cnv: B => A): EqualityConstraint[A, B] = new BToAEqualityConstraint[A, B](equalityOfA, cnv)
+
+  override def defaultEquality[A]: Equality[A] = new DefaultEquality[A]
 }
 
 /**

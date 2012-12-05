@@ -155,6 +155,6 @@ object GenMatchers {
     val targetDir = args(0)
     val scalaVersion = args(1)
     genMain(new File(targetDir + "/main/scala/org/scalatest/"), scalaVersion)
-    genTest(new File("gen/" + targetDir + "/test/scala/org/scalatest/"), scalaVersion)
+    // genTest(new File("gen/" + targetDir + "/test/scala/org/scalatest/"), scalaVersion)
   }
 }

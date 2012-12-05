@@ -1157,9 +1157,9 @@ $columnsOfIndexes$
     mainDir.mkdirs()
     genMain(mainDir, scalaVersion)
     
-    val testDir = new File("gen/" + targetDir + "/test/scala/org/scalatest/prop")
-    testDir.mkdirs()
-    genTest(testDir, scalaVersion)
+    // val testDir = new File("gen/" + targetDir + "/test/scala/org/scalatest/prop")
+    // testDir.mkdirs()
+    // genTest(testDir, scalaVersion)
   }
   
   def genMain(dir: File, scalaVersion: String) {
