@@ -2225,12 +2225,6 @@ trait WebBrowser {
     driver.close()
   }
   
-  @deprecated("The title method will be removed in the next 2.0 milestone release. Please use pageTitle instead.")
-  def title(implicit driver: WebDriver): String = {
-    val t = driver.getTitle
-    if (t != null) t else ""
-  }
-  
   /**
    * Returns the title of the current page, or the empty string if the current page has no title.
    *
@@ -3089,15 +3083,6 @@ trait WebBrowser {
     driver.manage.timeouts.implicitlyWait(timeout.totalNanos, TimeUnit.NANOSECONDS)
   }
 
-  @deprecated("The wait method will be removed in the next 2.0 milestone release. Please use eventually instead.")
-  def wait[T](timeout: Span, interval: Span = Span(500L, Milliseconds))(f: => T)(implicit driver: WebDriver): T = 
-    new WebDriverWait(driver, timeout.totalNanos / 1000000000L, interval.totalNanos / 1000000)
-      .until(new ExpectedCondition[T]() {
-        override def apply(driver: WebDriver) = {
-          f
-        }
-      })  
-  
   /**
    * Close all windows, and exit the driver.
    * 
