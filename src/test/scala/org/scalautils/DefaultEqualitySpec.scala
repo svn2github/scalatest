@@ -23,7 +23,7 @@ import scala.collection.GenIterable
 import scala.collection.GenTraversable
 import scala.collection.GenTraversableOnce
 
-class AnyEqualitySpec extends Spec with NonImplicitAssertions {
+class DefaultEqualitySpec extends Spec with NonImplicitAssertions {
 
   object `the AnyEquality type class` {
 
