@@ -85,3 +85,6 @@ trait Tolerance {
    */
   implicit def convertNumericToPlusOrMinusWrapper[T : Numeric](right: T): PlusOrMinusWrapper[T] = new PlusOrMinusWrapper(right)
 }
+
+object Tolerance extends Tolerance
+
