@@ -19,7 +19,6 @@ import org.scalautils.LegacyTripleEquals
 import exceptions.TestCanceledException
 
 class ConfigMapSpec extends Spec with LegacyTripleEquals {
-  object `A ConfigMap` {
 
     class Fruit {
       override def toString = "a Fruit"
@@ -52,6 +51,8 @@ class ConfigMapSpec extends Spec with LegacyTripleEquals {
       "apple" -> apple,
       "fruit" -> fruit
     )
+
+  object `A ConfigMap` {
 
     def `provides a nice syntax for getting a required entry` {
       assert(cm.getRequired[String]("string") === "aStringValue")
@@ -341,6 +342,44 @@ class ConfigMapSpec extends Spec with LegacyTripleEquals {
           cm.getWithDefault[Double]("string", 2.0)
         }
       assert(caught9.getMessage === Resources("configMapEntryHadUnexpectedType", "string", "class java.lang.String", "double", "aStringValue"))
+    }
+  }
+
+  object `The ConfigMap companion object` {
+    def `should provide a factory method for constructing new ConfigMaps` {
+
+      assert(cm.size === 19)
+
+      val expected = new ConfigMap(
+        Map(
+          "string" -> "aStringValue",
+          "boolean" -> true,
+          "Boolean" -> new java.lang.Boolean(true),
+          "byte" -> 1.toByte,
+          "Byte" -> new java.lang.Byte(1.toByte),
+          "short" -> 1.toShort,
+          "Short" -> new java.lang.Short(1.toShort),
+          "int" -> 1,
+          "Integer" -> new java.lang.Integer(1),
+          "long" -> Long.MaxValue,
+          "Long" -> new java.lang.Long(Long.MaxValue),
+          "char" -> 'c',
+          "Char" -> new java.lang.Character('c'),
+          "float" -> 1.0F,
+          "Float" -> new java.lang.Float(1.0F),
+          "double" -> 1.0,
+          "Double" -> new java.lang.Double(1.0),
+          "apple" -> apple,
+          "fruit" -> fruit
+        )
+      )
+
+      assert(cm === expected)
+    }
+
+    def `should provide a factory method for constructing empty ConfigMaps` {
+      val emptyCm: ConfigMap = ConfigMap.empty
+      assert(emptyCm.size === 0)
     }
   }
 }

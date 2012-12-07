@@ -71,4 +71,5 @@ class ConfigMap(underlying: Map[String, Any]) extends Map[String, Any] with MapL
 object ConfigMap {
   def apply(pairs: (String, Any)*): ConfigMap = new ConfigMap(Map(pairs: _*))
   // TODO, create an empty factory method
+  def empty: ConfigMap = new ConfigMap(Map.empty)
 }
