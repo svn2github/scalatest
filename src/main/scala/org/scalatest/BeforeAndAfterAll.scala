@@ -60,12 +60,12 @@ package org.scalatest
  * 
  *   type FixtureParam = File
  *   override def withFixture(test: OneArgTest) {
- *     val fileName = test.configMap("tempFileName").asInstanceOf[String]
+ *     val fileName = test.configMap.getRequired[String]("tempFileName")
  *     val file = new File(fileName)
  *     withFixture(test.toNoArgTest(file)) // loan the fixture to the test
  *   }
  * 
- *   "The temp file" should ("exist in " + suiteName) in { file =>
+ *   "The temp file" should ("exist in " + suiteName) in { file =&gt;
  *     assert(file.exists)
  *   }
  * }
@@ -85,16 +85,13 @@ package org.scalatest
  *   private val tempFileName = "tempFileName"
  * 
  *   // Set up the temp file needed by the test, taking
- *   // a file name from the configMap
+ *   // a file name from the config map
  *   override def beforeAll(configMap: ConfigMap) {
- * 
- *     require(
+ *     assume(
  *       configMap.isDefinedAt(tempFileName),
  *       "must place a temp file name in the config map under the key: " + tempFileName
  *     )
- * 
  *     val fileName = configMap.getRequired[String](tempFileName)
- * 
  *     val writer = new FileWriter(fileName)
  *     try writer.write("Hello, suite of tests!")
  *     finally writer.close()
@@ -102,8 +99,6 @@ package org.scalatest
  * 
  *   // Delete the temp file
  *   override def afterAll(configMap: ConfigMap) {
- *     // No need to require that configMap contains the key again because it won't get
- *     // here if it didn't contain the key in beforeAll
  *     val fileName = configMap.getRequired[String]("tempFileName")
  *     val file = new File(fileName)
  *     file.delete()
@@ -119,11 +114,9 @@ package org.scalatest
  * scala&gt; new ExampleSpec execute
  * <span class="stGreen">ExampleSpec:</span>
  * <span class="stRed">Exception encountered when invoking run on a suite. *** ABORTED ***
- *   java.lang.IllegalArgumentException: requirement failed: must place a temp file name in the configMap under the key: tempFileName
- *   ...
+ *   Exception encountered when invoking run on a suite. (<console>:30)
  * *** RUN ABORTED ***
- *   java.lang.IllegalArgumentException: requirement failed: must place a temp file name in the configMap under the key: tempFileName
- *   ...</span>
+ *   An exception or error caused a run to abort: must place a temp file name in the config map under the key: tempFileName (<console>:30)</span>
  * </pre>
  *
  * <p>
@@ -131,7 +124,7 @@ package org.scalatest
  * </p>
  *
  * <pre class="stREPL">
- * scala&gt; new ExampleSpec execute (configMap = Map("tempFileName" -> "tmp.txt"))
+ * scala&gt; new ExampleSpec execute (configMap = ConfigMap("tempFileName" -&gt; "tmp.txt"))
  * <span class="stGreen">ExampleSpec:
  * OneSpec:
  * The temp file
