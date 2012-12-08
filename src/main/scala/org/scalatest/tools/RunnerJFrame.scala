@@ -82,7 +82,7 @@ private[scalatest] class RunnerJFrame(
   runpathList: List[String], 
   tagsToIncludeSet: Set[String],
   tagsToExcludeSet: Set[String],
-  propertiesMap: Map[String, Object],
+  propertiesMap: ConfigMap,
   concurrent: Boolean,
   memberOfList: List[String], 
   beginsWithList: List[String],

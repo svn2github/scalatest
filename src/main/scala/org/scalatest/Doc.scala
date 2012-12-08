@@ -120,7 +120,7 @@ println("&&&&&&&&&&&")
 
 /*
   override protected def runNestedSuites(reporter: Reporter, stopper: Stopper, filter: Filter,
-      configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker) {
+      configMap: ConfigMap, distributor: Option[Distributor], tracker: Tracker) {
     reportMarkupProvided(thisDoc, reporter, tracker, None, trimMarkup(stripMargin(body.text)), 0, true, None, None)
   }
 */

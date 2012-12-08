@@ -617,7 +617,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     }
   }
   
-  private[scalatest] def createTestDataFor(testName: String, theConfigMap: Map[String, Any], theSuite: Suite) = 
+  private[scalatest] def createTestDataFor(testName: String, theConfigMap: ConfigMap, theSuite: Suite) = 
     new TestData {
       val configMap = theConfigMap 
       val name = testName

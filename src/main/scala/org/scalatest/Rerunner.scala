@@ -24,7 +24,7 @@ package org.scalatest
  * @author Bill Venners
  */
 @deprecated("We are considering removing Rerunner in ScalaTest 2.0 and would like to know if anyone is using it. If you are, please email scalatest-users@googlegroups.com or and describe your use case. Thanks!")
-trait Rerunner /* extends ((Reporter, Stopper, Filter, Map[String, Any], Option[Distributor], Tracker, ClassLoader) => Unit) */ {
+trait Rerunner /* extends ((Reporter, Stopper, Filter, ConfigMap, Option[Distributor], Tracker, ClassLoader) => Unit) */ {
 
   /**
    * Rerun a test or other entity (such as a suite), reporting results to the specified <code>Reporter</code>.
@@ -41,15 +41,16 @@ trait Rerunner /* extends ((Reporter, Stopper, Filter, Map[String, Any], Option[
    * @throws NullPointerException if any of the passed values are <code>null</code>.
    */
   def apply(reporter: Reporter, stopper: Stopper, filter: Filter,
-            configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker, loader: ClassLoader): Unit
+            configMap: ConfigMap, distributor: Option[Distributor], tracker: Tracker, loader: ClassLoader): Unit
 }
 
 /**
+ * TODO: Document in 2.0 release notes that I removed this deprecated implicit.
  * Companion object to Rerunner that holds a deprecated implicit conversion.
  */
-object Rerunner {
+private[scalatest] object Rerunner {
 
-  /**
+  /*
    * Converts a <code>Rerunner</code> to a function type that prior to the ScalaTest 1.5 release the
    * <code>Rerunner</code> extended.
    *
@@ -68,11 +69,13 @@ object Rerunner {
    * be retained. If no one steps forward with a compelling justification, it will be removed in a future version of ScalaTest.
    * </p>
    */
+/*
   @deprecated("See the documentation for Rerunner.convertRerunnerToFunction for information")
   implicit def convertRerunnerToFunction(rerunner: Rerunner): (Reporter, Stopper, Filter, Map[String, Any], Option[Distributor], Tracker, ClassLoader) => Unit =
   (reporter: Reporter, stopper: Stopper, filter: Filter,
       configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker, loader: ClassLoader) => rerunner(reporter,
           stopper, filter, configMap, distributor, tracker, loader)
+*/
 }
   /* *
    * Converts a <code>Rerunner</code> to a function type that prior to the ScalaTest 1.5 release the

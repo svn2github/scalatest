@@ -202,7 +202,7 @@ trait AbstractSuite { this: Suite =>
     distributor: Option[Distributor],
     tracker: Tracker
   ): Status = {  // TODO: test that this grabs chosenStyles out of config map
-    run(testName, Args(reporter, stopper, filter, configMap, distributor, tracker, Set.empty))
+    run(testName, Args(reporter, stopper, filter, new ConfigMap(configMap), distributor, tracker, Set.empty))
   } 
 }
 

@@ -134,12 +134,12 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       val a = new FunSpec {
         var correctConfigMapWasPassed = false
         override def withFixture(test: NoArgTest) {
-          correctConfigMapWasPassed = (test.configMap == Map("hi" -> 7))
+          correctConfigMapWasPassed = (test.configMap == ConfigMap("hi" -> 7))
           super.withFixture(test)
         }
         it("should do something") {}
       }
-      a.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("hi" -> 7), None, new Tracker(), Set.empty))
+      a.run(None, Args(SilentReporter, Stopper.default, Filter(), ConfigMap("hi" -> 7), None, new Tracker(), Set.empty))
       assert(a.correctConfigMapWasPassed)
     }
     describe("(with info calls)") {
@@ -492,7 +492,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         it("test that") { theTestThatCalled = true }
       }
       val repB = new TestIgnoredTrackingReporter
-      b.run(None, Args(repB, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
+      b.run(None, Args(repB, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), ConfigMap.empty, None, new Tracker, Set.empty))
       assert(!repB.testIgnoredReceived)
       assert(b.theTestThisCalled)
       assert(!b.theTestThatCalled)
@@ -505,7 +505,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         it("test that", mytags.SlowAsMolasses) { theTestThatCalled = true }
       }
       val repC = new TestIgnoredTrackingReporter
-      c.run(None, Args(repB, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), Map(), None, new Tracker, Set.empty))
+      c.run(None, Args(repB, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), ConfigMap.empty, None, new Tracker, Set.empty))
       assert(!repC.testIgnoredReceived)
       assert(c.theTestThisCalled)
       assert(c.theTestThatCalled)
@@ -518,7 +518,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         it("test that", mytags.SlowAsMolasses) { theTestThatCalled = true }
       }
       val repD = new TestIgnoredTrackingReporter
-      d.run(None, Args(repD, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.Ignore")), Map(), None, new Tracker, Set.empty))
+      d.run(None, Args(repD, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.Ignore")), ConfigMap.empty, None, new Tracker, Set.empty))
       assert(repD.testIgnoredReceived)
       assert(!d.theTestThisCalled)
       assert(d.theTestThatCalled)
@@ -534,7 +534,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
       val repE = new TestIgnoredTrackingReporter
       e.run(None, Args(repE, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker, Set.empty))
+                ConfigMap.empty, None, new Tracker, Set.empty))
       assert(!repE.testIgnoredReceived)
       assert(!e.theTestThisCalled)
       assert(e.theTestThatCalled)
@@ -551,7 +551,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
       val repF = new TestIgnoredTrackingReporter
       f.run(None, Args(repF, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker, Set.empty))
+                ConfigMap.empty, None, new Tracker, Set.empty))
       assert(!repF.testIgnoredReceived)
       assert(!f.theTestThisCalled)
       assert(f.theTestThatCalled)
@@ -568,7 +568,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
       }
       val repG = new TestIgnoredTrackingReporter
       g.run(None, Args(repG, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
-                Map(), None, new Tracker, Set.empty))
+                ConfigMap.empty, None, new Tracker, Set.empty))
       assert(!repG.testIgnoredReceived)
       assert(!g.theTestThisCalled)
       assert(g.theTestThatCalled)
@@ -584,7 +584,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         it("test the other") { theTestTheOtherCalled = true }
       }
       val repH = new TestIgnoredTrackingReporter
-      h.run(None, Args(repH, Stopper.default, Filter(None, Set("org.scalatest.FastAsLight")), Map(), None, new Tracker, Set.empty))
+      h.run(None, Args(repH, Stopper.default, Filter(None, Set("org.scalatest.FastAsLight")), ConfigMap.empty, None, new Tracker, Set.empty))
       assert(!repH.testIgnoredReceived)
       assert(!h.theTestThisCalled)
       assert(h.theTestThatCalled)
@@ -600,7 +600,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         it("test the other") { theTestTheOtherCalled = true }
       }
       val repI = new TestIgnoredTrackingReporter
-      i.run(None, Args(repI, Stopper.default, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
+      i.run(None, Args(repI, Stopper.default, Filter(None, Set("org.scalatest.SlowAsMolasses")), ConfigMap.empty, None, new Tracker, Set.empty))
       assert(!repI.testIgnoredReceived)
       assert(!i.theTestThisCalled)
       assert(!i.theTestThatCalled)
@@ -616,7 +616,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         it("test the other") { theTestTheOtherCalled = true }
       }
       val repJ = new TestIgnoredTrackingReporter
-      j.run(None, Args(repJ, Stopper.default, Filter(None, Set("org.scalatest.SlowAsMolasses")), Map(), None, new Tracker, Set.empty))
+      j.run(None, Args(repJ, Stopper.default, Filter(None, Set("org.scalatest.SlowAsMolasses")), ConfigMap.empty, None, new Tracker, Set.empty))
       assert(!repI.testIgnoredReceived)
       assert(!j.theTestThisCalled)
       assert(!j.theTestThatCalled)
@@ -632,7 +632,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         ignore("test the other") { theTestTheOtherCalled = true }
       }
       val repK = new TestIgnoredTrackingReporter
-      k.run(None, Args(repK, Stopper.default, Filter(None, Set("org.scalatest.SlowAsMolasses", "org.scalatest.Ignore")), Map(), None, new Tracker, Set.empty))
+      k.run(None, Args(repK, Stopper.default, Filter(None, Set("org.scalatest.SlowAsMolasses", "org.scalatest.Ignore")), ConfigMap.empty, None, new Tracker, Set.empty))
       assert(repK.testIgnoredReceived)
       assert(!k.theTestThisCalled)
       assert(!k.theTestThatCalled)

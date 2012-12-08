@@ -21,7 +21,7 @@ class ConfigMapWrapperSuiteSpec extends FunSuite with SharedHelpers with Severed
   test("configMap should get passed into the wrapped Suite") {
     SavesConfigMapSuite.resetConfigMap()
     val wrapped = new ConfigMapWrapperSuite(classOf[SavesConfigMapSuite])
-    val configMap = Map("salt" -> "pepper", "eggs" -> "bacon")
+    val configMap = ConfigMap("salt" -> "pepper", "eggs" -> "bacon")
     wrapped.run(None, Args(SilentReporter, Stopper.default, Filter(), configMap, None, new Tracker, Set.empty))
     assert(SavesConfigMapSuite.savedConfigMap === Some(configMap))
   }

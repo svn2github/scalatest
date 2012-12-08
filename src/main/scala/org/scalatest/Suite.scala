@@ -417,7 +417,7 @@ import collection.mutable.ListBuffer
  * In some cases you may need to pass information to a suite of tests.
  * For example, perhaps a suite of tests needs to grab information from a file, and you want
  * to be able to specify a different filename during different runs.  You can accomplish this in ScalaTest by passing
- * the filename in a <em>config map</em> of key-value pairs, which is passed to <code>run</code> as a <code>Map[String, Any]</code>.
+ * the filename in a <em>config map</em> of key-value pairs, which is passed to <code>run</code> as a <code>ConfigMap</code>.
  * The values in the config map are called "config objects," because they can be used to <em>configure</em>
  * suites, reporters, and tests.
  * </p>
@@ -762,7 +762,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    */
   final def execute(
     testName: String = null,
-    configMap: Map[String, Any] = Map(),
+    configMap: ConfigMap = ConfigMap.empty,
     color: Boolean = true,
     durations: Boolean = false,
     shortstacks: Boolean = false,
@@ -1754,7 +1754,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * @param theConfigMap the config map to include in the returned <code>TestData</code>
    * @return a <code>TestData</code> instance for the specified test, which includes the specified config map
    */
-  def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = {
+  def testDataFor(testName: String, theConfigMap: ConfigMap = ConfigMap.empty): TestData = {
     val suiteTags = for { 
       a <- this.getClass.getDeclaredAnnotations
       annotationClass = a.annotationType
@@ -1940,7 +1940,7 @@ private[scalatest] object Suite {
     // actually wrote a testNames(Informer) method and it was silently ignored.
     val isTestNames = simpleName == "testNames"
     val isTestTags = simpleName == "testTags"
-    val isTestDataFor = (simpleName == "testDataFor" && paramTypes.length == 2 && classOf[String].isAssignableFrom(paramTypes(0)) && classOf[Map[String, Any]].isAssignableFrom(paramTypes(1))) || 
+    val isTestDataFor = (simpleName == "testDataFor" && paramTypes.length == 2 && classOf[String].isAssignableFrom(paramTypes(0)) && classOf[ConfigMap].isAssignableFrom(paramTypes(1))) || 
                         (simpleName == "testDataFor$default$2" && paramTypes.length == 0)
 
     (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags, isTestDataFor)
@@ -2306,7 +2306,7 @@ used for test events like succeeded/failed, etc.
       None
   }
 
-  def checkChosenStyles(configMap: Map[String, Any], styleName: String) {
+  def checkChosenStyles(configMap: ConfigMap, styleName: String) {
     val chosenStyleSet = 
         if (configMap.isDefinedAt("org.scalatest.ChosenStyles"))
           configMap("org.scalatest.ChosenStyles").asInstanceOf[Set[String]]

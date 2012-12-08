@@ -76,10 +76,10 @@ package org.scalatest
 trait TestData {
 
   /**
-   * A <code>Map[String, Any]</code> containing objects that can be used
+   * A <code>ConfigMap</code> containing objects that can be used
    * to configure the fixture and test.
    */
-  val configMap: Map[String, Any] 
+  val configMap: ConfigMap 
 
   /**
    * The name of this test.

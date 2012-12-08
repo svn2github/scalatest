@@ -252,7 +252,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
 
     val mySuite = new MySuite
     val myReporter = new TestDurationReporter
-    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), ConfigMap.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.testSucceededWasFiredAndHadADuration)
     assert(myReporter.testFailedWasFiredAndHadADuration)
   }
@@ -269,7 +269,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
 
     val mySuite = new MySuite
     val myReporter = new SuiteDurationReporter
-    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), ConfigMap.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.suiteCompletedWasFiredAndHadADuration)
 
     class SuiteThatAborts extends Suite {
@@ -288,7 +288,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
 
     val myOtherSuite = new MyOtherSuite
     val myOtherReporter = new SuiteDurationReporter
-    myOtherSuite.run(None, Args(myOtherReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    myOtherSuite.run(None, Args(myOtherReporter, Stopper.default, Filter(), ConfigMap.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myOtherReporter.suiteAbortedWasFiredAndHadADuration)
   }
 
@@ -300,7 +300,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
 
     val mySuite = new MySuite
     val myReporter = new PendingReporter
-    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), Map(), None, new Tracker(new Ordinal(99)), Set.empty))
+    mySuite.run(None, Args(myReporter, Stopper.default, Filter(), ConfigMap.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(myReporter.testPendingWasFired)
   }
 
@@ -364,7 +364,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(s2.theTestTheOtherConfigMapWasEmpty)
 
     val s3 = new TestWasCalledSuite
-    s3.execute(configMap = Map("s" -> "s"))
+    s3.execute(configMap = ConfigMap("s" -> "s"))
     assert(s3.theTestThisCalled)
     assert(s3.theTestThatCalled)
     assert(s3.theTestTheOtherCalled)
@@ -373,7 +373,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(!s3.theTestTheOtherConfigMapWasEmpty)
 
     val s4 = new TestWasCalledSuite
-    s4.execute("testThis", Map("s" -> "s"))
+    s4.execute("testThis", ConfigMap("s" -> "s"))
     assert(s4.theTestThisCalled)
     assert(!s4.theTestThatCalled)
     assert(!s4.theTestTheOtherCalled)
@@ -391,7 +391,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(s5.theTestTheOtherConfigMapWasEmpty)
 
     val s6 = new TestWasCalledSuite
-    s6.execute(testName = "testThis", configMap = Map("s" -> "s"))
+    s6.execute(testName = "testThis", configMap = ConfigMap("s" -> "s"))
     assert(s6.theTestThisCalled)
     assert(!s6.theTestThatCalled)
     assert(!s6.theTestTheOtherCalled)
@@ -420,7 +420,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(s2.theTestTheOtherConfigMapWasEmpty)
 
     val s3 = new TestWasCalledSuite
-    s3.execute("Th", configMap = Map("s" -> "s"))
+    s3.execute("Th", configMap = ConfigMap("s" -> "s"))
     assert(s3.theTestThisCalled)
     assert(s3.theTestThatCalled)
     assert(s3.theTestTheOtherCalled)
@@ -429,7 +429,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(!s3.theTestTheOtherConfigMapWasEmpty)
 
     val s4 = new TestWasCalledSuite
-    s4.execute("Th", Map("s" -> "s"))
+    s4.execute("Th", ConfigMap("s" -> "s"))
     assert(s4.theTestThisCalled)
     assert(s4.theTestThatCalled)
     assert(s4.theTestTheOtherCalled)
@@ -447,7 +447,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(s5.theTestTheOtherConfigMapWasEmpty)
 
     val s6 = new TestWasCalledSuite
-    s6.execute(testName = "This", configMap = Map("s" -> "s"))
+    s6.execute(testName = "This", configMap = ConfigMap("s" -> "s"))
     assert(s6.theTestThisCalled)
     assert(!s6.theTestThatCalled)
     assert(!s6.theTestTheOtherCalled)
@@ -499,7 +499,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(s2.theTestTheOtherConfigMapWasEmpty)
 
     val s3 = new TestWasCalledSuite
-    s3.execute(" th", configMap = Map("s" -> "s"))
+    s3.execute(" th", configMap = ConfigMap("s" -> "s"))
     assert(s3.theTestThisCalled)
     assert(s3.theTestThatCalled)
     assert(s3.theTestTheOtherCalled)
@@ -508,7 +508,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(!s3.theTestTheOtherConfigMapWasEmpty)
 
     val s4 = new TestWasCalledSuite
-    s4.execute(" th", Map("s" -> "s"))
+    s4.execute(" th", ConfigMap("s" -> "s"))
     assert(s4.theTestThisCalled)
     assert(s4.theTestThatCalled)
     assert(s4.theTestTheOtherCalled)
@@ -526,7 +526,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(s5.theTestTheOtherConfigMapWasEmpty)
 
     val s6 = new TestWasCalledSuite
-    s6.execute(testName = " this", configMap = Map("s" -> "s"))
+    s6.execute(testName = " this", configMap = ConfigMap("s" -> "s"))
     assert(s6.theTestThisCalled)
     assert(!s6.theTestThatCalled)
     assert(!s6.theTestTheOtherCalled)
@@ -610,32 +610,32 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     
     val defaultFilter = new Filter(None, Set.empty)
     val defaultReporter = new EventRecordingReporter
-    masterSuite.runNestedSuites(Args(defaultReporter, Stopper.default, defaultFilter, Map.empty, None, new Tracker(new Ordinal(99)), Set.empty))
+    masterSuite.runNestedSuites(Args(defaultReporter, Stopper.default, defaultFilter, ConfigMap.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(defaultReporter.suiteStartingEventsReceived.size === 4)
     assert(defaultReporter.testIgnoredEventsReceived.size === 3)
     val defaultReporterDist = new EventRecordingReporter
     val defaultDistributor = new CounterDistributor
-    masterSuite.runNestedSuites(Args(defaultReporterDist, Stopper.default, defaultFilter, Map.empty, Some(defaultDistributor), new Tracker(new Ordinal(99)), Set.empty))
+    masterSuite.runNestedSuites(Args(defaultReporterDist, Stopper.default, defaultFilter, ConfigMap.empty, Some(defaultDistributor), new Tracker(new Ordinal(99)), Set.empty))
     assert(defaultDistributor.count === 4)
     
     val includeFilter = new Filter(Some(Set("org.scalatest.FastAsLight")), Set.empty)
     val includeReporter = new EventRecordingReporter
-    masterSuite.runNestedSuites(Args(includeReporter, Stopper.default, includeFilter, Map.empty, None, new Tracker(new Ordinal(99)), Set.empty))
+    masterSuite.runNestedSuites(Args(includeReporter, Stopper.default, includeFilter, ConfigMap.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(includeReporter.suiteStartingEventsReceived.size === 4) 
     assert(includeReporter.testIgnoredEventsReceived.size === 0) 
     val includeReporterDist = new EventRecordingReporter
     val includeDistributor = new CounterDistributor
-    masterSuite.runNestedSuites(Args(includeReporterDist, Stopper.default, includeFilter, Map.empty, Some(includeDistributor), new Tracker(new Ordinal(99)), Set.empty))
+    masterSuite.runNestedSuites(Args(includeReporterDist, Stopper.default, includeFilter, ConfigMap.empty, Some(includeDistributor), new Tracker(new Ordinal(99)), Set.empty))
     assert(includeDistributor.count === 4) 
     
     val excludeFilter = new Filter(None, Set("org.scalatest.SlowAsMolasses"))
     val excludeReporter = new EventRecordingReporter
-    masterSuite.runNestedSuites(Args(excludeReporter, Stopper.default, excludeFilter, Map.empty, None, new Tracker(new Ordinal(99)), Set.empty))
+    masterSuite.runNestedSuites(Args(excludeReporter, Stopper.default, excludeFilter, ConfigMap.empty, None, new Tracker(new Ordinal(99)), Set.empty))
     assert(excludeReporter.suiteStartingEventsReceived.size === 4)
     assert(excludeReporter.testIgnoredEventsReceived.size === 3)
     val excludeReporterDist = new EventRecordingReporter
     val excludeDistributor = new CounterDistributor
-    masterSuite.runNestedSuites(Args(excludeReporterDist, Stopper.default, excludeFilter, Map.empty, Some(excludeDistributor), new Tracker(new Ordinal(99)), Set.empty))
+    masterSuite.runNestedSuites(Args(excludeReporterDist, Stopper.default, excludeFilter, ConfigMap.empty, Some(excludeDistributor), new Tracker(new Ordinal(99)), Set.empty))
     assert(excludeDistributor.count === 4)
   }
   
@@ -694,21 +694,21 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     
     val simpleSuite = new SimpleSuite()
     simpleSuite.run(None, Args(SilentReporter))
-    simpleSuite.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker, Set.empty))
+    simpleSuite.run(None, Args(SilentReporter, Stopper.default, Filter(), ConfigMap("org.scalatest.ChosenStyles" -> Set("org.scalatest.Suite")), None, new Tracker, Set.empty))
     val caught =
       intercept[NotAllowedException] {
-        simpleSuite.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSpec")), None, new Tracker, Set.empty))
+        simpleSuite.run(None, Args(SilentReporter, Stopper.default, Filter(), ConfigMap("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSpec")), None, new Tracker, Set.empty))
       }
     import OptionValues._
     assert(caught.message.value === Resources("notTheChosenStyle", "org.scalatest.Suite", "org.scalatest.FunSpec"))
     val caught2 =
       intercept[NotAllowedException] {
-        simpleSuite.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSpec", "org.scalatest.FreeSpec")), None, new Tracker, Set.empty))
+        simpleSuite.run(None, Args(SilentReporter, Stopper.default, Filter(), ConfigMap("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSpec", "org.scalatest.FreeSpec")), None, new Tracker, Set.empty))
       }
     assert(caught2.message.value === Resources("notOneOfTheChosenStyles", "org.scalatest.Suite", Suite.makeListForHumans(Vector("org.scalatest.FunSpec", "org.scalatest.FreeSpec"))))
     val caught3 =
       intercept[NotAllowedException] {
-        simpleSuite.run(None, Args(SilentReporter, Stopper.default, Filter(), Map("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSpec", "org.scalatest.FreeSpec", "org.scalatest.FlatSpec")), None, new Tracker, Set.empty))
+        simpleSuite.run(None, Args(SilentReporter, Stopper.default, Filter(), ConfigMap("org.scalatest.ChosenStyles" -> Set("org.scalatest.FunSpec", "org.scalatest.FreeSpec", "org.scalatest.FlatSpec")), None, new Tracker, Set.empty))
       }
     assert(caught3.message.value === Resources("notOneOfTheChosenStyles", "org.scalatest.Suite", Suite.makeListForHumans(Vector("org.scalatest.FunSpec", "org.scalatest.FreeSpec", "org.scalatest.FlatSpec"))))
   }

@@ -79,7 +79,7 @@ trait ConfigMapFixture { this: fixture.Suite =>
   /**
    * The type of the <code>configMap</code>, which is <code>Map[String, Any]</code>.
    */
-  type FixtureParam = Map[String, Any]
+  type FixtureParam = ConfigMap
 
   /**
    * Invoke the test function, passing to the the test function the <code>configMap</code>

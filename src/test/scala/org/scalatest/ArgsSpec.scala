@@ -10,7 +10,7 @@ class ArgsSpec extends WordSpec with TableDrivenPropertyChecks with ShouldMatche
       val rep = SilentReporter
       val stp = Stopper.default
       val flt = Filter()
-      val cnf = Map.empty[String, Any]
+      val cnf = ConfigMap.empty
       val dst = None
       val trk = new Tracker
       val sty = Set.empty[String]
@@ -45,7 +45,7 @@ class ArgsSpec extends WordSpec with TableDrivenPropertyChecks with ShouldMatche
         }
       }
       val s = new MySuite
-      s.run(None, SilentReporter, Stopper.default, Filter(), Map.empty, None, new Tracker)
+      s.run(None, SilentReporter, Stopper.default, Filter(), ConfigMap.empty, None, new Tracker)
       assert(s.newRunGotCalled)
     }
   }

@@ -124,11 +124,12 @@ trait Reporter /* extends (Event => Unit) */ {
 }
 
 /**
+ * TODO: Document on the 2.0 release notes that I dropped this deprecated implicit.
  * Companion object to Reporter that holds a deprecated implicit conversion.
  */
-object Reporter {
+private[scalatest] object Reporter {
 
-  /**
+  /*
    * Converts a <code>Reporter</code> to a function type that prior to the ScalaTest 1.5 release the
    * <code>Reporter</code> extended.
    *
@@ -147,9 +148,11 @@ object Reporter {
    * be retained. If no one steps forward with a compelling justification, it will be removed in a future version of ScalaTest.
    * </p>
    */
+/*
   @deprecated("See the documentation for Reporter.convertReporterToFunction for information")
   implicit def convertReporterToFunction(repo: Reporter): (Event) => Unit =
     (e: Event) => repo(e)
+*/
 
   private[scalatest] def indentStackTrace(stackTrace: String, level: Int): String = {
     val indentation = if (level > 0) "  " * level else ""

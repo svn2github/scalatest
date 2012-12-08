@@ -107,7 +107,7 @@ class ScalaTestFramework extends Framework {
     private var reporter: DispatchReporter = null
     private var reporterConfigs: ReporterConfigurations = null
     private var filter: Filter = null
-    private var configMap: Map[String, String] = null
+    private var configMap: ConfigMap = null
     private val resultHolder = new SuiteResultHolder()
     
     def getConfigurations(args: Array[String], loggers: Array[Logger], eventHandler: EventHandler, testLoader: ClassLoader) = 

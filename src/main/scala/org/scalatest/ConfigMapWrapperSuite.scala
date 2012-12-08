@@ -50,7 +50,7 @@ package org.scalatest
  * import org.scalatest._
  *
  * @WrapWith(classOf[ConfigMapWrapperSuite])
- * class ExampleSpec(configMap: Map[String, Any]) extends path.FunSpec {
+ * class ExampleSpec(configMap: ConfigMap) extends path.FunSpec {
  *
  *   describe("A widget database") {
  *     it("should contain consistent values") {

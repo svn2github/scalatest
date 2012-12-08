@@ -318,7 +318,7 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
    */
   final override val styleName: String = "JUnit3Suite"
     
-  final override def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = 
+  final override def testDataFor(testName: String, theConfigMap: ConfigMap = ConfigMap.empty): TestData = 
     new TestData {
       val configMap = theConfigMap 
       val name = testName

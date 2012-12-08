@@ -232,7 +232,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
 
   private def hasIgnoreTag(testName: String) = getMethodForJUnitTestName(testName).getAnnotation(classOf[org.junit.Ignore]) != null
   
-  override def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = {
+  override def testDataFor(testName: String, theConfigMap: ConfigMap = ConfigMap.empty): TestData = {
     val suiteTags = for { 
       a <- this.getClass.getDeclaredAnnotations
       annotationClass = a.annotationType

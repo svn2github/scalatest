@@ -1245,7 +1245,7 @@ trait FreeSpec extends org.scalatest.Suite with OneInstancePerTest { thisSuite =
    */
   final override val styleName: String = "org.scalatest.path.FreeSpec"
     
-  override def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = {
+  override def testDataFor(testName: String, theConfigMap: ConfigMap = ConfigMap.empty): TestData = {
     ensureTestResultsRegistered(thisSuite)
     createTestDataFor(testName, theConfigMap, this)
   }

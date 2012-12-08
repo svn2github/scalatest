@@ -124,7 +124,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
    */
   protected def withFixture(test: OneArgTest)
 
-  private[fixture] class TestFunAndConfigMap(val name: String, test: FixtureParam => Any, val configMap: Map[String, Any])
+  private[fixture] class TestFunAndConfigMap(val name: String, test: FixtureParam => Any, val configMap: ConfigMap)
     extends OneArgTest {
     
     def apply(fixture: FixtureParam) {
@@ -136,7 +136,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
     val tags = testData.tags
   }
 
-  private[fixture] class FixturelessTestFunAndConfigMap(override val name: String, test: () => Any, override val configMap: Map[String, Any])
+  private[fixture] class FixturelessTestFunAndConfigMap(override val name: String, test: () => Any, override val configMap: ConfigMap)
     extends NoArgTest {
 
     def apply() { test() }

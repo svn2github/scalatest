@@ -35,7 +35,7 @@ class TestDataProp extends AllSuiteProp {
   
   test("TestData should include correct configMap, name, scopes and text") {
     forAll(examples.filter(_.included)) { s =>
-      s.run(None, Args(reporter = SilentReporter, configMap = Map("key1" -> "value1")))
+      s.run(None, Args(reporter = SilentReporter, configMap = ConfigMap("key1" -> "value1")))
       assert(s.testData != null, s.getClass.getName + "'s testData is null.")
       assert(s.expectedTestData.configMap === s.testData.configMap)
       assert(s.expectedTestData.name === s.testData.name)
@@ -59,7 +59,7 @@ object TestDataTag extends Tag("org.scalatest.tags.TestDataTag")
 @DoNotDiscover
 class ExampleTestDataSuite extends Suite with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "testMethod1"
     val scopes = Vector.empty
     val text = "testMethod1"
@@ -77,7 +77,7 @@ class ExampleTestDataSuite extends Suite with TestDataFixtureServices {
 @DoNotDiscover
 class ExampleTestDataFixtureSuite extends fixture.Suite with TestDataFixtureServices with StringFixture {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "testMethod1(FixtureParam)"
     val scopes = Vector.empty
     val text = "testMethod1(FixtureParam)"
@@ -95,7 +95,7 @@ class ExampleTestDataFixtureSuite extends fixture.Suite with TestDataFixtureServ
 @DoNotDiscover
 class ExampleTestDataSpec extends Spec with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
     val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
@@ -118,7 +118,7 @@ class ExampleTestDataSpec extends Spec with TestDataFixtureServices {
 @DoNotDiscover
 class ExampleTestDataFixtureSpec extends fixture.Spec with TestDataFixtureServices with StringFixture {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
     val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
@@ -141,13 +141,13 @@ class ExampleTestDataFixtureSpec extends fixture.Spec with TestDataFixtureServic
 @DoNotDiscover
 class ExampleTestDataJUnit3Suite extends JUnit3Suite with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "testMethod1"
     val scopes = Vector.empty
     val text = "testMethod1"
     val tags = Set.empty[String]
   }
-  var testData: TestData = this.testDataFor("testMethod1", Map("key1" -> "value1"))
+  var testData: TestData = this.testDataFor("testMethod1", ConfigMap("key1" -> "value1"))
   
   def testMethod1() {}
 }
@@ -155,13 +155,13 @@ class ExampleTestDataJUnit3Suite extends JUnit3Suite with TestDataFixtureService
 @DoNotDiscover
 class ExampleTestDataJUnitSuite extends JUnitSuite with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "testMethod1"
     val scopes = Vector.empty
     val text = "testMethod1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.Ignore")
   }
-  var testData: TestData = this.testDataFor("testMethod1", Map("key1" -> "value1"))
+  var testData: TestData = this.testDataFor("testMethod1", ConfigMap("key1" -> "value1"))
 
   @org.junit.Ignore
   @Test def testMethod1() = ()
@@ -172,13 +172,13 @@ class ExampleTestDataJUnitSuite extends JUnitSuite with TestDataFixtureServices 
 @DoNotDiscover
 class ExampleTestDataTestNGSuite extends TestNGSuite with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "testMethod1"
     val scopes = Vector.empty
     val text = "testMethod1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.Ignore")
   }
-  var testData: TestData = this.testDataFor("testMethod1", Map("key1" -> "value1"))
+  var testData: TestData = this.testDataFor("testMethod1", ConfigMap("key1" -> "value1"))
   @TestNG
   @Ignore
   def testMethod1() {}
@@ -187,7 +187,7 @@ class ExampleTestDataTestNGSuite extends TestNGSuite with TestDataFixtureService
 @DoNotDiscover
 class ExampleTestDataFunSuite extends FunSuite with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Test 1"
     val scopes = Vector.empty
     val text = "Test 1"
@@ -204,7 +204,7 @@ class ExampleTestDataFunSuite extends FunSuite with TestDataFixtureServices {
 @DoNotDiscover
 class ExampleTestDataFixtureFunSuite extends fixture.FunSuite with TestDataFixtureServices with StringFixture {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Test 1"
     val scopes = Vector.empty
     val text = "Test 1"
@@ -221,7 +221,7 @@ class ExampleTestDataFixtureFunSuite extends fixture.FunSuite with TestDataFixtu
 @DoNotDiscover
 class ExampleTestDataFunSpec extends FunSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
     val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
@@ -242,7 +242,7 @@ class ExampleTestDataFunSpec extends FunSpec with TestDataFixtureServices {
 @DoNotDiscover
 class ExampleTestDataFixtureFunSpec extends fixture.FunSpec with TestDataFixtureServices with StringFixture {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
     val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
@@ -263,7 +263,7 @@ class ExampleTestDataFixtureFunSpec extends fixture.FunSpec with TestDataFixture
 @DoNotDiscover
 class ExampleTestDataFeatureSpec extends FeatureSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Feature: Feature 1 Scenario: Scenario 1"
     val scopes = Vector("Feature: Feature 1")
     val text = "Scenario: Scenario 1"
@@ -282,7 +282,7 @@ class ExampleTestDataFeatureSpec extends FeatureSpec with TestDataFixtureService
 @DoNotDiscover
 class ExampleTestDataFixtureFeatureSpec extends fixture.FeatureSpec with TestDataFixtureServices with StringFixture {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Feature: Feature 1 Scenario: Scenario 1"
     val scopes = Vector("Feature: Feature 1")
     val text = "Scenario: Scenario 1"
@@ -301,7 +301,7 @@ class ExampleTestDataFixtureFeatureSpec extends fixture.FeatureSpec with TestDat
 @DoNotDiscover
 class ExampleTestDataFlatSpec extends FlatSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 should test 1"
     val scopes = Vector("Scope 1")
     val text = "should test 1"
@@ -318,7 +318,7 @@ class ExampleTestDataFlatSpec extends FlatSpec with TestDataFixtureServices {
 @DoNotDiscover
 class ExampleTestDataFixtureFlatSpec extends fixture.FlatSpec with TestDataFixtureServices with StringFixture {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 should test 1"
     val scopes = Vector("Scope 1")
     val text = "should test 1"
@@ -335,7 +335,7 @@ class ExampleTestDataFixtureFlatSpec extends fixture.FlatSpec with TestDataFixtu
 @DoNotDiscover
 class ExampleTestDataFreeSpec extends FreeSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
     val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
@@ -356,7 +356,7 @@ class ExampleTestDataFreeSpec extends FreeSpec with TestDataFixtureServices {
 @DoNotDiscover
 class ExampleTestDataFixtureFreeSpec extends fixture.FreeSpec with TestDataFixtureServices with StringFixture {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
     val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
@@ -377,7 +377,7 @@ class ExampleTestDataFixtureFreeSpec extends fixture.FreeSpec with TestDataFixtu
 @DoNotDiscover
 class ExampleTestDataPropSpec extends PropSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Test 1"
     val scopes = Vector.empty
     val text = "Test 1"
@@ -394,7 +394,7 @@ class ExampleTestDataPropSpec extends PropSpec with TestDataFixtureServices {
 @DoNotDiscover
 class ExampleTestDataFixturePropSpec extends fixture.PropSpec with TestDataFixtureServices with StringFixture {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Test 1"
     val scopes = Vector.empty
     val text = "Test 1"
@@ -411,7 +411,7 @@ class ExampleTestDataFixturePropSpec extends fixture.PropSpec with TestDataFixtu
 @DoNotDiscover
 class ExampleTestDataWordSpec extends WordSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 should Scope 2 should test 1"
     val scopes = Vector("Scope 1 should", "Scope 2 should")
     val text = "test 1"
@@ -432,7 +432,7 @@ class ExampleTestDataWordSpec extends WordSpec with TestDataFixtureServices {
 @DoNotDiscover
 class ExampleTestDataFixtureWordSpec extends fixture.WordSpec with TestDataFixtureServices with StringFixture {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 should Scope 2 should test 1"
     val scopes = Vector("Scope 1 should", "Scope 2 should")
     val text = "test 1"
@@ -453,13 +453,13 @@ class ExampleTestDataFixtureWordSpec extends fixture.WordSpec with TestDataFixtu
 @DoNotDiscover
 class ExampleTestDataPathFreeSpec extends path.FreeSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
     val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
-  def testData: TestData = testDataFor("Scope 1 Scope 2 test 1", Map("key1" -> "value1"))
+  def testData: TestData = testDataFor("Scope 1 Scope 2 test 1", ConfigMap("key1" -> "value1"))
   "Scope 1" - {
     "Scope 2" - {
       "test 1" taggedAs(TestDataTag) in {}
@@ -470,13 +470,13 @@ class ExampleTestDataPathFreeSpec extends path.FreeSpec with TestDataFixtureServ
 @DoNotDiscover
 class ExampleTestDataPathFunSpec extends path.FunSpec with TestDataFixtureServices {
   val expectedTestData = new TestData {
-    val configMap = Map("key1" -> "value1") 
+    val configMap = ConfigMap("key1" -> "value1") 
     val name = "Scope 1 Scope 2 test 1"
     val scopes = Vector("Scope 1", "Scope 2")
     val text = "test 1"
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
-  def testData: TestData = testDataFor("Scope 1 Scope 2 test 1", Map("key1" -> "value1"))
+  def testData: TestData = testDataFor("Scope 1 Scope 2 test 1", ConfigMap("key1" -> "value1"))
   describe("Scope 1") {
     describe("Scope 2") {
       it("test 1", TestDataTag) {}

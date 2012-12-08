@@ -33,7 +33,7 @@ private[scalatest] class SuiteRerunner(suiteClassName: String) extends Rerunner 
     throw new NullPointerException
 
   def apply(report: Reporter, stopRequested: Stopper, filter: Filter,
-            configMap: Map[String, Any], distributor: Option[Distributor], tracker: Tracker, loader: ClassLoader) {
+            configMap: ConfigMap, distributor: Option[Distributor], tracker: Tracker, loader: ClassLoader) {
 
     val tagsToInclude =
       filter.tagsToInclude match {

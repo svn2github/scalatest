@@ -130,7 +130,7 @@ object run {
    * <code>fullStacksPassed</code>, and <code>statsPassed</code>).
    * </p>
    */
-  def apply(suite: Suite, testName: String = null, configMap: Map[String, Any] = Map()) {
+  def apply(suite: Suite, testName: String = null, configMap: ConfigMap = ConfigMap.empty) {
     defaultShell.run(suite, testName, configMap)
   }
 }

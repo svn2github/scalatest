@@ -1982,5 +1982,5 @@ trait FreeSpec extends Suite { thisSuite =>
    */
   final override val styleName: String = "org.scalatest.FreeSpec"
     
-  override def testDataFor(testName: String, theConfigMap: Map[String, Any] = Map.empty): TestData = createTestDataFor(testName, theConfigMap, this)
+  override def testDataFor(testName: String, theConfigMap: ConfigMap = ConfigMap.empty): TestData = createTestDataFor(testName, theConfigMap, this)
 }

@@ -33,7 +33,7 @@ package org.scalatest
  * arguments. This trait's implemention of the variant that takes the <code>configMap</code>
  * simply invokes the variant that takes no parameters, which does nothing. Thus you can override
  * whichever variant you want. If you need something from the <code>configMap</code> before
- * all tests and nested suites are run, override <code>beforeAll(Map[String, Any])</code>. Otherwise,
+ * all tests and nested suites are run, override <code>beforeAll(ConfigMap)</code>. Otherwise,
  * override <code>beforeAll()</code>.
  * </p>
  *
@@ -86,14 +86,14 @@ package org.scalatest
  * 
  *   // Set up the temp file needed by the test, taking
  *   // a file name from the configMap
- *   override def beforeAll(configMap: Map[String, Any]) {
+ *   override def beforeAll(configMap: ConfigMap) {
  * 
  *     require(
  *       configMap.isDefinedAt(tempFileName),
- *       "must place a temp file name in the configMap under the key: " + tempFileName
+ *       "must place a temp file name in the config map under the key: " + tempFileName
  *     )
  * 
- *     val fileName = configMap(tempFileName).asInstanceOf[String]
+ *     val fileName = configMap.getRequired[String](tempFileName)
  * 
  *     val writer = new FileWriter(fileName)
  *     try writer.write("Hello, suite of tests!")
@@ -101,10 +101,10 @@ package org.scalatest
  *   }
  * 
  *   // Delete the temp file
- *   override def afterAll(configMap: Map[String, Any]) {
+ *   override def afterAll(configMap: ConfigMap) {
  *     // No need to require that configMap contains the key again because it won't get
  *     // here if it didn't contain the key in beforeAll
- *     val fileName = configMap("tempFileName").asInstanceOf[String]
+ *     val fileName = configMap.getRequired[String]("tempFileName")
  *     val file = new File(fileName)
  *     file.delete()
  *   }
@@ -166,7 +166,7 @@ trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
    * This trait's implementation
    * of <code>run</code> invokes the overloaded form of this method that
    * takes a <code>configMap</code> before executing
-   * any tests or nested suites. This trait's implementation of that <code>beforeAll(Map[String, Any])</code>
+   * any tests or nested suites. This trait's implementation of that <code>beforeAll(ConfigMap)</code>
    * method simply invokes this <code>beforeAll()</code>
    * method. Thus this method can be used to set up a test fixture
    * needed by the entire suite, when you don't need anything from the <code>configMap</code>.
@@ -188,7 +188,7 @@ trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
    * overloaded form of <code>beforeAll</code> that takes no <code>configMap</code>.
    * </p>
    */
-  protected def beforeAll(configMap: Map[String, Any]) {
+  protected def beforeAll(configMap: ConfigMap) {
     beforeAll()
   }
 
@@ -200,7 +200,7 @@ trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
    * This trait's implementation
    * of <code>run</code> invokes the overloaded form of this method that
    * takes a <code>configMap</code> after executing
-   * all tests and nested suites. This trait's implementation of that <code>afterAll(Map[String, Any])</code> method simply invokes this
+   * all tests and nested suites. This trait's implementation of that <code>afterAll(ConfigMap)</code> method simply invokes this
    * <code>afterAll()</code> method. Thus this method can be used to tear down a test fixture
    * needed by the entire suite, when you don't need anything from the <code>configMap</code>.
    * This trait's implementation of this method does nothing.
@@ -221,7 +221,7 @@ trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
    * overloaded form of <code>afterAll</code> that takes no <code>configMap</code>.
    * </p>
    */
-  protected def afterAll(configMap: Map[String, Any]) {
+  protected def afterAll(configMap: ConfigMap) {
     afterAll()
   }
 
@@ -229,8 +229,8 @@ trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
    * Execute a suite surrounded by calls to <code>beforeAll</code> and <code>afterAll</code>.
    *
    * <p>
-   * This trait's implementation of this method ("this method") invokes <code>beforeAll(Map[String, Any])</code>
-   * before executing any tests or nested suites and <code>afterAll(Map[String, Any])</code>
+   * This trait's implementation of this method ("this method") invokes <code>beforeAll(ConfigMap)</code>
+   * before executing any tests or nested suites and <code>afterAll(ConfigMap)</code>
    * after executing all tests and nested suites. It runs the suite by invoking <code>super.run</code>, passing along
    * the seven parameters passed to it.
    * </p>

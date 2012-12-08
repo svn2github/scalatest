@@ -21,7 +21,7 @@ package org.scalatest.testng {
   import org.testng.annotations.Test
   import testng.test._
 
-  //execute(None, new StandardOutReporter, new Stopper {}, Filter(), Map(), None)
+  //execute(None, new StandardOutReporter, new Stopper {}, Filter(), ConfigMap.empty, None)
   class TestNGSuiteGroupsSuite extends FunSuite {
     
     //////////////////////////////////////////////////////////

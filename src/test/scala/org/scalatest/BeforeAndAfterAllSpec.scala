@@ -9,7 +9,7 @@ class BeforeAndAfterAllSpec extends FunSpec with ShouldMatchers {
     @volatile var beforeAllTime: Long = 0
     @volatile var afterAllTime: Long = 0
     
-    override protected def beforeAll(configMap: Map[String, Any]) {
+    override protected def beforeAll(configMap: ConfigMap) {
       beforeAllTime = System.currentTimeMillis
     }
     
@@ -19,7 +19,7 @@ class BeforeAndAfterAllSpec extends FunSpec with ShouldMatchers {
     
     override def newInstance: Suite with ParallelTestExecution = new ExampleSuite
     
-    override protected def afterAll(configMap: Map[String, Any]) {
+    override protected def afterAll(configMap: ConfigMap) {
       afterAllTime = System.currentTimeMillis
     }
   }

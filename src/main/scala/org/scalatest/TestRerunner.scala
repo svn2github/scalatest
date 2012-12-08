@@ -29,7 +29,7 @@ private[scalatest] class TestRerunner(suiteClassName: String, testName: String) 
     throw new NullPointerException
 
   // [bv: I wasn't sure if I need to say override here.]
-  def apply(report: Reporter, stopper: Stopper, filter: Filter, configMap: Map[String, Any],
+  def apply(report: Reporter, stopper: Stopper, filter: Filter, configMap: ConfigMap,
             distributor: Option[Distributor], tracker: Tracker, loader: ClassLoader) {
 
     val runStartTime = System.currentTimeMillis
