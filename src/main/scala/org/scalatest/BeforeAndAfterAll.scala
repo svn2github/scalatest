@@ -86,20 +86,20 @@ package org.scalatest
  * 
  *   // Set up the temp file needed by the test, taking
  *   // a file name from the config map
- *   override def beforeAll(configMap: ConfigMap) {
+ *   override def beforeAll(cm: ConfigMap) {
  *     assume(
- *       configMap.isDefinedAt(tempFileName),
+ *       cm.isDefinedAt(tempFileName),
  *       "must place a temp file name in the config map under the key: " + tempFileName
  *     )
- *     val fileName = configMap.getRequired[String](tempFileName)
+ *     val fileName = cm.getRequired[String](tempFileName)
  *     val writer = new FileWriter(fileName)
  *     try writer.write("Hello, suite of tests!")
  *     finally writer.close()
  *   }
  * 
  *   // Delete the temp file
- *   override def afterAll(configMap: ConfigMap) {
- *     val fileName = configMap.getRequired[String]("tempFileName")
+ *   override def afterAll(cm: ConfigMap) {
+ *     val fileName = cm.getRequired[String]("tempFileName")
  *     val file = new File(fileName)
  *     file.delete()
  *   }
