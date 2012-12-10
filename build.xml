@@ -49,6 +49,8 @@
     <property name="example" value="${demo}/example" />
 
     <property name="jvmargs" value="-Xmx3000M -Xss10M"/>
+    <property name="mvn.deploy.plugin"
+              value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
 
   <!--
   <property name="build.compiler" value="jikes"/>
@@ -336,6 +338,36 @@
       </concat>
     </target>
 
+    <target name="docutils" depends="compile-main">
+      <delete dir="${build}/utilsdoc" />
+      <mkdir  dir="${build}/utilsdoc" />
+
+      <delete dir="${build}/docsrc" />
+      <mkdir  dir="${build}/docsrc" />
+
+      <copy todir="${build}/docsrc">
+        <fileset dir="src/main/scala" includes="org/scalautils/**"/>
+      </copy>
+
+      <replaceregexp match="@Finders(.*)" replace="">
+        <fileset dir="target/docsrc">
+          <include name="**/*.scala" />
+        </fileset>
+      </replaceregexp>
+
+      <scaladoc addparams="-no-specialization"
+                srcdir="target/docsrc"
+                destdir="${build}/utilsdoc"
+                classpathref="lib.path"
+                doctitle="ScalaUtils ${release}">
+        <include name="**/*.scala" />
+      </scaladoc>
+
+      <concat destfile="${doc}/lib/template.css" force="yes">
+        <filelist dir="${html}" files="template.css, addl.css"/>
+      </concat>
+    </target>
+
      <!-- Put everything in ${jar.contents} into the scalatest.jar file -->
     <target name="dist" depends="compile">
         <!-- Create the distribution directory -->
@@ -349,6 +381,11 @@
         <bnd classpath="${jar.contents}" sourcepath="${jar.contents}"
              eclipse="false" failok="false" exceptions="true" files="osgi.bnd"
              output="${dist}/lib/scalatest.jar" /> 
+
+        <!-- Create scalautils jar, including OSGi metadata -->
+        <bnd classpath="${jar.contents}" sourcepath="${jar.contents}"
+             eclipse="false" failok="false" exceptions="true"
+             files="scalautils-osgi.bnd" output="${dist}/lib/scalautils.jar" /> 
 
         <jar jarfile="${dist}/lib/scalatest-wbt.jar" basedir="${build.tests}" includes="org/scalatest/*.class" />
 
@@ -729,6 +766,7 @@
 
     <target name="jar" depends="dist"></target>
 
+    <!-- creates jars of scalatest and scalautils source files -->
     <target name="jarsrc">
       <jar jarfile="${build}/scalatest-sources.jar">
         <fileset dir="src/main/scala"/>
@@ -738,8 +776,14 @@
         <fileset dir="src/examples/java"/>
         <fileset dir="${build.generated.src}"/>
       </jar>
+
+      <jar jarfile="${build}/scalautils-sources.jar">
+        <fileset dir="src/main/scala"     includes="org/scalautils/**"/>
+        <fileset dir="src/main/resources" includes="org/scalautils/**"/>
+      </jar>
     </target>
 
+    <!-- creates jar of scalatest test source files -->
     <target name="jartestsrc">
       <jar jarfile="${build}/scalatest-test-sources.jar">
         <fileset dir="src/test/scala"/>
@@ -749,25 +793,50 @@
     </target>
 
     <!--
-      - Deploy to remote repository.
+      - Creates jars of scaladoc and javadoc files for scalatest and
+      - scalautils.
+      -->
+    <target name="jardoc" depends="doc,docutils">
+      <mkdir dir="${build}/dummydoc" />
+
+      <echo file="${build}/dummydoc/index.html">
+         We don't have any java in this project to document, but
+         Sonatype requires a javadoc jar so we just jar this text file.
+
+         Move along, move along.  Nothing to see here.
+      </echo>
+
+      <jar jarfile="${build}/scalatest-scaladoc.jar" basedir="${doc}"/>
+      <jar jarfile="${build}/scalatest-javadoc.jar"  basedir="${jdoc}"/>
+      <jar jarfile="${build}/scalautils-scaladoc.jar"
+           basedir="${build}/utilsdoc"/>
+      <jar jarfile="${build}/scalautils-javadoc.jar"
+           basedir="${build}/dummydoc"/>
+    </target>
+
+    <!--
+      - Deploys jars to remote repository.  Deploys both scalatest and
+      - scalautils jars.
       -
-      - Requires username and password for repository to be defined in your
+      - Requires username and password for repositories to be defined in your
       - ~/.m2/settings.xml file, e.g.:
       -
       -   <servers>
       -     <server>
-      -       <id>scala-tools.org</id>
+      -       <id>sonatype-nexus-staging</id>
+      -       <username>username</username>
+      -       <password>password</password>
+      -     </server>
+      -
+      -     <server>
+      -       <id>sonatype-nexus-snapshots</id>
       -       <username>username</username>
       -       <password>password</password>
       -     </server>
       -   </servers>
       - 
       -->
-     <target name="deploy" depends="jar,jartests,jarsrc,jartestsrc,doc">
-
-      <jar jarfile="${build}/scalatest-scaladoc.jar" basedir="${doc}"/>
-      <jar jarfile="${build}/scalatest-javadoc.jar"  basedir="${jdoc}"/>
-
+    <target name="deploy" depends="jar,jartests,jarsrc,jartestsrc,jardoc">
       <property name="deploy.main"
                 value="${dist}/lib/scalatest.jar"/>
       <property name="deploy.tests" 
@@ -784,6 +853,116 @@
                 value="${release}"/>
 
       <antcall target="deploy-jars"/>
+      <antcall target="deploy-utils"/>
+    </target>
+
+    <!--
+      - Deploys a single jar based on properties:
+      -   deploy.pomfile
+      -   deploy.release
+      -   deploy.file
+      -   deploy.classifier
+      -->
+    <target name="deploy-jar">
+      <artifact:pom id="pom" file="${deploy.pomfile}" />
+
+      <property name="snapshot.repository"
+                value="${pom.distributionManagement.snapshotRepository.url}" />
+      <property name="release.repository"
+                value="${pom.distributionManagement.repository.url}" />
+      <property name="snapshot.repository.id"
+                value="${pom.distributionManagement.snapshotRepository.id}" />
+      <property name="release.repository.id"
+                value="${pom.distributionManagement.repository.id}" />
+
+      <condition property="maven.repository.url" value="${snapshot.repository}"
+                 else="${release.repository}">
+        <contains string="${deploy.release}" substring="-SNAPSHOT"/>
+      </condition>
+
+      <condition property="repository.id" value="${snapshot.repository.id}"
+                 else="${release.repository.id}">
+        <contains string="${deploy.release}" substring="-SNAPSHOT"/>
+      </condition>
+
+      <artifact:mvn>
+        <arg value="${mvn.deploy.plugin}" />
+        <arg value="-Dfile=${deploy.file}" />
+        <arg value="-Dclassifier=${deploy.classifier}" />
+        <arg value="-Durl=${maven.repository.url}" />
+        <arg value="-DpomFile=${deploy.pomfile}" />
+        <arg value="-DrepositoryId=${repository.id}" />
+        <arg value="-DuniqueVersion=false" />
+        <arg value="-Pgpg" />
+      </artifact:mvn>
+    </target>
+
+    <!--
+      - Deploys scalautils jars.
+      -
+      - The deploy-utils target depends on jar, jardoc, and jarsrc
+      - being run previously, either on the command line or by the
+      - task that calls deploy-utils using antcall.
+      -
+      - (It doesn't use the depends attribute since it is intended to
+      - be run using <antcall>, which causes it to run in its own project.
+      - If it had its own depends attribute those prereqs would get run
+      - even if they had already been run in the calling project.)
+      -->
+    <target name="deploy-utils">
+      <copy file="scalautils-pom_template.xml" tofile="${build}/pom.xml"
+            overwrite="true">
+        <filterset>
+          <filter token="RELEASE" value="${release}" />
+          <filter token="SCALA_VERSION" value="${scala.version}" />
+        </filterset>
+      </copy>
+
+      <antcall target="deploy-utils-jars">
+        <param name="deploy.pomfile"
+               value="${build}/pom.xml"/>
+        <param name="deploy.main"
+               value="${dist}/lib/scalautils.jar"/>
+        <param name="deploy.sources" 
+               value="${build}/scalautils-sources.jar"/>
+        <param name="deploy.scaladoc" 
+               value="${build}/scalautils-scaladoc.jar"/>
+        <param name="deploy.javadoc" 
+               value="${build}/scalautils-javadoc.jar"/>
+        <param name="deploy.release"
+               value="${release}"/>
+      </antcall>
+
+    </target>
+
+    <!--
+      - Deploys scalautils jars identified by properties:
+      -  deploy.pomfile
+      -  deploy.main
+      -  deploy.scaladoc
+      -  deploy.javadoc
+      -  deploy.sources
+      -->
+    <target name="deploy-utils-jars">
+      <antcall target="deploy-jar">
+        <param name="deploy.classifier" value=""/>
+        <param name="deploy.file"       value="${deploy.main}"/>
+      </antcall>
+
+      <antcall target="deploy-jar">
+        <param name="deploy.classifier" value="scaladoc"/>
+        <param name="deploy.file"       value="${deploy.scaladoc}"/>
+      </antcall>
+
+      <antcall target="deploy-jar">
+        <param name="deploy.classifier" value="javadoc"/>
+        <param name="deploy.file"       value="${deploy.javadoc}"/>
+      </antcall>
+
+      <antcall target="deploy-jar">
+        <param name="deploy.classifier" value="sources"/>
+        <param name="deploy.file"       value="${deploy.sources}"/>
+      </antcall>
     </target>
 
     <!--
@@ -810,6 +989,7 @@
       -->
     <target name="redeploy"
           description="redeploy a release using a different scala version tag">
+
       <fail message="Missing old.scala.version definition."
             unless="old.scala.version" />
       <fail message="Missing new.scala.version definition." 
@@ -817,6 +997,11 @@
       <fail message="Missing scalatest.version definition." 
             unless="scalatest.version"  />
 
+      <antcall target="redeploy-scalatest"/>
+      <antcall target="redeploy-utils"/>
+    </target>
+
+    <target name="redeploy-scalatest">
       <artifact:dependencies filesetId="old.scala.fileset"
                              versionsId="dependency.versions">
         <dependency groupId="org.scalatest"
@@ -883,6 +1068,65 @@
       <antcall target="deploy-jars"/>
     </target>
 
+    <target name="redeploy-utils">
+      <artifact:dependencies filesetId="old.scala.fileset"
+                             versionsId="dependency.versions">
+        <dependency groupId="org.scalautils"
+                    artifactId="scalautils_${old.scala.version}"
+                    version="${scalatest.version}" />
+        <dependency groupId="org.scalautils"
+                    artifactId="scalautils_${old.scala.version}"
+                    version="${scalatest.version}"
+                    classifier="sources"/>
+        <dependency groupId="org.scalautils"
+                    artifactId="scalautils_${old.scala.version}"
+                    version="${scalatest.version}"
+                    classifier="scaladoc"/>
+        <dependency groupId="org.scalautils"
+                    artifactId="scalautils_${old.scala.version}"
+                    version="${scalatest.version}"
+                    classifier="javadoc"/>
+      </artifact:dependencies>
+
+      <copy file="scalautils-pom_template.xml" tofile="${build}/pom.xml"
+            overwrite="true">
+        <filterset>
+          <filter token="RELEASE" value="${scalatest.version}" />
+          <filter token="SCALA_VERSION" value="${new.scala.version}" />
+        </filterset>
+      </copy>
+
+      <delete dir="target/redeploy" />
+      <mkdir dir="target/redeploy" />
+      <copy todir="target/redeploy" verbose="true">
+        <fileset refid="old.scala.fileset" />
+        <mapper classpathref="maven-ant-tasks.classpath"
+                classname="org.apache.maven.artifact.ant.VersionMapper"
+                from="${scalatest.version}" to="flatten" />
+      </copy>
+
+      <move todir="target/redeploy" verbose="true">
+        <fileset dir="target/redeploy" includes="scalautils_*.jar"/>
+        <globmapper from="scalautils_${old.scala.version}*" to="scalautils*"/>
+      </move>
+
+      <antcall target="deploy-utils-jars">
+        <param name="deploy.pomfile"
+               value="${build}/pom.xml"/>
+        <param name="deploy.main"
+               value="target/redeploy/scalautils.jar"/>
+        <param name="deploy.sources" 
+               value="target/redeploy/scalautils-sources.jar"/>
+        <param name="deploy.scaladoc" 
+               value="target/redeploy/scalautils-scaladoc.jar"/>
+        <param name="deploy.javadoc" 
+               value="target/redeploy/scalautils-javadoc.jar"/>
+        <param name="deploy.release"
+               value="${scalatest.version}"/>
+      </antcall>
+
+    </target>
+
     <!--
       - For internal use by targets 'deploy' and 'redeploy'.  Deploys jars
       - specified by following properties:
@@ -898,91 +1142,41 @@
     <target name="deploy-jars">
       <artifact:pom id="pom" file="${build}/pom.xml" />
 
-      <property name="snapshot.repository"
-                value="${pom.distributionManagement.snapshotRepository.url}" />
-      <property name="release.repository"
-                value="${pom.distributionManagement.repository.url}" />
-      <property name="snapshot.repository.id"
-                value="${pom.distributionManagement.snapshotRepository.id}" />
-      <property name="release.repository.id"
-                value="${pom.distributionManagement.repository.id}" />
-      <property name="mvn.deploy.plugin"
-                value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
+      <antcall target="deploy-jar">
+        <param name="deploy.pomfile"    value="${build}/pom.xml"/>
+        <param name="deploy.classifier" value=""/>
+        <param name="deploy.file"       value="${deploy.main}"/>
+      </antcall>
 
-      <condition property="maven.repository.url" value="${snapshot.repository}"
-                 else="${release.repository}">
-        <contains string="${deploy.release}" substring="-SNAPSHOT"/>
-      </condition>
+      <antcall target="deploy-jar">
+        <param name="deploy.pomfile"    value="${build}/pom.xml"/>
+        <param name="deploy.classifier" value="tests"/>
+        <param name="deploy.file"       value="${deploy.tests}"/>
+      </antcall>
 
-      <condition property="repository.id" value="${snapshot.repository.id}"
-                 else="${release.repository.id}">
-        <contains string="${deploy.release}" substring="-SNAPSHOT"/>
-      </condition>
+      <antcall target="deploy-jar">
+        <param name="deploy.pomfile"    value="${build}/pom.xml"/>
+        <param name="deploy.classifier" value="sources"/>
+        <param name="deploy.file"       value="${deploy.sources}"/>
+      </antcall>
 
-      <artifact:mvn>
-        <arg value="${mvn.deploy.plugin}" />
-        <arg value="-Dfile=${deploy.main}" />
-        <arg value="-Durl=${maven.repository.url}" />
-        <arg value="-DpomFile=${build}/pom.xml" />
-        <arg value="-DrepositoryId=${repository.id}" />
-        <arg value="-DuniqueVersion=false" />
-        <arg value="-Pgpg" />
-      </artifact:mvn>
+      <antcall target="deploy-jar">
+        <param name="deploy.pomfile"    value="${build}/pom.xml"/>
+        <param name="deploy.classifier" value="test-sources"/>
+        <param name="deploy.file"       value="${deploy.test-sources}"/>
+      </antcall>
 
-      <artifact:mvn>
-        <arg value="${mvn.deploy.plugin}" />
-        <arg value="-Dfile=${deploy.tests}" />
-        <arg value="-Dclassifier=tests" />
-        <arg value="-Durl=${maven.repository.url}" />
-        <arg value="-DpomFile=${build}/pom.xml" />
-        <arg value="-DrepositoryId=${repository.id}" />
-        <arg value="-DuniqueVersion=false" />
-        <arg value="-Pgpg" />
-      </artifact:mvn>
+      <antcall target="deploy-jar">
+        <param name="deploy.pomfile"    value="${build}/pom.xml"/>
+        <param name="deploy.classifier" value="scaladoc"/>
+        <param name="deploy.file"       value="${deploy.scaladoc}"/>
+      </antcall>
 
-      <artifact:mvn>
-        <arg value="${mvn.deploy.plugin}" />
-        <arg value="-Dfile=${deploy.sources}" />
-        <arg value="-Dclassifier=sources" />
-        <arg value="-Durl=${maven.repository.url}" />
-        <arg value="-DpomFile=${build}/pom.xml" />
-        <arg value="-DrepositoryId=${repository.id}" />
-        <arg value="-DuniqueVersion=false" />
-        <arg value="-Pgpg" />
-      </artifact:mvn>
-
-      <artifact:mvn>
-        <arg value="${mvn.deploy.plugin}" />
-        <arg value="-Dfile=${deploy.test-sources}" />
-        <arg value="-Dclassifier=test-sources" />
-        <arg value="-Durl=${maven.repository.url}" />
-        <arg value="-DpomFile=${build}/pom.xml" />
-        <arg value="-DrepositoryId=${repository.id}" />
-        <arg value="-DuniqueVersion=false" />
-        <arg value="-Pgpg" />
-      </artifact:mvn>
-
-      <artifact:mvn>
-        <arg value="${mvn.deploy.plugin}" />
-        <arg value="-Dfile=${deploy.scaladoc}" />
-        <arg value="-Dclassifier=scaladoc" />
-        <arg value="-Durl=${maven.repository.url}" />
-        <arg value="-DpomFile=${build}/pom.xml" />
-        <arg value="-DrepositoryId=${repository.id}" />
-        <arg value="-DuniqueVersion=false" />
-        <arg value="-Pgpg" />
-      </artifact:mvn>
-
-      <artifact:mvn>
-        <arg value="${mvn.deploy.plugin}" />
-        <arg value="-Dfile=${deploy.javadoc}" />
-        <arg value="-Dclassifier=javadoc" />
-        <arg value="-Durl=${maven.repository.url}" />
-        <arg value="-DpomFile=${build}/pom.xml" />
-        <arg value="-DrepositoryId=${repository.id}" />
-        <arg value="-DuniqueVersion=false" />
-        <arg value="-Pgpg" />
-      </artifact:mvn>
+      <antcall target="deploy-jar">
+        <param name="deploy.pomfile"    value="${build}/pom.xml"/>
+        <param name="deploy.classifier" value="javadoc"/>
+        <param name="deploy.file"       value="${deploy.javadoc}"/>
+      </antcall>
     </target>
 
     <target name="test-junit">
