@@ -28,6 +28,8 @@ import org.scalatest.exceptions.TestFailedException
 import scala.collection.GenTraversable
 import scala.collection.GenSeq
 import scala.collection.GenMap
+import org.scalautils.Tolerance
+import org.scalautils.Interval
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -144,7 +146,7 @@ import Helper.accessProperty
  *
  * @author Bill Venners
  */
-trait ClassicMatchers extends Assertions { matchers =>
+trait ClassicMatchers extends Assertions with Tolerance { matchers =>
 
   // TODO: Can probably rewrite this with a Thread.currentStackTrace or whatever the method is. No need
   // to create the temporary RuntimeException
@@ -794,7 +796,8 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                          ^
        * </pre>
        */
-      def be(doubleTolerance: DoubleTolerance): Matcher[T with Double] = matchersWrapper.and(matchers.not.be(doubleTolerance))
+      def be[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.and(matchers.not.be(interval))
+      // TODEL def be(doubleTolerance: DoubleTolerance): Matcher[T with Double] = matchersWrapper.and(matchers.not.be(doubleTolerance))
 
       /**
        * This method enables the following syntax:
@@ -804,7 +807,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                 ^
        * </pre>
        */
-      def be(floatTolerance: FloatTolerance): Matcher[T with Float] = matchersWrapper.and(matchers.not.be(floatTolerance))
+      // TODEL def be(floatTolerance: FloatTolerance): Matcher[T with Float] = matchersWrapper.and(matchers.not.be(floatTolerance))
 
       /**
        * This method enables the following syntax:
@@ -814,7 +817,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                       ^
        * </pre>
        */
-      def be(longTolerance: LongTolerance): Matcher[T with Long] = matchersWrapper.and(matchers.not.be(longTolerance))
+      // TODEL def be(longTolerance: LongTolerance): Matcher[T with Long] = matchersWrapper.and(matchers.not.be(longTolerance))
 
       /**
        * This method enables the following syntax:
@@ -824,7 +827,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                    ^
        * </pre>
        */
-      def be(intTolerance: IntTolerance): Matcher[T with Int] = matchersWrapper.and(matchers.not.be(intTolerance))
+      // TODEL def be(intTolerance: IntTolerance): Matcher[T with Int] = matchersWrapper.and(matchers.not.be(intTolerance))
 
       /**
        * This method enables the following syntax:
@@ -834,7 +837,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                      ^
        * </pre>
        */
-      def be(shortTolerance: ShortTolerance): Matcher[T with Short] = matchersWrapper.and(matchers.not.be(shortTolerance))
+      // TODEL def be(shortTolerance: ShortTolerance): Matcher[T with Short] = matchersWrapper.and(matchers.not.be(shortTolerance))
 
       /**
        * This method enables the following syntax:
@@ -844,7 +847,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                      ^
        * </pre>
        */
-      def be(byteTolerance: ByteTolerance): Matcher[T with Byte] = matchersWrapper.and(matchers.not.be(byteTolerance))
+      // TODEL def be(byteTolerance: ByteTolerance): Matcher[T with Byte] = matchersWrapper.and(matchers.not.be(byteTolerance))
 
       /**
        * This method enables the following syntax:
@@ -1545,7 +1548,8 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                         ^
        * </pre>
        */
-      def be(doubleTolerance: DoubleTolerance): Matcher[T with Double] = matchersWrapper.or(matchers.not.be(doubleTolerance))
+      def be[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.be(interval))
+      // TODEL def be(doubleTolerance: DoubleTolerance): Matcher[T with Double] = matchersWrapper.or(matchers.not.be(doubleTolerance))
 
       /**
        * This method enables the following syntax:
@@ -1555,7 +1559,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                ^
        * </pre>
        */
-      def be(floatTolerance: FloatTolerance): Matcher[T with Float] = matchersWrapper.or(matchers.not.be(floatTolerance))
+      // TODEL def be(floatTolerance: FloatTolerance): Matcher[T with Float] = matchersWrapper.or(matchers.not.be(floatTolerance))
 
       /**
        * This method enables the following syntax:
@@ -1565,7 +1569,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                      ^
        * </pre>
        */
-      def be(longTolerance: LongTolerance): Matcher[T with Long] = matchersWrapper.or(matchers.not.be(longTolerance))
+      // TODEL def be(longTolerance: LongTolerance): Matcher[T with Long] = matchersWrapper.or(matchers.not.be(longTolerance))
 
       /**
        * This method enables the following syntax:
@@ -1575,7 +1579,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                   ^
        * </pre>
        */
-      def be(intTolerance: IntTolerance): Matcher[T with Int] = matchersWrapper.or(matchers.not.be(intTolerance))
+      // TODEL def be(intTolerance: IntTolerance): Matcher[T with Int] = matchersWrapper.or(matchers.not.be(intTolerance))
 
       /**
        * This method enables the following syntax:
@@ -1585,7 +1589,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                     ^
        * </pre>
        */
-      def be(shortTolerance: ShortTolerance): Matcher[T with Short] = matchersWrapper.or(matchers.not.be(shortTolerance))
+      // TODEL def be(shortTolerance: ShortTolerance): Matcher[T with Short] = matchersWrapper.or(matchers.not.be(shortTolerance))
 
       /**
        * This method enables the following syntax:
@@ -1595,7 +1599,7 @@ trait ClassicMatchers extends Assertions { matchers =>
        *                                                                     ^
        * </pre>
        */
-      def be(byteTolerance: ByteTolerance): Matcher[T with Byte] = matchersWrapper.or(matchers.not.be(byteTolerance))
+      // TODEL def be(byteTolerance: ByteTolerance): Matcher[T with Byte] = matchersWrapper.or(matchers.not.be(byteTolerance))
 
       /**
        * This method enables the following syntax:
@@ -3997,6 +4001,38 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
+  final class ResultOfNotWordForNumeric[T : Numeric](left: T, shouldBeTrue: Boolean)
+      extends ResultOfNotWord[T](left, shouldBeTrue) {
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOh should not be (6.5 plusOrMinus 0.2)
+     *                       ^
+     * </pre>
+     */
+    def be(interval: Interval[T]) {
+      // if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
+      if (interval.isWithin(left) != shouldBeTrue) {
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
+            left,
+            interval.right,
+            interval.tolerance
+          )
+        )
+      }
+    }
+  }
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
   final class ResultOfNotWordForDouble(left: Double, shouldBeTrue: Boolean)
       extends ResultOfNotWord[Double](left, shouldBeTrue) {
 
@@ -4008,6 +4044,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                       ^
      * </pre>
      */
+/* TODEL
     def be(doubleTolerance: DoubleTolerance) {
       import doubleTolerance._
       if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
@@ -4021,6 +4058,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         )
       }
     }
+*/
   }
 
   /**
@@ -4040,6 +4078,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                            ^
      * </pre>
      */
+/* TODEL
     def be(floatTolerance: FloatTolerance) {
       import floatTolerance._
       if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
@@ -4053,6 +4092,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         )
       }
     }
+*/
   }
 
   /**
@@ -4072,6 +4112,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                           ^
      * </pre>
      */
+/* TODEL
     def be(longTolerance: LongTolerance) {
       import longTolerance._
       if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
@@ -4085,6 +4126,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         )
       }
     }
+*/
   }
 
   /**
@@ -4104,6 +4146,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                          ^
      * </pre>
      */
+/* TODEL
     def be(intTolerance: IntTolerance) {
       import intTolerance._
       if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
@@ -4117,6 +4160,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         )
       }
     }
+*/
   }
 
   /**
@@ -4136,6 +4180,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                            ^
      * </pre>
      */
+/* TODEL
     def be(shortTolerance: ShortTolerance) {
       import shortTolerance._
       if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
@@ -4149,6 +4194,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         )
       }
     }
+*/
   }
 
   /**
@@ -4168,6 +4214,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                            ^
      * </pre>
      */
+/* TODEL
     def be(byteTolerance: ByteTolerance) {
       import byteTolerance._
       if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
@@ -4181,6 +4228,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         )
       }
     }
+*/
   }
 
   /**
@@ -4802,6 +4850,27 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                      ^
      * </pre>
      */
+    def apply[U](interval: Interval[U]): Matcher[U] =
+      new Matcher[U] {
+        def apply(left: U): MatchResult = {
+          MatchResult(
+            interval.isWithin(left),
+            // left <= right + tolerance && left >= right - tolerance,
+            FailureMessages("wasNotPlusOrMinus", left, interval.right, interval.tolerance),
+            FailureMessages("wasPlusOrMinus", left, interval.right, interval.tolerance)
+          )
+        }
+      }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOh should be (7.1 plusOrMinus 0.2)
+     *                      ^
+     * </pre>
+     */
+/* TODEL
     def apply(doubleTolerance: DoubleTolerance): Matcher[Double] =
       new Matcher[Double] {
         def apply(left: Double): MatchResult = {
@@ -4813,6 +4882,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         }
       }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -4822,6 +4892,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                           ^
      * </pre>
      */
+/* TODEL
     def apply(floatTolerance: FloatTolerance): Matcher[Float] =
       new Matcher[Float] {
         def apply(left: Float): MatchResult = {
@@ -4833,6 +4904,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         }
       }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -4842,6 +4914,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                     ^
      * </pre>
      */
+/* TODEL
     def apply(longTolerance: LongTolerance): Matcher[Long] =
       new Matcher[Long] {
         def apply(left: Long): MatchResult = {
@@ -4853,6 +4926,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         }
       }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -4862,6 +4936,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                     ^
      * </pre>
      */
+/* TODEL
     def apply(intTolerance: IntTolerance): Matcher[Int] =
       new Matcher[Int] {
         def apply(left: Int): MatchResult = {
@@ -4873,6 +4948,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         }
       }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -4882,6 +4958,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                     ^
      * </pre>
      */
+/* TODEL
     def apply(shortTolerance: ShortTolerance): Matcher[Short] =
       new Matcher[Short] {
         def apply(left: Short): MatchResult = {
@@ -4893,6 +4970,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         }
       }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -4902,6 +4980,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                     ^
      * </pre>
      */
+/* TODEL
     def apply(byteTolerance: ByteTolerance): Matcher[Byte] =
       new Matcher[Byte] {
         def apply(left: Byte): MatchResult = {
@@ -4913,6 +4992,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         }
       }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -5462,6 +5542,28 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                         ^
      * </pre>
      */
+    def be[U](interval: Interval[U]): Matcher[U] = {
+      new Matcher[U] {
+        def apply(left: U): MatchResult = {
+          MatchResult(
+            // !(left <= right + tolerance && left >= right - tolerance),
+            !(interval.isWithin(left)),
+            FailureMessages("wasPlusOrMinus", left, interval.right, interval.tolerance),
+            FailureMessages("wasNotPlusOrMinus", left, interval.right, interval.tolerance)
+          )
+        }
+      }
+    }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOh should ((not be (17.1 plusOrMinus 0.2)) and (not be (27.1 plusOrMinus 0.2)))
+     *                         ^
+     * </pre>
+     */
+/* TODEL
     def be(doubleTolerance: DoubleTolerance): Matcher[Double] = {
       import doubleTolerance._
       new Matcher[Double] {
@@ -5474,6 +5576,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
     }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -5483,6 +5586,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                         ^
      * </pre>
      */
+/* TODEL
     def be(floatTolerance: FloatTolerance): Matcher[Float] = {
       import floatTolerance._
       new Matcher[Float] {
@@ -5495,6 +5599,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
     }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -5504,6 +5609,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                        ^
      * </pre>
      */
+/* TODEL
     def be(longTolerance: LongTolerance): Matcher[Long] = {
       import longTolerance._
       new Matcher[Long] {
@@ -5516,6 +5622,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
     }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -5525,6 +5632,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                       ^
      * </pre>
      */
+/* TODEL
     def be(intTolerance: IntTolerance): Matcher[Int] = {
       import intTolerance._
       new Matcher[Int] {
@@ -5537,6 +5645,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
     }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -5546,6 +5655,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                         ^
      * </pre>
      */
+/* TODEL
     def be(shortTolerance: ShortTolerance): Matcher[Short] = {
       import shortTolerance._
       new Matcher[Short] {
@@ -5558,6 +5668,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
     }
+*/
 
     /**
      * This method enables the following syntax: 
@@ -5567,6 +5678,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                        ^
      * </pre>
      */
+/* TODEL
     def be(byteTolerance: ByteTolerance): Matcher[Byte] = {
       import byteTolerance._
       new Matcher[Byte] {
@@ -5579,6 +5691,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
     }
+*/
 
     /**
      * This method enables <code>be</code> to be used for inequality comparison. Here are some examples:
@@ -6342,7 +6455,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final case class DoubleTolerance(right: Double, tolerance: Double)
+  // TODEL final case class DoubleTolerance(right: Double, tolerance: Double)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6350,6 +6463,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
+/* TODEL
   final class DoublePlusOrMinusWrapper(right: Double) {
 
     /**
@@ -6366,12 +6480,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       DoubleTolerance(right, tolerance)
     }
   }
+*/
 
   /**
    * Implicitly converts an object of type <code>Double</code> to a <code>DoublePlusOrMinusWrapper</code>,
    * to enable a <code>plusOrMinus</code> method to be invokable on that object.
    */
-  implicit def convertDoubleToPlusOrMinusWrapper(right: Double): DoublePlusOrMinusWrapper = new DoublePlusOrMinusWrapper(right)
+  // TODEL implicit def convertDoubleToPlusOrMinusWrapper(right: Double): DoublePlusOrMinusWrapper = new DoublePlusOrMinusWrapper(right)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6379,7 +6494,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final case class FloatTolerance(right: Float, tolerance: Float)
+  // TODEL final case class FloatTolerance(right: Float, tolerance: Float)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6387,6 +6502,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
+/* TODEL
   final class FloatPlusOrMinusWrapper(right: Float) {
 
     /**
@@ -6403,12 +6519,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       FloatTolerance(right, tolerance)
     }
   }
+*/
 
   /**
    * Implicitly converts an object of type <code>Float</code> to a <code>FloatPlusOrMinusWrapper</code>,
    * to enable a <code>plusOrMinus</code> method to be invokable on that object.
    */
-  implicit def convertFloatToPlusOrMinusWrapper(right: Float): FloatPlusOrMinusWrapper = new FloatPlusOrMinusWrapper(right)
+  // TODEL implicit def convertFloatToPlusOrMinusWrapper(right: Float): FloatPlusOrMinusWrapper = new FloatPlusOrMinusWrapper(right)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6416,7 +6533,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final case class LongTolerance(right: Long, tolerance: Long)
+  // TODEL final case class LongTolerance(right: Long, tolerance: Long)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6424,6 +6541,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
+/* TODEL
   final class LongPlusOrMinusWrapper(right: Long) {
 
     /**
@@ -6440,12 +6558,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       LongTolerance(right, tolerance)
     }
   }
+*/
 
   /**
    * Implicitly converts an object of type <code>Long</code> to a <code>LongPlusOrMinusWrapper</code>,
    * to enable a <code>plusOrMinus</code> method to be invokable on that object.
    */
-  implicit def convertLongToPlusOrMinusWrapper(right: Long): LongPlusOrMinusWrapper = new LongPlusOrMinusWrapper(right)
+  // TODEL implicit def convertLongToPlusOrMinusWrapper(right: Long): LongPlusOrMinusWrapper = new LongPlusOrMinusWrapper(right)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6453,7 +6572,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final case class IntTolerance(right: Int, tolerance: Int)
+  // TODEL final case class IntTolerance(right: Int, tolerance: Int)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6461,6 +6580,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
+/* TODEL
   final class IntPlusOrMinusWrapper(right: Int) {
 
     /**
@@ -6477,12 +6597,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       IntTolerance(right, tolerance)
     }
   }
+*/
 
   /**
    * Implicitly converts an object of type <code>Int</code> to a <code>IntPlusOrMinusWrapper</code>,
    * to enable a <code>plusOrMinus</code> method to be invokable on that object.
    */
-  implicit def convertIntToPlusOrMinusWrapper(right: Int): IntPlusOrMinusWrapper = new IntPlusOrMinusWrapper(right)
+  // TODEL implicit def convertIntToPlusOrMinusWrapper(right: Int): IntPlusOrMinusWrapper = new IntPlusOrMinusWrapper(right)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6490,7 +6611,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final case class ShortTolerance(right: Short, tolerance: Short)
+  // TODEL final case class ShortTolerance(right: Short, tolerance: Short)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6498,6 +6619,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
+/* TODEL
   final class ShortPlusOrMinusWrapper(right: Short) {
 
     /**
@@ -6514,12 +6636,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       ShortTolerance(right, tolerance)
     }
   }
+*/
 
   /**
    * Implicitly converts an object of type <code>Short</code> to a <code>ShortPlusOrMinusWrapper</code>,
    * to enable a <code>plusOrMinus</code> method to be invokable on that object.
    */
-  implicit def convertShortToPlusOrMinusWrapper(right: Short): ShortPlusOrMinusWrapper = new ShortPlusOrMinusWrapper(right)
+  // TODEL implicit def convertShortToPlusOrMinusWrapper(right: Short): ShortPlusOrMinusWrapper = new ShortPlusOrMinusWrapper(right)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6527,7 +6650,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final case class ByteTolerance(right: Byte, tolerance: Byte)
+  // TODEL final case class ByteTolerance(right: Byte, tolerance: Byte)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6535,6 +6658,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
+/* TODEL
   final class BytePlusOrMinusWrapper(right: Byte) {
 
     /**
@@ -6551,12 +6675,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       ByteTolerance(right, tolerance)
     }
   }
+*/
 
   /**
    * Implicitly converts an object of type <code>Byte</code> to a <code>BytePlusOrMinusWrapper</code>,
    * to enable a <code>plusOrMinus</code> method to be invokable on that object.
    */
-  implicit def convertByteToPlusOrMinusWrapper(right: Byte): BytePlusOrMinusWrapper = new BytePlusOrMinusWrapper(right)
+  // TODEL implicit def convertByteToPlusOrMinusWrapper(right: Byte): BytePlusOrMinusWrapper = new BytePlusOrMinusWrapper(right)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of

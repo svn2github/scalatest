@@ -1070,6 +1070,57 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * @author Bill Venners
    */
+  final class NumericShouldWrapper[T : Numeric](left: T) {
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * aDouble should equal (8.8)
+     *        ^
+     * </pre>
+     */
+    def should(rightMatcher: Matcher[T]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should not equal (8.8)
+     *        ^
+     * </pre>
+     */
+    def should(notWord: NotWord): ResultOfNotWordForNumeric[T] = {
+      new ResultOfNotWordForNumeric[T](left, false)
+    }
+    
+    def shouldBe(right: T) {
+      if (left != right) {
+        val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+        throw newTestFailedException(FailureMessages("wasNotEqualTo", leftee, rightee))
+      }
+    }
+    
+    def shouldBe(beMatcher: BeMatcher[T]) {
+      beMatcher.apply(left).matches
+    }
+  }
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * <p>
+   * This class is used in conjunction with an implicit conversion to enable <code>should</code> methods to
+   * be invoked on <code>Double</code>s.
+   * </p>
+   *
+   * @author Bill Venners
+   */
+
+/* TODEL
   final class DoubleShouldWrapper(left: Double) {
 
     /**
@@ -1107,6 +1158,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
       beMatcher.apply(left).matches
     }
   }
+*/
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -2026,37 +2078,39 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    * Implicitly converts an object of type <code>scala.Double</code> to a <code>DoubleShouldWrapper</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToDoubleShouldWrapper(o: Double): DoubleShouldWrapper = new DoubleShouldWrapper(o)
+  implicit def convertToNumericShouldWrapperForDouble(o: Double): NumericShouldWrapper[Double] = new NumericShouldWrapper[Double](o)
 
   /**
-   * Implicitly converts an object of type <code>scala.Float</code> to a <code>FloatShouldWrapper</code>,
+   * Implicitly converts an object of type <code>scala.Float</code> to a <code>NumericShouldWrapper[Float]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToFloatShouldWrapper(o: Float): FloatShouldWrapper = new FloatShouldWrapper(o)
+  implicit def convertToNumericShouldWrapperForFloat(o: Float): NumericShouldWrapper[Float] = new NumericShouldWrapper[Float](o)
 
   /**
-   * Implicitly converts an object of type <code>scala.Long</code> to a <code>LongShouldWrapper</code>,
+   * Implicitly converts an object of type <code>scala.Long</code> to a <code>NumericShouldWrapper[Long]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToLongShouldWrapper(o: Long): LongShouldWrapper = new LongShouldWrapper(o)
+  implicit def convertToNumericShouldWrapperForLong(o: Long): NumericShouldWrapper[Long] = new NumericShouldWrapper[Long](o)
 
   /**
-   * Implicitly converts an object of type <code>scala.Int</code> to a <code>IntShouldWrapper</code>,
+   * Implicitly converts an object of type <code>scala.Int</code> to a <code>NumericShouldWrapper[Int]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToIntShouldWrapper(o: Int): IntShouldWrapper = new IntShouldWrapper(o)
+  implicit def convertToNumericShouldWrapperForInt(o: Int): NumericShouldWrapper[Int] = new NumericShouldWrapper[Int](o)
 
   /**
-   * Implicitly converts an object of type <code>scala.Short</code> to a <code>ShortShouldWrapper</code>,
+   * Implicitly converts an object of type <code>scala.Short</code> to a <code>NumericShouldWrapper[Short]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToShortShouldWrapper(o: Short): ShortShouldWrapper = new ShortShouldWrapper(o)
+  implicit def convertToNumericShouldWrapperForShort(o: Short): NumericShouldWrapper[Short] = new NumericShouldWrapper[Short](o)
 
   /**
-   * Implicitly converts an object of type <code>scala.Byte</code> to a <code>ByteShouldWrapper</code>,
+   * Implicitly converts an object of type <code>scala.Byte</code> to a <code>NumericShouldWrapper[Byte]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToByteShouldWrapper(o: Byte): ByteShouldWrapper = new ByteShouldWrapper(o)
+  implicit def convertToByteShouldWrapper(o: Byte): NumericShouldWrapper[Byte] = new NumericShouldWrapper[Byte](o)
+
+  // TODEL: REmove the PrimitiveShouldWrappers, which aren't used anymore
 
   /**
    * Implicitly converts a <code>scala.AnyRef</code> of type <code>T</code> to an <code>AnyRefShouldWrapper[T]</code>,
