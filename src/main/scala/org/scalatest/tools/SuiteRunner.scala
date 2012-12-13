@@ -84,7 +84,7 @@ private[scalatest] class SuiteRunner(suite: Suite, args: Args, status: ScalaTest
           dispatch(SuiteAborted(tracker.nextOrdinal(), rawString3, suite.suiteName, suite.suiteId, Some(suite.getClass.getName), Some(e), Some(duration), formatter3, Some(SeeStackDepthException), suite.rerunner))
           status.setFailed()
         }
-        case e => 
+        case e: Throwable => 
           status.setFailed()
           throw e
       }
