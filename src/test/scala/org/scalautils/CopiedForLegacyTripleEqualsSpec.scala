@@ -292,6 +292,14 @@ class CopiedForLegacyTripleEqualsSpec extends Spec with NonImplicitAssertions {
           assert(super1 === sub1)
           assert(sub1 === super1)
 
+          assert((super1 === null).isDefined)
+          assert(super1 !== null)
+
+          assert(nullSuper === null)
+          assert((nullSuper !== null).isDefined)
+          assert((nullSuper === super1).isDefined)
+          assert(nullSuper !== super1)
+
           // The rest should not compile
           // assert(1 === 1L)
           // assert(1L === 1)
@@ -305,14 +313,6 @@ class CopiedForLegacyTripleEqualsSpec extends Spec with NonImplicitAssertions {
 
           // assert(fr === cr)
           // assert(cr === fr)
-
-          assert((super1 === null).isDefined)
-          assert(super1 !== null)
-
-          assert(nullSuper === null)
-          assert((nullSuper !== null).isDefined)
-          assert((nullSuper === super1).isDefined)
-          assert(nullSuper !== super1)
         }
       }
 
@@ -510,6 +510,15 @@ class CopiedForLegacyTripleEqualsSpec extends Spec with NonImplicitAssertions {
           assert((1 !== 1L).isDefined)
           assert((1L !== 1).isDefined)
 
+          // Should work sensibly with nulls
+          assert((super1 === null).isDefined)
+          assert(super1 !== null)
+
+          assert(nullSuper === null)
+          assert((nullSuper !== null).isDefined)
+          assert((nullSuper === super1).isDefined)
+          assert(nullSuper !== super1)
+
           // The rest should not compile
           // assert("1" === 1)
           // assert(1 === "1")
@@ -518,14 +527,6 @@ class CopiedForLegacyTripleEqualsSpec extends Spec with NonImplicitAssertions {
 
           // assert(fr === cr)
           // assert(cr === fr)
-
-          assert((super1 === null).isDefined)
-          assert(super1 !== null)
-
-          assert(nullSuper === null)
-          assert((nullSuper !== null).isDefined)
-          assert((nullSuper === super1).isDefined)
-          assert(nullSuper !== super1)
         }
       }
 

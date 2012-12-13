@@ -22,6 +22,8 @@ import scala.collection.GenTraversable
 import scala.collection.GenSeq
 import scala.collection.GenMap
 import Assertions.areEqualComparingArraysStructurally
+import org.scalautils.TripleEqualsInvocation
+import org.scalautils.EqualityConstraint
 
 /**
  * Trait that provides a domain specific language (DSL) for expressing assertions in tests
@@ -912,8 +914,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[T]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX1: Matcher[T]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX1)
     }
 
     /**
@@ -925,6 +927,24 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should(notWord: NotWord) = new ResultOfNotWord[T](left, false)
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (?) // Which one gets here?
+     *        ^
+     */
+    def should[U](inv: TripleEqualsInvocation[U]) {
+      if ((left == inv.right) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**
@@ -972,8 +992,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[String]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX2: Matcher[String]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX2)
     }
 
     /**
@@ -1057,6 +1077,24 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
     def should(notWord: NotWord): ResultOfNotWordForString = {
       new ResultOfNotWordForString(left, false)
     }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * s should === ("hi") 
+     *        ^
+     */
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[String, U]) {
+      if ((left == inv.right) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**
@@ -1080,8 +1118,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[T]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX3: Matcher[T]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX3)
     }
 
     /**
@@ -1106,6 +1144,24 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
     def shouldBe(beMatcher: BeMatcher[T]) {
       beMatcher.apply(left).matches
     }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (3) // Which one gets here?
+     *        ^
+     */
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[T, U]) {
+      if ((left == inv.right) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**
@@ -1129,8 +1185,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[scala.collection.GenMap[K, V]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX4: Matcher[scala.collection.GenMap[K, V]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX4)
     }
 
     /**
@@ -1202,8 +1258,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[T]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX5: Matcher[T]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX5)
     }
 
     /**
@@ -1296,6 +1352,17 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
         throw newTestFailedException(FailureMessages(resourceName, leftee, rightee))
       }
     }
+
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[T, U]) {
+      if ((left == inv.right) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**
@@ -1319,8 +1386,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *             ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[GenTraversable[T]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX6: Matcher[GenTraversable[T]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX6)
     }
 
     /**
@@ -1377,8 +1444,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *                ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[java.util.Collection[T]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX7: Matcher[java.util.Collection[T]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX7)
     }
 
     /**
@@ -1435,8 +1502,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *         ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[java.util.Map[K, V]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX8: Matcher[java.util.Map[K, V]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX8)
     }
 
     /**
@@ -1507,8 +1574,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[GenSeq[T]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX9: Matcher[GenSeq[T]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX9)
     }
 
     /**
@@ -1569,8 +1636,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *       ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[Array[T]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX10: Matcher[Array[T]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX10)
     }
 
     /**
@@ -1627,8 +1694,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *      ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[List[T]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX11: Matcher[List[T]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX11)
     }
 
     /**
@@ -1686,8 +1753,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *          ^
      * </pre>
      */
-    def should(rightMatcher: Matcher[java.util.List[T]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcher)
+    def should(rightMatcherX12: Matcher[java.util.List[T]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX12)
     }
 
     /**

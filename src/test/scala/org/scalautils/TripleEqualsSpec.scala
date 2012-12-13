@@ -292,6 +292,14 @@ class TripleEqualsSpec extends Spec with NonImplicitAssertions {
           assert(super1 === sub1)
           assert(sub1 === super1)
 
+          assert(!(super1 === null))
+          assert(super1 !== null)
+
+          assert(nullSuper === null)
+          assert(!(nullSuper !== null))
+          assert(!(nullSuper === super1))
+          assert(nullSuper !== super1)
+
           // The rest should not compile
           // assert(1 === 1L)
           // assert(1L === 1)
@@ -305,14 +313,6 @@ class TripleEqualsSpec extends Spec with NonImplicitAssertions {
 
           // assert(fr === cr)
           // assert(cr === fr)
-
-          assert(!(super1 === null))
-          assert(super1 !== null)
-
-          assert(nullSuper === null)
-          assert(!(nullSuper !== null))
-          assert(!(nullSuper === super1))
-          assert(nullSuper !== super1)
         }
       }
 

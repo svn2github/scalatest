@@ -30,6 +30,7 @@ import scala.collection.GenSeq
 import scala.collection.GenMap
 import org.scalautils.Tolerance
 import org.scalautils.Interval
+import org.scalautils.TripleEqualsInvocation
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -705,8 +706,8 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        *                                  ^
        * </pre>
        */
-      def be(resultOfTripleEqualsApplication: ResultOfTripleEqualsApplication): Matcher[T] =
-        matchersWrapper.and(matchers.not.be(resultOfTripleEqualsApplication))
+      def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[T] =
+        matchersWrapper.and(matchers.not.be(tripleEqualsInvocation))
 
       /**
        * This method enables the following syntax:
@@ -1406,8 +1407,8 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        *                                 ^
        * </pre>
        */
-      def be(resultOfTripleEqualsApplication: ResultOfTripleEqualsApplication): Matcher[T] =
-        matchersWrapper.or(matchers.not.be(resultOfTripleEqualsApplication))
+      def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[T] =
+        matchersWrapper.or(matchers.not.be(tripleEqualsInvocation))
 
       /**
        * This method enables the following syntax:
@@ -3442,8 +3443,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                   ^
      * </pre>
      */
-    def be(comparison: ResultOfTripleEqualsApplication) {
-      if (comparison(left) != shouldBeTrue) {
+    def be(comparison: TripleEqualsInvocation[_]) {
+      if ((left == comparison.right) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "wasNotEqualTo" else "wasEqualTo",
@@ -4937,13 +4938,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                 ^
      * </pre>
      */
-    def be(resultOfTripleEqualsApplication: ResultOfTripleEqualsApplication): Matcher[Any] = {
+    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[Any] = {
       new Matcher[Any] {
         def apply(left: Any): MatchResult =
           MatchResult(
-            !resultOfTripleEqualsApplication(left),
-            FailureMessages("wasEqualTo", left, resultOfTripleEqualsApplication.right),
-            FailureMessages("wasNotEqualTo", left, resultOfTripleEqualsApplication.right)
+            !(left == tripleEqualsInvocation.right),
+            FailureMessages("wasEqualTo", left, tripleEqualsInvocation.right),
+            FailureMessages("wasNotEqualTo", left, tripleEqualsInvocation.right)
           )
       }
     }
@@ -6288,6 +6289,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
+/* TODEL
   final class ResultOfTripleEqualsApplication(val right: Any) {
 
     /**
@@ -6310,6 +6312,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def apply(left: Any): Boolean = left == right
   }
+*/
 
   /**
    * This method enables the following syntax: 
@@ -6363,8 +6366,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                   ^
    * </pre>
    */
+/* TODEL
   def === (right: Any): ResultOfTripleEqualsApplication =
     new ResultOfTripleEqualsApplication(right)
+*/
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
