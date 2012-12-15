@@ -1599,6 +1599,25 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should(beWord: BeWord): ResultOfBeWordForAnyRef[java.util.Map[K, V]] = new ResultOfBeWordForAnyRef(left, true)
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (javaMap)
+     *        ^
+     * </pre>
+     */
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[java.util.Map[K, V], U]) {
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**
@@ -1810,7 +1829,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * result should === (Array(1, 2, 3))
+     * result should === (jList)
      *        ^
      * </pre>
      */
