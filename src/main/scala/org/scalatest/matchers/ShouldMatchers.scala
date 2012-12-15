@@ -1734,70 +1734,28 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
         throw newTestFailedException(FailureMessages("wasNotEqualTo", leftee, rightee))
       }
     }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (Array(1, 2, 3))
+     *        ^
+     * </pre>
+     */
+    def should[U <: Array[T]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[Array[T], U]) {
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
   // Note, no should(beWord) is needed here because a different implicit conversion will be used
   // on "array shoudl be ..." because this one doesn't solve the type error.
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * <p>
-   * This class is used in conjunction with an implicit conversion to enable <code>should</code> methods to
-   * be invoked on objects of type <code>scala.List[T]</code>.
-   * </p>
-   *
-   * @author Bill Venners
-   */
-/*
-  final class ListShouldWrapper[T](left: List[T]) {
-
-    /**
-     * This method enables syntax such as the following:
-     *
-     * <pre class="stHighlight">
-     * list should equal (List(1, 2, 3))
-     *      ^
-     * </pre>
-     */
-    def should(rightMatcherX11: Matcher[List[T]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcherX11)
-    }
-
-    /**
-     * This method enables syntax such as the following:
-     *
-     * <pre class="stHighlight">
-     * list should be theSameInstanceAs anotherObject
-     *      ^
-     * </pre>
-     */
-    def should(beWord: BeWord): ResultOfBeWordForAnyRef[List[T]] = new ResultOfBeWordForAnyRef(left, true)
-
-    /**
-     * This method enables syntax such as the following:
-     *
-     * <pre class="stHighlight">
-     * list should have length (3)
-     *      ^
-     * </pre>
-     */
-    def should(haveWord: HaveWord): ResultOfHaveWordForSeq[T] =
-      new ResultOfHaveWordForSeq(left, true)
-
-    /**
-     * This method enables syntax such as the following:
-     *
-     * <pre class="stHighlight">
-     * list should not have length (3)
-     *      ^
-     * </pre>
-     */
-    def should(notWord: NotWord): ResultOfNotWordForSeq[T, List[T]] =
-      new ResultOfNotWordForSeq(left, false)
-    
-  }
-*/
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -1972,12 +1930,6 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
   implicit def convertToArrayShouldWrapper[T](o: Array[T]): ArrayShouldWrapper[T] = new ArrayShouldWrapper[T](o)
 
   /**
-   * Implicitly converts an object of type <code>scala.List[T]</code> to a <code>ListShouldWrapper[T]</code>,
-   * to enable <code>should</code> methods to be invokable on that object.
-   */
-  // implicit def convertToListShouldWrapper[T](o: List[T]): ListShouldWrapper[T] = new ListShouldWrapper[T](o)
-
-  /**
    * Implicitly converts an object of type <code>scala.collection.GenMap[K, V]</code> to a <code>MapShouldWrapper[K, V]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
@@ -2001,7 +1953,6 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    * <code>length</code> to be used on Java <code>List</code>s.
    */
   implicit def convertToJavaListShouldWrapper[T](o: java.util.List[T]): JavaListShouldWrapper[T] = new JavaListShouldWrapper[T](o)
-
 
   /**
    * Implicitly converts an object of type <code>java.util.Map[K, V]</code> to a <code>JavaMapShouldWrapper[K, V]</code>,

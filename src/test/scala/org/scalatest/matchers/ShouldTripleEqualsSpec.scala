@@ -83,6 +83,9 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           List(1, 2, 3) should === (List(1, 2, 3))
           List(1, 2, 3) should !== (List(2, 3, 4))
+
+          Array(1, 2, 3) should === (Array(1, 2, 3))
+          Array(1, 2, 3) should !== (Array(2, 3, 4))
         }
       }
 
@@ -321,6 +324,9 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           List(1, 2, 3) should === (List(1, 2, 3))
           List(1, 2, 3) should !== (List(2, 3, 4))
 
+          Array(1, 2, 3) should === (Array(1, 2, 3))
+          Array(1, 2, 3) should !== (Array(2, 3, 4))
+
           // The rest should not compile
           // 1 should === (1L)
           // 1L should === (1)
@@ -548,6 +554,11 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           List(1, 2, 3) should === (List(1, 2, 3))
           List(1, 2, 3) should !== (List(2, 3, 4))
+
+          Array(1, 2, 3) should === (Array(1, 2, 3))
+          Array(1, 2, 3) should !== (Array(2, 3, 4))
+          // TODO: Think about whether and how to compare arrays and Seq's, and how to make it consistent with asssert(Array(1, 2, 3) === Seq(1, 2, 3))
+          // Actually that requires no implicit conversions, so I'll do it.
 
           // The rest should not compile
           // "1" should === (1)
