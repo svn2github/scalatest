@@ -1527,6 +1527,25 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      */
     def should(notWord: NotWord): ResultOfNotWordForJavaCollection[T, java.util.Collection[T]] =
       new ResultOfNotWordForJavaCollection(left, false)
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (jSet)
+     *        ^
+     * </pre>
+     */
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[java.util.Collection[T], U]) {
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**

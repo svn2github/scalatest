@@ -51,6 +51,13 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
   javaHashMap.put("one",1)
   javaHashMap.put("two", 2)
 
+  val javaSet: java.util.Set[Int] = new java.util.HashSet
+  javaSet.add(1)
+  javaSet.add(2)
+  val javaHashSet: java.util.HashSet[Int] = new java.util.HashSet
+  javaHashSet.add(1)
+  javaHashSet.add(2)
+
   object `the custom equality should === (operator` {
 
     object `with TripleEquals` {
@@ -130,6 +137,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           intercept[TestFailedException] { javaMap should === (7) }
           javaMap should !== (7)
+
+          javaSet should === (javaHashSet)
+          intercept[TestFailedException] { javaSet should !== (javaHashSet) }
+
+          javaHashSet should === (javaSet)
+          intercept[TestFailedException] { javaHashSet should !== (javaSet) }
+
+          intercept[TestFailedException] { javaSet should === (7) }
+          javaSet should !== (7)
         }
       }
 
@@ -383,6 +399,12 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           javaHashMap should === (javaMap)
           intercept[TestFailedException] { javaHashMap should !== (javaMap) }
 
+          javaSet should === (javaHashSet)
+          intercept[TestFailedException] { javaSet should !== (javaHashSet) }
+
+          javaHashSet should === (javaSet)
+          intercept[TestFailedException] { javaHashSet should !== (javaSet) }
+
           // The rest should not compile
           // 1 should === (1L)
           // 1L should === (1)
@@ -414,6 +436,9 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           // intercept[TestFailedException] { javaMap should === (7) }
           // javaMap should !== (7)
+
+          // intercept[TestFailedException] { javaSet should === (7) }
+          // javaSet should !== (7)
         }
       }
 
@@ -650,6 +675,12 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           javaHashMap should === (javaMap)
           intercept[TestFailedException] { javaHashMap should !== (javaMap) }
 
+          javaSet should === (javaHashSet)
+          intercept[TestFailedException] { javaSet should !== (javaHashSet) }
+
+          javaHashSet should === (javaSet)
+          intercept[TestFailedException] { javaHashSet should !== (javaSet) }
+
           // The rest should not compile
           // "1" should === (1)
           // 1 should === ("1")
@@ -670,6 +701,9 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           // intercept[TestFailedException] { javaMap should === (7) }
           // javaMap should !== (7)
+
+          // intercept[TestFailedException] { javaSet should === (7) }
+          // javaSet should !== (7)
         }
       }
 
