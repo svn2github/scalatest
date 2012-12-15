@@ -1246,6 +1246,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
+// TODO: Write a test that fails if I can't do Map(1 -> 2) should === (Set(1, 2)) // This will always fail, but it is consistent
     def should[U <: GenMap[K, V]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenMap[K, V], U]) {
       if ((left == inv.right) != inv.expectingEqual)
         throw newTestFailedException(
@@ -1459,6 +1460,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
+// TODO: Write a test that fails for Set(1, 2, 3) should === (7)
     def should[U <: GenTraversable[T]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenTraversable[T], U]) {
       if ((left == inv.right) != inv.expectingEqual)
         throw newTestFailedException(
@@ -1668,8 +1670,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should[U <: GenSeq[T]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenSeq[T], U]) {
-      if ((left == inv.right) != inv.expectingEqual)
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenSeq[T], U]) {
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
            if (inv.expectingEqual) "didNotEqual" else "equaled",
@@ -1743,7 +1745,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should[U <: Array[T]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[Array[T], U]) {
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[Array[T], U]) {
       if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
