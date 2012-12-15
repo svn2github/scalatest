@@ -74,6 +74,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           intercept[TestFailedException] { nullSuper should !== (null) }
           intercept[TestFailedException] { nullSuper should === (super1) }
           nullSuper should !== (super1)
+
+          Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
+          Map("I" -> 1, "II" -> 2) should !== (Map("1" -> 1, "2" -> 2))
+
+          Set(1, 2, 3) should === (Set(1, 2, 3))
+          Set(1, 2, 3) should !== (Set(2, 3, 4))
+
+          List(1, 2, 3) should === (List(1, 2, 3))
+          List(1, 2, 3) should !== (List(2, 3, 4))
         }
       }
 
@@ -303,6 +312,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           intercept[TestFailedException] { nullSuper should === (super1) }
           nullSuper should !== (super1)
 
+          Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
+          Map("I" -> 1, "II" -> 2) should !== (Map("1" -> 1, "2" -> 2))
+
+          Set(1, 2, 3) should === (Set(1, 2, 3))
+          Set(1, 2, 3) should !== (Set(2, 3, 4))
+
+          List(1, 2, 3) should === (List(1, 2, 3))
+          List(1, 2, 3) should !== (List(2, 3, 4))
+
           // The rest should not compile
           // 1 should === (1L)
           // 1L should === (1)
@@ -521,6 +539,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           intercept[TestFailedException] { nullSuper should !== (null) }
           intercept[TestFailedException] { nullSuper should === (super1) }
           nullSuper should !== (super1)
+
+          Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
+          Map("I" -> 1, "II" -> 2) should !== (Map("1" -> 1, "2" -> 2))
+
+          Set(1, 2, 3) should === (Set(1, 2, 3))
+          Set(1, 2, 3) should !== (Set(2, 3, 4))
+
+          List(1, 2, 3) should === (List(1, 2, 3))
+          List(1, 2, 3) should !== (List(2, 3, 4))
 
           // The rest should not compile
           // "1" should === (1)

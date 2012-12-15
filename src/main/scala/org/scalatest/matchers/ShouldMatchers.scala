@@ -934,6 +934,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * <pre class="stHighlight">
      * result should === (?) // Which one gets here?
      *        ^
+     * </pre>
      */
     def should[U](inv: TripleEqualsInvocation[U]) {
       if ((left == inv.right) != inv.expectingEqual)
@@ -1084,6 +1085,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * <pre class="stHighlight">
      * s should === ("hi") 
      *        ^
+     * </pre>
      */
     def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[String, U]) {
       if ((left == inv.right) != inv.expectingEqual)
@@ -1151,6 +1153,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * <pre class="stHighlight">
      * result should === (3) // Which one gets here?
      *        ^
+     * </pre>
      */
     def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[T, U]) {
       if ((left == inv.right) != inv.expectingEqual)
@@ -1235,6 +1238,24 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
       new ResultOfNotWordForMap(left, false)
     }
 
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (Map("I" -&gt; 1, "II" -&gt; 2))
+     *        ^
+     * </pre>
+     */
+    def should[U <: GenMap[K, V]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenMap[K, V], U]) {
+      if ((left == inv.right) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**
@@ -1353,6 +1374,14 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
       }
     }
 
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === ? // TODO: What is this one used for?
+     *        ^
+     * </pre>
+     */
     def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[T, U]) {
       if ((left == inv.right) != inv.expectingEqual)
         throw newTestFailedException(
@@ -1421,6 +1450,25 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      */
     def should(notWord: NotWord): ResultOfNotWordForTraversable[T, GenTraversable[T]] =
       new ResultOfNotWordForTraversable(left, false)
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (Set(1, 2, 3))
+     *        ^
+     * </pre>
+     */
+    def should[U <: GenTraversable[T]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenTraversable[T], U]) {
+      if ((left == inv.right) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**
@@ -1589,10 +1637,6 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
     def should(haveWord: HaveWord): ResultOfHaveWordForSeq[T] =
       new ResultOfHaveWordForSeq(left, true)
 
-/* TODO: This is what I think it should be. But it was the AnyRef one, or maybe even not that.
-    def should(notWord: NotWord): ResultOfNotWordForSeq[T, List[T]] =
-      new ResultOfNotWordForSeq(left, false)
-*/
     /**
      * This method enables syntax such as the following:
      *
@@ -1601,8 +1645,10 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(notWord: NotWord): ResultOfNotWordForAnyRef[GenSeq[T]] =
-      new ResultOfNotWordForAnyRef(left, false)
+    def should(notWord: NotWord): ResultOfNotWordForSeq[T, GenSeq[T]] =
+      new ResultOfNotWordForSeq(left, false)
+    // def should(notWord: NotWord): ResultOfNotWordForAnyRef[GenSeq[T]] =
+      // new ResultOfNotWordForAnyRef(left, false)
 
     /**
      * This method enables syntax such as the following:
@@ -1613,6 +1659,25 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should(beWord: BeWord): ResultOfBeWordForAnyRef[GenSeq[T]] = new ResultOfBeWordForAnyRef(left, true)
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (List(1, 2, 3))
+     *        ^
+     * </pre>
+     */
+    def should[U <: GenSeq[T]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenSeq[T], U]) {
+      if ((left == inv.right) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**
@@ -1684,6 +1749,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * @author Bill Venners
    */
+/*
   final class ListShouldWrapper[T](left: List[T]) {
 
     /**
@@ -1731,6 +1797,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
       new ResultOfNotWordForSeq(left, false)
     
   }
+*/
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -1908,7 +1975,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    * Implicitly converts an object of type <code>scala.List[T]</code> to a <code>ListShouldWrapper[T]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToListShouldWrapper[T](o: List[T]): ListShouldWrapper[T] = new ListShouldWrapper[T](o)
+  // implicit def convertToListShouldWrapper[T](o: List[T]): ListShouldWrapper[T] = new ListShouldWrapper[T](o)
 
   /**
    * Implicitly converts an object of type <code>scala.collection.GenMap[K, V]</code> to a <code>MapShouldWrapper[K, V]</code>,
