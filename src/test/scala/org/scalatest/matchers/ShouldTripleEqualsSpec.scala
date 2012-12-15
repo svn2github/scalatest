@@ -37,6 +37,13 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
   val sub2: Sub = new Sub(2)
   val nullSuper: Super = null
 
+  val javaList: java.util.List[Int] = new java.util.ArrayList
+  javaList.add(1)
+  javaList.add(2)
+  val javaArrayList: java.util.ArrayList[Int] = new java.util.ArrayList
+  javaArrayList.add(1)
+  javaArrayList.add(2)
+      
   object `the custom equality should === (operator` {
 
     object `with TripleEquals` {
@@ -78,8 +85,14 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
           Map("I" -> 1, "II" -> 2) should !== (Map("1" -> 1, "2" -> 2))
 
+          intercept[TestFailedException] { Map("I" -> 1, "II" -> 2) should === (7) }
+          Map("I" -> 1, "II" -> 2) should !== (7)
+
           Set(1, 2, 3) should === (Set(1, 2, 3))
           Set(1, 2, 3) should !== (Set(2, 3, 4))
+
+          intercept[TestFailedException] { Set(1, 2, 3) should === (7) }
+          Set(1, 2, 3) should !== (7)
 
           List(1, 2, 3) should === (List(1, 2, 3))
           List(1, 2, 3) should !== (List(2, 3, 4))
@@ -92,6 +105,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           Array(1, 2, 3) should === (Seq(1, 2, 3))
           Array(1, 2, 3) should !== (Seq(2, 3, 4))
+
+          javaList should === (javaArrayList)
+          intercept[TestFailedException] { javaList should !== (javaArrayList) }
+
+          javaArrayList should === (javaList)
+          intercept[TestFailedException] { javaArrayList should !== (javaList) }
+
+          intercept[TestFailedException] { javaList should === (7) }
+          javaList should !== (7)
         }
       }
 
@@ -333,6 +355,12 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           Array(1, 2, 3) should === (Array(1, 2, 3))
           Array(1, 2, 3) should !== (Array(2, 3, 4))
 
+          javaList should === (javaArrayList)
+          intercept[TestFailedException] { javaList should !== (javaArrayList) }
+
+          javaArrayList should === (javaList)
+          intercept[TestFailedException] { javaArrayList should !== (javaList) }
+
           // The rest should not compile
           // 1 should === (1L)
           // 1L should === (1)
@@ -352,6 +380,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           // Seq(1, 2, 3) should === (Array(1, 2, 3))
           // Seq(1, 2, 3) should !== (Array(2, 3, 4))
+
+          // intercept[TestFailedException] { Map("I" -> 1, "II" -> 2) should === (7) }
+          // Map("I" -> 1, "II" -> 2) should !== (7)
+
+          // intercept[TestFailedException] { Set(1, 2, 3) should === (7) }
+          // Set(1, 2, 3) should !== (7)
+
+          // intercept[TestFailedException] { javaList should === (7) }
+          // javaList should !== (7)
         }
       }
 
@@ -576,6 +613,12 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           Array(1, 2, 3) should === (Seq(1, 2, 3))
           Array(1, 2, 3) should !== (Seq(2, 3, 4))
 
+          javaList should === (javaArrayList)
+          intercept[TestFailedException] { javaList should !== (javaArrayList) }
+
+          javaArrayList should === (javaList)
+          intercept[TestFailedException] { javaArrayList should !== (javaList) }
+
           // The rest should not compile
           // "1" should === (1)
           // 1 should === ("1")
@@ -584,6 +627,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           // fr should === (cr)
           // cr should === (fr)
+
+          // intercept[TestFailedException] { Map("I" -> 1, "II" -> 2) should === (7) }
+          // Map("I" -> 1, "II" -> 2) should !== (7)
+
+          // intercept[TestFailedException] { Set(1, 2, 3) should === (7) }
+          // Set(1, 2, 3) should !== (7)
+
+          // intercept[TestFailedException] { javaList should === (7) }
+          // javaList should !== (7)
         }
       }
 

@@ -1246,8 +1246,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-// TODO: Write a test that fails if I can't do Map(1 -> 2) should === (Set(1, 2)) // This will always fail, but it is consistent
-    def should[U <: GenMap[K, V]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenMap[K, V], U]) {
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenMap[K, V], U]) {
       if ((left == inv.right) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
@@ -1460,8 +1459,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-// TODO: Write a test that fails for Set(1, 2, 3) should === (7)
-    def should[U <: GenTraversable[T]](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenTraversable[T], U]) {
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenTraversable[T], U]) {
       if ((left == inv.right) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
@@ -1807,7 +1805,25 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
     def should(notWord: NotWord): ResultOfNotWordForJavaList[T, java.util.List[T]] = {
       new ResultOfNotWordForJavaList(left, false)
     }
-    
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (Array(1, 2, 3))
+     *        ^
+     * </pre>
+     */
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[java.util.List[T], U]) {
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+           if (inv.expectingEqual) "didNotEqual" else "equaled",
+            left,
+            inv.right
+          )
+        )
+    }
   }
 
   /**
