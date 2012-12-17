@@ -928,11 +928,11 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      */
     def should(notWord: NotWord) = new ResultOfNotWord[T](left, false)
 
-    /**
+    /* * Turns out all the tests compile without this one
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * result should === (?) // Which one gets here?
+     * () should === (()) // In 2.10, will work with AnyVals. TODO: Also, Need to ensure Char works
      *        ^
      * </pre>
      */
@@ -1151,7 +1151,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * result should === (3) // Which one gets here?
+     * result should === (3)
      *        ^
      * </pre>
      */
@@ -1378,7 +1378,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * result should === ? // TODO: What is this one used for?
+     * result should === (new Person("Abe", "Lincoln"))
      *        ^
      * </pre>
      */

@@ -146,6 +146,9 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           intercept[TestFailedException] { javaSet should === (7) }
           javaSet should !== (7)
+
+          () should === (())
+          () should !== (7)
         }
       }
 
@@ -404,6 +407,9 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           javaHashSet should === (javaSet)
           intercept[TestFailedException] { javaHashSet should !== (javaSet) }
+
+          () should === (())
+          () should !== (7)
 
           // The rest should not compile
           // 1 should === (1L)
@@ -680,6 +686,9 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
 
           javaHashSet should === (javaSet)
           intercept[TestFailedException] { javaHashSet should !== (javaSet) }
+
+          () should === (())
+          () should !== (7)
 
           // The rest should not compile
           // "1" should === (1)
