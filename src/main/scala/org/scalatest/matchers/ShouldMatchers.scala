@@ -936,8 +936,9 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should[U](inv: TripleEqualsInvocation[U]) {
-      if ((left == inv.right) != inv.expectingEqual)
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[T, U]) {
+      // if ((left == inv.right) != inv.expectingEqual)
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
            if (inv.expectingEqual) "didNotEqual" else "equaled",
@@ -1088,7 +1089,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[String, U]) {
-      if ((left == inv.right) != inv.expectingEqual)
+      // if ((left == inv.right) != inv.expectingEqual)
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
            if (inv.expectingEqual) "didNotEqual" else "equaled",
@@ -1156,7 +1158,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[T, U]) {
-      if ((left == inv.right) != inv.expectingEqual)
+      // if ((left == inv.right) != inv.expectingEqual)
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
            if (inv.expectingEqual) "didNotEqual" else "equaled",
@@ -1247,7 +1250,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenMap[K, V], U]) {
-      if ((left == inv.right) != inv.expectingEqual)
+      // if ((left == inv.right) != inv.expectingEqual)
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
            if (inv.expectingEqual) "didNotEqual" else "equaled",
@@ -1383,7 +1387,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[T, U]) {
-      if ((left == inv.right) != inv.expectingEqual)
+      // if ((left == inv.right) != inv.expectingEqual)
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
            if (inv.expectingEqual) "didNotEqual" else "equaled",
@@ -1460,7 +1465,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenTraversable[T], U]) {
-      if ((left == inv.right) != inv.expectingEqual)
+      // if ((left == inv.right) != inv.expectingEqual)
+      if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
            if (inv.expectingEqual) "didNotEqual" else "equaled",
