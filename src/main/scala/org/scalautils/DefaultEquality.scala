@@ -15,7 +15,7 @@
  */
 package org.scalautils
 
-class DefaultEquality[A] extends Equality[A] {
+final class DefaultEquality[A] extends Equality[A] {
 
   def areEqual(a: A, b: Any): Boolean = {
     a match {
