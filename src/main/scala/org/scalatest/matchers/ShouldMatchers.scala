@@ -1410,7 +1410,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * @author Bill Venners
    */
-  final class TraversableShouldWrapper[T](left: GenTraversable[T]) {
+  final class TraversableShouldWrapper[E, L[_] <: GenTraversable[_]](left: L[E]) {
 
     /**
      * This method enables syntax such as the following:
@@ -1420,8 +1420,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *             ^
      * </pre>
      */
-    def should(rightMatcherX6: Matcher[GenTraversable[T]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcherX6)
+    def should(rightMatcherX6: Matcher[GenTraversable[E]]) {
+      ShouldMethodHelper.shouldMatcher(left.asInstanceOf[GenTraversable[E]], rightMatcherX6)
     }
 
     /**
@@ -1432,8 +1432,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *             ^
      * </pre>
      */
-    def should(haveWord: HaveWord): ResultOfHaveWordForTraversable[T] = 
-      new ResultOfHaveWordForTraversable(left, true)
+    def should(haveWord: HaveWord): ResultOfHaveWordForTraversable[E] = 
+      new ResultOfHaveWordForTraversable(left.asInstanceOf[GenTraversable[E]], true)
 
     /**
      * This method enables syntax such as the following:
@@ -1443,7 +1443,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *             ^
      * </pre>
      */
-    def should(beWord: BeWord): ResultOfBeWordForAnyRef[GenTraversable[T]] = new ResultOfBeWordForAnyRef(left, true)
+    def should(beWord: BeWord): ResultOfBeWordForAnyRef[GenTraversable[E]] = new ResultOfBeWordForAnyRef(left.asInstanceOf[GenTraversable[E]], true)
 
     /**
      * This method enables syntax such as the following:
@@ -1453,8 +1453,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *             ^
      * </pre>
      */
-    def should(notWord: NotWord): ResultOfNotWordForTraversable[T, GenTraversable[T]] =
-      new ResultOfNotWordForTraversable(left, false)
+    def should(notWord: NotWord): ResultOfNotWordForTraversable[E, GenTraversable[E]] =
+      new ResultOfNotWordForTraversable(left.asInstanceOf[GenTraversable[E]], false)
 
     /**
      * This method enables syntax such as the following:
@@ -1464,7 +1464,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenTraversable[T], U]) {
+    def should[R](inv: TripleEqualsInvocation[R])(implicit constraint: EqualityConstraint[L[E], R]) {
       // if ((left == inv.right) != inv.expectingEqual)
       if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
@@ -1656,7 +1656,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * @author Bill Venners
    */
-  final class SeqShouldWrapper[T](left: GenSeq[T]) {
+  final class SeqShouldWrapper[E, L[_] <: GenSeq[_]](left: L[E]) {
  
     /**
      * This method enables syntax such as the following:
@@ -1666,7 +1666,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(rightMatcherX9: Matcher[GenSeq[T]]) {
+    def should(rightMatcherX9: Matcher[L[E]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherX9)
     }
 
@@ -1678,8 +1678,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(haveWord: HaveWord): ResultOfHaveWordForSeq[T] =
-      new ResultOfHaveWordForSeq(left, true)
+    def should(haveWord: HaveWord): ResultOfHaveWordForSeq[E] =
+      new ResultOfHaveWordForSeq(left.asInstanceOf[GenSeq[E]], true)
 
     /**
      * This method enables syntax such as the following:
@@ -1689,9 +1689,9 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(notWord: NotWord): ResultOfNotWordForSeq[T, GenSeq[T]] =
-      new ResultOfNotWordForSeq(left, false)
-    // def should(notWord: NotWord): ResultOfNotWordForAnyRef[GenSeq[T]] =
+    def should(notWord: NotWord): ResultOfNotWordForSeq[E, GenSeq[E]] =
+      new ResultOfNotWordForSeq(left.asInstanceOf[GenSeq[E]], false)
+    // def should(notWord: NotWord): ResultOfNotWordForAnyRef[GenSeq[E]] =
       // new ResultOfNotWordForAnyRef(left, false)
 
     /**
@@ -1702,7 +1702,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(beWord: BeWord): ResultOfBeWordForAnyRef[GenSeq[T]] = new ResultOfBeWordForAnyRef(left, true)
+    def should(beWord: BeWord): ResultOfBeWordForAnyRef[L[E]] = new ResultOfBeWordForAnyRef(left, true)
 
     /**
      * This method enables syntax such as the following:
@@ -1712,7 +1712,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenSeq[T], U]) {
+    def should[R](inv: TripleEqualsInvocation[R])(implicit constraint: EqualityConstraint[L[E], R]) {
       if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
@@ -1977,13 +1977,13 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    * Implicitly converts an object of type <code>scala.Collection[T]</code> to a <code>CollectionShouldWrapper</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToTraversableShouldWrapper[T](o: GenTraversable[T]): TraversableShouldWrapper[T] = new TraversableShouldWrapper[T](o)
+  implicit def convertToTraversableShouldWrapper[E, L[_] <: GenTraversable[_]](o: L[E]): TraversableShouldWrapper[E, L] = new TraversableShouldWrapper[E, L](o)
 
   /**
    * Implicitly converts an object of type <code>GenSeq[T]</code> to a <code>SeqShouldWrapper[T]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToSeqShouldWrapper[T](o: GenSeq[T]): SeqShouldWrapper[T] = new SeqShouldWrapper[T](o)
+  implicit def convertToSeqShouldWrapper[E, L[_] <: GenSeq[_]](o: L[E]): SeqShouldWrapper[E, L] = new SeqShouldWrapper[E, L](o)
 
   /**
    * Implicitly converts an object of type <code>scala.Array[T]</code> to a <code>ArrayShouldWrapper[T]</code>,

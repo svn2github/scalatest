@@ -55,16 +55,35 @@ class ShouldTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions wit
       3 should !== (3)
       3 should === (4)
     }
-    // TODO: Equality[Map[String,Int]] doesn't work. Try making Equality contravariant
-    // and recompile all
     def `for Map` {
-      Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
-      Map("I" -> 1, "II" -> 2) should !== (Map("one" -> 1, "two" -> 2))
-      implicit val e = new Equality[GenMap[String,Int]] {
-        def areEqual(a: GenMap[String,Int], b: Any): Boolean = a != b
+      def `with default equality` {
+        Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
+        Map("I" -> 1, "II" -> 2) should !== (Map("one" -> 1, "two" -> 2))
       }
-      Map("I" -> 1, "II" -> 2) should !== (Map("I" -> 1, "II" -> 2))
-      Map("I" -> 1, "II" -> 2) should === (Map("one" -> 1, "two" -> 2))
+      def `with GenMap equality` {
+        implicit val e = new Equality[GenMap[String,Int]] {
+          def areEqual(a: GenMap[String,Int], b: Any): Boolean = a != b
+        }
+        Map("I" -> 1, "II" -> 2) should !== (Map("I" -> 1, "II" -> 2))
+        Map("I" -> 1, "II" -> 2) should === (Map("one" -> 1, "two" -> 2))
+      }
+      def `with specific Map equality` {
+        implicit val e = new Equality[Map[String,Int]] {
+          def areEqual(a: Map[String,Int], b: Any): Boolean = a != b
+        }
+        Map("I" -> 1, "II" -> 2) should !== (Map("I" -> 1, "II" -> 2))
+        Map("I" -> 1, "II" -> 2) should === (Map("one" -> 1, "two" -> 2))
+      }
+      def `with both GenMap and specific Map equality` {
+        implicit val e = new Equality[GenMap[String,Int]] {
+          def areEqual(a: GenMap[String,Int], b: Any): Boolean = a == b
+        }
+        implicit val e2 = new Equality[Map[String,Int]] { // Should pick the most specific one
+          def areEqual(a: Map[String,Int], b: Any): Boolean = a != b
+        }
+        Map("I" -> 1, "II" -> 2) should !== (Map("I" -> 1, "II" -> 2))
+        Map("I" -> 1, "II" -> 2) should === (Map("one" -> 1, "two" -> 2))
+      }
     }
     def `for AnyRef` {
       case class Person(name: String)
@@ -76,15 +95,46 @@ class ShouldTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions wit
       Person("Joe") should !== (Person("Joe"))
       Person("Joe") should === (Person("Sally"))
     }
-    // TODO: Equality[Set[Int]] doesn't work.
-    def `for Traversable` {
-      Set(1, 2, 3) should === (Set(1, 2, 3))
-      Set(1, 2, 3) should !== (Set(1, 2, 4))
-      implicit val e = new Equality[GenTraversable[Int]] {
-        def areEqual(a: GenTraversable[Int], b: Any): Boolean = a != b
+    object `for Traversable` {
+      def `with default equality` {
+        Set(1, 2, 3) should === (Set(1, 2, 3))
+        Set(1, 2, 3) should !== (Set(1, 2, 4))
       }
-      Set(1, 2, 3) should !== (Set(1, 2, 3))
-      Set(1, 2, 3) should === (Set(1, 2, 4))
+      def `with inferred GenTraversable equality` {
+        // implicit val e = new Equality[GenTraversable[Int]] { ... does not and should not compile
+        implicit def travEq[T <: GenTraversable[Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
+        }
+        Set(1, 2, 3) should !== (Set(1, 2, 3))
+        Set(1, 2, 3) should === (Set(1, 2, 4))
+      }
+      def `with specific Traversable equality` {
+        implicit val e = new Equality[Set[Int]] {
+          def areEqual(a: Set[Int], b: Any): Boolean = a != b
+        }
+        Set(1, 2, 3) should !== (Set(1, 2, 3))
+        Set(1, 2, 3) should === (Set(1, 2, 4))
+      }
+      def `with both GenTraversable and specific Traversable equality` {
+        implicit val e = new Equality[GenTraversable[Int]] {
+          def areEqual(a: GenTraversable[Int], b: Any): Boolean = a == b
+        }
+        implicit val e2 = new Equality[Set[Int]] { // Should pick the most specific one
+          def areEqual(a: Set[Int], b: Any): Boolean = a != b
+        }
+        Set(1, 2, 3) should !== (Set(1, 2, 3))
+        Set(1, 2, 3) should === (Set(1, 2, 4))
+      }
+      def `with both inferred GenTraversable and specific Traversable equality` {
+        implicit def travEq[T <: GenTraversable[Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
+        }
+        implicit val e2 = new Equality[Set[Int]] { // Should pick the most specific one
+          def areEqual(a: Set[Int], b: Any): Boolean = a != b
+        }
+        Set(1, 2, 3) should !== (Set(1, 2, 3))
+        Set(1, 2, 3) should === (Set(1, 2, 4))
+      }
     }
     def `for Java Collection` {
       pending
@@ -92,15 +142,46 @@ class ShouldTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions wit
     def `for Java Map` {
       pending
     }
-    // TODO: Equality[Vector[Int] doesn't work.
-    def `for Seq` {
-      Vector(1, 2, 3) should === (Vector(1, 2, 3))
-      Vector(1, 2, 3) should !== (Vector(1, 2, 4))
-      implicit val e = new Equality[GenSeq[Int]] {
-        def areEqual(a: GenSeq[Int], b: Any): Boolean = a != b
+    object `for Seq` {
+      def `with default equality` {
+        Vector(1, 2, 3) should === (Vector(1, 2, 3))
+        Vector(1, 2, 3) should !== (Vector(1, 2, 4))
       }
-      Vector(1, 2, 3) should !== (Vector(1, 2, 3))
-      Vector(1, 2, 3) should === (Vector(1, 2, 4))
+      def `with inferred GenSeq equality` {
+        // implicit val e = new Equality[GenSeq[Int]] { ... does not and should not compile
+        implicit def travEq[T <: GenSeq[Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
+        }
+        Vector(1, 2, 3) should !== (Vector(1, 2, 3))
+        Vector(1, 2, 3) should === (Vector(1, 2, 4))
+      }
+      def `with specific Seq equality` {
+        implicit val e = new Equality[Vector[Int]] {
+          def areEqual(a: Vector[Int], b: Any): Boolean = a != b
+        }
+        Vector(1, 2, 3) should !== (Vector(1, 2, 3))
+        Vector(1, 2, 3) should === (Vector(1, 2, 4))
+      }
+      def `with both GenSeq and specific Seq equality` {
+        implicit val e = new Equality[GenSeq[Int]] {
+          def areEqual(a: GenSeq[Int], b: Any): Boolean = a == b
+        }
+        implicit val e2 = new Equality[Vector[Int]] { // Should pick the exact one
+          def areEqual(a: Vector[Int], b: Any): Boolean = a != b
+        }
+        Vector(1, 2, 3) should !== (Vector(1, 2, 3))
+        Vector(1, 2, 3) should === (Vector(1, 2, 4))
+      }
+      def `with both inferred GenSeq and specific Seq equality` {
+        implicit def travEq[T <: GenSeq[Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a == b
+        }
+        implicit val e2 = new Equality[Vector[Int]] { // Should pick the exact one
+          def areEqual(a: Vector[Int], b: Any): Boolean = a != b
+        }
+        Vector(1, 2, 3) should !== (Vector(1, 2, 3))
+        Vector(1, 2, 3) should === (Vector(1, 2, 4))
+      }
     }
     def `for Array` {
       Array(1, 2, 3) should === (Array(1, 2, 3))
