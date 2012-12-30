@@ -55,31 +55,46 @@ class ShouldTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions wit
       3 should !== (3)
       3 should === (4)
     }
-    def `for Map` {
+    object `for Map` {
       def `with default equality` {
         Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
         Map("I" -> 1, "II" -> 2) should !== (Map("one" -> 1, "two" -> 2))
+        implicit val e = new Equality[GenMap[String, Int]] {
+          def areEqual(a: GenMap[String, Int], b: Any): Boolean = a != b
+        }
+        Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
+        Map("I" -> 1, "II" -> 2) should !== (Map("one" -> 1, "two" -> 2))
       }
-      def `with GenMap equality` {
-        implicit val e = new Equality[GenMap[String,Int]] {
-          def areEqual(a: GenMap[String,Int], b: Any): Boolean = a != b
+      def `with inferred GenMap equality` {
+        implicit def travEq[T <: GenMap[String, Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
         }
         Map("I" -> 1, "II" -> 2) should !== (Map("I" -> 1, "II" -> 2))
         Map("I" -> 1, "II" -> 2) should === (Map("one" -> 1, "two" -> 2))
       }
       def `with specific Map equality` {
-        implicit val e = new Equality[Map[String,Int]] {
-          def areEqual(a: Map[String,Int], b: Any): Boolean = a != b
+        implicit val e = new Equality[Map[String, Int]] {
+          def areEqual(a: Map[String, Int], b: Any): Boolean = a != b
         }
         Map("I" -> 1, "II" -> 2) should !== (Map("I" -> 1, "II" -> 2))
         Map("I" -> 1, "II" -> 2) should === (Map("one" -> 1, "two" -> 2))
       }
-      def `with both GenMap and specific Map equality` {
-        implicit val e = new Equality[GenMap[String,Int]] {
-          def areEqual(a: GenMap[String,Int], b: Any): Boolean = a == b
+      def `with both GenMap and specific Map equality, though I don't know why this compiles` {
+        implicit val e = new Equality[GenMap[String, Int]] {
+          def areEqual(a: GenMap[String, Int], b: Any): Boolean = a == b
         }
-        implicit val e2 = new Equality[Map[String,Int]] { // Should pick the most specific one
-          def areEqual(a: Map[String,Int], b: Any): Boolean = a != b
+        implicit val e2 = new Equality[Map[String, Int]] { // Should pick the most specific one
+          def areEqual(a: Map[String, Int], b: Any): Boolean = a != b
+        }
+        Map("I" -> 1, "II" -> 2) should !== (Map("I" -> 1, "II" -> 2))
+        Map("I" -> 1, "II" -> 2) should === (Map("one" -> 1, "two" -> 2))
+      }
+      def `with both inferred GenMap and specific Map equality` {
+        implicit def travEq[T <: GenMap[String, Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
+        }
+        implicit val e2 = new Equality[Map[String, Int]] { // Should pick the most specific one
+          def areEqual(a: Map[String, Int], b: Any): Boolean = a != b
         }
         Map("I" -> 1, "II" -> 2) should !== (Map("I" -> 1, "II" -> 2))
         Map("I" -> 1, "II" -> 2) should === (Map("one" -> 1, "two" -> 2))
@@ -99,9 +114,16 @@ class ShouldTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions wit
       def `with default equality` {
         Set(1, 2, 3) should === (Set(1, 2, 3))
         Set(1, 2, 3) should !== (Set(1, 2, 4))
+
+        implicit val e = new Equality[GenTraversable[Int]] {
+          def areEqual(a: GenTraversable[Int], b: Any): Boolean = a != b
+        }
+
+        // Still picks DefaultEquality probably because of variance. TODO: Investigate and explain.
+        Set(1, 2, 3) should === (Set(1, 2, 3))
+        Set(1, 2, 3) should !== (Set(1, 2, 4))
       }
       def `with inferred GenTraversable equality` {
-        // implicit val e = new Equality[GenTraversable[Int]] { ... does not and should not compile
         implicit def travEq[T <: GenTraversable[Int]] = new Equality[T] {
           def areEqual(a: T, b: Any): Boolean = a != b
         }
@@ -136,12 +158,127 @@ class ShouldTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions wit
         Set(1, 2, 3) should === (Set(1, 2, 4))
       }
     }
-    def `for Java Collection` {
-      pending
+    object `for Java Collection` {
+
+      val javaSet123: java.util.Set[Int] = new java.util.HashSet
+      javaSet123.add(1)
+      javaSet123.add(2)
+      javaSet123.add(3)
+
+      val javaSet124: java.util.Set[Int] = new java.util.HashSet
+      javaSet124.add(1)
+      javaSet124.add(2)
+      javaSet124.add(4)
+
+      def `with default equality` {
+        javaSet123 should === (javaSet123)
+        javaSet123 should !== (javaSet124)
+        implicit val e = new Equality[java.util.Collection[Int]] {
+          def areEqual(a: java.util.Collection[Int], b: Any): Boolean = a != b
+        }
+        javaSet123 should === (javaSet123)
+        javaSet123 should !== (javaSet124)
+      }
+
+      def `with inferred Collection equality` {
+        // implicit val e = new Equality[GenTraversable[Int]] { ... does not and should not compile
+        implicit def travEq[T <: java.util.Collection[Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
+        }
+        javaSet123 should !== (javaSet123)
+        javaSet123 should === (javaSet124)
+      }
+
+      def `with specific Collection equality` {
+        implicit val e = new Equality[java.util.Set[Int]] {
+          def areEqual(a: java.util.Set[Int], b: Any): Boolean = a != b
+        }
+        javaSet123 should !== (javaSet123)
+        javaSet123 should === (javaSet124)
+      }
+
+      def `with both Collection and specific Collection equality` {
+        implicit val e = new Equality[java.util.Collection[Int]] {
+          def areEqual(a: java.util.Collection[Int], b: Any): Boolean = a == b
+        }
+        implicit val e2 = new Equality[java.util.Set[Int]] { // Should pick the most specific one
+          def areEqual(a: java.util.Set[Int], b: Any): Boolean = a != b
+        }
+        javaSet123 should !== (javaSet123)
+        javaSet123 should === (javaSet124)
+      }
+      def `with both inferred Collection and specific Collection equality` {
+        implicit def travEq[T <: java.util.Collection[Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
+        }
+        implicit val e2 = new Equality[java.util.Set[Int]] { // Should pick the most specific one
+          def areEqual(a: java.util.Set[Int], b: Any): Boolean = a != b
+        }
+        javaSet123 should !== (javaSet123)
+        javaSet123 should === (javaSet124)
+      }
     }
-    def `for Java Map` {
-      pending
+
+    object `for Java Map` {
+
+      val javaMap123: java.util.HashMap[String, Int] = new java.util.HashMap
+      javaMap123.put("one",1)
+      javaMap123.put("two", 2)
+      javaMap123.put("three", 3)
+
+      val javaMap124: java.util.HashMap[String, Int] = new java.util.HashMap
+      javaMap124.put("one",1)
+      javaMap124.put("two", 2)
+      javaMap124.put("four", 4)
+
+      def `with default equality` {
+        javaMap123 should === (javaMap123)
+        javaMap123 should !== (javaMap124)
+        implicit val e = new Equality[java.util.Map[String, Int]] {
+          def areEqual(a: java.util.Map[String, Int], b: Any): Boolean = a != b
+        }
+        javaMap123 should === (javaMap123)
+        javaMap123 should !== (javaMap124)
+      }
+
+      def `with inferred Map equality` {
+        implicit def travEq[T <: java.util.Map[String, Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
+        }
+        javaMap123 should !== (javaMap123)
+        javaMap123 should === (javaMap124)
+      }
+
+      def `with specific HashMap equality` {
+        implicit val e = new Equality[java.util.HashMap[String, Int]] {
+          def areEqual(a: java.util.HashMap[String, Int], b: Any): Boolean = a != b
+        }
+        javaMap123 should !== (javaMap123)
+        javaMap123 should === (javaMap124)
+      }
+
+      def `with both Map and specific HashMap equality` {
+        implicit val e = new Equality[java.util.Map[String, Int]] {
+          def areEqual(a: java.util.Map[String, Int], b: Any): Boolean = a == b
+        }
+        implicit val e2 = new Equality[java.util.HashMap[String, Int]] { // Should pick this because it is an exact match
+          def areEqual(a: java.util.HashMap[String, Int], b: Any): Boolean = a != b
+        }
+        javaMap123 should !== (javaMap123)
+        javaMap123 should === (javaMap124)
+      }
+      def `with both inferred Map and specific HashMap equality` {
+        implicit def travEq[T <: java.util.Map[String, Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
+        }
+        implicit val e2 = new Equality[java.util.HashMap[String, Int]] { // Should pick the most specific one
+          def areEqual(a: java.util.HashMap[String, Int], b: Any): Boolean = a != b
+        }
+        javaMap123 should !== (javaMap123)
+        javaMap123 should === (javaMap124)
+      }
     }
+
     object `for Seq` {
       def `with default equality` {
         Vector(1, 2, 3) should === (Vector(1, 2, 3))
@@ -192,8 +329,61 @@ class ShouldTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions wit
       Array(1, 2, 3) should !== (Array(1, 2, 3))
       Array(1, 2, 3) should === (Array(1, 2, 4))
     }
-    def `for Java List` {
-      pending
+    object `for Java List` {
+
+      val javaList123: java.util.List[Int] = new java.util.ArrayList
+      javaList123.add(1)
+      javaList123.add(2)
+      javaList123.add(3)
+
+      val javaList124: java.util.List[Int] = new java.util.ArrayList
+      javaList124.add(1)
+      javaList124.add(2)
+      javaList124.add(4)
+      
+      def `with default equality` {
+        javaList123 should === (javaList123)
+        javaList123 should !== (javaList124)
+        implicit val e = new Equality[java.util.Collection[Int]] {
+          def areEqual(a: java.util.Collection[Int], b: Any): Boolean = a != b
+        }
+        javaList123 should === (javaList123)
+        javaList123 should !== (javaList124)
+      }
+      def `with inferred java.util.Collection equality` {
+        implicit def travEq[T <: java.util.Collection[Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a != b
+        }
+        javaList123 should !== (javaList123)
+        javaList123 should === (javaList124)
+      }
+      def `with specific java.util.List equality` {
+        implicit val e = new Equality[java.util.List[Int]] {
+          def areEqual(a: java.util.List[Int], b: Any): Boolean = a != b
+        }
+        javaList123 should !== (javaList123)
+        javaList123 should === (javaList124)
+      }
+      def `with both java.util.Collection and java.util.List equality` {
+        implicit val e = new Equality[java.util.Collection[Int]] {
+          def areEqual(a: java.util.Collection[Int], b: Any): Boolean = a == b
+        }
+        implicit val e2 = new Equality[java.util.List[Int]] { // Should pick the exact one
+          def areEqual(a: java.util.List[Int], b: Any): Boolean = a != b
+        }
+        javaList123 should !== (javaList123)
+        javaList123 should === (javaList124)
+      }
+      def `with both inferred java.util.List and specific java.util.List equality` {
+        implicit def travEq[T <: java.util.List[Int]] = new Equality[T] {
+          def areEqual(a: T, b: Any): Boolean = a == b
+        }
+        implicit val e2 = new Equality[java.util.List[Int]] { // Should pick the exact one
+          def areEqual(a: java.util.List[Int], b: Any): Boolean = a != b
+        }
+        javaList123 should !== (javaList123)
+        javaList123 should === (javaList124)
+      }
     }
   }
 }

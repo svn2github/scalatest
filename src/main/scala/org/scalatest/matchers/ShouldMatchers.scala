@@ -24,6 +24,7 @@ import scala.collection.GenMap
 import Assertions.areEqualComparingArraysStructurally
 import org.scalautils.TripleEqualsInvocation
 import org.scalautils.EqualityConstraint
+import org.scalautils.AsAny
 
 /**
  * Trait that provides a domain specific language (DSL) for expressing assertions in tests
@@ -882,7 +883,10 @@ import org.scalautils.EqualityConstraint
  * forget a set of needed parentheses.
  * </p>
  */
-trait ShouldMatchers extends Matchers with ShouldVerb {
+trait ShouldMatchers extends Matchers with ShouldVerb with AsAny {
+
+  // Turn off this implicit conversion, becase asAny method is added via AnyShouldWrapper
+  override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = new AsAnyWrapper(o)
 
   private object ShouldMethodHelper {
     def shouldMatcher[T](left: T, rightMatcher: Matcher[T]) {
@@ -947,6 +951,9 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
           )
         )
     }
+
+    // TODO: Scaladoc
+    def asAny: Any = left
   }
 
   /**
@@ -1170,6 +1177,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
     }
   }
 
+// TODO: Am I doing conversions on immutable.GenTraversable and immutable.GenSeq? If so, write a test that fails and make it general.
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
    * the matchers DSL.
@@ -1181,7 +1189,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * @author Bill Venners
    */
-  final class MapShouldWrapper[K, V](left: scala.collection.GenMap[K, V]) {
+  final class MapShouldWrapper[K, V, L[_, _] <: scala.collection.GenMap[_, _]](left: L[K, V]) {
+  // final class MapShouldWrapper[K, V](left: scala.collection.GenMap[K, V]) {
 
     /**
      * This method enables syntax such as the following:
@@ -1191,7 +1200,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(rightMatcherX4: Matcher[scala.collection.GenMap[K, V]]) {
+    def should(rightMatcherX4: Matcher[L[K, V]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherX4)
     }
 
@@ -1203,7 +1212,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *     ^
      * </pre>
      */
-    def should(beWord: BeWord): ResultOfBeWordForAnyRef[scala.collection.GenMap[K, V]] = new ResultOfBeWordForAnyRef(left, true)
+    def should(beWord: BeWord): ResultOfBeWordForAnyRef[scala.collection.GenMap[K, V]] = new ResultOfBeWordForAnyRef(left.asInstanceOf[GenMap[K, V]], true)
 
     /**
      * This method enables syntax such as the following:
@@ -1214,7 +1223,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should(haveWord: HaveWord): ResultOfHaveWordForTraversable[(K, V)] = {
-      new ResultOfHaveWordForTraversable(left, true)
+      new ResultOfHaveWordForTraversable(left.asInstanceOf[GenMap[K,V]], true)
     }
 
     /**
@@ -1226,7 +1235,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should(containWord: ContainWord): ResultOfContainWordForMap[K, V] = {
-      new ResultOfContainWordForMap(left, true)
+      new ResultOfContainWordForMap(left.asInstanceOf[GenMap[K, V]], true)
     }
 
     /**
@@ -1238,7 +1247,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should(notWord: NotWord): ResultOfNotWordForMap[K, V] = {
-      new ResultOfNotWordForMap(left, false)
+      new ResultOfNotWordForMap(left.asInstanceOf[GenMap[K, V]], false)
     }
 
     /**
@@ -1249,7 +1258,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[GenMap[K, V], U]) {
+    def should[R](inv: TripleEqualsInvocation[R])(implicit constraint: EqualityConstraint[L[K, V], R]) {
       // if ((left == inv.right) != inv.expectingEqual)
       if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
@@ -1488,7 +1497,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * @author Bill Venners
    */
-  final class JavaCollectionShouldWrapper[T](left: java.util.Collection[T]) {
+  // final class JavaCollectionShouldWrapper[T](left: java.util.Collection[T]) {
+  final class JavaCollectionShouldWrapper[E, L[_] <: java.util.Collection[_]](left: L[E]) {
 
     /**
      * This method enables syntax such as the following:
@@ -1498,7 +1508,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *                ^
      * </pre>
      */
-    def should(rightMatcherX7: Matcher[java.util.Collection[T]]) {
+    def should(rightMatcherX7: Matcher[L[E]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherX7)
     }
 
@@ -1510,8 +1520,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *                ^
      * </pre>
      */
-    def should(haveWord: HaveWord): ResultOfHaveWordForJavaCollection[T] =
-      new ResultOfHaveWordForJavaCollection(left, true)
+    def should(haveWord: HaveWord): ResultOfHaveWordForJavaCollection[E] =
+      new ResultOfHaveWordForJavaCollection(left.asInstanceOf[java.util.Collection[E]], true)
 
     /**
      * This method enables syntax such as the following:
@@ -1521,7 +1531,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *                ^
      * </pre>
      */
-    def should(beWord: BeWord): ResultOfBeWordForAnyRef[java.util.Collection[T]] = new ResultOfBeWordForAnyRef(left, true)
+    def should(beWord: BeWord): ResultOfBeWordForAnyRef[java.util.Collection[E]] = new ResultOfBeWordForAnyRef(left.asInstanceOf[java.util.Collection[E]], true)
 
     /**
      * This method enables syntax such as the following:
@@ -1531,8 +1541,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *                ^
      * </pre>
      */
-    def should(notWord: NotWord): ResultOfNotWordForJavaCollection[T, java.util.Collection[T]] =
-      new ResultOfNotWordForJavaCollection(left, false)
+    def should(notWord: NotWord): ResultOfNotWordForJavaCollection[E, java.util.Collection[E]] =
+      new ResultOfNotWordForJavaCollection(left.asInstanceOf[java.util.Collection[E]], false)
 
     /**
      * This method enables syntax such as the following:
@@ -1542,7 +1552,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[java.util.Collection[T], U]) {
+    def should[R](inv: TripleEqualsInvocation[R])(implicit constraint: EqualityConstraint[L[E], R]) {
       if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
@@ -1565,7 +1575,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    *
    * @author Bill Venners
    */
-  final class JavaMapShouldWrapper[K, V](left: java.util.Map[K, V]) {
+  // final class JavaMapShouldWrapper[K, V](left: java.util.Map[K, V]) {
+  final class JavaMapShouldWrapper[K, V, L[_, _] <: java.util.Map[_, _]](left: L[K, V]) {
 
     /**
      * This method enables syntax such as the following:
@@ -1575,7 +1586,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *         ^
      * </pre>
      */
-    def should(rightMatcherX8: Matcher[java.util.Map[K, V]]) {
+    def should(rightMatcherX8: Matcher[L[K, V]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherX8)
     }
 
@@ -1588,7 +1599,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should(containWord: ContainWord): ResultOfContainWordForJavaMap[K, V] = {
-      new ResultOfContainWordForJavaMap(left, true)
+      new ResultOfContainWordForJavaMap(left.asInstanceOf[java.util.Map[K, V]], true)
     }
  
     /**
@@ -1612,7 +1623,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      * </pre>
      */
     def should(notWord: NotWord): ResultOfNotWordForJavaMap[K, V] = {
-      new ResultOfNotWordForJavaMap[K, V](left, false)
+      new ResultOfNotWordForJavaMap[K, V](left.asInstanceOf[java.util.Map[K, V]], false)
     }
 
     /**
@@ -1623,7 +1634,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *         ^
      * </pre>
      */
-    def should(beWord: BeWord): ResultOfBeWordForAnyRef[java.util.Map[K, V]] = new ResultOfBeWordForAnyRef(left, true)
+    def should(beWord: BeWord): ResultOfBeWordForAnyRef[java.util.Map[K, V]] = new ResultOfBeWordForAnyRef(left.asInstanceOf[java.util.Map[K, V]], true)
 
     /**
      * This method enables syntax such as the following:
@@ -1633,7 +1644,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
      *        ^
      * </pre>
      */
-    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[java.util.Map[K, V], U]) {
+    def should[R](inv: TripleEqualsInvocation[R])(implicit constraint: EqualityConstraint[L[K, V], R]) {
       if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
@@ -1902,7 +1913,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
            if (!clazz.isAssignableFrom(u.getClass)) {
              val s = Resources("wrongException", clazz.getName, u.getClass.getName)
              throw newTestFailedException(s, Some(u))
-             // throw new TestFailedException(s, u, 3)   XXX
+             // throw new TestFailedException(s, u, 3) 
            }
            else {
              Some(u)
@@ -1995,7 +2006,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    * Implicitly converts an object of type <code>scala.collection.GenMap[K, V]</code> to a <code>MapShouldWrapper[K, V]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToMapShouldWrapper[K, V](o: scala.collection.GenMap[K, V]): MapShouldWrapper[K, V] = new MapShouldWrapper[K, V](o)
+  implicit def convertToMapShouldWrapper[K, V, L[_, _] <: scala.collection.GenMap[_, _]](o: L[K, V]): MapShouldWrapper[K, V, L] = new MapShouldWrapper[K, V, L](o)
 
   /**
    * Implicitly converts an object of type <code>java.lang.String</code> to a <code>StringShouldWrapper</code>,
@@ -2007,7 +2018,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    * Implicitly converts an object of type <code>java.util.Collection[T]</code> to a <code>JavaCollectionShouldWrapper[T]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToJavaCollectionShouldWrapper[T](o: java.util.Collection[T]): JavaCollectionShouldWrapper[T] = new JavaCollectionShouldWrapper[T](o)
+  implicit def convertToJavaCollectionShouldWrapper[E, L[_] <: java.util.Collection[_]](o: L[E]): JavaCollectionShouldWrapper[E, L] = new JavaCollectionShouldWrapper[E, L](o)
 
   /**
    * Implicitly converts an object of type <code>java.util.List[T]</code> to a <code>JavaListShouldWrapper[T]</code>,
@@ -2020,7 +2031,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb {
    * Implicitly converts an object of type <code>java.util.Map[K, V]</code> to a <code>JavaMapShouldWrapper[K, V]</code>,
    * to enable <code>should</code> methods to be invokable on that object.
    */
-  implicit def convertToJavaMapShouldWrapper[K, V](o: java.util.Map[K, V]): JavaMapShouldWrapper[K, V] = new JavaMapShouldWrapper[K, V](o)
+  implicit def convertToJavaMapShouldWrapper[K, V, L[_, _] <: java.util.Map[_, _]](o: L[K, V]): JavaMapShouldWrapper[K, V, L] = new JavaMapShouldWrapper[K, V, L](o)
 }
 /*
 leave this explanation in. It is a useful reminder.

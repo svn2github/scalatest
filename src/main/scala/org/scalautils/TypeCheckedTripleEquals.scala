@@ -19,7 +19,9 @@ trait LowPriorityTypeCheckedConstraint extends EqualityConstraints {
   implicit override def lowPriorityTypeCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], ev: A <:< B): EqualityConstraint[A, B] = new BasicEqualityConstraint[A, B](equalityOfA)
 }
 
-trait TypeCheckedTripleEquals extends LowPriorityTypeCheckedConstraint {
+trait TypeCheckedTripleEquals extends LowPriorityTypeCheckedConstraint with AsAny {
+
+  override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = super.convertToAsAnyWrapper(o)
 
   implicit override def defaultEquality[A]: Equality[A] = new DefaultEquality[A]
 

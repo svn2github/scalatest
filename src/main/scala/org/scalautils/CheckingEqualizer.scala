@@ -75,5 +75,7 @@ class CheckingEqualizer[L](left: L) {
   def !==[R](right: R)(implicit constraint: EqualityConstraint[L, R]): Boolean = !constraint.areEqual(left, right)
   def ===(interval: Interval[L]): Boolean = if (interval != null) interval.isWithin(left) else left == interval
   def !==(interval: Interval[L]): Boolean = if (interval != null) !interval.isWithin(left) else left != interval
+  // TODO: Scaladoc
+  def asAny: Any = left
 }
 

@@ -19,7 +19,9 @@ trait LowPriorityConversionCheckedLegacyConstraint extends EqualityConstraints {
   implicit override def lowPriorityConversionCheckedEqualityConstraint[A, B](implicit equalityOfB: Equality[B], cnv: A => B): EqualityConstraint[A, B] = new AToBEqualityConstraint[A, B](equalityOfB, cnv)
 }
 
-trait ConversionCheckedLegacyTripleEquals extends LowPriorityConversionCheckedLegacyConstraint {
+trait ConversionCheckedLegacyTripleEquals extends LowPriorityConversionCheckedLegacyConstraint with AsAny {
+
+  override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = super.convertToAsAnyWrapper(o)
 
   implicit override def defaultEquality[A]: Equality[A] = new DefaultEquality[A]
 
