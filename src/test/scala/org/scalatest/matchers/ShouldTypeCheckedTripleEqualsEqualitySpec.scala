@@ -25,19 +25,19 @@ import scala.collection.GenTraversableOnce
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import org.scalautils.Equality
-import org.scalautils.TripleEquals
+import org.scalautils.TypeCheckedTripleEquals
 
-class ShouldTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions with ShouldMatchers with TripleEquals {
+class ShouldTypeCheckedTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions with ShouldMatchers with TypeCheckedTripleEquals {
 
   object `the === operator should use the appropriate Equality type class` {
     def `for Any` {
       () should === (())
-      () should !== (7)
+      // () should !== (7) // Does not compile if type checked
       implicit val e = new Equality[Unit] {
         def areEqual(a: Unit, b: Any): Boolean = a != b
       }
       () should !== (())
-      () should === (7)
+      // () should === (7) // Does not compile if type checked
     }
     def `for String` {
       "hi" should === ("hi")
