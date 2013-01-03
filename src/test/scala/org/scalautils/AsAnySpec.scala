@@ -30,7 +30,7 @@ class AsAnySpec extends Spec {
     object `provided by TypeCheckedTripleEquals` {
       def `should convert any type to Any` {
         new TypeCheckedTripleEquals {
-          assert(1.asAny !== "1".asAny)
+          // assert(1.asAny !== "1".asAny) // Doesn't compile under 2.9 saying: error: reassignment to val
           assert(this.isInstanceOf[AsAny])
 
           // Should not compile
@@ -42,7 +42,7 @@ class AsAnySpec extends Spec {
     object `provided by TypeCheckedLegacyTripleEquals` {
       def `should convert any type to Any` {
         new TypeCheckedLegacyTripleEquals {
-          assert(1.asAny !== "1".asAny)
+          // assert(1.asAny !== "1".asAny) // Doesn't compile under 2.9 saying: error: reassignment to val
           assert(this.isInstanceOf[AsAny])
 
           // Should not compile
@@ -54,7 +54,7 @@ class AsAnySpec extends Spec {
     object `provided by ConversionCheckedTripleEquals` {
       def `should convert any type to Any` {
         new ConversionCheckedTripleEquals {
-          assert(1.asAny !== "1".asAny)
+          // assert(1.asAny !== "1".asAny) // Doesn't compile under 2.9 saying: error: reassignment to val
           assert(this.isInstanceOf[AsAny])
 
           // Should not compile
@@ -66,7 +66,7 @@ class AsAnySpec extends Spec {
     object `provided by ConversionCheckedLegacyTripleEquals` {
       def `should convert any type to Any` {
         new ConversionCheckedLegacyTripleEquals {
-          assert(1.asAny !== "1".asAny)
+          // assert(1.asAny !== "1".asAny) // Doesn't compile under 2.9 saying: error: reassignment to val
           assert(this.isInstanceOf[AsAny])
 
           // Should not compile
