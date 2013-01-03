@@ -16,7 +16,7 @@
   </properties>
 	
   <groupId>org.scalatest</groupId>
-  <artifactId>scalatest_@SCALA_VERSION@</artifactId>
+  <artifactId>scalatest_2.10</artifactId>
   <version>@RELEASE@</version>
   <packaging>jar</packaging>
 
@@ -92,7 +92,7 @@
 
     <dependency>
       <groupId>org.scalacheck</groupId>
-      <artifactId>scalacheck_@SCALA_VERSION@</artifactId>
+      <artifactId>scalacheck_2.10</artifactId>
       <version>1.10.0</version>
       <optional>true</optional>
     </dependency>
