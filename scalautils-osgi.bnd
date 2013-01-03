@@ -9,7 +9,7 @@ production.
 Bundle-DocURL: http://www.scalatest.org/scalautils
 Bundle-Vendor: Artima, Inc.
 
-Import-Package: org.scalatest.*, scala.*, org.scalautils.*;version="$<range;[==,=+);$<replace;${scala.version};-;.>>", *;resolution:=optional
+Import-Package: org.scalatest.*, org.scalautils.*, scala.*;version="$<range;[==,=+);$<replace;${scala.version};-;.>>", *;resolution:=optional
 
 Export-Package: org.scalautils.*;version="${release}"
 

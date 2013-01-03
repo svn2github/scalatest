@@ -22,6 +22,7 @@
     <property name="javasrc.test" value="src/test/java" />
     <property name="scalasrc.examples" value="src/examples/scala" />
     <property name="javasrc.examples" value="src/examples/java" />
+    <property name="osgi-test-src" value="src/test-osgi/scala" />
     <property name="resources" value="src/main/resources" />
     <property name="html" value="src/main/html" />
     <property name="images" value="${resources}/images" />
@@ -38,6 +39,7 @@
     <property name="build.examples" value="${build}/examples" />
     <property name="build.generators" value="${build}/generators" />
     <property name="build.coverage" value="${build}/coverage" />
+    <property name="build.osgi-tests" value="${build}/osgi-tests" />
     <property name="dist" value="${build}/dist" />
     <property name="instrumented" value="${build}/instrumented" />
     <property name="doc" value="${build}/doc" />
@@ -66,6 +68,7 @@
         <mkdir dir="${build.generators}" />
         <mkdir dir="${build.generated.src}" />
         <mkdir dir="${build.generated.tests}" />
+        <mkdir dir="${build.osgi-tests}" />
         <mkdir dir="${dist}" />
         <mkdir dir="${demodoc}" />
         <mkdir dir="${jdoc}" />
@@ -764,7 +767,19 @@
         </scalatest>
     </target>
 
-    <target name="jar" depends="dist"></target>
+    <target name="osgi.compile" depends="compile">
+        <scalac srcdir="${osgi-test-src}" destdir="${build.osgi-tests}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC"/>
+    </target>
+
+    <target name="osgi.test" depends="osgi.compile,taskdefscalatest,dist">
+        <scalatest runpath="${build.osgi-tests};${classes}" haltonfailure="true" fork="true">
+            <jvmarg value="-Dscala.version=${scala.version}" />
+            <reporter type="stdout"/>
+            <suite classname="org.scalatest.osgi.OsgiSuite" />
+        </scalatest>
+    </target>
+
+    <target name="jar" depends="dist,osgi.test"></target>
 
     <!-- creates jars of scalatest and scalautils source files -->
     <target name="jarsrc">
