@@ -883,7 +883,7 @@ import org.scalautils.AsAny
  * forget a set of needed parentheses.
  * </p>
  */
-trait ShouldMatchers extends Matchers with ShouldVerb with AsAny {
+trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElement {
 
   // Turn off this implicit conversion, becase asAny method is added via AnyShouldWrapper
   override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = new AsAnyWrapper(o)
@@ -1484,6 +1484,28 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny {
           )
         )
     }
+    
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * xs.loneElement should be > 9
+     *    ^
+     * </pre>
+     */
+    def loneElement: E = {
+      if (left.size == 1)
+        left.head.asInstanceOf[E] // Why do I need to cast?
+      else
+        throw newTestFailedException(
+          FailureMessages(
+            "notLoneElement",
+            left,
+            left.size), 
+          None, 
+          1
+        )
+    }
   }
 
   /**
@@ -2032,6 +2054,11 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny {
    * to enable <code>should</code> methods to be invokable on that object.
    */
   implicit def convertToJavaMapShouldWrapper[K, V, L[_, _] <: java.util.Map[_, _]](o: L[K, V]): JavaMapShouldWrapper[K, V, L] = new JavaMapShouldWrapper[K, V, L](o)
+  
+  /**
+   * Turn off implicit conversion of LoneElement, so that if user accidentally mixin LoneElement it does conflict with convertToTraversableShouldWrapper
+   */
+  override def convertToTraversableLoneElementWrapper[T](xs: GenTraversable[T]): LoneElementTraversableWrapper[T] = new LoneElementTraversableWrapper[T](xs)
 }
 /*
 leave this explanation in. It is a useful reminder.

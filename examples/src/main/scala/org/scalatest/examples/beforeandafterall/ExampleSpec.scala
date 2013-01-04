@@ -32,7 +32,7 @@ class ExampleSpec extends Specs(
 
   // Set up the temp file needed by the test, taking
   // a file name from the configMap
-  override def beforeAll(configMap: Map[String, Any]) {
+  override def beforeAll(configMap: ConfigMap) {
 
     require(
       configMap.isDefinedAt(tempFileName),
@@ -47,7 +47,7 @@ class ExampleSpec extends Specs(
   }
 
   // Delete the temp file
-  override def afterAll(configMap: Map[String, Any]) {
+  override def afterAll(configMap: ConfigMap) {
     // No need to require that configMap contains the key again because it won't get
     // here if it didn't contain the key in beforeAll
     val fileName = configMap("tempFileName").asInstanceOf[String]
