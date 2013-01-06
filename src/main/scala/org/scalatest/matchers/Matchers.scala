@@ -3907,11 +3907,33 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * sevenDotOh should not be (6.5 plusOrMinus 0.2)
+     * sevenDotOh should not be (6.5 +- 0.2)
      *                       ^
      * </pre>
      */
     def be(interval: Interval[T]) {
+      // if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
+      if (interval.isWithin(left) != shouldBeTrue) {
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
+            left,
+            interval.right,
+            interval.tolerance
+          )
+        )
+      }
+    }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOh should not equal (6.5 +- 0.2)
+     *                       ^
+     * </pre>
+     */
+    def equal(interval: Interval[T]) {
       // if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
       if (interval.isWithin(left) != shouldBeTrue) {
         throw newTestFailedException(
@@ -4209,6 +4231,26 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         }
       }
+
+  /**
+   * This method enables syntax such as the following:
+   *
+   * <pre class="stHighlight">
+   * result should equal (100 +- 1)
+   *        ^
+   * </pre>
+   */
+  def equal[T](interval: Interval[T]): Matcher[T] = {
+    new Matcher[T] {
+      def apply(left: T): MatchResult = {
+        MatchResult(
+          interval.isWithin(left),
+          FailureMessages("wasNotPlusOrMinus", left, interval.right, interval.tolerance),
+          FailureMessages("wasPlusOrMinus", left, interval.right, interval.tolerance)
+        )
+      }
+    }
+  }
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of

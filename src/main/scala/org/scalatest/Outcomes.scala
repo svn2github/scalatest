@@ -17,11 +17,13 @@ package org.scalatest
 
 import exceptions.TestCanceledException
 import exceptions.TestOmittedException
-import exceptions.TestOmittedException
 
-trait Results {
+// Note no Ignored outcome, because ignore is done with a tag and is known
+// before a test is executed. Outcome is only modeling the outcomes of
+// executing a test body.
+trait Outcomes {
   trait FailedOrCanceled
-  sealed abstract class Result {
+  sealed abstract class Outcome {
     def isSucceeded: Boolean = false
     def isFailed: Boolean = false
     def isCanceled: Boolean = false
@@ -31,10 +33,10 @@ trait Results {
     def isEmpty: Boolean = false
     def toOption: Option[Throwable] = None
   }
-  abstract class Exceptional(ex: Throwable) extends Result {
+  abstract class Exceptional(ex: Throwable) extends Outcome {
     override def toOption: Option[Throwable] = Some(ex)
   }
-  case object Succeeded extends Result {
+  case object Succeeded extends Outcome {
     override def isSucceeded: Boolean = true
     override def isDefined: Boolean = false
     override def isEmpty: Boolean = true
@@ -52,7 +54,7 @@ trait Results {
     override def isOmitted: Boolean = true
   }
   object FailedOrCanceled {
-    def unapply(res: Result): Option[Throwable] = 
+    def unapply(res: Outcome): Option[Throwable] = 
       res match {
         case Failed(ex) => Some(ex)
         case Canceled(ex) => Some(ex)
@@ -60,7 +62,7 @@ trait Results {
       }
   }
   object Exceptional {
-    def unapply(res: Result): Option[Throwable] = 
+    def unapply(res: Outcome): Option[Throwable] = 
       res match {
         case Failed(ex) => Some(ex)
         case Canceled(ex) => Some(ex)
@@ -69,8 +71,8 @@ trait Results {
         case _ => None
       }
   }
-  object Result {
-    implicit def convertResultToIterable(res: Result): scala.collection.immutable.Iterable[Throwable] = {
+  object Outcome {
+    implicit def convertOutcomeToIterable(res: Outcome): scala.collection.immutable.Iterable[Throwable] = {
       res match {
         case Exceptional(ex) => Vector(ex)
         case _ => Vector.empty
@@ -78,7 +80,7 @@ trait Results {
     }
   }
 
-  def resultOf(f: => Unit): Result = {
+  def outcomeOf(f: => Unit): Outcome = {
     try {                                         
       f                                           
       Succeeded

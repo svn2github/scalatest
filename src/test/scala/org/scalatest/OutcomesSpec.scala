@@ -19,8 +19,8 @@ import exceptions.TestCanceledException
 import exceptions.TestPendingException
 import exceptions.TestOmittedException
 
-class ResultsSpec extends Spec with Results with OptionValues {
-  object `A Result` {
+class OutcomesSpec extends Spec with Outcomes with OptionValues {
+  object `An Outcome` {
     def `can be Succeeded` {
       assert(Succeeded.isSucceeded)
       assert(!Succeeded.isFailed)
@@ -60,17 +60,17 @@ class ResultsSpec extends Spec with Results with OptionValues {
       assert(!Omitted(ex).isPending)
       assert(Omitted(ex).isOmitted)
     }
-    val res1: Result = Succeeded
+    val res1: Outcome = Succeeded
     val ex2 = new Exception
-    val res2: Result = Failed(ex2)
+    val res2: Outcome = Failed(ex2)
     val ex3 = new TestCanceledException(0)
-    val res3: Result = Canceled(ex3)
+    val res3: Outcome = Canceled(ex3)
     val ex4 = new TestPendingException
-    val res4: Result = Pending(ex4)
+    val res4: Outcome = Pending(ex4)
     val ex5 = new TestOmittedException
-    val res5: Result = Omitted(ex5)
+    val res5: Outcome = Omitted(ex5)
     def `can be easily pattern matched on based on whether it is either Failed or Canceled` {
-      def isFailedOrCanceled(res: Result): Boolean =
+      def isFailedOrCanceled(res: Outcome): Boolean =
         res match {
           case _: FailedOrCanceled => true
           case _ => false
@@ -82,7 +82,7 @@ class ResultsSpec extends Spec with Results with OptionValues {
       assert(!isFailedOrCanceled(res5))
     }
     def `can be easily pattern matched on, extracting the exception, based on whether it is either Failed or Canceled` {
-      def insideFailedOrCanceled(res: Result): Option[Throwable] =
+      def insideFailedOrCanceled(res: Outcome): Option[Throwable] =
         res match {
           case FailedOrCanceled(ex) => Some(ex)
           case _ => None
@@ -94,7 +94,7 @@ class ResultsSpec extends Spec with Results with OptionValues {
       assert(insideFailedOrCanceled(res5).isEmpty)
     }
     def `can be easily pattern matched on based on whether it is Exceptional` {
-      def isExceptional(res: Result): Boolean =
+      def isExceptional(res: Outcome): Boolean =
         res match {
           case _: Exceptional => true
           case _ => false
@@ -106,7 +106,7 @@ class ResultsSpec extends Spec with Results with OptionValues {
       assert(isExceptional(res5))
     }
     def `can be easily pattern matched on, extracting the exception, based on whether it is Exceptional` {
-      def insideExceptional(res: Result): Option[Throwable] =
+      def insideExceptional(res: Outcome): Option[Throwable] =
         res match {
           case Exceptional(ex) => Some(ex)
           case _ => None
@@ -147,23 +147,23 @@ class ResultsSpec extends Spec with Results with OptionValues {
       assert(Vector(res1, res2, res3, res4, res5).flatten === Vector(ex2, ex3, ex4, ex5))
     }
   }
-  object `The resultOf method` {
-    def `must transform expression evaluations into the appropriate Result class` {
-      assert(resultOf { 99 } == Succeeded)
+  object `The outcomeOf method` {
+    def `must transform expression evaluations into the appropriate Outcome class` {
+      assert(outcomeOf { 99 } == Succeeded)
       val tfe = new TestFailedException(0)
-      assert(resultOf { throw tfe } === Failed(tfe))
+      assert(outcomeOf { throw tfe } === Failed(tfe))
       val iae = new IllegalArgumentException
-      assert(resultOf { throw iae } === Failed(iae))
+      assert(outcomeOf { throw iae } === Failed(iae))
       val tce = new TestCanceledException(0)
-      assert(resultOf { throw tce } === Canceled(tce))
+      assert(outcomeOf { throw tce } === Canceled(tce))
       val tpe = new TestPendingException
-      assert(resultOf { throw tpe } === Pending(tpe))
+      assert(outcomeOf { throw tpe } === Pending(tpe))
       val toe = new TestOmittedException
-      assert(resultOf { throw toe } === Omitted(toe))
+      assert(outcomeOf { throw toe } === Omitted(toe))
     }
     def `if UnknownError is thrown, should complete abruptly with that exception` {
       intercept[UnknownError] {
-        resultOf { throw new UnknownError }
+        outcomeOf { throw new UnknownError }
       }
     }
   }

@@ -29,7 +29,7 @@ import org.scalautils.TripleEquals
 
 class ShouldTripleEqualsEqualitySpec extends Spec with NonImplicitAssertions with ShouldMatchers with TripleEquals {
 
-  object `the === operator should use the appropriate Equality type class` {
+  object `the should === operator should use the appropriate Equality type class` {
     def `for Any` {
       () should === (())
       () should !== (7)

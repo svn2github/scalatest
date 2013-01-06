@@ -23,6 +23,7 @@ import scala.collection.GenSeq
 import scala.collection.GenMap
 import Assertions.areEqualComparingArraysStructurally
 import org.scalautils.TripleEqualsInvocation
+import org.scalautils.TripleEqualsInvocationOnInterval
 import org.scalautils.EqualityConstraint
 import org.scalautils.AsAny
 
@@ -1172,6 +1173,26 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
            if (inv.expectingEqual) "didNotEqual" else "equaled",
             left,
             inv.right
+          )
+        )
+    }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result should === (100 +- 1)
+     *        ^
+     * </pre>
+     */
+    def should(inv: TripleEqualsInvocationOnInterval[T]) {
+      if ((inv.interval.isWithin(left)) != inv.expectingEqual)
+        throw newTestFailedException(
+          FailureMessages(
+            if (inv.expectingEqual) "wasNotPlusOrMinus" else "wasPlusOrMinus",
+            left,
+            inv.interval.right,
+            inv.interval.tolerance
           )
         )
     }
