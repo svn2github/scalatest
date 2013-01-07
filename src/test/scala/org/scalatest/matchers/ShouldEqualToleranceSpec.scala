@@ -304,7 +304,8 @@ class ShouldEqualToleranceSpec extends Spec with ShouldMatchers with Tolerance {
     def `should throw TFE if the number is outside the given interval` {
 
       // Double +- Double
-      intercept[TestFailedException] { sevenDotOh should equal (7.5 +- 0.2) }
+      val caught = intercept[TestFailedException] { sevenDotOh should equal (7.5 +- 0.2) }
+      assert(caught.getMessage === "7.0 did not equal 7.5 plus or minus 0.2")
       intercept[TestFailedException] { sevenDotOh should equal (6.5 +- 0.2) }
       intercept[TestFailedException] { minusSevenDotOh should equal (-7.5 +- 0.2) }
       intercept[TestFailedException] { minusSevenDotOh should equal (-6.5 +- 0.2) }
@@ -562,7 +563,8 @@ class ShouldEqualToleranceSpec extends Spec with ShouldMatchers with Tolerance {
     def `should throw TFE if the number is within the given interval when used with not` {
 
       // Double +- Double
-      intercept[TestFailedException] { sevenDotOh should not equal (7.1 +- 0.2) }
+      val caught = intercept[TestFailedException] { sevenDotOh should not equal (7.1 +- 0.2) }
+      assert(caught.getMessage === "7.0 equaled 7.1 plus or minus 0.2")
       intercept[TestFailedException] { sevenDotOh should not equal (6.9 +- 0.2) }
       intercept[TestFailedException] { sevenDotOh should not equal (7.0 +- 0.2) }
       intercept[TestFailedException] { sevenDotOh should not equal (7.2 +- 0.2) }
