@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 Artima, Inc.
+ * Copyright 2001-2013 Artima, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,13 @@ class ShouldEqualToleranceSpec extends Spec with ShouldMatchers with Tolerance {
     And if X is Byte, Y must be Byte.
     assert(minusSevenDotOhFloat === (-6.8f +- 0.2d))
   */
+ /* Chose not to do the symmetry, because no one needs it and implementing it would require an implicit. So these fail:
+      (7.1 +- 0.2) should equal sevenDotOh
+      (7.5 +- 0.2) should not equal sevenDotOh
+ */
   object `The should equal syntax` {
 
-    def `should be true if the number is within the given interval` {
+    def `should succeed if the number is within the given interval` {
 
       // Double +- Double
       sevenDotOh should equal (7.1 +- 0.2)
@@ -297,264 +301,6 @@ class ShouldEqualToleranceSpec extends Spec with ShouldMatchers with Tolerance {
       minusSevenByte should equal ((-5).toByte +- 2.toByte)
     }
 
-/*
-    Decided against symmetry
-    def `should, for symmetry, be true if the number is within the given interval when the interval is placed on the left hand side` {
-
-      // Double +- Double
-      (7.1 +- 0.2) should equal (sevenDotOh)
-      (6.9 +- 0.2) should equal (sevenDotOh)
-      (7.0 +- 0.2) should equal (sevenDotOh)
-      (7.2 +- 0.2) should equal (sevenDotOh)
-      (6.8 +- 0.2) should equal (sevenDotOh)
-      (-7.1 +- 0.2) should equal (minusSevenDotOh)
-      (-6.9 +- 0.2) should equal (minusSevenDotOh)
-      (-7.0 +- 0.2) should equal (minusSevenDotOh)
-      (-7.2 +- 0.2) should equal (minusSevenDotOh)
-      (-6.8 +- 0.2) should equal (minusSevenDotOh)
-
-      // Double +- Float
-      (7.1 +- 0.2f) should equal (sevenDotOh)
-      (6.9 +- 0.2f) should equal (sevenDotOh)
-      (7.0 +- 0.2f) should equal (sevenDotOh)
-      (7.2 +- 0.2f) should equal (sevenDotOh)
-      (6.8 +- 0.2f) should equal (sevenDotOh)
-      (-7.1 +- 0.2f) should equal (minusSevenDotOh)
-      (-6.9 +- 0.2f) should equal (minusSevenDotOh)
-      (-7.0 +- 0.2f) should equal (minusSevenDotOh)
-      (-7.2 +- 0.2f) should equal (minusSevenDotOh)
-      (-6.8 +- 0.2f) should equal (minusSevenDotOh)
-
-      // Double +- Long
-      (7.1 +- 2L) should equal (sevenDotOh)
-      (6.9 +- 2L) should equal (sevenDotOh)
-      (7.0 +- 2L) should equal (sevenDotOh)
-      (7.2 +- 2L) should equal (sevenDotOh)
-      (6.8 +- 2L) should equal (sevenDotOh)
-      (-7.1 +- 2L) should equal (minusSevenDotOh)
-      (-6.9 +- 2L) should equal (minusSevenDotOh)
-      (-7.0 +- 2L) should equal (minusSevenDotOh)
-      (-7.2 +- 2L) should equal (minusSevenDotOh)
-      (-6.8 +- 2L) should equal (minusSevenDotOh)
-
-      // Double +- Int
-      (7.1 +- 2) should equal (sevenDotOh)
-      (6.9 +- 2) should equal (sevenDotOh)
-      (7.0 +- 2) should equal (sevenDotOh)
-      (7.2 +- 2) should equal (sevenDotOh)
-      (6.8 +- 2) should equal (sevenDotOh)
-      (-7.1 +- 2) should equal (minusSevenDotOh)
-      (-6.9 +- 2) should equal (minusSevenDotOh)
-      (-7.0 +- 2) should equal (minusSevenDotOh)
-      (-7.2 +- 2) should equal (minusSevenDotOh)
-      (-6.8 +- 2) should equal (minusSevenDotOh)
-
-      // Double +- Short
-      (7.1 +- 2.toShort) should equal (sevenDotOh)
-      (6.9 +- 2.toShort) should equal (sevenDotOh)
-      (7.0 +- 2.toShort) should equal (sevenDotOh)
-      (7.2 +- 2.toShort) should equal (sevenDotOh)
-      (6.8 +- 2.toShort) should equal (sevenDotOh)
-      (-7.1 +- 2.toShort) should equal (minusSevenDotOh)
-      (-6.9 +- 2.toShort) should equal (minusSevenDotOh)
-      (-7.0 +- 2.toShort) should equal (minusSevenDotOh)
-      (-7.2 +- 2.toShort) should equal (minusSevenDotOh)
-      (-6.8 +- 2.toShort) should equal (minusSevenDotOh)
-
-      // Double +- Byte
-      (7.1 +- 2.toByte) should equal (sevenDotOh)
-      (6.9 +- 2.toByte) should equal (sevenDotOh)
-      (7.0 +- 2.toByte) should equal (sevenDotOh)
-      (7.2 +- 2.toByte) should equal (sevenDotOh)
-      (6.8 +- 2.toByte) should equal (sevenDotOh)
-      (-7.1 +- 2.toByte) should equal (minusSevenDotOh)
-      (-6.9 +- 2.toByte) should equal (minusSevenDotOh)
-      (-7.0 +- 2.toByte) should equal (minusSevenDotOh)
-      (-7.2 +- 2.toByte) should equal (minusSevenDotOh)
-      (-6.8 +- 2.toByte) should equal (minusSevenDotOh)
-
-      // Float +- Float
-      (7.1f +- 0.2f) should equal (sevenDotOhFloat)
-      (6.9f +- 0.2f) should equal (sevenDotOhFloat)
-      (7.0f +- 0.2f) should equal (sevenDotOhFloat)
-      (7.2f +- 0.2f) should equal (sevenDotOhFloat)
-      (6.8f +- 0.2f) should equal (sevenDotOhFloat)
-      (-7.1f +- 0.2f) should equal (minusSevenDotOhFloat)
-      (-6.9f +- 0.2f) should equal (minusSevenDotOhFloat)
-      (-7.0f +- 0.2f) should equal (minusSevenDotOhFloat)
-      (-7.2f +- 0.2f) should equal (minusSevenDotOhFloat)
-      (-6.8f +- 0.2f) should equal (minusSevenDotOhFloat)
-
-      // Float +- Long
-      (7.1f +- 2L) should equal (sevenDotOhFloat)
-      (6.9f +- 2L) should equal (sevenDotOhFloat)
-      (7.0f +- 2L) should equal (sevenDotOhFloat)
-      (7.2f +- 2L) should equal (sevenDotOhFloat)
-      (6.8f +- 2L) should equal (sevenDotOhFloat)
-      (-7.1f +- 2L) should equal (minusSevenDotOhFloat)
-      (-6.9f +- 2L) should equal (minusSevenDotOhFloat)
-      (-7.0f +- 2L) should equal (minusSevenDotOhFloat)
-      (-7.2f +- 2L) should equal (minusSevenDotOhFloat)
-      (-6.8f +- 2L) should equal (minusSevenDotOhFloat)
-
-      // Float +- Int
-      (7.1f +- 2) should equal (sevenDotOhFloat)
-      (6.9f +- 2) should equal (sevenDotOhFloat)
-      (7.0f +- 2) should equal (sevenDotOhFloat)
-      (7.2f +- 2) should equal (sevenDotOhFloat)
-      (6.8f +- 2) should equal (sevenDotOhFloat)
-      (-7.1f +- 2) should equal (minusSevenDotOhFloat)
-      (-6.9f +- 2) should equal (minusSevenDotOhFloat)
-      (-7.0f +- 2) should equal (minusSevenDotOhFloat)
-      (-7.2f +- 2) should equal (minusSevenDotOhFloat)
-      (-6.8f +- 2) should equal (minusSevenDotOhFloat)
-
-      // Float +- Short
-      (7.1f +- 2.toShort) should equal (sevenDotOhFloat)
-      (6.9f +- 2.toShort) should equal (sevenDotOhFloat)
-      (7.0f +- 2.toShort) should equal (sevenDotOhFloat)
-      (7.2f +- 2.toShort) should equal (sevenDotOhFloat)
-      (6.8f +- 2.toShort) should equal (sevenDotOhFloat)
-      (-7.1f +- 2.toShort) should equal (minusSevenDotOhFloat)
-      (-6.9f +- 2.toShort) should equal (minusSevenDotOhFloat)
-      (-7.0f +- 2.toShort) should equal (minusSevenDotOhFloat)
-      (-7.2f +- 2.toShort) should equal (minusSevenDotOhFloat)
-      (-6.8f +- 2.toShort) should equal (minusSevenDotOhFloat)
-
-      // Float +- Byte
-      (7.1f +- 2.toByte) should equal (sevenDotOhFloat)
-      (6.9f +- 2.toByte) should equal (sevenDotOhFloat)
-      (7.0f +- 2.toByte) should equal (sevenDotOhFloat)
-      (7.2f +- 2.toByte) should equal (sevenDotOhFloat)
-      (6.8f +- 2.toByte) should equal (sevenDotOhFloat)
-      (-7.1f +- 2.toByte) should equal (minusSevenDotOhFloat)
-      (-6.9f +- 2.toByte) should equal (minusSevenDotOhFloat)
-      (-7.0f +- 2.toByte) should equal (minusSevenDotOhFloat)
-      (-7.2f +- 2.toByte) should equal (minusSevenDotOhFloat)
-      (-6.8f +- 2.toByte) should equal (minusSevenDotOhFloat)
-
-      // Long +- Long
-      (9L +- 2L) should equal (sevenLong)
-      (8L +- 2L) should equal (sevenLong)
-      (7L +- 2L) should equal (sevenLong)
-      (6L +- 2L) should equal (sevenLong)
-      (5L +- 2L) should equal (sevenLong)
-      (-9L +- 2L) should equal (minusSevenLong)
-      (-8L +- 2L) should equal (minusSevenLong)
-      (-7L +- 2L) should equal (minusSevenLong)
-      (-6L +- 2L) should equal (minusSevenLong)
-      (-5L +- 2L) should equal (minusSevenLong)
-
-      // Long +- Int
-      (9L +- 2) should equal (sevenLong)
-      (8L +- 2) should equal (sevenLong)
-      (7L +- 2) should equal (sevenLong)
-      (6L +- 2) should equal (sevenLong)
-      (5L +- 2) should equal (sevenLong)
-      (-9L +- 2) should equal (minusSevenLong)
-      (-8L +- 2) should equal (minusSevenLong)
-      (-7L +- 2) should equal (minusSevenLong)
-      (-6L +- 2) should equal (minusSevenLong)
-      (-5L +- 2) should equal (minusSevenLong)
-
-      // Long +- Short
-      (9L +- 2.toShort) should equal (sevenLong)
-      (8L +- 2.toShort) should equal (sevenLong)
-      (7L +- 2.toShort) should equal (sevenLong)
-      (6L +- 2.toShort) should equal (sevenLong)
-      (5L +- 2.toShort) should equal (sevenLong)
-      (-9L +- 2.toShort) should equal (minusSevenLong)
-      (-8L +- 2.toShort) should equal (minusSevenLong)
-      (-7L +- 2.toShort) should equal (minusSevenLong)
-      (-6L +- 2.toShort) should equal (minusSevenLong)
-      (-5L +- 2.toShort) should equal (minusSevenLong)
-
-      // Long +- Byte
-      (9L +- 2.toByte) should equal (sevenLong)
-      (8L +- 2.toByte) should equal (sevenLong)
-      (7L +- 2.toByte) should equal (sevenLong)
-      (6L +- 2.toByte) should equal (sevenLong)
-      (5L +- 2.toByte) should equal (sevenLong)
-      (-9L +- 2.toByte) should equal (minusSevenLong)
-      (-8L +- 2.toByte) should equal (minusSevenLong)
-      (-7L +- 2.toByte) should equal (minusSevenLong)
-      (-6L +- 2.toByte) should equal (minusSevenLong)
-      (-5L +- 2.toByte) should equal (minusSevenLong)
-
-      // Int +- Int
-      (9 +- 2) should equal (sevenInt)
-      (8 +- 2) should equal (sevenInt)
-      (7 +- 2) should equal (sevenInt)
-      (6 +- 2) should equal (sevenInt)
-      (5 +- 2) should equal (sevenInt)
-      (-9 +- 2) should equal (minusSevenInt)
-      (-8 +- 2) should equal (minusSevenInt)
-      (-7 +- 2) should equal (minusSevenInt)
-      (-6 +- 2) should equal (minusSevenInt)
-      (-5 +- 2) should equal (minusSevenInt)
-
-      // Int +- Short
-      (9 +- 2.toShort) should equal (sevenInt)
-      (8 +- 2.toShort) should equal (sevenInt)
-      (7 +- 2.toShort) should equal (sevenInt)
-      (6 +- 2.toShort) should equal (sevenInt)
-      (5 +- 2.toShort) should equal (sevenInt)
-      (-9 +- 2.toShort) should equal (minusSevenInt)
-      (-8 +- 2.toShort) should equal (minusSevenInt)
-      (-7 +- 2.toShort) should equal (minusSevenInt)
-      (-6 +- 2.toShort) should equal (minusSevenInt)
-      (-5 +- 2.toShort) should equal (minusSevenInt)
-
-      // Int +- Byte
-      (9 +- 2.toByte) should equal (sevenInt)
-      (8 +- 2.toByte) should equal (sevenInt)
-      (7 +- 2.toByte) should equal (sevenInt)
-      (6 +- 2.toByte) should equal (sevenInt)
-      (5 +- 2.toByte) should equal (sevenInt)
-      (-9 +- 2.toByte) should equal (minusSevenInt)
-      (-8 +- 2.toByte) should equal (minusSevenInt)
-      (-7 +- 2.toByte) should equal (minusSevenInt)
-      (-6 +- 2.toByte) should equal (minusSevenInt)
-      (-5 +- 2.toByte) should equal (minusSevenInt)
-
-      // Short +- Short
-      (9.toShort +- 2.toShort) should equal (sevenShort)
-      (8.toShort +- 2.toShort) should equal (sevenShort)
-      (7.toShort +- 2.toShort) should equal (sevenShort)
-      (6.toShort +- 2.toShort) should equal (sevenShort)
-      (5.toShort +- 2.toShort) should equal (sevenShort)
-      ((-9).toShort +- 2.toShort) should equal (minusSevenShort)
-      ((-8).toShort +- 2.toShort) should equal (minusSevenShort)
-      ((-7).toShort +- 2.toShort) should equal (minusSevenShort)
-      ((-6).toShort +- 2.toShort) should equal (minusSevenShort)
-      ((-5).toShort +- 2.toShort) should equal (minusSevenShort)
-
-      // Short +- Byte
-      (9.toShort +- 2.toByte) should equal (sevenShort)
-      (8.toShort +- 2.toByte) should equal (sevenShort)
-      (7.toShort +- 2.toByte) should equal (sevenShort)
-      (6.toShort +- 2.toByte) should equal (sevenShort)
-      (5.toShort +- 2.toByte) should equal (sevenShort)
-      ((-9).toShort +- 2.toByte) should equal (minusSevenShort)
-      ((-8).toShort +- 2.toByte) should equal (minusSevenShort)
-      ((-7).toShort +- 2.toByte) should equal (minusSevenShort)
-      ((-6).toShort +- 2.toByte) should equal (minusSevenShort)
-      ((-5).toShort +- 2.toByte) should equal (minusSevenShort)
-
-      // Byte +- Byte
-      (9.toByte +- 2.toByte) should equal (sevenByte)
-      (8.toByte +- 2.toByte) should equal (sevenByte)
-      (7.toByte +- 2.toByte) should equal (sevenByte)
-      (6.toByte +- 2.toByte) should equal (sevenByte)
-      (5.toByte +- 2.toByte) should equal (sevenByte)
-      ((-9).toByte +- 2.toByte) should equal (minusSevenByte)
-      ((-8).toByte +- 2.toByte) should equal (minusSevenByte)
-      ((-7).toByte +- 2.toByte) should equal (minusSevenByte)
-      ((-6).toByte +- 2.toByte) should equal (minusSevenByte)
-      ((-5).toByte +- 2.toByte) should equal (minusSevenByte)
-    }
-*/
-
     def `should throw TFE if the number is outside the given interval` {
 
       // Double +- Double
@@ -684,142 +430,7 @@ class ShouldEqualToleranceSpec extends Spec with ShouldMatchers with Tolerance {
       intercept[TestFailedException] { minusSevenByte should equal ((-10).toByte +- 2.toByte) }
     }
 
-/*
-    Decided against this symmetry
-    def `should, for symmetry, throw TFE if the number is outside the given interval, when the interval is on the left hand side` {
-
-      // Double +- Double
-      intercept[TestFailedException] { (7.5 +- 0.2) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.5 +- 0.2) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (-7.5 +- 0.2) should equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.5 +- 0.2) should equal (minusSevenDotOh) }
-
-      // Double +- Float
-      intercept[TestFailedException] { (7.5 +- 0.2f) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.5 +- 0.2f) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (-7.5 +- 0.2f) should equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.5 +- 0.2f) should equal (minusSevenDotOh) }
-
-      // Double +- Long
-      intercept[TestFailedException] { (4.0 +- 2L) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (9.1 +- 2L) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (-4.0 +- 2L) should equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-9.1 +- 2L) should equal (minusSevenDotOh) }
-
-      // Double +- Int
-      intercept[TestFailedException] { (4.0 +- 2) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (9.1 +- 2) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (-4.0 +- 2) should equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-9.1 +- 2) should equal (minusSevenDotOh) }
-
-      // Double +- Short
-      intercept[TestFailedException] { (4.0 +- 2.toShort) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (9.1 +- 2.toShort) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (-4.0 +- 2.toShort) should equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-9.1 +- 2.toShort) should equal (minusSevenDotOh) }
-
-      // Double +- Byte
-      intercept[TestFailedException] { (4.0 +- 2.toByte) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (9.1 +- 2.toByte) should equal (sevenDotOh) }
-      intercept[TestFailedException] { (-4.0 +- 2.toByte) should equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-9.1 +- 2.toByte) should equal (minusSevenDotOh) }
-
-      // Float +- Float
-      intercept[TestFailedException] { (7.5f +- 0.2f) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.5f +- 0.2f) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.5f +- 0.2f) should equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.5f +- 0.2f) should equal (minusSevenDotOhFloat) }
-
-      // Float +- Long
-      intercept[TestFailedException] { (4.0f +- 2L) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (9.1f +- 2L) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-4.0f +- 2L) should equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-9.1f +- 2L) should equal (minusSevenDotOhFloat) }
-
-      // Float +- Int
-      intercept[TestFailedException] { (4.0f +- 2) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (9.1f +- 2) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-4.0f +- 2) should equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-9.1f +- 2) should equal (minusSevenDotOhFloat) }
-
-      // Float +- Short
-      intercept[TestFailedException] { (4.0f +- 2.toShort) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (9.1f +- 2.toShort) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-4.0f +- 2.toShort) should equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-9.1f +- 2.toShort) should equal (minusSevenDotOhFloat) }
-
-      // Float +- Byte
-      intercept[TestFailedException] { (4.0f +- 2.toByte) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (9.1f +- 2.toByte) should equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-4.0f +- 2.toByte) should equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-9.1f +- 2.toByte) should equal (minusSevenDotOhFloat) }
-
-      // Long +- Long
-      intercept[TestFailedException] { (4L +- 2L) should equal (sevenLong) }
-      intercept[TestFailedException] { (10L +- 2L) should equal (sevenLong) }
-      intercept[TestFailedException] { (-4L +- 2L) should equal (minusSevenLong) }
-      intercept[TestFailedException] { (-10L +- 2L) should equal (minusSevenLong) }
-
-      // Long +- Int
-      intercept[TestFailedException] { (4L +- 2) should equal (sevenLong) }
-      intercept[TestFailedException] { (10L +- 2) should equal (sevenLong) }
-      intercept[TestFailedException] { (-4L +- 2) should equal (minusSevenLong) }
-      intercept[TestFailedException] { (-10L +- 2) should equal (minusSevenLong) }
-
-      // Long +- Short
-      intercept[TestFailedException] { (4L +- 2.toShort) should equal (sevenLong) }
-      intercept[TestFailedException] { (10L +- 2.toShort) should equal (sevenLong) }
-      intercept[TestFailedException] { (-4L +- 2.toShort) should equal (minusSevenLong) }
-      intercept[TestFailedException] { (-10L +- 2.toShort) should equal (minusSevenLong) }
-
-      // Long +- Byte
-      intercept[TestFailedException] { (4L +- 2.toByte) should equal (sevenLong) }
-      intercept[TestFailedException] { (10L +- 2.toByte) should equal (sevenLong) }
-      intercept[TestFailedException] { (-4L +- 2.toByte) should equal (minusSevenLong) }
-      intercept[TestFailedException] { (-10L +- 2.toByte) should equal (minusSevenLong) }
-
-      // Int +- Int
-      intercept[TestFailedException] { (4 +- 2) should equal (sevenInt) }
-      intercept[TestFailedException] { (10 +- 2) should equal (sevenInt) }
-      intercept[TestFailedException] { (-4 +- 2) should equal (minusSevenInt) }
-      intercept[TestFailedException] { (-10 +- 2) should equal (minusSevenInt) }
-
-      // Int +- Short
-      intercept[TestFailedException] { (4 +- 2.toShort) should equal (sevenInt) }
-      intercept[TestFailedException] { (10 +- 2.toShort) should equal (sevenInt) }
-      intercept[TestFailedException] { (-4 +- 2.toShort) should equal (minusSevenInt) }
-      intercept[TestFailedException] { (-10 +- 2.toShort) should equal (minusSevenInt) }
-
-      // Int +- Byte
-      intercept[TestFailedException] { (4 +- 2.toByte) should equal (sevenInt) }
-      intercept[TestFailedException] { (10 +- 2.toByte) should equal (sevenInt) }
-      intercept[TestFailedException] { (-4 +- 2.toByte) should equal (minusSevenInt) }
-      intercept[TestFailedException] { (-10 +- 2.toByte) should equal (minusSevenInt) }
-
-      // Short +- Short
-      intercept[TestFailedException] { (4.toShort +- 2.toShort) should equal (sevenShort) }
-      intercept[TestFailedException] { (10.toShort +- 2.toShort) should equal (sevenShort) }
-      intercept[TestFailedException] { ((-4).toShort +- 2.toShort) should equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-10).toShort +- 2.toShort) should equal (minusSevenShort) }
-
-      // Short +- Byte
-      intercept[TestFailedException] { (4.toShort +- 2.toByte) should equal (sevenShort) }
-      intercept[TestFailedException] { (10.toShort +- 2.toByte) should equal (sevenShort) }
-      intercept[TestFailedException] { ((-4).toShort +- 2.toByte) should equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-10).toShort +- 2.toByte) should equal (minusSevenShort) }
-
-      // Byte +- Byte
-      intercept[TestFailedException] { (4.toByte +- 2.toByte) should equal (sevenByte) }
-      intercept[TestFailedException] { (10.toByte +- 2.toByte) should equal (sevenByte) }
-      intercept[TestFailedException] { ((-4).toByte +- 2.toByte) should equal (minusSevenByte) }
-      intercept[TestFailedException] { ((-10).toByte +- 2.toByte) should equal (minusSevenByte) }
-    }
-*/
-  }
-
-  object `The not equal syntax` {
-
-    def `should succeed if the number is outside the given interval` {
+    def `should succeed if the number is outside the given interval when used with not` {
 
       // Double +- Double
       sevenDotOh should not equal (7.5 +- 0.2)
@@ -948,138 +559,7 @@ class ShouldEqualToleranceSpec extends Spec with ShouldMatchers with Tolerance {
       minusSevenByte should not equal ((-10).toByte +- 2.toByte)
     }
 
-/* Chose not to do the symmetry thing, because implementing it would require an implicit that no one would need.
-    def `should, for symmetry, succeed if the number is outside the given interval when the interval is placed on the left hand side` {
-
-      // Double +- Double
-      (7.5 +- 0.2) should not equal sevenDotOh
-      (6.5 +- 0.2) should not equal sevenDotOh
-      (-7.5 +- 0.2) should not equal minusSevenDotOh
-      (-6.5 +- 0.2) should not equal minusSevenDotOh
-
-      // Double +- Float
-      (7.5 +- 0.2f) should not equal sevenDotOh
-      (6.5 +- 0.2f) should not equal sevenDotOh
-      (-7.5 +- 0.2f) should not equal minusSevenDotOh
-      (-6.5 +- 0.2f) should not equal minusSevenDotOh
-
-      // Double +- Long
-      (4.0 +- 2L) should not equal sevenDotOh
-      (9.1 +- 2L) should not equal sevenDotOh
-      (-4.0 +- 2L) should not equal minusSevenDotOh
-      (-9.1 +- 2L) should not equal minusSevenDotOh
-
-      // Double +- Int
-      (4.0 +- 2) should not equal sevenDotOh
-      (9.1 +- 2) should not equal sevenDotOh
-      (-4.0 +- 2) should not equal minusSevenDotOh
-      (-9.1 +- 2) should not equal minusSevenDotOh
-
-      // Double +- Short
-      (4.0 +- 2.toShort) should not equal sevenDotOh
-      (9.1 +- 2.toShort) should not equal sevenDotOh
-      (-4.0 +- 2.toShort) should not equal minusSevenDotOh
-      (-9.1 +- 2.toShort) should not equal minusSevenDotOh
-
-      // Double +- Byte
-      (4.0 +- 2.toByte) should not equal sevenDotOh
-      (9.1 +- 2.toByte) should not equal sevenDotOh
-      (-4.0 +- 2.toByte) should not equal minusSevenDotOh
-      (-9.1 +- 2.toByte) should not equal minusSevenDotOh
-
-      // Float +- Float
-      (7.5f +- 0.2f) should not equal sevenDotOhFloat
-      (6.5f +- 0.2f) should not equal sevenDotOhFloat
-      (-7.5f +- 0.2f) should not equal minusSevenDotOhFloat
-      (-6.5f +- 0.2f) should not equal minusSevenDotOhFloat
-
-      // Float +- Long
-      (4.0f +- 2L) should not equal sevenDotOhFloat
-      (9.1f +- 2L) should not equal sevenDotOhFloat
-      (-4.0f +- 2L) should not equal minusSevenDotOhFloat
-      (-9.1f +- 2L) should not equal minusSevenDotOhFloat
-
-      // Float +- Int
-      (4.0f +- 2) should not equal sevenDotOhFloat
-      (9.1f +- 2) should not equal sevenDotOhFloat
-      (-4.0f +- 2) should not equal minusSevenDotOhFloat
-      (-9.1f +- 2) should not equal minusSevenDotOhFloat
-
-      // Float +- Short
-      (4.0f +- 2.toShort) should not equal sevenDotOhFloat
-      (9.1f +- 2.toShort) should not equal sevenDotOhFloat
-      (-4.0f +- 2.toShort) should not equal minusSevenDotOhFloat
-      (-9.1f +- 2.toShort) should not equal minusSevenDotOhFloat
-
-      // Float +- Byte
-      (4.0f +- 2.toByte) should not equal sevenDotOhFloat
-      (9.1f +- 2.toByte) should not equal sevenDotOhFloat
-      (-4.0f +- 2.toByte) should not equal minusSevenDotOhFloat
-      (-9.1f +- 2.toByte) should not equal minusSevenDotOhFloat
-
-      // Long +- Long
-      (4L +- 2L) should not equal sevenLong
-      (10L +- 2L) should not equal sevenLong
-      (-4L +- 2L) should not equal minusSevenLong
-      (-10L +- 2L) should not equal minusSevenLong
-
-      // Long +- Int
-      (4L +- 2) should not equal sevenLong
-      (10L +- 2) should not equal sevenLong
-      (-4L +- 2) should not equal minusSevenLong
-      (-10L +- 2) should not equal minusSevenLong
-
-      // Long +- Short
-      (4L +- 2.toShort) should not equal sevenLong
-      (10L +- 2.toShort) should not equal sevenLong
-      (-4L +- 2.toShort) should not equal minusSevenLong
-      (-10L +- 2.toShort) should not equal minusSevenLong
-
-      // Long +- Byte
-      (4L +- 2.toByte) should not equal sevenLong
-      (10L +- 2.toByte) should not equal sevenLong
-      (-4L +- 2.toByte) should not equal minusSevenLong
-      (-10L +- 2.toByte) should not equal minusSevenLong
-
-      // Int +- Int
-      (4 +- 2) should not equal sevenInt
-      (10 +- 2) should not equal sevenInt
-      (-4 +- 2) should not equal minusSevenInt
-      (-10 +- 2) should not equal minusSevenInt
-
-      // Int +- Short
-      (4 +- 2.toShort) should not equal sevenInt
-      (10 +- 2.toShort) should not equal sevenInt
-      (-4 +- 2.toShort) should not equal minusSevenInt
-      (-10 +- 2.toShort) should not equal minusSevenInt
-
-      // Int +- Byte
-      (4 +- 2.toByte) should not equal sevenInt
-      (10 +- 2.toByte) should not equal sevenInt
-      (-4 +- 2.toByte) should not equal minusSevenInt
-      (-10 +- 2.toByte) should not equal minusSevenInt
-
-      // Short +- Short
-      (4.toShort +- 2.toShort) should not equal sevenShort
-      (10.toShort +- 2.toShort) should not equal sevenShort
-      ((-4).toShort +- 2.toShort) should not equal minusSevenShort
-      ((-10).toShort +- 2.toShort) should not equal minusSevenShort
-
-      // Short +- Byte
-      (4.toShort +- 2.toByte) should not equal sevenShort
-      (10.toShort +- 2.toByte) should not equal sevenShort
-      ((-4).toShort +- 2.toByte) should not equal minusSevenShort
-      ((-10).toShort +- 2.toByte) should not equal minusSevenShort
-
-      // Byte +- Byte
-      (4.toByte +- 2.toByte) should not equal sevenByte
-      (10.toByte +- 2.toByte) should not equal sevenByte
-      ((-4).toByte +- 2.toByte) should not equal minusSevenByte
-      ((-10).toByte +- 2.toByte) should not equal minusSevenByte
-    }
-*/
-
-    def `should throw TFE if the number is within the given interval` {
+    def `should throw TFE if the number is within the given interval when used with not` {
 
       // Double +- Double
       intercept[TestFailedException] { sevenDotOh should not equal (7.1 +- 0.2) }
@@ -1334,263 +814,590 @@ class ShouldEqualToleranceSpec extends Spec with ShouldMatchers with Tolerance {
       intercept[TestFailedException] { minusSevenByte should not equal ((-5).toByte +- 2.toByte) }
     }
 
-/*
-    Decided against this symmetry
-    def `should, for symmetry, throw TFE if the number is within the given interval, when the interval is placed on the left hand side` {
-
+    def `should succeed when equal and used in a logical-and expression` {
       // Double +- Double
-      intercept[TestFailedException] { (7.1 +- 0.2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.9 +- 0.2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.0 +- 0.2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.2 +- 0.2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.8 +- 0.2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (-7.1 +- 0.2) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.9 +- 0.2) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.0 +- 0.2) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.2 +- 0.2) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.8 +- 0.2) should not equal (minusSevenDotOh) }
+      sevenDotOh should (equal (7.1 +- 0.2) and equal (7.1 +- 0.2))
+      sevenDotOh should (equal (6.9 +- 0.2) and equal (6.9 +- 0.2))
+      sevenDotOh should (equal (7.0 +- 0.2) and equal (7.0 +- 0.2))
+      sevenDotOh should (equal (7.2 +- 0.2) and equal (7.2 +- 0.2))
+      sevenDotOh should (equal (6.8 +- 0.2) and equal (6.8 +- 0.2))
+      minusSevenDotOh should (equal (-7.1 +- 0.2) and equal (-7.1 +- 0.2))
+      minusSevenDotOh should (equal (-6.9 +- 0.2) and equal (-6.9 +- 0.2))
+      minusSevenDotOh should (equal (-7.0 +- 0.2) and equal (-7.0 +- 0.2))
+      minusSevenDotOh should (equal (-7.2 +- 0.2) and equal (-7.2 +- 0.2))
+      minusSevenDotOh should (equal (-6.8 +- 0.2) and equal (-6.8 +- 0.2))
 
       // Double +- Float
-      intercept[TestFailedException] { (7.1 +- 0.2f) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.9 +- 0.2f) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.0 +- 0.2f) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.2 +- 0.2f) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.8 +- 0.2f) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (-7.1 +- 0.2f) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.9 +- 0.2f) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.0 +- 0.2f) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.2 +- 0.2f) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.8 +- 0.2f) should not equal (minusSevenDotOh) }
+      sevenDotOh should (equal (7.1 +- 0.2f) and equal (7.1 +- 0.2f))
+      sevenDotOh should (equal (6.9 +- 0.2f) and equal (6.9 +- 0.2f))
+      sevenDotOh should (equal (7.0 +- 0.2f) and equal (7.0 +- 0.2f))
+      sevenDotOh should (equal (7.2 +- 0.2f) and equal (7.2 +- 0.2f))
+      sevenDotOh should (equal (6.8 +- 0.2f) and equal (6.8 +- 0.2f))
+      minusSevenDotOh should (equal (-7.1 +- 0.2f) and equal (-7.1 +- 0.2f))
+      minusSevenDotOh should (equal (-6.9 +- 0.2f) and equal (-6.9 +- 0.2f))
+      minusSevenDotOh should (equal (-7.0 +- 0.2f) and equal (-7.0 +- 0.2f))
+      minusSevenDotOh should (equal (-7.2 +- 0.2f) and equal (-7.2 +- 0.2f))
+      minusSevenDotOh should (equal (-6.8 +- 0.2f) and equal (-6.8 +- 0.2f))
 
       // Double +- Long
-      intercept[TestFailedException] { (7.1 +- 2L) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.9 +- 2L) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.0 +- 2L) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.2 +- 2L) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.8 +- 2L) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (-7.1 +- 2L) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.9 +- 2L) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.0 +- 2L) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.2 +- 2L) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.8 +- 2L) should not equal (minusSevenDotOh) }
+      sevenDotOh should (equal (7.1 +- 2L) and equal (7.1 +- 2L))
+      sevenDotOh should (equal (6.9 +- 2L) and equal (6.9 +- 2L))
+      sevenDotOh should (equal (7.0 +- 2L) and equal (7.0 +- 2L))
+      sevenDotOh should (equal (7.2 +- 2L) and equal (7.2 +- 2L))
+      sevenDotOh should (equal (6.8 +- 2L) and equal (6.8 +- 2L))
+      minusSevenDotOh should (equal (-7.1 +- 2L) and equal (-7.1 +- 2L))
+      minusSevenDotOh should (equal (-6.9 +- 2L) and equal (-6.9 +- 2L))
+      minusSevenDotOh should (equal (-7.0 +- 2L) and equal (-7.0 +- 2L))
+      minusSevenDotOh should (equal (-7.2 +- 2L) and equal (-7.2 +- 2L))
+      minusSevenDotOh should (equal (-6.8 +- 2L) and equal (-6.8 +- 2L))
 
       // Double +- Int
-      intercept[TestFailedException] { (7.1 +- 2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.9 +- 2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.0 +- 2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.2 +- 2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.8 +- 2) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (-7.1 +- 2) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.9 +- 2) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.0 +- 2) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.2 +- 2) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.8 +- 2) should not equal (minusSevenDotOh) }
+      sevenDotOh should (equal (7.1 +- 2) and equal (7.1 +- 2))
+      sevenDotOh should (equal (6.9 +- 2) and equal (6.9 +- 2))
+      sevenDotOh should (equal (7.0 +- 2) and equal (7.0 +- 2))
+      sevenDotOh should (equal (7.2 +- 2) and equal (7.2 +- 2))
+      sevenDotOh should (equal (6.8 +- 2) and equal (6.8 +- 2))
+      minusSevenDotOh should (equal (-7.1 +- 2) and equal (-7.1 +- 2))
+      minusSevenDotOh should (equal (-6.9 +- 2) and equal (-6.9 +- 2))
+      minusSevenDotOh should (equal (-7.0 +- 2) and equal (-7.0 +- 2))
+      minusSevenDotOh should (equal (-7.2 +- 2) and equal (-7.2 +- 2))
+      minusSevenDotOh should (equal (-6.8 +- 2) and equal (-6.8 +- 2))
 
       // Double +- Short
-      intercept[TestFailedException] { (7.1 +- 2.toShort) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.9 +- 2.toShort) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.0 +- 2.toShort) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.2 +- 2.toShort) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.8 +- 2.toShort) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (-7.1 +- 2.toShort) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.9 +- 2.toShort) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.0 +- 2.toShort) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.2 +- 2.toShort) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.8 +- 2.toShort) should not equal (minusSevenDotOh) }
+      sevenDotOh should (equal (7.1 +- 2.toShort) and equal (7.1 +- 2.toShort))
+      sevenDotOh should (equal (6.9 +- 2.toShort) and equal (6.9 +- 2.toShort))
+      sevenDotOh should (equal (7.0 +- 2.toShort) and equal (7.0 +- 2.toShort))
+      sevenDotOh should (equal (7.2 +- 2.toShort) and equal (7.2 +- 2.toShort))
+      sevenDotOh should (equal (6.8 +- 2.toShort) and equal (6.8 +- 2.toShort))
+      minusSevenDotOh should (equal (-7.1 +- 2.toShort) and equal (-7.1 +- 2.toShort))
+      minusSevenDotOh should (equal (-6.9 +- 2.toShort) and equal (-6.9 +- 2.toShort))
+      minusSevenDotOh should (equal (-7.0 +- 2.toShort) and equal (-7.0 +- 2.toShort))
+      minusSevenDotOh should (equal (-7.2 +- 2.toShort) and equal (-7.2 +- 2.toShort))
+      minusSevenDotOh should (equal (-6.8 +- 2.toShort) and equal (-6.8 +- 2.toShort))
 
       // Double +- Byte
-      intercept[TestFailedException] { (7.1 +- 2.toByte) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.9 +- 2.toByte) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.0 +- 2.toByte) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (7.2 +- 2.toByte) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (6.8 +- 2.toByte) should not equal (sevenDotOh) }
-      intercept[TestFailedException] { (-7.1 +- 2.toByte) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.9 +- 2.toByte) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.0 +- 2.toByte) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-7.2 +- 2.toByte) should not equal (minusSevenDotOh) }
-      intercept[TestFailedException] { (-6.8 +- 2.toByte) should not equal (minusSevenDotOh) }
+      sevenDotOh should (equal (7.1 +- 2.toByte) and equal (7.1 +- 2.toByte))
+      sevenDotOh should (equal (6.9 +- 2.toByte) and equal (6.9 +- 2.toByte))
+      sevenDotOh should (equal (7.0 +- 2.toByte) and equal (7.0 +- 2.toByte))
+      sevenDotOh should (equal (7.2 +- 2.toByte) and equal (7.2 +- 2.toByte))
+      sevenDotOh should (equal (6.8 +- 2.toByte) and equal (6.8 +- 2.toByte))
+      minusSevenDotOh should (equal (-7.1 +- 2.toByte) and equal (-7.1 +- 2.toByte))
+      minusSevenDotOh should (equal (-6.9 +- 2.toByte) and equal (-6.9 +- 2.toByte))
+      minusSevenDotOh should (equal (-7.0 +- 2.toByte) and equal (-7.0 +- 2.toByte))
+      minusSevenDotOh should (equal (-7.2 +- 2.toByte) and equal (-7.2 +- 2.toByte))
+      minusSevenDotOh should (equal (-6.8 +- 2.toByte) and equal (-6.8 +- 2.toByte))
 
       // Float +- Float
-      intercept[TestFailedException] { (7.1f +- 0.2f) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.9f +- 0.2f) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.0f +- 0.2f) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.2f +- 0.2f) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.8f +- 0.2f) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.1f +- 0.2f) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.9f +- 0.2f) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.0f +- 0.2f) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.2f +- 0.2f) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.8f +- 0.2f) should not equal (minusSevenDotOhFloat) }
+      sevenDotOhFloat should (equal (7.1f +- 0.2f) and equal (7.1f +- 0.2f))
+      sevenDotOhFloat should (equal (6.9f +- 0.2f) and equal (6.9f +- 0.2f))
+      sevenDotOhFloat should (equal (7.0f +- 0.2f) and equal (7.0f +- 0.2f))
+      sevenDotOhFloat should (equal (7.2f +- 0.2f) and equal (7.2f +- 0.2f))
+      sevenDotOhFloat should (equal (6.8f +- 0.2f) and equal (6.8f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-7.1f +- 0.2f) and equal (-7.1f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-6.9f +- 0.2f) and equal (-6.9f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-7.0f +- 0.2f) and equal (-7.0f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-7.2f +- 0.2f) and equal (-7.2f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-6.8f +- 0.2f) and equal (-6.8f +- 0.2f))
 
       // Float +- Long
-      intercept[TestFailedException] { (7.1f +- 2L) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.9f +- 2L) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.0f +- 2L) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.2f +- 2L) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.8f +- 2L) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.1f +- 2L) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.9f +- 2L) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.0f +- 2L) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.2f +- 2L) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.8f +- 2L) should not equal (minusSevenDotOhFloat) }
+      sevenDotOhFloat should (equal (7.1f +- 2L) and equal (7.1f +- 2L))
+      sevenDotOhFloat should (equal (6.9f +- 2L) and equal (6.9f +- 2L))
+      sevenDotOhFloat should (equal (7.0f +- 2L) and equal (7.0f +- 2L))
+      sevenDotOhFloat should (equal (7.2f +- 2L) and equal (7.2f +- 2L))
+      sevenDotOhFloat should (equal (6.8f +- 2L) and equal (6.8f +- 2L))
+      minusSevenDotOhFloat should (equal (-7.1f +- 2L) and equal (-7.1f +- 2L))
+      minusSevenDotOhFloat should (equal (-6.9f +- 2L) and equal (-6.9f +- 2L))
+      minusSevenDotOhFloat should (equal (-7.0f +- 2L) and equal (-7.0f +- 2L))
+      minusSevenDotOhFloat should (equal (-7.2f +- 2L) and equal (-7.2f +- 2L))
+      minusSevenDotOhFloat should (equal (-6.8f +- 2L) and equal (-6.8f +- 2L))
 
       // Float +- Int
-      intercept[TestFailedException] { (7.1f +- 2) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.9f +- 2) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.0f +- 2) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.2f +- 2) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.8f +- 2) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.1f +- 2) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.9f +- 2) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.0f +- 2) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.2f +- 2) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.8f +- 2) should not equal (minusSevenDotOhFloat) }
+      sevenDotOhFloat should (equal (7.1f +- 2) and equal (7.1f +- 2))
+      sevenDotOhFloat should (equal (6.9f +- 2) and equal (6.9f +- 2))
+      sevenDotOhFloat should (equal (7.0f +- 2) and equal (7.0f +- 2))
+      sevenDotOhFloat should (equal (7.2f +- 2) and equal (7.2f +- 2))
+      sevenDotOhFloat should (equal (6.8f +- 2) and equal (6.8f +- 2))
+      minusSevenDotOhFloat should (equal (-7.1f +- 2) and equal (-7.1f +- 2))
+      minusSevenDotOhFloat should (equal (-6.9f +- 2) and equal (-6.9f +- 2))
+      minusSevenDotOhFloat should (equal (-7.0f +- 2) and equal (-7.0f +- 2))
+      minusSevenDotOhFloat should (equal (-7.2f +- 2) and equal (-7.2f +- 2))
+      minusSevenDotOhFloat should (equal (-6.8f +- 2) and equal (-6.8f +- 2))
 
       // Float +- Short
-      intercept[TestFailedException] { (7.1f +- 2.toShort) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.9f +- 2.toShort) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.0f +- 2.toShort) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.2f +- 2.toShort) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.8f +- 2.toShort) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.1f +- 2.toShort) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.9f +- 2.toShort) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.0f +- 2.toShort) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.2f +- 2.toShort) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.8f +- 2.toShort) should not equal (minusSevenDotOhFloat) }
+      sevenDotOhFloat should (equal (7.1f +- 2.toShort) and equal (7.1f +- 2.toShort))
+      sevenDotOhFloat should (equal (6.9f +- 2.toShort) and equal (6.9f +- 2.toShort))
+      sevenDotOhFloat should (equal (7.0f +- 2.toShort) and equal (7.0f +- 2.toShort))
+      sevenDotOhFloat should (equal (7.2f +- 2.toShort) and equal (7.2f +- 2.toShort))
+      sevenDotOhFloat should (equal (6.8f +- 2.toShort) and equal (6.8f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-7.1f +- 2.toShort) and equal (-7.1f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-6.9f +- 2.toShort) and equal (-6.9f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-7.0f +- 2.toShort) and equal (-7.0f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-7.2f +- 2.toShort) and equal (-7.2f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-6.8f +- 2.toShort) and equal (-6.8f +- 2.toShort))
 
       // Float +- Byte
-      intercept[TestFailedException] { (7.1f +- 2.toByte) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.9f +- 2.toByte) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.0f +- 2.toByte) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (7.2f +- 2.toByte) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (6.8f +- 2.toByte) should not equal (sevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.1f +- 2.toByte) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.9f +- 2.toByte) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.0f +- 2.toByte) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-7.2f +- 2.toByte) should not equal (minusSevenDotOhFloat) }
-      intercept[TestFailedException] { (-6.8f +- 2.toByte) should not equal (minusSevenDotOhFloat) }
+      sevenDotOhFloat should (equal (7.1f +- 2.toByte) and equal (7.1f +- 2.toByte))
+      sevenDotOhFloat should (equal (6.9f +- 2.toByte) and equal (6.9f +- 2.toByte))
+      sevenDotOhFloat should (equal (7.0f +- 2.toByte) and equal (7.0f +- 2.toByte))
+      sevenDotOhFloat should (equal (7.2f +- 2.toByte) and equal (7.2f +- 2.toByte))
+      sevenDotOhFloat should (equal (6.8f +- 2.toByte) and equal (6.8f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-7.1f +- 2.toByte) and equal (-7.1f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-6.9f +- 2.toByte) and equal (-6.9f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-7.0f +- 2.toByte) and equal (-7.0f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-7.2f +- 2.toByte) and equal (-7.2f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-6.8f +- 2.toByte) and equal (-6.8f +- 2.toByte))
 
       // Long +- Long
-      intercept[TestFailedException] { (9L +- 2L) should not equal (sevenLong) }
-      intercept[TestFailedException] { (8L +- 2L) should not equal (sevenLong) }
-      intercept[TestFailedException] { (7L +- 2L) should not equal (sevenLong) }
-      intercept[TestFailedException] { (6L +- 2L) should not equal (sevenLong) }
-      intercept[TestFailedException] { (5L +- 2L) should not equal (sevenLong) }
-      intercept[TestFailedException] { (-9L +- 2L) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-8L +- 2L) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-7L +- 2L) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-6L +- 2L) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-5L +- 2L) should not equal (minusSevenLong) }
+      sevenLong should (equal (9L +- 2L) and equal (9L +- 2L))
+      sevenLong should (equal (8L +- 2L) and equal (8L +- 2L))
+      sevenLong should (equal (7L +- 2L) and equal (7L +- 2L))
+      sevenLong should (equal (6L +- 2L) and equal (6L +- 2L))
+      sevenLong should (equal (5L +- 2L) and equal (5L +- 2L))
+      minusSevenLong should (equal (-9L +- 2L) and equal (-9L +- 2L))
+      minusSevenLong should (equal (-8L +- 2L) and equal (-8L +- 2L))
+      minusSevenLong should (equal (-7L +- 2L) and equal (-7L +- 2L))
+      minusSevenLong should (equal (-6L +- 2L) and equal (-6L +- 2L))
+      minusSevenLong should (equal (-5L +- 2L) and equal (-5L +- 2L))
 
       // Long +- Int
-      intercept[TestFailedException] { (9L +- 2) should not equal (sevenLong) }
-      intercept[TestFailedException] { (8L +- 2) should not equal (sevenLong) }
-      intercept[TestFailedException] { (7L +- 2) should not equal (sevenLong) }
-      intercept[TestFailedException] { (6L +- 2) should not equal (sevenLong) }
-      intercept[TestFailedException] { (5L +- 2) should not equal (sevenLong) }
-      intercept[TestFailedException] { (-9L +- 2) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-8L +- 2) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-7L +- 2) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-6L +- 2) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-5L +- 2) should not equal (minusSevenLong) }
+      sevenLong should (equal (9L +- 2) and equal (9L +- 2))
+      sevenLong should (equal (8L +- 2) and equal (8L +- 2))
+      sevenLong should (equal (7L +- 2) and equal (7L +- 2))
+      sevenLong should (equal (6L +- 2) and equal (6L +- 2))
+      sevenLong should (equal (5L +- 2) and equal (5L +- 2))
+      minusSevenLong should (equal (-9L +- 2) and equal (-9L +- 2))
+      minusSevenLong should (equal (-8L +- 2) and equal (-8L +- 2))
+      minusSevenLong should (equal (-7L +- 2) and equal (-7L +- 2))
+      minusSevenLong should (equal (-6L +- 2) and equal (-6L +- 2))
+      minusSevenLong should (equal (-5L +- 2) and equal (-5L +- 2))
 
       // Long +- Short
-      intercept[TestFailedException] { (9L +- 2.toShort) should not equal (sevenLong) }
-      intercept[TestFailedException] { (8L +- 2.toShort) should not equal (sevenLong) }
-      intercept[TestFailedException] { (7L +- 2.toShort) should not equal (sevenLong) }
-      intercept[TestFailedException] { (6L +- 2.toShort) should not equal (sevenLong) }
-      intercept[TestFailedException] { (5L +- 2.toShort) should not equal (sevenLong) }
-      intercept[TestFailedException] { (-9L +- 2.toShort) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-8L +- 2.toShort) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-7L +- 2.toShort) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-6L +- 2.toShort) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-5L +- 2.toShort) should not equal (minusSevenLong) }
+      sevenLong should (equal (9L +- 2.toShort) and equal (9L +- 2.toShort))
+      sevenLong should (equal (8L +- 2.toShort) and equal (8L +- 2.toShort))
+      sevenLong should (equal (7L +- 2.toShort) and equal (7L +- 2.toShort))
+      sevenLong should (equal (6L +- 2.toShort) and equal (6L +- 2.toShort))
+      sevenLong should (equal (5L +- 2.toShort) and equal (5L +- 2.toShort))
+      minusSevenLong should (equal (-9L +- 2.toShort) and equal (-9L +- 2.toShort))
+      minusSevenLong should (equal (-8L +- 2.toShort) and equal (-8L +- 2.toShort))
+      minusSevenLong should (equal (-7L +- 2.toShort) and equal (-7L +- 2.toShort))
+      minusSevenLong should (equal (-6L +- 2.toShort) and equal (-6L +- 2.toShort))
+      minusSevenLong should (equal (-5L +- 2.toShort) and equal (-5L +- 2.toShort))
 
       // Long +- Byte
-      intercept[TestFailedException] { (9L +- 2.toByte) should not equal (sevenLong) }
-      intercept[TestFailedException] { (8L +- 2.toByte) should not equal (sevenLong) }
-      intercept[TestFailedException] { (7L +- 2.toByte) should not equal (sevenLong) }
-      intercept[TestFailedException] { (6L +- 2.toByte) should not equal (sevenLong) }
-      intercept[TestFailedException] { (5L +- 2.toByte) should not equal (sevenLong) }
-      intercept[TestFailedException] { (-9L +- 2.toByte) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-8L +- 2.toByte) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-7L +- 2.toByte) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-6L +- 2.toByte) should not equal (minusSevenLong) }
-      intercept[TestFailedException] { (-5L +- 2.toByte) should not equal (minusSevenLong) }
+      sevenLong should (equal (9L +- 2.toByte) and equal (9L +- 2.toByte))
+      sevenLong should (equal (8L +- 2.toByte) and equal (8L +- 2.toByte))
+      sevenLong should (equal (7L +- 2.toByte) and equal (7L +- 2.toByte))
+      sevenLong should (equal (6L +- 2.toByte) and equal (6L +- 2.toByte))
+      sevenLong should (equal (5L +- 2.toByte) and equal (5L +- 2.toByte))
+      minusSevenLong should (equal (-9L +- 2.toByte) and equal (-9L +- 2.toByte))
+      minusSevenLong should (equal (-8L +- 2.toByte) and equal (-8L +- 2.toByte))
+      minusSevenLong should (equal (-7L +- 2.toByte) and equal (-7L +- 2.toByte))
+      minusSevenLong should (equal (-6L +- 2.toByte) and equal (-6L +- 2.toByte))
+      minusSevenLong should (equal (-5L +- 2.toByte) and equal (-5L +- 2.toByte))
 
       // Int +- Int
-      intercept[TestFailedException] { (9 +- 2) should not equal (sevenInt) }
-      intercept[TestFailedException] { (8 +- 2) should not equal (sevenInt) }
-      intercept[TestFailedException] { (7 +- 2) should not equal (sevenInt) }
-      intercept[TestFailedException] { (6 +- 2) should not equal (sevenInt) }
-      intercept[TestFailedException] { (5 +- 2) should not equal (sevenInt) }
-      intercept[TestFailedException] { (-9 +- 2) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-8 +- 2) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-7 +- 2) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-6 +- 2) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-5 +- 2) should not equal (minusSevenInt) }
+      sevenInt should (equal (9 +- 2) and equal (9 +- 2))
+      sevenInt should (equal (8 +- 2) and equal (8 +- 2))
+      sevenInt should (equal (7 +- 2) and equal (7 +- 2))
+      sevenInt should (equal (6 +- 2) and equal (6 +- 2))
+      sevenInt should (equal (5 +- 2) and equal (5 +- 2))
+      minusSevenInt should (equal (-9 +- 2) and equal (-9 +- 2))
+      minusSevenInt should (equal (-8 +- 2) and equal (-8 +- 2))
+      minusSevenInt should (equal (-7 +- 2) and equal (-7 +- 2))
+      minusSevenInt should (equal (-6 +- 2) and equal (-6 +- 2))
+      minusSevenInt should (equal (-5 +- 2) and equal (-5 +- 2))
 
       // Int +- Short
-      intercept[TestFailedException] { (9 +- 2.toShort) should not equal (sevenInt) }
-      intercept[TestFailedException] { (8 +- 2.toShort) should not equal (sevenInt) }
-      intercept[TestFailedException] { (7 +- 2.toShort) should not equal (sevenInt) }
-      intercept[TestFailedException] { (6 +- 2.toShort) should not equal (sevenInt) }
-      intercept[TestFailedException] { (5 +- 2.toShort) should not equal (sevenInt) }
-      intercept[TestFailedException] { (-9 +- 2.toShort) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-8 +- 2.toShort) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-7 +- 2.toShort) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-6 +- 2.toShort) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-5 +- 2.toShort) should not equal (minusSevenInt) }
+      sevenInt should (equal (9 +- 2.toShort) and equal (9 +- 2.toShort))
+      sevenInt should (equal (8 +- 2.toShort) and equal (8 +- 2.toShort))
+      sevenInt should (equal (7 +- 2.toShort) and equal (7 +- 2.toShort))
+      sevenInt should (equal (6 +- 2.toShort) and equal (6 +- 2.toShort))
+      sevenInt should (equal (5 +- 2.toShort) and equal (5 +- 2.toShort))
+      minusSevenInt should (equal (-9 +- 2.toShort) and equal (-9 +- 2.toShort))
+      minusSevenInt should (equal (-8 +- 2.toShort) and equal (-8 +- 2.toShort))
+      minusSevenInt should (equal (-7 +- 2.toShort) and equal (-7 +- 2.toShort))
+      minusSevenInt should (equal (-6 +- 2.toShort) and equal (-6 +- 2.toShort))
+      minusSevenInt should (equal (-5 +- 2.toShort) and equal (-5 +- 2.toShort))
 
       // Int +- Byte
-      intercept[TestFailedException] { (9 +- 2.toByte) should not equal (sevenInt) }
-      intercept[TestFailedException] { (8 +- 2.toByte) should not equal (sevenInt) }
-      intercept[TestFailedException] { (7 +- 2.toByte) should not equal (sevenInt) }
-      intercept[TestFailedException] { (6 +- 2.toByte) should not equal (sevenInt) }
-      intercept[TestFailedException] { (5 +- 2.toByte) should not equal (sevenInt) }
-      intercept[TestFailedException] { (-9 +- 2.toByte) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-8 +- 2.toByte) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-7 +- 2.toByte) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-6 +- 2.toByte) should not equal (minusSevenInt) }
-      intercept[TestFailedException] { (-5 +- 2.toByte) should not equal (minusSevenInt) }
+      sevenInt should (equal (9 +- 2.toByte) and equal (9 +- 2.toByte))
+      sevenInt should (equal (8 +- 2.toByte) and equal (8 +- 2.toByte))
+      sevenInt should (equal (7 +- 2.toByte) and equal (7 +- 2.toByte))
+      sevenInt should (equal (6 +- 2.toByte) and equal (6 +- 2.toByte))
+      sevenInt should (equal (5 +- 2.toByte) and equal (5 +- 2.toByte))
+      minusSevenInt should (equal (-9 +- 2.toByte) and equal (-9 +- 2.toByte))
+      minusSevenInt should (equal (-8 +- 2.toByte) and equal (-8 +- 2.toByte))
+      minusSevenInt should (equal (-7 +- 2.toByte) and equal (-7 +- 2.toByte))
+      minusSevenInt should (equal (-6 +- 2.toByte) and equal (-6 +- 2.toByte))
+      minusSevenInt should (equal (-5 +- 2.toByte) and equal (-5 +- 2.toByte))
 
       // Short +- Short
-      intercept[TestFailedException] { (9.toShort +- 2.toShort) should not equal (sevenShort) }
-      intercept[TestFailedException] { (8.toShort +- 2.toShort) should not equal (sevenShort) }
-      intercept[TestFailedException] { (7.toShort +- 2.toShort) should not equal (sevenShort) }
-      intercept[TestFailedException] { (6.toShort +- 2.toShort) should not equal (sevenShort) }
-      intercept[TestFailedException] { (5.toShort +- 2.toShort) should not equal (sevenShort) }
-      intercept[TestFailedException] { ((-9).toShort +- 2.toShort) should not equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-8).toShort +- 2.toShort) should not equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-7).toShort +- 2.toShort) should not equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-6).toShort +- 2.toShort) should not equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-5).toShort +- 2.toShort) should not equal (minusSevenShort) }
+      sevenShort should (equal (9.toShort +- 2.toShort) and equal (9.toShort +- 2.toShort))
+      sevenShort should (equal (8.toShort +- 2.toShort) and equal (8.toShort +- 2.toShort))
+      sevenShort should (equal (7.toShort +- 2.toShort) and equal (7.toShort +- 2.toShort))
+      sevenShort should (equal (6.toShort +- 2.toShort) and equal (6.toShort +- 2.toShort))
+      sevenShort should (equal (5.toShort +- 2.toShort) and equal (5.toShort +- 2.toShort))
+      minusSevenShort should (equal ((-9).toShort +- 2.toShort) and equal ((-9).toShort +- 2.toShort))
+      minusSevenShort should (equal ((-8).toShort +- 2.toShort) and equal ((-8).toShort +- 2.toShort))
+      minusSevenShort should (equal ((-7).toShort +- 2.toShort) and equal ((-7).toShort +- 2.toShort))
+      minusSevenShort should (equal ((-6).toShort +- 2.toShort) and equal ((-6).toShort +- 2.toShort))
+      minusSevenShort should (equal ((-5).toShort +- 2.toShort) and equal ((-5).toShort +- 2.toShort))
 
       // Short +- Byte
-      intercept[TestFailedException] { (9.toShort +- 2.toByte) should not equal (sevenShort) }
-      intercept[TestFailedException] { (8.toShort +- 2.toByte) should not equal (sevenShort) }
-      intercept[TestFailedException] { (7.toShort +- 2.toByte) should not equal (sevenShort) }
-      intercept[TestFailedException] { (6.toShort +- 2.toByte) should not equal (sevenShort) }
-      intercept[TestFailedException] { (5.toShort +- 2.toByte) should not equal (sevenShort) }
-      intercept[TestFailedException] { ((-9).toShort +- 2.toByte) should not equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-8).toShort +- 2.toByte) should not equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-7).toShort +- 2.toByte) should not equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-6).toShort +- 2.toByte) should not equal (minusSevenShort) }
-      intercept[TestFailedException] { ((-5).toShort +- 2.toByte) should not equal (minusSevenShort) }
+      sevenShort should (equal (9.toShort +- 2.toByte) and equal (9.toShort +- 2.toByte))
+      sevenShort should (equal (8.toShort +- 2.toByte) and equal (8.toShort +- 2.toByte))
+      sevenShort should (equal (7.toShort +- 2.toByte) and equal (7.toShort +- 2.toByte))
+      sevenShort should (equal (6.toShort +- 2.toByte) and equal (6.toShort +- 2.toByte))
+      sevenShort should (equal (5.toShort +- 2.toByte) and equal (5.toShort +- 2.toByte))
+      minusSevenShort should (equal ((-9).toShort +- 2.toByte) and equal ((-9).toShort +- 2.toByte))
+      minusSevenShort should (equal ((-8).toShort +- 2.toByte) and equal ((-8).toShort +- 2.toByte))
+      minusSevenShort should (equal ((-7).toShort +- 2.toByte) and equal ((-7).toShort +- 2.toByte))
+      minusSevenShort should (equal ((-6).toShort +- 2.toByte) and equal ((-6).toShort +- 2.toByte))
+      minusSevenShort should (equal ((-5).toShort +- 2.toByte) and equal ((-5).toShort +- 2.toByte))
 
       // Byte +- Byte
-      intercept[TestFailedException] { (9.toByte +- 2.toByte) should not equal (sevenByte) }
-      intercept[TestFailedException] { (8.toByte +- 2.toByte) should not equal (sevenByte) }
-      intercept[TestFailedException] { (7.toByte +- 2.toByte) should not equal (sevenByte) }
-      intercept[TestFailedException] { (6.toByte +- 2.toByte) should not equal (sevenByte) }
-      intercept[TestFailedException] { (5.toByte +- 2.toByte) should not equal (sevenByte) }
-      intercept[TestFailedException] { ((-9).toByte +- 2.toByte) should not equal (minusSevenByte) }
-      intercept[TestFailedException] { ((-8).toByte +- 2.toByte) should not equal (minusSevenByte) }
-      intercept[TestFailedException] { ((-7).toByte +- 2.toByte) should not equal (minusSevenByte) }
-      intercept[TestFailedException] { ((-6).toByte +- 2.toByte) should not equal (minusSevenByte) }
-      intercept[TestFailedException] { ((-5).toByte +- 2.toByte) should not equal (minusSevenByte) }
+      sevenByte should (equal (9.toByte +- 2.toByte) and equal (9.toByte +- 2.toByte))
+      sevenByte should (equal (8.toByte +- 2.toByte) and equal (8.toByte +- 2.toByte))
+      sevenByte should (equal (7.toByte +- 2.toByte) and equal (7.toByte +- 2.toByte))
+      sevenByte should (equal (6.toByte +- 2.toByte) and equal (6.toByte +- 2.toByte))
+      sevenByte should (equal (5.toByte +- 2.toByte) and equal (5.toByte +- 2.toByte))
+      minusSevenByte should (equal ((-9).toByte +- 2.toByte) and equal ((-9).toByte +- 2.toByte))
+      minusSevenByte should (equal ((-8).toByte +- 2.toByte) and equal ((-8).toByte +- 2.toByte))
+      minusSevenByte should (equal ((-7).toByte +- 2.toByte) and equal ((-7).toByte +- 2.toByte))
+      minusSevenByte should (equal ((-6).toByte +- 2.toByte) and equal ((-6).toByte +- 2.toByte))
+      minusSevenByte should (equal ((-5).toByte +- 2.toByte) and equal ((-5).toByte +- 2.toByte))
     }
-*/
+
+    def `should succeed when equal and used in a logical-or expression` {
+
+      sevenDotOh should (equal (7.1 +- 0.2) or equal (7.1 +- 0.2))
+      sevenDotOh should (equal (6.9 +- 0.2) or equal (6.9 +- 0.2))
+      sevenDotOh should (equal (7.0 +- 0.2) or equal (7.0 +- 0.2))
+      sevenDotOh should (equal (7.2 +- 0.2) or equal (7.2 +- 0.2))
+      sevenDotOh should (equal (6.8 +- 0.2) or equal (6.8 +- 0.2))
+      minusSevenDotOh should (equal (-7.1 +- 0.2) or equal (-7.1 +- 0.2))
+      minusSevenDotOh should (equal (-6.9 +- 0.2) or equal (-6.9 +- 0.2))
+      minusSevenDotOh should (equal (-7.0 +- 0.2) or equal (-7.0 +- 0.2))
+      minusSevenDotOh should (equal (-7.2 +- 0.2) or equal (-7.2 +- 0.2))
+      minusSevenDotOh should (equal (-6.8 +- 0.2) or equal (-6.8 +- 0.2))
+
+      // Double +- Float
+      sevenDotOh should (equal (7.1 +- 0.2f) or equal (7.1 +- 0.2f))
+      sevenDotOh should (equal (6.9 +- 0.2f) or equal (6.9 +- 0.2f))
+      sevenDotOh should (equal (7.0 +- 0.2f) or equal (7.0 +- 0.2f))
+      sevenDotOh should (equal (7.2 +- 0.2f) or equal (7.2 +- 0.2f))
+      sevenDotOh should (equal (6.8 +- 0.2f) or equal (6.8 +- 0.2f))
+      minusSevenDotOh should (equal (-7.1 +- 0.2f) or equal (-7.1 +- 0.2f))
+      minusSevenDotOh should (equal (-6.9 +- 0.2f) or equal (-6.9 +- 0.2f))
+      minusSevenDotOh should (equal (-7.0 +- 0.2f) or equal (-7.0 +- 0.2f))
+      minusSevenDotOh should (equal (-7.2 +- 0.2f) or equal (-7.2 +- 0.2f))
+      minusSevenDotOh should (equal (-6.8 +- 0.2f) or equal (-6.8 +- 0.2f))
+
+      // Double +- Long
+      sevenDotOh should (equal (7.1 +- 2L) or equal (7.1 +- 2L))
+      sevenDotOh should (equal (6.9 +- 2L) or equal (6.9 +- 2L))
+      sevenDotOh should (equal (7.0 +- 2L) or equal (7.0 +- 2L))
+      sevenDotOh should (equal (7.2 +- 2L) or equal (7.2 +- 2L))
+      sevenDotOh should (equal (6.8 +- 2L) or equal (6.8 +- 2L))
+      minusSevenDotOh should (equal (-7.1 +- 2L) or equal (-7.1 +- 2L))
+      minusSevenDotOh should (equal (-6.9 +- 2L) or equal (-6.9 +- 2L))
+      minusSevenDotOh should (equal (-7.0 +- 2L) or equal (-7.0 +- 2L))
+      minusSevenDotOh should (equal (-7.2 +- 2L) or equal (-7.2 +- 2L))
+      minusSevenDotOh should (equal (-6.8 +- 2L) or equal (-6.8 +- 2L))
+
+      // Double +- Int
+      sevenDotOh should (equal (7.1 +- 2) or equal (7.1 +- 2))
+      sevenDotOh should (equal (6.9 +- 2) or equal (6.9 +- 2))
+      sevenDotOh should (equal (7.0 +- 2) or equal (7.0 +- 2))
+      sevenDotOh should (equal (7.2 +- 2) or equal (7.2 +- 2))
+      sevenDotOh should (equal (6.8 +- 2) or equal (6.8 +- 2))
+      minusSevenDotOh should (equal (-7.1 +- 2) or equal (-7.1 +- 2))
+      minusSevenDotOh should (equal (-6.9 +- 2) or equal (-6.9 +- 2))
+      minusSevenDotOh should (equal (-7.0 +- 2) or equal (-7.0 +- 2))
+      minusSevenDotOh should (equal (-7.2 +- 2) or equal (-7.2 +- 2))
+      minusSevenDotOh should (equal (-6.8 +- 2) or equal (-6.8 +- 2))
+
+      // Double +- Short
+      sevenDotOh should (equal (7.1 +- 2.toShort) or equal (7.1 +- 2.toShort))
+      sevenDotOh should (equal (6.9 +- 2.toShort) or equal (6.9 +- 2.toShort))
+      sevenDotOh should (equal (7.0 +- 2.toShort) or equal (7.0 +- 2.toShort))
+      sevenDotOh should (equal (7.2 +- 2.toShort) or equal (7.2 +- 2.toShort))
+      sevenDotOh should (equal (6.8 +- 2.toShort) or equal (6.8 +- 2.toShort))
+      minusSevenDotOh should (equal (-7.1 +- 2.toShort) or equal (-7.1 +- 2.toShort))
+      minusSevenDotOh should (equal (-6.9 +- 2.toShort) or equal (-6.9 +- 2.toShort))
+      minusSevenDotOh should (equal (-7.0 +- 2.toShort) or equal (-7.0 +- 2.toShort))
+      minusSevenDotOh should (equal (-7.2 +- 2.toShort) or equal (-7.2 +- 2.toShort))
+      minusSevenDotOh should (equal (-6.8 +- 2.toShort) or equal (-6.8 +- 2.toShort))
+
+      // Double +- Byte
+      sevenDotOh should (equal (7.1 +- 2.toByte) or equal (7.1 +- 2.toByte))
+      sevenDotOh should (equal (6.9 +- 2.toByte) or equal (6.9 +- 2.toByte))
+      sevenDotOh should (equal (7.0 +- 2.toByte) or equal (7.0 +- 2.toByte))
+      sevenDotOh should (equal (7.2 +- 2.toByte) or equal (7.2 +- 2.toByte))
+      sevenDotOh should (equal (6.8 +- 2.toByte) or equal (6.8 +- 2.toByte))
+      minusSevenDotOh should (equal (-7.1 +- 2.toByte) or equal (-7.1 +- 2.toByte))
+      minusSevenDotOh should (equal (-6.9 +- 2.toByte) or equal (-6.9 +- 2.toByte))
+      minusSevenDotOh should (equal (-7.0 +- 2.toByte) or equal (-7.0 +- 2.toByte))
+      minusSevenDotOh should (equal (-7.2 +- 2.toByte) or equal (-7.2 +- 2.toByte))
+      minusSevenDotOh should (equal (-6.8 +- 2.toByte) or equal (-6.8 +- 2.toByte))
+
+      // Float +- Float
+      sevenDotOhFloat should (equal (7.1f +- 0.2f) or equal (7.1f +- 0.2f))
+      sevenDotOhFloat should (equal (6.9f +- 0.2f) or equal (6.9f +- 0.2f))
+      sevenDotOhFloat should (equal (7.0f +- 0.2f) or equal (7.0f +- 0.2f))
+      sevenDotOhFloat should (equal (7.2f +- 0.2f) or equal (7.2f +- 0.2f))
+      sevenDotOhFloat should (equal (6.8f +- 0.2f) or equal (6.8f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-7.1f +- 0.2f) or equal (-7.1f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-6.9f +- 0.2f) or equal (-6.9f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-7.0f +- 0.2f) or equal (-7.0f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-7.2f +- 0.2f) or equal (-7.2f +- 0.2f))
+      minusSevenDotOhFloat should (equal (-6.8f +- 0.2f) or equal (-6.8f +- 0.2f))
+
+      // Float +- Long
+      sevenDotOhFloat should (equal (7.1f +- 2L) or equal (7.1f +- 2L))
+      sevenDotOhFloat should (equal (6.9f +- 2L) or equal (6.9f +- 2L))
+      sevenDotOhFloat should (equal (7.0f +- 2L) or equal (7.0f +- 2L))
+      sevenDotOhFloat should (equal (7.2f +- 2L) or equal (7.2f +- 2L))
+      sevenDotOhFloat should (equal (6.8f +- 2L) or equal (6.8f +- 2L))
+      minusSevenDotOhFloat should (equal (-7.1f +- 2L) or equal (-7.1f +- 2L))
+      minusSevenDotOhFloat should (equal (-6.9f +- 2L) or equal (-6.9f +- 2L))
+      minusSevenDotOhFloat should (equal (-7.0f +- 2L) or equal (-7.0f +- 2L))
+      minusSevenDotOhFloat should (equal (-7.2f +- 2L) or equal (-7.2f +- 2L))
+      minusSevenDotOhFloat should (equal (-6.8f +- 2L) or equal (-6.8f +- 2L))
+
+      // Float +- Int
+      sevenDotOhFloat should (equal (7.1f +- 2) or equal (7.1f +- 2))
+      sevenDotOhFloat should (equal (6.9f +- 2) or equal (6.9f +- 2))
+      sevenDotOhFloat should (equal (7.0f +- 2) or equal (7.0f +- 2))
+      sevenDotOhFloat should (equal (7.2f +- 2) or equal (7.2f +- 2))
+      sevenDotOhFloat should (equal (6.8f +- 2) or equal (6.8f +- 2))
+      minusSevenDotOhFloat should (equal (-7.1f +- 2) or equal (-7.1f +- 2))
+      minusSevenDotOhFloat should (equal (-6.9f +- 2) or equal (-6.9f +- 2))
+      minusSevenDotOhFloat should (equal (-7.0f +- 2) or equal (-7.0f +- 2))
+      minusSevenDotOhFloat should (equal (-7.2f +- 2) or equal (-7.2f +- 2))
+      minusSevenDotOhFloat should (equal (-6.8f +- 2) or equal (-6.8f +- 2))
+
+      // Float +- Short
+      sevenDotOhFloat should (equal (7.1f +- 2.toShort) or equal (7.1f +- 2.toShort))
+      sevenDotOhFloat should (equal (6.9f +- 2.toShort) or equal (6.9f +- 2.toShort))
+      sevenDotOhFloat should (equal (7.0f +- 2.toShort) or equal (7.0f +- 2.toShort))
+      sevenDotOhFloat should (equal (7.2f +- 2.toShort) or equal (7.2f +- 2.toShort))
+      sevenDotOhFloat should (equal (6.8f +- 2.toShort) or equal (6.8f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-7.1f +- 2.toShort) or equal (-7.1f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-6.9f +- 2.toShort) or equal (-6.9f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-7.0f +- 2.toShort) or equal (-7.0f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-7.2f +- 2.toShort) or equal (-7.2f +- 2.toShort))
+      minusSevenDotOhFloat should (equal (-6.8f +- 2.toShort) or equal (-6.8f +- 2.toShort))
+
+      // Float +- Byte
+      sevenDotOhFloat should (equal (7.1f +- 2.toByte) or equal (7.1f +- 2.toByte))
+      sevenDotOhFloat should (equal (6.9f +- 2.toByte) or equal (6.9f +- 2.toByte))
+      sevenDotOhFloat should (equal (7.0f +- 2.toByte) or equal (7.0f +- 2.toByte))
+      sevenDotOhFloat should (equal (7.2f +- 2.toByte) or equal (7.2f +- 2.toByte))
+      sevenDotOhFloat should (equal (6.8f +- 2.toByte) or equal (6.8f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-7.1f +- 2.toByte) or equal (-7.1f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-6.9f +- 2.toByte) or equal (-6.9f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-7.0f +- 2.toByte) or equal (-7.0f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-7.2f +- 2.toByte) or equal (-7.2f +- 2.toByte))
+      minusSevenDotOhFloat should (equal (-6.8f +- 2.toByte) or equal (-6.8f +- 2.toByte))
+
+      // Long +- Long
+      sevenLong should (equal (9L +- 2L) or equal (9L +- 2L))
+      sevenLong should (equal (8L +- 2L) or equal (8L +- 2L))
+      sevenLong should (equal (7L +- 2L) or equal (7L +- 2L))
+      sevenLong should (equal (6L +- 2L) or equal (6L +- 2L))
+      sevenLong should (equal (5L +- 2L) or equal (5L +- 2L))
+      minusSevenLong should (equal (-9L +- 2L) or equal (-9L +- 2L))
+      minusSevenLong should (equal (-8L +- 2L) or equal (-8L +- 2L))
+      minusSevenLong should (equal (-7L +- 2L) or equal (-7L +- 2L))
+      minusSevenLong should (equal (-6L +- 2L) or equal (-6L +- 2L))
+      minusSevenLong should (equal (-5L +- 2L) or equal (-5L +- 2L))
+
+      // Long +- Int
+      sevenLong should (equal (9L +- 2) or equal (9L +- 2))
+      sevenLong should (equal (8L +- 2) or equal (8L +- 2))
+      sevenLong should (equal (7L +- 2) or equal (7L +- 2))
+      sevenLong should (equal (6L +- 2) or equal (6L +- 2))
+      sevenLong should (equal (5L +- 2) or equal (5L +- 2))
+      minusSevenLong should (equal (-9L +- 2) or equal (-9L +- 2))
+      minusSevenLong should (equal (-8L +- 2) or equal (-8L +- 2))
+      minusSevenLong should (equal (-7L +- 2) or equal (-7L +- 2))
+      minusSevenLong should (equal (-6L +- 2) or equal (-6L +- 2))
+      minusSevenLong should (equal (-5L +- 2) or equal (-5L +- 2))
+
+      // Long +- Short
+      sevenLong should (equal (9L +- 2.toShort) or equal (9L +- 2.toShort))
+      sevenLong should (equal (8L +- 2.toShort) or equal (8L +- 2.toShort))
+      sevenLong should (equal (7L +- 2.toShort) or equal (7L +- 2.toShort))
+      sevenLong should (equal (6L +- 2.toShort) or equal (6L +- 2.toShort))
+      sevenLong should (equal (5L +- 2.toShort) or equal (5L +- 2.toShort))
+      minusSevenLong should (equal (-9L +- 2.toShort) or equal (-9L +- 2.toShort))
+      minusSevenLong should (equal (-8L +- 2.toShort) or equal (-8L +- 2.toShort))
+      minusSevenLong should (equal (-7L +- 2.toShort) or equal (-7L +- 2.toShort))
+      minusSevenLong should (equal (-6L +- 2.toShort) or equal (-6L +- 2.toShort))
+      minusSevenLong should (equal (-5L +- 2.toShort) or equal (-5L +- 2.toShort))
+
+      // Long +- Byte
+      sevenLong should (equal (9L +- 2.toByte) or equal (9L +- 2.toByte))
+      sevenLong should (equal (8L +- 2.toByte) or equal (8L +- 2.toByte))
+      sevenLong should (equal (7L +- 2.toByte) or equal (7L +- 2.toByte))
+      sevenLong should (equal (6L +- 2.toByte) or equal (6L +- 2.toByte))
+      sevenLong should (equal (5L +- 2.toByte) or equal (5L +- 2.toByte))
+      minusSevenLong should (equal (-9L +- 2.toByte) or equal (-9L +- 2.toByte))
+      minusSevenLong should (equal (-8L +- 2.toByte) or equal (-8L +- 2.toByte))
+      minusSevenLong should (equal (-7L +- 2.toByte) or equal (-7L +- 2.toByte))
+      minusSevenLong should (equal (-6L +- 2.toByte) or equal (-6L +- 2.toByte))
+      minusSevenLong should (equal (-5L +- 2.toByte) or equal (-5L +- 2.toByte))
+
+      // Int +- Int
+      sevenInt should (equal (9 +- 2) or equal (9 +- 2))
+      sevenInt should (equal (8 +- 2) or equal (8 +- 2))
+      sevenInt should (equal (7 +- 2) or equal (7 +- 2))
+      sevenInt should (equal (6 +- 2) or equal (6 +- 2))
+      sevenInt should (equal (5 +- 2) or equal (5 +- 2))
+      minusSevenInt should (equal (-9 +- 2) or equal (-9 +- 2))
+      minusSevenInt should (equal (-8 +- 2) or equal (-8 +- 2))
+      minusSevenInt should (equal (-7 +- 2) or equal (-7 +- 2))
+      minusSevenInt should (equal (-6 +- 2) or equal (-6 +- 2))
+      minusSevenInt should (equal (-5 +- 2) or equal (-5 +- 2))
+
+      // Int +- Short
+      sevenInt should (equal (9 +- 2.toShort) or equal (9 +- 2.toShort))
+      sevenInt should (equal (8 +- 2.toShort) or equal (8 +- 2.toShort))
+      sevenInt should (equal (7 +- 2.toShort) or equal (7 +- 2.toShort))
+      sevenInt should (equal (6 +- 2.toShort) or equal (6 +- 2.toShort))
+      sevenInt should (equal (5 +- 2.toShort) or equal (5 +- 2.toShort))
+      minusSevenInt should (equal (-9 +- 2.toShort) or equal (-9 +- 2.toShort))
+      minusSevenInt should (equal (-8 +- 2.toShort) or equal (-8 +- 2.toShort))
+      minusSevenInt should (equal (-7 +- 2.toShort) or equal (-7 +- 2.toShort))
+      minusSevenInt should (equal (-6 +- 2.toShort) or equal (-6 +- 2.toShort))
+      minusSevenInt should (equal (-5 +- 2.toShort) or equal (-5 +- 2.toShort))
+
+      // Int +- Byte
+      sevenInt should (equal (9 +- 2.toByte) or equal (9 +- 2.toByte))
+      sevenInt should (equal (8 +- 2.toByte) or equal (8 +- 2.toByte))
+      sevenInt should (equal (7 +- 2.toByte) or equal (7 +- 2.toByte))
+      sevenInt should (equal (6 +- 2.toByte) or equal (6 +- 2.toByte))
+      sevenInt should (equal (5 +- 2.toByte) or equal (5 +- 2.toByte))
+      minusSevenInt should (equal (-9 +- 2.toByte) or equal (-9 +- 2.toByte))
+      minusSevenInt should (equal (-8 +- 2.toByte) or equal (-8 +- 2.toByte))
+      minusSevenInt should (equal (-7 +- 2.toByte) or equal (-7 +- 2.toByte))
+      minusSevenInt should (equal (-6 +- 2.toByte) or equal (-6 +- 2.toByte))
+      minusSevenInt should (equal (-5 +- 2.toByte) or equal (-5 +- 2.toByte))
+
+      // Short +- Short
+      sevenShort should (equal (9.toShort +- 2.toShort) or equal (9.toShort +- 2.toShort))
+      sevenShort should (equal (8.toShort +- 2.toShort) or equal (8.toShort +- 2.toShort))
+      sevenShort should (equal (7.toShort +- 2.toShort) or equal (7.toShort +- 2.toShort))
+      sevenShort should (equal (6.toShort +- 2.toShort) or equal (6.toShort +- 2.toShort))
+      sevenShort should (equal (5.toShort +- 2.toShort) or equal (5.toShort +- 2.toShort))
+      minusSevenShort should (equal ((-9).toShort +- 2.toShort) or equal ((-9).toShort +- 2.toShort))
+      minusSevenShort should (equal ((-8).toShort +- 2.toShort) or equal ((-8).toShort +- 2.toShort))
+      minusSevenShort should (equal ((-7).toShort +- 2.toShort) or equal ((-7).toShort +- 2.toShort))
+      minusSevenShort should (equal ((-6).toShort +- 2.toShort) or equal ((-6).toShort +- 2.toShort))
+      minusSevenShort should (equal ((-5).toShort +- 2.toShort) or equal ((-5).toShort +- 2.toShort))
+
+      // Short +- Byte
+      sevenShort should (equal (9.toShort +- 2.toByte) or equal (9.toShort +- 2.toByte))
+      sevenShort should (equal (8.toShort +- 2.toByte) or equal (8.toShort +- 2.toByte))
+      sevenShort should (equal (7.toShort +- 2.toByte) or equal (7.toShort +- 2.toByte))
+      sevenShort should (equal (6.toShort +- 2.toByte) or equal (6.toShort +- 2.toByte))
+      sevenShort should (equal (5.toShort +- 2.toByte) or equal (5.toShort +- 2.toByte))
+      minusSevenShort should (equal ((-9).toShort +- 2.toByte) or equal ((-9).toShort +- 2.toByte))
+      minusSevenShort should (equal ((-8).toShort +- 2.toByte) or equal ((-8).toShort +- 2.toByte))
+      minusSevenShort should (equal ((-7).toShort +- 2.toByte) or equal ((-7).toShort +- 2.toByte))
+      minusSevenShort should (equal ((-6).toShort +- 2.toByte) or equal ((-6).toShort +- 2.toByte))
+      minusSevenShort should (equal ((-5).toShort +- 2.toByte) or equal ((-5).toShort +- 2.toByte))
+
+      // Byte +- Byte
+      sevenByte should (equal (9.toByte +- 2.toByte) or equal (9.toByte +- 2.toByte))
+      sevenByte should (equal (8.toByte +- 2.toByte) or equal (8.toByte +- 2.toByte))
+      sevenByte should (equal (7.toByte +- 2.toByte) or equal (7.toByte +- 2.toByte))
+      sevenByte should (equal (6.toByte +- 2.toByte) or equal (6.toByte +- 2.toByte))
+      sevenByte should (equal (5.toByte +- 2.toByte) or equal (5.toByte +- 2.toByte))
+      minusSevenByte should (equal ((-9).toByte +- 2.toByte) or equal ((-9).toByte +- 2.toByte))
+      minusSevenByte should (equal ((-8).toByte +- 2.toByte) or equal ((-8).toByte +- 2.toByte))
+      minusSevenByte should (equal ((-7).toByte +- 2.toByte) or equal ((-7).toByte +- 2.toByte))
+      minusSevenByte should (equal ((-6).toByte +- 2.toByte) or equal ((-6).toByte +- 2.toByte))
+      minusSevenByte should (equal ((-5).toByte +- 2.toByte) or equal ((-5).toByte +- 2.toByte))
+    }
+
+    def `should succeed when not equal and used in a logical-and expression with not` {
+      1 should { not { equal (3 +- 1) } and not { equal (3 +- 1) }}
+      1 should { not equal (3 +- 1) and (not equal (3 +- 1)) }
+      1 should (not equal (3 +- 1) and not equal (3 +- 1))
+    }
+
+    def `should succeed when not equal and used in a logical-or expression with not` {
+      1 should { not { equal (3 +- 1) } or not { equal (3 +- 1) }}
+      1 should { not equal (3 +- 1) or (not equal (3 +- 1)) }
+      1 should (not equal (3 +- 1) or not equal (3 +- 1))
+    }
+
+    def `should throw a TFE when not equal and used in a logical-and expression` {
+      val caught = intercept[TestFailedException] {
+        1 should { equal (5 +- 1) and equal (2 +- 1) }
+      }
+      assert(caught.getMessage === "1 did not equal 5 plus or minus 1")
+    }
+
+    def `should throw a TFE when not equal and used in a logical-or expression` {
+      val caught = intercept[TestFailedException] {
+        1 should { equal (5 +- 1) or equal (4 +- 1) }
+      }
+      assert(caught.getMessage === "1 did not equal 5 plus or minus 1, and 1 did not equal 4 plus or minus 1")
+    }
+
+    def `should throw a TFE when equal and used in a logical-and expression with not` {
+
+      val caught1 = intercept[TestFailedException] {
+        1 should { not { equal (2 +- 1) } and not { equal (3 - 1) }}
+      }
+      assert(caught1.getMessage === "1 equaled 2 plus or minus 1")
+
+      val caught2 = intercept[TestFailedException] {
+        1 should { not equal (2 +- 1) and (not equal (3 - 1)) }
+      }
+      assert(caught2.getMessage === "1 equaled 2 plus or minus 1")
+
+      val caught3 = intercept[TestFailedException] {
+        1 should (not equal (2 +- 1) and not equal (3 - 1))
+      }
+      assert(caught3.getMessage === "1 equaled 2 plus or minus 1")
+
+      val caught4 = intercept[TestFailedException] {
+        1 should { not { equal (3 +- 1) } and not { equal (2 +- 1) }}
+      }
+      assert(caught4.getMessage === "1 did not equal 3 plus or minus 1, but 1 equaled 2 plus or minus 1")
+
+      val caught5 = intercept[TestFailedException] {
+        1 should { not equal (3 +- 1) and (not equal (2 +- 1)) }
+      }
+      assert(caught5.getMessage === "1 did not equal 3 plus or minus 1, but 1 equaled 2 plus or minus 1")
+
+      val caught6 = intercept[TestFailedException] {
+        1 should (not equal (3 +- 1) and not equal (2 +- 1))
+      }
+      assert(caught6.getMessage === "1 did not equal 3 plus or minus 1, but 1 equaled 2 plus or minus 1")
+    }
+
+    def `should throw a TFE when equal and used in a logical-or expression with not` {
+
+      val caught1 = intercept[TestFailedException] {
+        1 should { not { equal (2 +- 1) } or not { equal (2 +- 1) }}
+      }
+      assert(caught1.getMessage === "1 equaled 2 plus or minus 1, and 1 equaled 2 plus or minus 1")
+
+      val caught2 = intercept[TestFailedException] {
+        1 should { not equal (2 +- 1) or { not equal (2 +- 1) }}
+      }
+      assert(caught2.getMessage === "1 equaled 2 plus or minus 1, and 1 equaled 2 plus or minus 1")
+
+      val caught3 = intercept[TestFailedException] {
+        1 should (not equal (2 +- 1) or not equal (2 +- 1))
+      }
+      assert(caught3.getMessage === "1 equaled 2 plus or minus 1, and 1 equaled 2 plus or minus 1")
+    }
   }
 
   object `The X +- Y syntax` {

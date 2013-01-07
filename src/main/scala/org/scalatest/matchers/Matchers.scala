@@ -601,6 +601,16 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
         matchersWrapper.and(matchers.not.apply(matchers.equal(any)))
 
       /**
+       * This method enables the following syntax, for the "primitive" numeric types:
+       *
+       * <pre class="stHighlight">
+       * sevenDotOh should (not equal (17.0 plusOrMinus 0.2) and not equal (17.0 plusOrMinus 0.2))
+       *                                                         ^
+       * </pre>
+       */
+      def equal[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.and(matchers.not.equal(interval))
+
+      /**
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
@@ -1300,6 +1310,16 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        */
       def equal(any: Any): Matcher[T] =
         matchersWrapper.or(matchers.not.apply(matchers.equal(any)))
+
+      /**
+       * This method enables the following syntax for the "primitive" numeric types:
+       *
+       * <pre class="stHighlight">
+       * sevenDotOh should (not equal (17.0 plusOrMinus 0.2) or not equal (17.0 plusOrMinus 0.2))
+       *                                                        ^
+       * </pre>
+       */
+      def equal[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.equal(interval))
 
       /**
        * This method enables the following syntax:
@@ -3938,7 +3958,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       if (interval.isWithin(left) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
-            if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
+            if (shouldBeTrue) "didNotEqualPlusOrMinus" else "equaledPlusOrMinus",
             left,
             interval.right,
             interval.tolerance
@@ -4245,8 +4265,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       def apply(left: T): MatchResult = {
         MatchResult(
           interval.isWithin(left),
-          FailureMessages("wasNotPlusOrMinus", left, interval.right, interval.tolerance),
-          FailureMessages("wasPlusOrMinus", left, interval.right, interval.tolerance)
+          FailureMessages("didNotEqualPlusOrMinus", left, interval.right, interval.tolerance),
+          FailureMessages("equaledPlusOrMinus", left, interval.right, interval.tolerance)
         )
       }
     }
@@ -4820,6 +4840,26 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def equal(right: Any): Matcher[Any] = apply(matchers.equal(right))
+
+    /**
+     * This method enables the following syntax for the "primitive" numeric types: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOh should ((not equal (17.1 plusOrMinus 0.2)) and (not equal (27.1 plusOrMinus 0.2)))
+     *                         ^
+     * </pre>
+     */
+    def equal[U](interval: Interval[U]): Matcher[U] = {
+      new Matcher[U] {
+        def apply(left: U): MatchResult = {
+          MatchResult(
+            !(interval.isWithin(left)),
+            FailureMessages("equaledPlusOrMinus", left, interval.right, interval.tolerance),
+            FailureMessages("didNotEqualPlusOrMinus", left, interval.right, interval.tolerance)
+          )
+        }
+      }
+    }
 
     /**
      * This method enables the following syntax: 

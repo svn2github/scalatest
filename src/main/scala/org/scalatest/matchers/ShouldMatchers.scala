@@ -1189,7 +1189,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
       if ((inv.interval.isWithin(left)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
-            if (inv.expectingEqual) "wasNotPlusOrMinus" else "wasPlusOrMinus",
+            if (inv.expectingEqual) "wasNotPlusOrMinus" else "wasPlusOrMinus", // TODO: Write a failing test that wants equaledPlusOrMinus
             left,
             inv.interval.right,
             inv.interval.tolerance
