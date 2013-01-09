@@ -78,6 +78,10 @@
           <filterset>
             <filter token="RELEASE" value="${release}" />
             <filter token="SCALA_VERSION" value="${scala.version}" />
+            <!--
+              -  DEPLOY_SCALA_VERSION is used in the artifact name, e.g.
+              -  it's "2.10" when scala version is "2.10.0"
+              -->
             <filter token="DEPLOY_SCALA_VERSION"
                     value="${deploy.scala.version}" />
           </filterset>
@@ -933,6 +937,8 @@
         <filterset>
           <filter token="RELEASE" value="${release}" />
           <filter token="SCALA_VERSION" value="${scala.version}" />
+          <filter token="DEPLOY_SCALA_VERSION"
+                  value="${deploy.scala.version}" />
         </filterset>
       </copy>
 
@@ -994,11 +1000,13 @@
       -
       -    scalatest_2.9.0-1
       -
-      - Requires three properties, old.scala.version, new.scala.version,
-      - and scalatest.version to be defined on the command line, e.g.:
+      - Requires four properties, old.scala.version, new.scala.version,
+      - new.deploy.scala.version, and scalatest.version to be defined on
+      - the command line, e.g.:
       -
       -   ant redeploy -Dold.scala.version='2.9.0'
       -                -Dnew.scala.version='2.9.0-1'
+      -                -Dnew.deploy.scala.version='2.9-1'
       -                -Dscalatest.version=1.6.1
       -
       - Retrieves the specified jars from the maven repo, in this case
@@ -1012,6 +1020,8 @@
             unless="old.scala.version" />
       <fail message="Missing new.scala.version definition." 
             unless="new.scala.version" />
+      <fail message="Missing new.deploy.scala.version definition." 
+            unless="new.deploy.scala.version" />
       <fail message="Missing scalatest.version definition." 
             unless="scalatest.version"  />
 
@@ -1051,6 +1061,8 @@
         <filterset>
           <filter token="RELEASE" value="${scalatest.version}" />
           <filter token="SCALA_VERSION" value="${new.scala.version}" />
+          <filter token="DEPLOY_SCALA_VERSION"
+                  value="${new.deploy.scala.version}" />
         </filterset>
       </copy>
 
@@ -1111,6 +1123,7 @@
         <filterset>
           <filter token="RELEASE" value="${scalatest.version}" />
           <filter token="SCALA_VERSION" value="${new.scala.version}" />
+          <filter token="SCALA_VERSION" value="${new.deploy.scala.version}" />
         </filterset>
       </copy>
 
