@@ -35,6 +35,9 @@ trait EqualityConstraints {
   def ===[T](right: T): TripleEqualsInvocation[T] = new TripleEqualsInvocation[T](right, true)
   def !==[T](right: T): TripleEqualsInvocation[T] = new TripleEqualsInvocation[T](right, false)
 
+  def ===(right: Null): TripleEqualsInvocation[Null] = new TripleEqualsInvocation[Null](right, true)
+  def !==(right: Null): TripleEqualsInvocation[Null] = new TripleEqualsInvocation[Null](right, false)
+
   def ===[T](right: Interval[T]): TripleEqualsInvocationOnInterval[T] = new TripleEqualsInvocationOnInterval[T](right, true)
   def !==[T](right: Interval[T]): TripleEqualsInvocationOnInterval[T] = new TripleEqualsInvocationOnInterval[T](right, false)
 }
