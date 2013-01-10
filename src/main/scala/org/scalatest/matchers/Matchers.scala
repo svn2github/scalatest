@@ -614,6 +614,30 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
+       * aNullRef should (not equal ("hi") and not equal (null))
+       *                                   ^
+       * </pre>
+       */
+      def equal(o: Null): Matcher[T] = {
+        matchersWrapper and {
+          new Matcher[T] {
+            def apply(left: T): MatchResult = {
+              MatchResult(
+                left != null,
+                FailureMessages("equaledNull"),
+                FailureMessages("didNotEqualNull", left),
+                FailureMessages("midSentenceEqualedNull"),
+                FailureMessages("didNotEqualNull", left)
+              )
+            }
+          }
+        }
+      }
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
        * 1 should (not be (2) and not be (3 - 1))
        *                              ^
        * </pre>
@@ -1320,6 +1344,30 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        * </pre>
        */
       def equal[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.equal(interval))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * aNullRef should (not equal (null) or not equal (null))
+       *                                   ^
+       * </pre>
+       */
+      def equal(o: Null): Matcher[T] = {
+        matchersWrapper or {
+          new Matcher[T] {
+            def apply(left: T): MatchResult = {
+              MatchResult(
+                left != null,
+                FailureMessages("equaledNull"),
+                FailureMessages("didNotEqualNull", left),
+                FailureMessages("midSentenceEqualedNull"),
+                FailureMessages("didNotEqualNull", left)
+              )
+            }
+          }
+        }
+      }
 
       /**
        * This method enables the following syntax:
@@ -3356,6 +3404,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         )
     }
 
+// TODO: Why isn't there an equal that takes a tolerance? (and later one that takes a null?)
+
     /**
      * This method enables the following syntax:
      *
@@ -3932,7 +3982,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def be(interval: Interval[T]) {
-      // if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
       if (interval.isWithin(left) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
@@ -3954,7 +4003,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def equal(interval: Interval[T]) {
-      // if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
       if (interval.isWithin(left) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
@@ -4271,6 +4319,27 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
   }
+
+  /**
+   * This method enables syntax such as the following:
+   *
+   * <pre class="stHighlight">
+   * result should equal (null)
+   *        ^
+   * </pre>
+   */
+  def equal(o: Null): Matcher[AnyRef] = 
+    new Matcher[AnyRef] {
+      def apply(left: AnyRef): MatchResult = {
+        MatchResult(
+          left == null,
+          FailureMessages("didNotEqualNull", left),
+          FailureMessages("equaledNull"),
+          FailureMessages("didNotEqualNull", left),
+          FailureMessages("midSentenceEqualedNull")
+        )
+      }
+    }
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -4860,6 +4929,27 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
     }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * map should (not equal (null))
+     *                 ^
+     * </pre>
+     */
+    def equal(o: Null): Matcher[AnyRef] =
+      new Matcher[AnyRef] {
+        def apply(left: AnyRef): MatchResult = {
+          MatchResult(
+            left != null,
+            FailureMessages("equaledNull"),
+            FailureMessages("didNotEqualNull", left),
+            FailureMessages("midSentenceEqualedNull"),
+            FailureMessages("didNotEqualNull", left)
+          )
+        }
+      }
 
     /**
      * This method enables the following syntax: 

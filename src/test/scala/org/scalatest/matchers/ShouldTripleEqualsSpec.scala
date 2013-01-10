@@ -88,12 +88,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           super1 should === (sub1)
           sub1 should === (super1)
 
-          intercept[TestFailedException] { super1 should === (null) }
+          val caught1 = intercept[TestFailedException] { super1 should === (null) }
+          caught1.getMessage should be ("Super(1) did not equal null")
           super1 should !== (null)
 
           nullSuper should === (null)
-          intercept[TestFailedException] { nullSuper should !== (null) }
-          intercept[TestFailedException] { nullSuper should === (super1) }
+          val caught2 = intercept[TestFailedException] { nullSuper should !== (null) }
+          caught2.getMessage should be ("null equaled null")
+          val caught3 = intercept[TestFailedException] { nullSuper should === (super1) }
+          caught3.getMessage should be ("null did not equal Super(1)")
           nullSuper should !== (super1)
 
           Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
@@ -370,12 +373,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           super1 should === (sub1)
           sub1 should === (super1)
 
-          intercept[TestFailedException] { super1 should === (null) }
+          val caught1 = intercept[TestFailedException] { super1 should === (null) }
+          caught1.getMessage should be ("Super(1) did not equal null")
           super1 should !== (null)
 
           nullSuper should === (null)
-          intercept[TestFailedException] { nullSuper should !== (null) }
-          intercept[TestFailedException] { nullSuper should === (super1) }
+          val caught2 = intercept[TestFailedException] { nullSuper should !== (null) }
+          caught2.getMessage should be ("null equaled null")
+          val caught3 = intercept[TestFailedException] { nullSuper should === (super1) }
+          caught3.getMessage should be ("null did not equal Super(1)")
           nullSuper should !== (super1)
 
           Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
@@ -644,12 +650,15 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Should
           intercept[TestFailedException] { 1L should !== (1) }
 
           // Should work sensibly with nulls
-          intercept[TestFailedException] { super1 should === (null) }
+          val caught1 = intercept[TestFailedException] { super1 should === (null) }
+          caught1.getMessage should be ("Super(1) did not equal null")
           super1 should !== (null)
 
           nullSuper should === (null)
-          intercept[TestFailedException] { nullSuper should !== (null) }
-          intercept[TestFailedException] { nullSuper should === (super1) }
+          val caught2 = intercept[TestFailedException] { nullSuper should !== (null) }
+          caught2.getMessage should be ("null equaled null")
+          val caught3 = intercept[TestFailedException] { nullSuper should === (super1) }
+          caught3.getMessage should be ("null did not equal Super(1)")
           nullSuper should !== (super1)
 
           Map("I" -> 1, "II" -> 2) should === (Map("I" -> 1, "II" -> 2))
