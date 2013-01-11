@@ -34,7 +34,8 @@
     <property name="classes" value="${jar.contents}" />
     <property name="generators" value="project" />
     <property name="build.generated.src" value="${build}/scala-${scala.version}/src_managed/main/scala" />
-    <property name="build.generated.tests" value="gen/${build}/scala-${scala.version}/src_managed/test/scala" />
+	<property name="build.generated.tests.src" value="gentests/${build}/scala-${scala.version}/src_managed/test/scala" />
+	<property name="build.generated.tests.bin" value="gentests/${build}/scala-${scala.version}/bin" />
     <property name="build.tests" value="${build}/tests" />
     <property name="build.tests.jar" value="${build}/tests.jar" />
     <property name="build.examples" value="${build}/examples" />
@@ -68,7 +69,8 @@
         <mkdir dir="${build.examples}" />
         <mkdir dir="${build.generators}" />
         <mkdir dir="${build.generated.src}" />
-        <mkdir dir="${build.generated.tests}" />
+    	<mkdir dir="${build.generated.tests.src}" />
+    	<mkdir dir="${build.generated.tests.bin}" />
         <mkdir dir="${build.osgi-tests}" />
         <mkdir dir="${dist}" />
         <mkdir dir="${demodoc}" />
@@ -161,6 +163,13 @@
             "${build}/scala-${scala.version}/src_managed/main/scala/org/scalatest/junit/MustMatchersForJUnit.scala">
           </mapper>
         </uptodate>
+    	
+    	<uptodate property="geninspectors.uptodate"
+    	    	  srcfile="project/GenInspectors.scala">
+    	  <mapper type="merge" to=
+    	    "${build.generated.tests.src}/org/scalatest/inspectors/nested/NestedInspectorsSpec.scala">
+    	  </mapper>
+    	</uptodate>
 
         <uptodate property="gengen.uptodate"
                   srcfile="project/GenGen.scala">
@@ -172,23 +181,25 @@
 
     <target name="taskdefscalatest">
         <taskdef name="scalatest" classname="org.scalatest.tools.ScalaTestAntTask">
-            <classpath refid="build.class.path" />
+        	<classpath refid="build.test.class.path" />
         </taskdef>
     </target>
 
     <target name="clean">
         <delete dir="${build}" />
-    	<delete dir="gen" />
+    	<delete dir="gentests" />
         <delete dir="test-output" quiet="true" />
     </target>
 
     <target name="compile-codegenerators" depends="init">
         <scalac srcdir="${generators}" destdir="${build.generators}" target="jvm-1.5" deprecation="yes" classpathref="build.generators.class.path">
+        	<include name="GenFramework.scala" />
         	<include name="GenDeprecatedShouldMatchersTests.scala" />
         	<include name="GenFunSuiteN.scala" />
         	<include name="GenGen.scala" />
         	<!--<include name="GenMustMatchers.scala" />-->
             <include name="GenMatchers.scala" />
+        	<include name="GenInspectors.scala" />
         	<include name="GenTable.scala" />
         	<include name="GenTheyWord.scala" />
         </scalac>
@@ -211,6 +222,15 @@
             <arg value="${scala.version}" />
         </java>
     </target>
+	
+	<target name="geninspectors" depends="init, compile-codegenerators"
+		    unless="geninspectors.uptodate">
+      <java classname="GenInspectors"
+            classpathref="run.generators.class.path" fork="false">
+        <arg value="${build.generated.tests.src}" />
+        <arg value="${scala.version}" />
+	  </java>
+	</target>
 
     <target name="gengen" depends="init, compile-codegenerators"
             unless="gengen.uptodate">
@@ -242,7 +262,7 @@
     <target name="compile" depends="compile-main, compile-tests"/>
 
     <!--<target name="compile-main" depends="init">-->
-    <target name="compile-main" depends="init, gentables, genmatchers, gengen">
+    <target name="compile-main" depends="init, gentables, genmatchers, gengen, geninspectors">
         <!--<fail message="Wrong JVM [${ant.java.version}]. Include 'java6' target to use java 6."
               unless="jvm.ok"/>-->
 
@@ -285,14 +305,33 @@
 
     <target name="compile-tests" depends="compile-main">
 
-        <!-- Compile the Scala code from ${scalasrc.test} into ${build.tests} -->
-        <scalac srcdir="${scalasrc.test}:${javasrc.test}" destdir="${build.tests}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC"/>
+      <!-- Compile the Scala code from ${scalasrc.test} into ${build.tests} -->
+      <scalac srcdir="${scalasrc.test}:${javasrc.test}" destdir="${build.tests}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC"/>
 
-        <!-- Compile the Scala code from ${build.generated.tests} into ${classes}. Scalac will parse any referenced .java files. -->
-        <scalac srcdir="${build.generated.tests}" destdir="${build.tests}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC" />
-
-        <!-- Compile the Java code from ${javasrc.test} into ${build.tests} -->
-        <javac srcdir="${javasrc.test}" destdir="${build.tests}" compiler="javac1.5" memoryMaximumSize="2000M" fork="true" classpath="${classes}:${org.scala-lang:scala-library:jar}:${junit:junit:jar}" debug="yes" />
+      <!-- Compile the Java code from ${javasrc.test} into ${build.tests} -->
+      <javac srcdir="${javasrc.test}" destdir="${build.tests}" compiler="javac1.5" memoryMaximumSize="2000M" fork="true" classpath="${classes}:${org.scala-lang:scala-library:jar}:${junit:junit:jar}" debug="yes" />
+    </target>
+	
+	<target name="compile-gentests" depends="compile-tests">
+      <scalac srcdir="${build.generated.tests.src}" destdir="${build.generated.tests.bin}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC">
+		<include name="org/scalatest/junit/*.scala"/>
+		<include name="org/scalatest/matchers/*.scala"/>
+		<include name="org/scalatest/prop/*.scala"/>
+      </scalac>
+	  <scalac srcdir="${build.generated.tests.src}" destdir="${build.generated.tests.bin}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC">
+		<include name="org/scalatest/inspectors/all/*.scala"/>
+		<include name="org/scalatest/inspectors/atLeast/*.scala"/>
+		<include name="org/scalatest/inspectors/atMost/*.scala"/>
+      </scalac>
+	  <scalac srcdir="${build.generated.tests.src}" destdir="${build.generated.tests.bin}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC">
+        <include name="org/scalatest/inspectors/between/*.scala"/>
+        <include name="org/scalatest/inspectors/every/*.scala"/>
+        <include name="org/scalatest/inspectors/exactly/*.scala"/>
+      </scalac>
+      <scalac srcdir="${build.generated.tests.src}" destdir="${build.generated.tests.bin}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC">
+        <include name="org/scalatest/inspectors/nested/*.scala"/>
+        <include name="org/scalatest/inspectors/no/*.scala"/>
+      </scalac>
     </target>
 
     <target name="compile-examples" depends="compile-main">
@@ -472,6 +511,15 @@
             <config name="dbname" value="testdb" />
         </scalatest>
     </target>
+	
+	<target name="run-gentests" depends="compile-gentests,taskdefscalatest">
+      <scalatest fork="true" runpath="${build.generated.tests.bin}" parallel="true" haltonfailure="true">
+		<jvmarg value="-XX:MaxPermSize=512m"/>
+		<reporter type="graphic"/>
+        <reporter type="stdout" config="DF"/>
+        <wildcard package="org.scalatest" />
+      </scalatest>
+	</target>
 
     <target name="testfromjar" depends="jartests"
             description="test from test.jar after jarring test class files">
@@ -810,7 +858,7 @@
       <jar jarfile="${build}/scalatest-test-sources.jar">
         <fileset dir="src/test/scala"/>
         <fileset dir="src/test/java"/>
-        <fileset dir="${build.generated.tests}"/>
+        <fileset dir="${build.generated.tests.src}"/>
       </jar>
     </target>
 

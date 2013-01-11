@@ -59,6 +59,8 @@ import exceptions.StackDepthExceptionHelper.getStackDepthFun
 import exceptions._
 import exceptions._
 import collection.mutable.ListBuffer
+import collection.GenTraversable
+import annotation.tailrec
 
 /*
  * <h2>Using <code>info</code> and <code>markup</code></h2>
@@ -1696,15 +1698,15 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    */
   def expectedTestCount(filter: Filter): Int = {
 
-    // [bv: here was another tricky refactor. How to increment a counter in a loop]
-    def countNestedSuiteTests(nestedSuites: List[Suite], filter: Filter): Int =
-      nestedSuites.toList match {
-        case List() => 0
-        case nestedSuite :: nestedSuites => 
-          nestedSuite.expectedTestCount(filter) + countNestedSuiteTests(nestedSuites, filter)
-    }
+    @tailrec
+    def countNestedSuiteTests(acc: Int, nestedSuitesToCount: List[Suite], filter: Filter): Int =
+      nestedSuitesToCount match {
+        case List() => acc
+        case head :: tail => 
+          countNestedSuiteTests(acc + head.expectedTestCount(filter), tail, filter)
+      }
 
-    filter.runnableTestCount(testNames, tags, suiteId) + countNestedSuiteTests(nestedSuites.toList, filter)
+     countNestedSuiteTests(filter.runnableTestCount(testNames, tags, suiteId), nestedSuites.toList, filter)
   }
 
   // Wrap any non-DispatchReporter, non-CatchReporter in a CatchReporter,
@@ -2083,6 +2085,9 @@ used for test events like succeeded/failed, etc.
       Resources("exceptionThrown", e.getClass.getName) // Say something like, "java.lang.Exception was thrown."
 
   def indentation(level: Int) = "  " * level
+  
+  def indentLines(level: Int, lines: GenTraversable[String]) = 
+    lines.map(line => line.split("\n").map(indentation(level) + _).mkString("\n"))
 
   def reportTestFailed(theSuite: Suite, report: Reporter, throwable: Throwable, testName: String, testText: String,
                        recordedEvents: collection.immutable.IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, formatter: Formatter, location: Option[Location]) {
