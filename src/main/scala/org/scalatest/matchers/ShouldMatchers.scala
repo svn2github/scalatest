@@ -1464,7 +1464,30 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      */
     def should(haveWord: HaveWord): ResultOfHaveWordForTraversable[E] = 
       new ResultOfHaveWordForTraversable(left.asInstanceOf[GenTraversable[E]], true)
-
+    
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * traversable should contain theSameElementsAs anotherTraversable
+     *             ^
+     * </pre>
+     */
+    def should(containWord: ContainWord) = 
+      new ResultOfContainWordForTraversable(left.asInstanceOf[GenTraversable[E]], true)
+    
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * traversable should contain customContainMatcher
+     *             ^
+     * </pre>
+     */
+    def should(containMatcher: ContainMatcher[E]) {
+      new ResultOfContainWordForTraversable(left.asInstanceOf[GenTraversable[E]], true).apply(containMatcher)
+    }
+    
     /**
      * This method enables syntax such as the following:
      *
@@ -1485,7 +1508,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      */
     def should(notWord: NotWord): ResultOfNotWordForTraversable[E, GenTraversable[E]] =
       new ResultOfNotWordForTraversable(left.asInstanceOf[GenTraversable[E]], false)
-
+    
     /**
      * This method enables syntax such as the following:
      *
@@ -1734,7 +1757,30 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      */
     def should(haveWord: HaveWord): ResultOfHaveWordForSeq[E] =
       new ResultOfHaveWordForSeq(left.asInstanceOf[GenSeq[E]], true)
-
+    
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * seq should contain theSameElementsAs anotherSeq
+     *     ^
+     * </pre>
+     */
+    def should(containWord: ContainWord) = 
+      new ResultOfContainWordForTraversable(left.asInstanceOf[GenTraversable[E]], true)
+    
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * traversable should contain customContainMatcher
+     *             ^
+     * </pre>
+     */
+    def should(containMatcher: ContainMatcher[E]) {
+      new ResultOfContainWordForTraversable(left.asInstanceOf[GenTraversable[E]], true).apply(containMatcher)
+    }
+    
     /**
      * This method enables syntax such as the following:
      *

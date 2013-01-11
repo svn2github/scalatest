@@ -36,9 +36,9 @@ class JMockCycleSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
         val oneFishMock = mock[OneFish]
         val twoFishMock = mock[TwoFish]
 
-        expecting { e => import e._
-          oneOf (oneFishMock).eat("red fish")
-          oneOf (twoFishMock).eat("blue fish")
+        expecting { e => import e.{oneOf => OneOf}
+          OneOf (oneFishMock).eat("red fish")
+          OneOf (twoFishMock).eat("blue fish")
         }
 
         whenExecuting {
@@ -58,9 +58,9 @@ class JMockCycleSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
         val oneFishMock = mock[OneFish]
         val twoFishMock = mock[TwoFish]
 
-        expecting { e => import e._
-          oneOf (oneFishMock).eat("red fish")
-          oneOf (twoFishMock).eat("blue fish")
+        expecting { e => import e.{oneOf => OneOf}
+          OneOf (oneFishMock).eat("red fish")
+          OneOf (twoFishMock).eat("blue fish")
         }
 
         whenExecuting {
@@ -80,9 +80,9 @@ class JMockCycleSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
         val oneFishMock = mock[OneFish]
         val twoFishMock = mock[TwoFish]
 
-        expecting { e => import e._
-          oneOf (oneFishMock).eat("red fish")
-          oneOf (twoFishMock).eat("blue fish")
+        expecting { e => import e.{oneOf => OneOf}
+          OneOf (oneFishMock).eat("red fish")
+          OneOf (twoFishMock).eat("blue fish")
         }
 
         whenExecuting {
@@ -116,16 +116,16 @@ class JMockCycleSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
         }
         val oneFishMock = mock[OneFish]
 
-        expecting { e => import e._
-          oneOf (oneFishMock).doString(withArg(thatEquals("red fish")))
-          oneOf (oneFishMock).doInt(withArg(thatEquals(5)))
-          oneOf (oneFishMock).doShort(withArg(thatEquals(5.asInstanceOf[Short])))
-          oneOf (oneFishMock).doByte(withArg(thatEquals(5.asInstanceOf[Byte])))
-          oneOf (oneFishMock).doLong(withArg(thatEquals(5L)))
-          oneOf (oneFishMock).doBoolean(withArg(thatEquals(true)))
-          oneOf (oneFishMock).doFloat(withArg(thatEquals(5.0f)))
-          oneOf (oneFishMock).doDouble(withArg(thatEquals(5.0d)))
-          oneOf (oneFishMock).doChar(withArg(thatEquals('5')))
+        expecting { e => import e.{oneOf => OneOf, withArg}
+          OneOf (oneFishMock).doString(withArg(thatEquals("red fish")))
+          OneOf (oneFishMock).doInt(withArg(thatEquals(5)))
+          OneOf (oneFishMock).doShort(withArg(thatEquals(5.asInstanceOf[Short])))
+          OneOf (oneFishMock).doByte(withArg(thatEquals(5.asInstanceOf[Byte])))
+          OneOf (oneFishMock).doLong(withArg(thatEquals(5L)))
+          OneOf (oneFishMock).doBoolean(withArg(thatEquals(true)))
+          OneOf (oneFishMock).doFloat(withArg(thatEquals(5.0f)))
+          OneOf (oneFishMock).doDouble(withArg(thatEquals(5.0d)))
+          OneOf (oneFishMock).doChar(withArg(thatEquals('5')))
         }
 
         whenExecuting {
@@ -164,16 +164,16 @@ class JMockCycleSpec extends FlatSpec with ShouldMatchers with SharedHelpers {
         }
         val oneFishMock = mock[OneFish]
 
-        expecting { e => import e._
-          oneOf (oneFishMock).doString(withArg("red fish"))
-          oneOf (oneFishMock).doInt(withArg(5))
-          oneOf (oneFishMock).doShort(withArg(5.asInstanceOf[Short]))
-          oneOf (oneFishMock).doByte(withArg(5.asInstanceOf[Byte]))
-          oneOf (oneFishMock).doLong(withArg(5L))
-          oneOf (oneFishMock).doBoolean(withArg(true))
-          oneOf (oneFishMock).doFloat(withArg(5.0f))
-          oneOf (oneFishMock).doDouble(withArg(5.0d))
-          oneOf (oneFishMock).doChar(withArg('5'))
+        expecting { e => import e.{oneOf => OneOf, withArg}
+          OneOf (oneFishMock).doString(withArg("red fish"))
+          OneOf (oneFishMock).doInt(withArg(5))
+          OneOf (oneFishMock).doShort(withArg(5.asInstanceOf[Short]))
+          OneOf (oneFishMock).doByte(withArg(5.asInstanceOf[Byte]))
+          OneOf (oneFishMock).doLong(withArg(5L))
+          OneOf (oneFishMock).doBoolean(withArg(true))
+          OneOf (oneFishMock).doFloat(withArg(5.0f))
+          OneOf (oneFishMock).doDouble(withArg(5.0d))
+          OneOf (oneFishMock).doChar(withArg('5'))
         }
 
         whenExecuting {
