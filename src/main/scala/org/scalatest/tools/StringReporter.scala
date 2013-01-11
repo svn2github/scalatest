@@ -446,14 +446,29 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
 
       // TODO: Reduce duplication among InfoProvided, ScopeOpened, and ScopeClosed
       case ScopeClosed(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
-
+        
         val testNameInfo = nameInfo.testName
         val stringToPrint = stringToPrintWhenNoError("scopeClosed", formatter, nameInfo.suiteName, nameInfo.testName, Some(message)) // TODO: I htink I want ot say Scope Closed - + message
         stringToPrint match {
           case Some(string) => printPossiblyInColor(string, ansiGreen)
           case None =>
         }
-
+        
+      case ScopePending(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) => 
+        val stringToPrint =
+          if (presentUnformatted)
+            Some(Resources("scopePending", nameInfo.suiteName + ": " + message))
+          else
+            formatter match {
+              case Some(IndentedText(formattedText, _, _)) => Some(Resources("specTextAndNote", formattedText, Resources("pendingNote")))
+              case Some(MotionToSuppress) => None
+              case _ => Some(Resources("scopePending", nameInfo.suiteName + ": " + message))
+            }
+        stringToPrint match {
+          case Some(string) => printPossiblyInColor(string, ansiYellow)
+          case None =>
+        }
+        
       case mpEvent: MarkupProvided =>
         handleMarkupProvided(mpEvent, ansiGreen)
 
@@ -563,12 +578,21 @@ org.scalatest.prop.TableDrivenPropertyCheckFailedException: TestFailedException 
         // totalNumberOfTestsRun=Total number of tests run was: {0}
         printPossiblyInColor(Resources("totalNumberOfTestsRun", testsCompletedCount.toString), ansiCyan)
 
-        // Suite Summary: completed {0}, aborted {1}
-        printPossiblyInColor(Resources("suiteSummary", suitesCompletedCount.toString, suitesAbortedCount.toString), ansiCyan)
+        if (scopesPendingCount > 0) {
+          // Suite Summary: completed {0}, aborted {1}  Scopes: pending {2}
+          printPossiblyInColor(Resources("suiteScopeSummary", suitesCompletedCount.toString, suitesAbortedCount.toString, scopesPendingCount.toString), ansiCyan)
+        }
+        else {
+          // Suite Summary: completed {0}, aborted {1}
+          printPossiblyInColor(Resources("suiteSummary", suitesCompletedCount.toString, suitesAbortedCount.toString), ansiCyan)
+        }
 
         // Test Summary: succeeded {0}, failed {1}, ignored, {2}, pending {3}, canceled {4}
         printPossiblyInColor(Resources("testSummary", testsSucceededCount.toString, testsFailedCount.toString, testsCanceledCount.toString, testsIgnoredCount.toString, testsPendingCount.toString), ansiCyan)
 
+        
+          
+        
         // *** 1 SUITE ABORTED ***
         if (suitesAbortedCount == 1)
           printPossiblyInColor(Resources("oneSuiteAborted"), ansiRed)

@@ -54,6 +54,7 @@ private[tools] class FilterReporter(reporter: Reporter, configSet: Set[ReporterC
       case event: InfoProvided => if (!configSet.contains(FilterInfoProvided)) report(event)
       case event: ScopeOpened => if (!configSet.contains(FilterScopeOpened)) report(event)
       case event: ScopeClosed => if (!configSet.contains(FilterScopeClosed)) report(event)
+      case event: ScopePending => if (!configSet.contains(FilterScopePending)) report(event)
       case event: MarkupProvided => if (!configSet.contains(FilterMarkupProvided)) report(event)
     }
   }

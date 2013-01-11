@@ -244,6 +244,7 @@ private[scalatest] case class ConcurrentConfig(numThreads: Int, enableSuiteSorti
  * <li> <code><b>O</b></code> - drop <code>InfoProvided</code> events</li>
  * <li> <code><b>P</b></code> - drop <code>ScopeOpened</code> events</li>
  * <li> <code><b>Q</b></code> - drop <code>ScopeClosed</code> events</li>
+ * <li> <code><b>R</b></code> - drop <code>ScopePending</code> events</li>
  * <li> <code><b>M</b></code> - drop <code>MarkupProvided</code> events</li>
  * </ul>
  *
@@ -1223,12 +1224,12 @@ object Runner {
         case 'Y' =>  throw new IllegalArgumentException("Use of Y was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'Z' => throw new IllegalArgumentException("Use of Z was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'T' => // Use for Dots
-        case 'P' =>throw new IllegalArgumentException("Use of P was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
+        //case 'P' =>throw new IllegalArgumentException("Use of P was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'B' =>throw new IllegalArgumentException("Use of B was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'I' =>throw new IllegalArgumentException("Use of I was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         // case 'S' => // Use for Short Stack Traces
         case 'A' =>throw new IllegalArgumentException("Use of A was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
-        case 'R' =>throw new IllegalArgumentException("Use of R was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
+        //case 'R' =>throw new IllegalArgumentException("Use of R was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'G' =>throw new IllegalArgumentException("Use of G was deprecated in ScalaTest 1.0 and removed in 1.5. Please check the Scaladoc documentation of org.scalatest.Runner for information on valid Reporter config parameters.")
         case 'N' => set += FilterTestStarting
         case 'C' => set += FilterTestSucceeded
@@ -1237,6 +1238,9 @@ object Runner {
         case 'H' => set += FilterSuiteStarting
         case 'L' => set += FilterSuiteCompleted
         case 'O' => set += FilterInfoProvided
+        case 'P' => set += FilterScopeOpened
+        case 'Q' => set += FilterScopeClosed
+        case 'R' => set += FilterScopePending
         case 'W' => set += PresentWithoutColor
         case 'F' => set += PresentFullStackTraces
         case 'S' => set += PresentShortStackTraces

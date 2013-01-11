@@ -176,6 +176,7 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
         case e: MarkupProvided => idx += 1
         case e: ScopeOpened    => idx += 1
         case e: ScopeClosed    => idx += 1
+        case e: ScopePending   => idx += 1
         case e: TestPending    => unexpected(e)
         case e: TestCanceled   => unexpected(e)
         case e: RunStarting    => unexpected(e)
@@ -298,6 +299,7 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
 
         case e: ScopeOpened    => idx += 1
         case e: ScopeClosed    => idx += 1
+        case e: ScopePending   => idx += 1
         case e: InfoProvided   => idx += 1
         case e: MarkupProvided => idx += 1
         case e: SuiteCompleted => unexpected(e)

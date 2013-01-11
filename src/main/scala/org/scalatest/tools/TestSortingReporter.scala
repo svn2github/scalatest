@@ -155,6 +155,8 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
           handleSuiteEvent(scopeOpened)
         case scopeClosed: ScopeClosed =>
           handleSuiteEvent(scopeClosed)
+        case scopePending: ScopePending => 
+          handleSuiteEvent(scopePending)
         case infoProvided: InfoProvided =>
           handleSuiteEvent(infoProvided)
         case markupProvided: MarkupProvided =>
@@ -168,7 +170,7 @@ private[scalatest] class TestSortingReporter(suiteId: String, dispatch: Reporter
     }
   }
 
-  // This is either ScopeOpened, ScopeClosed, InfoProvided, or MarkupProvided
+  // This is either ScopeOpened, ScopeClosed, ScopePending, InfoProvided, or MarkupProvided
   // Called within synchronized
   private def handleSuiteEvent(event: Event) {
     val listBuffer = new ListBuffer[Event]()

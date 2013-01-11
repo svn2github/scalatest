@@ -61,6 +61,7 @@ private[tools] class EventHolder(val event: Event, val message: Option[String], 
           case event: RunCompleted => firstString
           case event: ScopeOpened => firstString + " - " + event.message
           case event: ScopeClosed => firstString
+          case event: ScopePending => firstString + " - " + event.message
           case event: InfoProvided => firstString + " - " + event.message
           case event: MarkupProvided => firstString + " - " + event.text
           case event: SuiteStarting => firstAndSecondString(firstString, event.suiteName)

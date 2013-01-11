@@ -15,4 +15,5 @@ private[scalatest] case class SuiteResult(
   testsIgnoredCount: Int, 
   testsPendingCount: Int, 
   testsCanceledCount: Int, 
+  scopesPendingCount: Int, 
   isCompleted: Boolean)

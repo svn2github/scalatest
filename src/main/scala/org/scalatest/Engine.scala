@@ -47,6 +47,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
   abstract class Branch(parentOption: Option[Branch]) extends Node(parentOption) {
     var subNodes: List[Node] = Nil
+    var pending: Boolean = false
   }
 
   case object Trunk extends Branch(None)
@@ -304,10 +305,12 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
         val descriptionTextWithOptionalPrefix = prependChildPrefix(parent, descriptionText)
         val indentationLevel = desc.indentationLevel
-        reportScopeOpened(theSuite, args.reporter, args.tracker, None, descriptionTextWithOptionalPrefix, indentationLevel, false, lineInFile)
+        reportScopeOpened(theSuite, args.reporter, args.tracker, descriptionTextWithOptionalPrefix, indentationLevel, false, lineInFile)
         traverseSubNodes()
-        reportScopeClosed(theSuite, args.reporter, args.tracker, None, descriptionTextWithOptionalPrefix, indentationLevel, false, lineInFile)
-
+        if (desc.pending) 
+          reportScopePending(theSuite, args.reporter, args.tracker, descriptionTextWithOptionalPrefix, indentationLevel, false, lineInFile)
+        else 
+          reportScopeClosed(theSuite, args.reporter, args.tracker, descriptionTextWithOptionalPrefix, indentationLevel, false, lineInFile)
       case Trunk =>
         traverseSubNodes()
     }
@@ -477,13 +480,19 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     
     val oldBranch = currentBranch
     val newBranch = DescriptionBranch(currentBranch, description, childPrefix, branchLocation)
-    oldBranch.subNodes ::= newBranch
 
     // Update atomic, making the current branch to the new branch
     updateAtomic(oldBundle, Bundle(newBranch, testNamesList, testsMap, tagsMap, registrationClosed))
-
-    fun // Execute the function
-
+    oldBranch.subNodes ::= newBranch
+    
+    try {
+      fun // Execute the function
+    }
+    catch {
+      case e: exceptions.TestPendingException =>
+        newBranch.pending = true
+    }
+      
     { // Put the old branch back as the current branch
       val oldBundle = atomic.get
       val (currentBranch, testNamesList, testsMap, tagsMap, registrationClosed) = oldBundle.unpack

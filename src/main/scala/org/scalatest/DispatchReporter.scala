@@ -59,6 +59,7 @@ private[scalatest] class DispatchReporter(val reporters: List[Reporter], val out
         var testsPendingCount = 0
         var suitesCompletedCount = 0
         var suitesAbortedCount = 0
+        var scopesPendingCount = 0
       }
   
       val counterMap = scala.collection.mutable.Map[Int, Counter]()
@@ -91,7 +92,8 @@ private[scalatest] class DispatchReporter(val reporters: List[Reporter], val out
                   counter.testsPendingCount,
                   counter.testsCanceledCount,
                   counter.suitesCompletedCount,
-                  counter.suitesAbortedCount
+                  counter.suitesAbortedCount, 
+                  counter.scopesPendingCount
                 )
               )
             }
@@ -121,6 +123,7 @@ private[scalatest] class DispatchReporter(val reporters: List[Reporter], val out
                   case _: TestPending => incrementCount(event, _.testsPendingCount += 1); event
                   case _: SuiteCompleted => incrementCount(event, _.suitesCompletedCount += 1); event
                   case _: SuiteAborted => incrementCount(event, _.suitesAbortedCount += 1); event
+                  case _: ScopePending => incrementCount(event, _.scopesPendingCount += 1); event
   
                   case oldRunCompleted @ RunCompleted(ordinal, duration, summary, formatter, location, payload, threadName, timeStamp) =>
                     updatedSummary(summary, ordinal) match {

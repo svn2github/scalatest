@@ -379,6 +379,7 @@ private[scalatest] class RunnerJFrame(
                 case event: InfoProvided => nameFromNameInfo(event.nameInfo)
                 case event: ScopeOpened => nameFromNameInfo(Some(event.nameInfo))
                 case event: ScopeClosed => nameFromNameInfo(Some(event.nameInfo))
+                case event: ScopePending => nameFromNameInfo(Some(event.nameInfo))
                 case event: MarkupProvided => nameFromNameInfo(event.nameInfo) // Should not get here because I'm not registering MarkupInfos
                 case event: SuiteStarting => Some(event.suiteName)
                 case event: SuiteCompleted => Some(event.suiteName)
@@ -400,6 +401,7 @@ private[scalatest] class RunnerJFrame(
                 case event: InfoProvided => None
                 case event: ScopeOpened => None
                 case event: ScopeClosed => None
+                case event: ScopePending => None
                 case event: MarkupProvided => None // Shouldn't get here because not registering MarkupInfos
                 case event: SuiteStarting => None
                 case event: SuiteCompleted => event.duration
@@ -994,7 +996,12 @@ private[scalatest] class RunnerJFrame(
           usingEventDispatchThread {
             registerEvent(event)
           }
-
+          
+        case ScopePending(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
+          usingEventDispatchThread {
+            registerEvent(event)
+          }
+          
         case MarkupProvided(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
       }
     }
@@ -1409,6 +1416,12 @@ private[scalatest] class RunnerJFrame(
             registerRerunEvent(event)
           }
   
+        case ScopePending(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
+
+          usingEventDispatchThread {
+            registerRerunEvent(event)
+          }
+          
         case MarkupProvided(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
       }
     }
@@ -1513,6 +1526,7 @@ private[tools] object RunnerJFrame {
       case PresentInfoProvided => "INFO_PROVIDED"
       case PresentScopeOpened => "SCOPE_OPENED"
       case PresentScopeClosed => "SCOPE_CLOSED"
+      case PresentScopePending => "SCOPE_PENDING"
       case PresentMarkupProvided => "MARKUP_PROVIDED" // Shouldn't get here, because not registering these events in the GUI
       case PresentRunStopped => "RUN_STOPPED"
       case PresentRunAborted => "RUN_ABORTED"

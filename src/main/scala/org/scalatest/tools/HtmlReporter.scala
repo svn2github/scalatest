@@ -278,6 +278,17 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
               case ScopeClosed(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
                 scopeStack.pop
                 NodeSeq.Empty
+                
+              case ScopePending(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) => 
+                val testNameInfo = nameInfo.testName
+                val stringToPrint = stringToPrintWhenNoError("scopePending", formatter, nameInfo.suiteName, nameInfo.testName)
+                stringToPrint match {
+                  case Some(string) => 
+                    val elementId = generateElementId
+                    scope(elementId, string, getIndentLevel(formatter) + 1)
+                  case None => 
+                    NodeSeq.Empty
+                }
           
               case TestSucceeded(ordinal, suiteName, suiteId, suiteClassName, testName, testText, recordedEvents, duration, formatter, location, rerunnable, payload, threadName, timeStamp) => 
             
@@ -899,13 +910,14 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
           throw new IllegalStateException("Expected SuiteStarting for completion event: " + event + " in the head of suite events, but we got no suite event at all")
         sortedSuiteEvents.head match {
           case suiteStarting: SuiteStarting => 
-            val suiteResult = sortedSuiteEvents.foldLeft(SuiteResult(suiteId, suiteName, suiteClassName, duration, suiteStarting, event, Vector.empty ++ sortedSuiteEvents.tail, 0, 0, 0, 0, 0, true)) { case (r, e) => 
+            val suiteResult = sortedSuiteEvents.foldLeft(SuiteResult(suiteId, suiteName, suiteClassName, duration, suiteStarting, event, Vector.empty ++ sortedSuiteEvents.tail, 0, 0, 0, 0, 0, 0, true)) { case (r, e) => 
               e match {
                 case testSucceeded: TestSucceeded => r.copy(testsSucceededCount = r.testsSucceededCount + 1)
                 case testFailed: TestFailed => r.copy(testsFailedCount = r.testsFailedCount + 1)
                 case testIgnored: TestIgnored => r.copy(testsIgnoredCount = r.testsIgnoredCount + 1)
                 case testPending: TestPending => r.copy(testsPendingCount = r.testsPendingCount + 1)
                 case testCanceled: TestCanceled => r.copy(testsCanceledCount = r.testsCanceledCount + 1)
+                case scopePending: ScopePending => r.copy(scopesPendingCount = r.scopesPendingCount + 1)
                 case _ => r
               }
             }
@@ -923,13 +935,14 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
           throw new IllegalStateException("Expected SuiteStarting for completion event: " + event + " in the head of suite events, but we got no suite event at all")
         sortedSuiteEvents.head match {
           case suiteStarting: SuiteStarting => 
-            val suiteResult = sortedSuiteEvents.foldLeft(SuiteResult(suiteId, suiteName, suiteClassName, duration, suiteStarting, event, Vector.empty ++ sortedSuiteEvents.tail, 0, 0, 0, 0, 0, false)) { case (r, e) => 
+            val suiteResult = sortedSuiteEvents.foldLeft(SuiteResult(suiteId, suiteName, suiteClassName, duration, suiteStarting, event, Vector.empty ++ sortedSuiteEvents.tail, 0, 0, 0, 0, 0, 0, false)) { case (r, e) => 
               e match {
                 case testSucceeded: TestSucceeded => r.copy(testsSucceededCount = r.testsSucceededCount + 1)
                 case testFailed: TestFailed => r.copy(testsFailedCount = r.testsFailedCount + 1)
                 case testIgnored: TestIgnored => r.copy(testsIgnoredCount = r.testsIgnoredCount + 1)
                 case testPending: TestPending => r.copy(testsPendingCount = r.testsPendingCount + 1)
                 case testCanceled: TestCanceled => r.copy(testsCanceledCount = r.testsCanceledCount + 1)
+                case scopePending: ScopePending => r.copy(scopesPendingCount = r.scopesPendingCount + 1)
                 case _ => r
               }
             }
@@ -965,6 +978,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         }
       case e: ScopeOpened    => e.nameInfo.suiteId == suiteId
       case e: ScopeClosed    => e.nameInfo.suiteId == suiteId
+      case e: ScopePending   => e.nameInfo.suiteId == suiteId
       case e: SuiteStarting  => e.suiteId == suiteId
       case _ => false
     }
@@ -1005,7 +1019,10 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
     
   // Suites: completed {0}, aborted {1}
   private def getSuiteSummary(summary: Summary) = 
-    Resources("suiteSummary", summary.suitesCompletedCount.toString, summary.suitesAbortedCount.toString)
+    if (summary.scopesPendingCount > 0)       
+      Resources("suiteScopeSummary", summary.suitesCompletedCount.toString, summary.suitesAbortedCount.toString, summary.scopesPendingCount.toString)
+    else
+      Resources("suiteSummary", summary.suitesCompletedCount.toString, summary.suitesAbortedCount.toString)
 
   // Tests: succeeded {0}, failed {1}, canceled {4}, ignored {2}, pending {3}
   private def getTestSummary(summary: Summary) = 

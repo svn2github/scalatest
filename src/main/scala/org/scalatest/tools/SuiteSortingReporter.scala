@@ -82,6 +82,8 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter, sortingTimeout
           handleTestEvents(scopeOpened.nameInfo.suiteId, scopeOpened)
         case scopeClosed: ScopeClosed =>
           handleTestEvents(scopeClosed.nameInfo.suiteId, scopeClosed)
+        case scopePending: ScopePending => 
+          handleTestEvents(scopePending.nameInfo.suiteId, scopePending)
         case _ =>
           dispatch(event)  // Just dispatch it if got unexpected event.
       }
@@ -101,7 +103,7 @@ private[scalatest] class SuiteSortingReporter(dispatch: Reporter, sortingTimeout
       dispatch(event)  // could happens after timeout
   }
   // Handles SuiteStarting, TestStarting, TestIgnored, TestSucceeded, TestFailed, TestPending,
-  // TestCanceled, InfoProvided, MarkupProvided, ScopeOpened, ScopeClosed.
+  // TestCanceled, InfoProvided, MarkupProvided, ScopeOpened, ScopeClosed, ScopePending
   private def handleTestEvents(suiteId: String, event: Event) {
     val slot = slotMap(suiteId)
     val slotIdx = slotListBuf.indexOf(slot)

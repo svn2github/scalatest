@@ -173,6 +173,7 @@ sealed abstract class Event extends Ordered[Event] with java.io.Serializable {
           <testsCanceledCount>{ summary.testsCanceledCount }</testsCanceledCount>
           <suitesCompletedCount>{ summary.suitesCompletedCount }</suitesCompletedCount>
           <suitesAbortedCount>{ summary.suitesAbortedCount }</suitesAbortedCount>
+          <scopesPendingCount>{ summary.scopesPendingCount }</scopesPendingCount>
         case None => ""
       }
     }
@@ -1819,6 +1820,80 @@ final case class ScopeClosed (
       <threadName>{ threadName }</threadName>
       <timeStamp>{ timeStamp }</timeStamp>
     </ScopeClosed>
+}
+
+/**
+ * Event that indicates a scope is pending.
+ *
+ * <p>
+ * To create instances of this class you may
+ * use the factory method provided in its <a href="ScopePending$.html">companion object</a>. For example, given a
+ * report function named <code>report</code>, you could fire a <code>ScopePending</code> event like this:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * report(ScopePending(ordinal, message, Some(NameInfo(suiteName, Some(thisSuite.getClass.getName), Some(testName)))))
+ * </pre>
+ *
+ * <p>
+ * A <code>ScopePending</code> event is fired from within suites, and not tests. 
+ * The <code>ScopePending</code> event should include a <code>NameInfo</code> in which <code>testName</code> is <em>not</em> defined.
+ * </p>
+ *
+ * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
+ *        other events reported during the same run
+ * @param message a localized message suitable for presenting to the user
+ * @param nameInfo a <code>NameInfo</code> that provides names for the suite and optionally the test 
+ *        in the context of which the scope was closed
+ * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
+ *        how to present this event to the user
+ * @param location An optional location that provides information indicating where in the source code an event originated.
+ * @param payload an optional object that can be used to pass custom information to the reporter about the <code>ScopePending</code> event
+ * @param threadName a name for the <code>Thread</code> about whose activity this event was reported
+ * @param timeStamp a <code>Long</code> indicating the time this event was reported, expressed in terms of the
+ *        number of milliseconds since the standard base time known as "the epoch":  January 1, 1970, 00:00:00 GMT
+ *
+ * @author Bill Venners
+ */
+final case class ScopePending (
+  ordinal: Ordinal,
+  message: String,
+  nameInfo: NameInfo,
+  formatter: Option[Formatter] = None,
+  location: Option[Location] = None,
+  payload: Option[Any] = None,
+  threadName: String = Thread.currentThread.getName,
+  timeStamp: Long = (new Date).getTime
+) extends Event {
+
+  if (ordinal == null)
+    throw new NullPointerException("ordinal was null")
+  if (message == null)
+    throw new NullPointerException("message was null")
+  if (nameInfo == null)
+    throw new NullPointerException("nameInfo was null")
+  if (formatter == null)
+    throw new NullPointerException("formatter was null")
+  if (location == null)
+    throw new NullPointerException("location was null")
+  if (payload == null)
+    throw new NullPointerException("payload was null")
+  if (threadName == null)
+    throw new NullPointerException("threadName was null")
+  
+  import EventXmlHelper._
+  private [scalatest] def toXml = 
+    <ScopePending>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <message>{ message }</message>
+      <nameInfo>{ nameInfoOption(if (nameInfo != null) Some(nameInfo) else None) }</nameInfo>
+      <formatter>{ formatterOption(formatter) }</formatter>
+      <location>{ locationOption(location) }</location>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </ScopePending>
 }
 
 /*

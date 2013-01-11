@@ -82,6 +82,8 @@ private[tools] class IconEmbellishedListCellRenderer extends ListCellRenderer {
     val testStartingIcon = purpleImageIcon
     val testSucceededIcon = greenImageIcon
     val testIgnoredIcon = yellowImageIcon
+    val testPendingIcon = yellowImageIcon
+    val testCanceledIcon = yellowImageIcon
     val testFailedIcon = redImageIcon
     val suiteStartingIcon = cyanImageIcon
     val suiteCompletedIcon = cyanImageIcon
@@ -89,6 +91,7 @@ private[tools] class IconEmbellishedListCellRenderer extends ListCellRenderer {
     val infoProvidedIcon = blueImageIcon
     val scopeOpenedIcon = blueImageIcon
     val scopeClosedIcon = blueImageIcon
+    val scopePendingIcon = yellowImageIcon
     val runStoppedIcon = grayImageIcon
     val runAbortedIcon = redImageIcon
     val runCompletedIcon = grayImageIcon
@@ -97,6 +100,8 @@ private[tools] class IconEmbellishedListCellRenderer extends ListCellRenderer {
     val testStartingSelIcon = purpleSelImageIcon
     val testSucceededSelIcon = greenSelImageIcon
     val testIgnoredSelIcon = yellowSelImageIcon
+    val testPendingSelIcon = yellowSelImageIcon
+    val testCanceledSelIcon = yellowSelImageIcon
     val testFailedSelIcon = redSelImageIcon
     val suiteStartingSelIcon = cyanSelImageIcon
     val suiteCompletedSelIcon = cyanSelImageIcon
@@ -104,6 +109,7 @@ private[tools] class IconEmbellishedListCellRenderer extends ListCellRenderer {
     val infoProvidedSelIcon = blueSelImageIcon
     val scopeOpenedSelIcon = blueSelImageIcon
     val scopeClosedSelIcon = blueSelImageIcon
+    val scopePendingSelIcon = blueSelImageIcon
     val runStoppedSelIcon = graySelImageIcon
     val runAbortedSelIcon = redSelImageIcon
     val runCompletedSelIcon = graySelImageIcon
@@ -156,15 +162,15 @@ private[tools] class IconEmbellishedListCellRenderer extends ListCellRenderer {
       }
       case _: TestPending => {
         if (isSelected)
-          renderer.setIcon(Icons.testIgnoredSelIcon)
+          renderer.setIcon(Icons.testPendingSelIcon)
         else
-          renderer.setIcon(Icons.testIgnoredIcon)
+          renderer.setIcon(Icons.testPendingIcon)
       }
       case _: TestCanceled => {
         if (isSelected)
-          renderer.setIcon(Icons.testIgnoredSelIcon)
+          renderer.setIcon(Icons.testCanceledSelIcon)
         else
-          renderer.setIcon(Icons.testIgnoredIcon)
+          renderer.setIcon(Icons.testCanceledIcon)
       }
       case _: TestFailed => {
         if (isSelected)
@@ -222,6 +228,12 @@ private[tools] class IconEmbellishedListCellRenderer extends ListCellRenderer {
           renderer.setIcon(Icons.scopeClosedSelIcon)
         else
           renderer.setIcon(Icons.scopeClosedIcon)
+      }
+      case _: ScopePending => {
+        if (isSelected)
+          renderer.setIcon(Icons.scopePendingSelIcon)
+        else
+          renderer.setIcon(Icons.scopePendingIcon)
       }
       case _: RunCompleted => {
         if (isSelected)

@@ -1265,7 +1265,7 @@ trait Spec extends Suite { thisSuite =>
             val scope = isScopeMethod(o, m)
             if (scope) {
               val scopeDesc = getScopeDesc(m)
-              def scopeFun = 
+              def scopeFun = {
                 try {
                   val scopeObj = m.invoke(o)
                   register(scopeObj)
@@ -1274,7 +1274,7 @@ trait Spec extends Suite { thisSuite =>
                   case ite: InvocationTargetException if ite.getTargetException != null =>
                     throw ite.getTargetException
                 }
-              
+              }
               val scopeLocation = TopOfClass(m.getReturnType.getName)
               registerNestedBranch(scopeDesc, None, scopeFun, "registrationAlreadyClosed", sourceFileName, "ensureScopesAndTestsRegistered", 2, 0, Some(scopeLocation))
             }

@@ -61,6 +61,9 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
     var scopeClosedList = new ListBuffer[Elem]
     def scopeClosedEvents = scopeClosedList.toArray
     
+    var scopePendingList = new ListBuffer[Elem]
+    def scopePendingEvents = scopePendingList.toArray
+    
     var suiteStartingList = new ListBuffer[Elem]
     def suiteStartingEvents = suiteStartingList.toArray
     
@@ -121,6 +124,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
               case "TestCanceled" => testCanceledList += eventXml
               case "ScopeOpened" => scopeOpenedList += eventXml
               case "ScopeClosed" => scopeClosedList += eventXml
+              case "ScopePending" => scopePendingList += eventXml
               case "SuiteStarting" => suiteStartingList += eventXml
               case "SuiteCompleted" => suiteCompletedList += eventXml
               case "SuiteAborted" => suiteAbortedList += eventXml
@@ -283,7 +287,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
   describe("Socket Reporter") {
     
     it("should send TestStarting, TestSucceeded, TestFailed, TestIgnored, TestPending, " +
-       "TestCanceled, ScopeOpened and ScopeClosed event using socket") {
+       "TestCanceled, ScopeOpened, ScopeClosed and ScopePending event using socket") {
       
       class TestSpec extends FunSpec {
         describe("A Feature") {
@@ -292,6 +296,9 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
           ignore("should ignored") {}
           it("should pending") { pending }
           it("should canceled") { cancel("cancel on purpose") }
+        }
+        describe("A Pending Feature") {
+          pending
         }
       }
       
@@ -307,30 +314,35 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       eventually(timeout(Span(30, Seconds))) { assert(eventRecorder.ready) } // Wait until the receiver is ready
       
         
-      assert(eventRecorder.scopeOpenedEvents.length === 1)
+      assert(eventRecorder.scopeOpenedEvents.length === 2)
       checkScopeEvents(eventRecorder.scopeOpenedEvents(0), "A Feature", spec.suiteName, spec.suiteId, 
-                     Some(spec.getClass.getName), "SocketReporterSpec.scala", thisLineNumber - 23)
+                     Some(spec.getClass.getName), "SocketReporterSpec.scala", thisLineNumber - 26)
+      checkScopeEvents(eventRecorder.scopeOpenedEvents(1), "A Pending Feature", spec.suiteName, spec.suiteId, 
+                     Some(spec.getClass.getName), "SocketReporterSpec.scala", thisLineNumber - 21)
       assert(eventRecorder.scopeClosedEvents.length === 1)
       checkScopeEvents(eventRecorder.scopeClosedEvents(0), "A Feature", spec.suiteName, spec.suiteId, 
-                     Some(spec.getClass.getName), "SocketReporterSpec.scala", thisLineNumber - 26)
+                     Some(spec.getClass.getName), "SocketReporterSpec.scala", thisLineNumber - 31)
+      assert(eventRecorder.scopePendingEvents.length === 1)
+      checkScopeEvents(eventRecorder.scopePendingEvents(0), "A Pending Feature", spec.suiteName, spec.suiteId, 
+                     Some(spec.getClass.getName), "SocketReporterSpec.scala", thisLineNumber - 27)
                      
       assert(eventRecorder.testStartingEvents.length === 4)
       checkTestStarting(eventRecorder.testStartingEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
-                        "A Feature should succeed", "should succeed", "SocketReporterSpec.scala", thisLineNumber - 29, 
+                        "A Feature should succeed", "should succeed", "SocketReporterSpec.scala", thisLineNumber - 37, 
                         None) // rerunner should be none, as the suite is an inner class.
       checkTestStarting(eventRecorder.testStartingEvents(1), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
-                        "A Feature should failed", "should failed", "SocketReporterSpec.scala", thisLineNumber - 31, 
+                        "A Feature should failed", "should failed", "SocketReporterSpec.scala", thisLineNumber - 39, 
                         None)
       checkTestStarting(eventRecorder.testStartingEvents(2), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
-                        "A Feature should pending", "should pending", "SocketReporterSpec.scala", thisLineNumber - 32, 
+                        "A Feature should pending", "should pending", "SocketReporterSpec.scala", thisLineNumber - 40, 
                         None)
       checkTestStarting(eventRecorder.testStartingEvents(3), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
-                        "A Feature should canceled", "should canceled", "SocketReporterSpec.scala", thisLineNumber - 34, 
+                        "A Feature should canceled", "should canceled", "SocketReporterSpec.scala", thisLineNumber - 42, 
                         None)
       
       assert(eventRecorder.testSucceededEvents.length === 1)
       checkTestSucceeded(eventRecorder.testSucceededEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
-                         "A Feature should succeed", "should succeed", "SocketReporterSpec.scala", thisLineNumber - 43, None)
+                         "A Feature should succeed", "should succeed", "SocketReporterSpec.scala", thisLineNumber - 51, None)
       
       assert(eventRecorder.testFailedEvents.length === 1)
       checkTestFailed(eventRecorder.testFailedEvents(0), "1 did not equal 2", spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
@@ -338,15 +350,15 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
 
       assert(eventRecorder.testPendingEvents.length === 1)
       checkTestPending(eventRecorder.testPendingEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
-                       "A Feature should pending", "should pending", "SocketReporterSpec.scala", thisLineNumber - 48, None)
+                       "A Feature should pending", "should pending", "SocketReporterSpec.scala", thisLineNumber - 56, None)
 
       assert(eventRecorder.testIgnoredEvents.length === 1)
       checkTestIgnored(eventRecorder.testIgnoredEvents(0), spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
-                       "A Feature should ignored", "should ignored", "SocketReporterSpec.scala", thisLineNumber - 53)
+                       "A Feature should ignored", "should ignored", "SocketReporterSpec.scala", thisLineNumber - 61)
       
       assert(eventRecorder.testCanceledEvents.length === 1)
       checkTestCanceled(eventRecorder.testCanceledEvents(0), "cancel on purpose", spec.suiteName, spec.suiteId, Some(spec.getClass.getName), 
-                        "A Feature should canceled", "should canceled", "SocketReporterSpec.scala", thisLineNumber - 55)        
+                        "A Feature should canceled", "should canceled", "SocketReporterSpec.scala", thisLineNumber - 63)        
     }
     
     it("should send SuiteStarting, SuiteCompleted, SuiteAborted event using socket") {
@@ -393,9 +405,9 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       
       val rep = new SocketReporter("localhost", socket.getLocalPort)
       rep(RunStarting(new Ordinal(0), 10, Map("key 1" -> "value 1"), None, None, None, Thread.currentThread.getName, timeStamp))
-      rep(RunCompleted(new Ordinal(0), Some(1000L), Some(Summary(1, 2, 3, 4, 5, 6, 7)), None, None, None, Thread.currentThread.getName, timeStamp))
-      rep(RunStopped(new Ordinal(0), Some(1000L), Some(Summary(8, 9, 10, 11, 12, 13, 14)), None, None, None, Thread.currentThread.getName, timeStamp))
-      rep(RunAborted(new Ordinal(0), "Suite aborted", Some(new Throwable("error!")), Some(1000L), Some(Summary(15, 16, 17, 18, 19, 20, 21)), None,
+      rep(RunCompleted(new Ordinal(0), Some(1000L), Some(Summary(1, 2, 3, 4, 5, 6, 7, 8)), None, None, None, Thread.currentThread.getName, timeStamp))
+      rep(RunStopped(new Ordinal(0), Some(1000L), Some(Summary(8, 9, 10, 11, 12, 13, 14, 15)), None, None, None, Thread.currentThread.getName, timeStamp))
+      rep(RunAborted(new Ordinal(0), "Suite aborted", Some(new Throwable("error!")), Some(1000L), Some(Summary(15, 16, 17, 18, 19, 20, 21, 22)), None,
                      None, None, Thread.currentThread.getName, timeStamp))
       rep.dispose()
       eventRecorder.stopped = true
@@ -418,6 +430,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       assert((eventRecorder.runCompletedEvents(0) \ "summary" \ "testsCanceledCount").text.toInt === 5)
       assert((eventRecorder.runCompletedEvents(0) \ "summary" \ "suitesCompletedCount").text.toInt === 6)
       assert((eventRecorder.runCompletedEvents(0) \ "summary" \ "suitesAbortedCount").text.toInt === 7)
+      assert((eventRecorder.runCompletedEvents(0) \ "summary" \ "scopesPendingCount").text.toInt === 8)
       assert((eventRecorder.runCompletedEvents(0) \ "threadName").text === Thread.currentThread.getName)
       assert((eventRecorder.runCompletedEvents(0) \ "timeStamp").text === timeStamp.toString)
       
@@ -430,6 +443,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       assert((eventRecorder.runStoppedEvents(0) \ "summary" \ "testsCanceledCount").text.toInt === 12)
       assert((eventRecorder.runStoppedEvents(0) \ "summary" \ "suitesCompletedCount").text.toInt === 13)
       assert((eventRecorder.runStoppedEvents(0) \ "summary" \ "suitesAbortedCount").text.toInt === 14)
+      assert((eventRecorder.runStoppedEvents(0) \ "summary" \ "scopesPendingCount").text.toInt === 15)
       assert((eventRecorder.runStoppedEvents(0) \ "threadName").text === Thread.currentThread.getName)
       assert((eventRecorder.runStoppedEvents(0) \ "timeStamp").text === timeStamp.toString)
       
@@ -443,6 +457,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       assert((eventRecorder.runAbortedEvents(0) \ "summary" \ "testsCanceledCount").text.toInt === 19)
       assert((eventRecorder.runAbortedEvents(0) \ "summary" \ "suitesCompletedCount").text.toInt === 20)
       assert((eventRecorder.runAbortedEvents(0) \ "summary" \ "suitesAbortedCount").text.toInt === 21)
+      assert((eventRecorder.runAbortedEvents(0) \ "summary" \ "scopesPendingCount").text.toInt === 22)
       assert((eventRecorder.runAbortedEvents(0) \ "threadName").text === Thread.currentThread.getName)
       assert((eventRecorder.runAbortedEvents(0) \ "timeStamp").text === timeStamp.toString)
     }
@@ -488,5 +503,4 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       assert((eventRecorder.markupProvidedEvents(0) \ "timeStamp").text === timeStamp.toString)
     }
   }
-  
 }

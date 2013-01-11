@@ -2246,7 +2246,6 @@ used for test events like succeeded/failed, etc.
     theSuite: Suite,
     report: Reporter,
     tracker: Tracker,
-    testName: Option[String],
     message: String,
     level: Int,
     includeIcon: Boolean = true,
@@ -2256,8 +2255,8 @@ used for test events like succeeded/failed, etc.
       ScopeOpened(
         tracker.nextOrdinal(),
         message,
-        NameInfo(theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), testName),
-        Some(getIndentedTextForInfo(message, level, includeIcon, testName.isDefined)), 
+        NameInfo(theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), None),
+        Some(getIndentedTextForInfo(message, level, includeIcon, false)),
         location
       )
     )
@@ -2268,7 +2267,6 @@ used for test events like succeeded/failed, etc.
     theSuite: Suite,
     report: Reporter,
     tracker: Tracker,
-    testName: Option[String],
     message: String,
     level: Int,
     includeIcon: Boolean = true,
@@ -2278,8 +2276,28 @@ used for test events like succeeded/failed, etc.
       ScopeClosed(
         tracker.nextOrdinal(),
         message,
-        NameInfo(theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), testName),
+        NameInfo(theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), None),
         Some(MotionToSuppress),
+        location
+      )
+    )
+  }
+  
+  def reportScopePending(
+    theSuite: Suite,
+    report: Reporter,
+    tracker: Tracker,
+    message: String,
+    level: Int,
+    includeIcon: Boolean = true,
+    location: Option[Location]
+  ) {
+    report(
+      ScopePending(
+        tracker.nextOrdinal(),
+        message,
+        NameInfo(theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), None),
+        Some(getIndentedTextForInfo(message, level, includeIcon, false)),
         location
       )
     )

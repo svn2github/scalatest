@@ -75,6 +75,7 @@ private[scalatest] class DashboardReporter(directory: String,
       case _: InfoProvided   =>
       case _: ScopeOpened    =>
       case _: ScopeClosed    =>
+      case _: ScopePending   =>
       case _: MarkupProvided =>
       case _: RunCompleted   => writeFiles(event)
       case _: RunStopped     => writeFiles(event)
@@ -265,7 +266,7 @@ private[scalatest] class DashboardReporter(directory: String,
           case _ => unexpectedEvent(terminatingEvent); None
         }
   
-      val summary  = summaryOption.getOrElse(Summary(0, 0, 0, 0, 0, 0, 0))
+      val summary  = summaryOption.getOrElse(Summary(0, 0, 0, 0, 0, 0, 0, 0))
   
       formatRun(timestamp,
                 "" + summary.testsSucceededCount,
@@ -527,7 +528,7 @@ private[scalatest] class DashboardReporter(directory: String,
           case _ => unexpectedEvent(event); (None, None)
         }
 
-      val summary  = summaryOption.getOrElse(Summary(0, 0, 0, 0, 0, 0, 0))
+      val summary  = summaryOption.getOrElse(Summary(0, 0, 0, 0, 0, 0, 0, 0))
       val duration = durationOption.getOrElse(0)
 
       "<summary index=\"" + nextIndex() + "\" text=\"\" " +
@@ -594,6 +595,7 @@ private[scalatest] class DashboardReporter(directory: String,
         case e: InfoProvided   => unexpectedEvent(e)
         case e: ScopeOpened    => unexpectedEvent(e)
         case e: ScopeClosed    => unexpectedEvent(e)
+        case e: ScopePending   => unexpectedEvent(e)
         case e: MarkupProvided => unexpectedEvent(e)
       }
     }
