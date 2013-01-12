@@ -32,30 +32,36 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
   object `the should equal syntax should use the appropriate Equality type class` {
     def `for Any` {
       () should equal (())
+      () shouldEqual ()
       () should not equal (7)
       implicit val e = new Equality[Unit] {
         def areEqual(a: Unit, b: Any): Boolean = a != b
       }
       () should not equal (())
       () should equal (7)
+      () shouldEqual 7
     }
     def `for String` {
       "hi" should equal ("hi")
+      "hi" shouldEqual "hi"
       "hi" should not equal ("ho")
       implicit val e = new Equality[String] {
         def areEqual(a: String, b: Any): Boolean = a != b
       }
       "hi" should not equal ("hi")
       "hi" should equal ("ho")
+      "hi" shouldEqual "ho"
     }
     def `for Numeric` {
       3 should equal (3)
+      3 shouldEqual 3
       3 should not equal (4)
       implicit val e = new Equality[Int] {
         def areEqual(a: Int, b: Any): Boolean = a != b
       }
       3 should not equal (3)
       3 should equal (4)
+      3 shouldEqual 4
     }
 /*
     object `for Map` {

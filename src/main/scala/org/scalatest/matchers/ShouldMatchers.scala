@@ -27,6 +27,7 @@ import org.scalautils.TripleEqualsInvocationOnInterval
 import org.scalautils.EqualityConstraint
 import org.scalautils.AsAny
 import org.scalautils.Equality
+import org.scalautils.Interval
 
 /**
  * Trait that provides a domain specific language (DSL) for expressing assertions in tests
@@ -940,6 +941,21 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
+     * () shouldEqual ()
+     *    ^
+     * </pre>
+     */
+    def shouldEqual(right: Any)(implicit equality: Equality[T]) {
+      if (!equality.areEqual(left, right)) {
+        val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+        throw newTestFailedException(FailureMessages("didNotEqual", leftee, rightee))
+      }
+    }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
      * result should not equal (3)
      *        ^
      * </pre>
@@ -1029,6 +1045,21 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      */
     def should(rightMatcherGen1: MatcherGen1[String, Equality])(implicit equality: Equality[String]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * string shouldEqual "hi"
+     *        ^
+     * </pre>
+     */
+    def shouldEqual(right: Any)(implicit equality: Equality[String]) {
+      if (!equality.areEqual(left, right)) {
+        val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+        throw newTestFailedException(FailureMessages("didNotEqual", leftee, rightee))
+      }
     }
 
     /**
@@ -1175,6 +1206,35 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
+     * aDouble shouldEqual 8.8
+     *         ^
+     * </pre>
+     */
+    def shouldEqual(right: T)(implicit equality: Equality[T]) {
+      if (!equality.areEqual(left, right)) {
+        val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+        throw newTestFailedException(FailureMessages("didNotEqual", leftee, rightee))
+      }
+    }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * result shouldEqual 7.1 +- 0.2
+     *        ^
+     * </pre>
+     */
+    def shouldEqual(interval: Interval[T]) {
+      if (!interval.isWithin(left)) {
+        throw newTestFailedException(FailureMessages("didNotEqualPlusOrMinus", left, interval.right, interval.tolerance))
+      }
+    }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
      * result should not equal (8.8)
      *        ^
      * </pre>
@@ -1182,14 +1242,22 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
     def should(notWord: NotWord): ResultOfNotWordForNumeric[T] = {
       new ResultOfNotWordForNumeric[T](left, false)
     }
-    
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * aDouble shouldBe 8.8
+     *         ^
+     * </pre>
+     */
     def shouldBe(right: T) {
       if (left != right) {
         val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
         throw newTestFailedException(FailureMessages("wasNotEqualTo", leftee, rightee))
       }
     }
-    
+
     def shouldBe(beMatcher: BeMatcher[T]) {
       beMatcher.apply(left).matches
     }
@@ -1376,6 +1444,21 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      */
     def should(rightMatcherGen1: MatcherGen1[T, Equality])(implicit equality: Equality[T]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * anyRef shouldEqual (anotherObject)
+     *        ^
+     * </pre>
+     */
+    def shouldEqual(right: T) {
+      if (left != right) {
+        val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+        throw newTestFailedException(FailureMessages("didNotEqual", leftee, rightee))
+      }
     }
 
     /**

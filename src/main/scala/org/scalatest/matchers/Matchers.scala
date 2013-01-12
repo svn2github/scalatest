@@ -4592,7 +4592,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
 
-// XXX
 // Need one for the same typeclass and one for a different typeclass, yes, and can overload because
 // one returns a MatcherGen1 the other a MatcherGen2.
      // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
