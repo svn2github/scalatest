@@ -32,6 +32,7 @@ import org.scalautils.Tolerance
 import org.scalautils.Interval
 import org.scalautils.TripleEqualsInvocation
 import scala.annotation.tailrec
+import org.scalautils.Equality
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -246,6 +247,8 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
     def and[U <: T](rightMatcher: Matcher[U]): Matcher[U] =
       new Matcher[U] {
         def apply(left: U): MatchResult = {
+          andMatchersAndApply(left, leftMatcher, rightMatcher)
+/*
           val leftMatchResult = leftMatcher(left)
           val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
           if (!leftMatchResult.matches)
@@ -264,6 +267,40 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
               Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
               Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
             )
+          }
+*/
+        }
+      }
+
+    def and[U <: T, TYPECLASS[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
+      new MatcherGen1[U, TYPECLASS] {
+        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+          new Matcher[V] {
+            def apply(left: V): MatchResult = {
+              val rightMatcher = rightMatcherGen1.matcher
+              andMatchersAndApply(left, leftMatcher, rightMatcher)
+/*
+              val leftMatchResult = leftMatcher(left)
+              val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
+              if (!leftMatchResult.matches)
+                MatchResult(
+                  false,
+                  leftMatchResult.failureMessage,
+                  leftMatchResult.negatedFailureMessage,
+                  leftMatchResult.midSentenceFailureMessage,
+                  leftMatchResult.midSentenceNegatedFailureMessage
+                )
+              else {
+                MatchResult(
+                  rightMatchResult.matches,
+                  Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
+                  Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
+                  Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
+                  Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
+                )
+              }
+*/
+            }
           }
         }
       }
@@ -599,7 +636,7 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        * </pre>
        */
       def equal(any: Any): Matcher[T] =
-        matchersWrapper.and(matchers.not.apply(matchers.equal(any)))
+        matchersWrapper.and(matchers.not.apply(matchers.legacyEqual(any)))
 
       /**
        * This method enables the following syntax, for the "primitive" numeric types:
@@ -981,6 +1018,8 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
     def or[U <: T](rightMatcher: Matcher[U]): Matcher[U] =
       new Matcher[U] {
         def apply(left: U): MatchResult = {
+          orMatchersAndApply(left, leftMatcher, rightMatcher)
+/*
           val leftMatchResult = leftMatcher(left)
           val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
           if (leftMatchResult.matches)
@@ -999,6 +1038,40 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
               Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
               Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
             )
+          }
+*/
+        }
+      }
+
+    def or[U <: T, TYPECLASS[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
+      new MatcherGen1[U, TYPECLASS] {
+        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+          new Matcher[V] {
+            def apply(left: V): MatchResult = {
+              val rightMatcher = rightMatcherGen1.matcher
+              orMatchersAndApply(left, leftMatcher, rightMatcher)
+/*
+              val leftMatchResult = leftMatcher(left)
+              val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
+              if (leftMatchResult.matches)
+                MatchResult(
+                  true,
+                  leftMatchResult.negatedFailureMessage,
+                  leftMatchResult.failureMessage,
+                  leftMatchResult.midSentenceNegatedFailureMessage,
+                  leftMatchResult.midSentenceFailureMessage
+                )
+              else {
+                MatchResult(
+                  rightMatchResult.matches,
+                  Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceFailureMessage),
+                  Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
+                  Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
+                  Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
+                )
+              }
+*/
+            }
           }
         }
       }
@@ -1334,7 +1407,7 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        * </pre>
        */
       def equal(any: Any): Matcher[T] =
-        matchersWrapper.or(matchers.not.apply(matchers.equal(any)))
+        matchersWrapper.or(matchers.not.apply(matchers.legacyEqual(any)))
 
       /**
        * This method enables the following syntax for the "primitive" numeric types:
@@ -2907,7 +2980,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  sealed class ResultOfNotWordForTraversable[E, T <: GenTraversable[E]](left: T, shouldBeTrue: Boolean)
+  sealed class ResultOfNotWordForTraversable[E, T[_] <: GenTraversable[_]](left: T[E], shouldBeTrue: Boolean)
       extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
 
     /**
@@ -2940,7 +3013,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def contain(right: ContainMatcher[E]) {
-      val result = right(left)
+      val result = right(left.asInstanceOf[scala.collection.GenTraversable[E]])
       if (result.matches != shouldBeTrue) {
         throw newTestFailedException(
           if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
@@ -3028,9 +3101,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForMap[K, V](left: scala.collection.GenMap[K, V], shouldBeTrue: Boolean)
-      extends ResultOfNotWordForTraversable[(K, V), scala.collection.GenMap[K, V]](left, shouldBeTrue) {
-
+  final class ResultOfNotWordForMap[K, V, L[_, _] <: scala.collection.GenMap[_, _]](left: L[K, V], shouldBeTrue: Boolean)
+      extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
 
     /**
      * This method enables the following syntax:
@@ -3042,7 +3114,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def contain(resultOfKeyWordApplication: ResultOfKeyWordApplication[K]) {
       val right = resultOfKeyWordApplication.expectedKey
-      if ((left.exists(_._1 == right)) != shouldBeTrue) {
+      if ((left.asInstanceOf[GenMap[K, V]].exists(_._1 == right)) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainKey" else "containedKey",
@@ -3063,10 +3135,74 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def contain(resultOfValueWordApplication: ResultOfValueWordApplication[V]) {
       val right = resultOfValueWordApplication.expectedValue
-      if ((left.exists(_._2 == right)) != shouldBeTrue) {
+      if ((left.asInstanceOf[GenMap[K, V]].exists(_._2 == right)) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainValue" else "containedValue",
+              left,
+              right
+            )
+          )
+      }
+    }
+
+    // TODO: Had to pull these methods out of ReusltOfNotWordForTraversable, because can't exent
+    // it without losing precision on the inferred types. Map[String, Int] becomes GenIterable[(Any, Any)]
+    // So the wrong Equality type class was chosen. By going around ResultOfNotWordForTraversable, I can
+    // get the precise Map type up to ResultOfNotWord's equal method, which requires the Equality type class.
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * iterable should not contain ("one")
+     *                     ^
+     * </pre>
+     */
+    def contain(expectedElement: (K, V)) {
+      val right = expectedElement
+      if ((left.exists(_ == right)) != shouldBeTrue) {
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "didNotContainExpectedElement" else "containedExpectedElement",
+              left,
+              right
+            )
+          )
+      }
+    }
+    
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * collection should not contain containMatcher
+     *                       ^
+     * </pre>
+     */
+    def contain(right: ContainMatcher[(K, V)]) {
+      val result = right(left.asInstanceOf[scala.collection.GenTraversable[(K, V)]])
+      if (result.matches != shouldBeTrue) {
+        throw newTestFailedException(
+          if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
+        )
+      }
+    }
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * collection should not have size (3)
+     *                       ^
+     * </pre>
+     */
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication) {
+      val right = resultOfSizeWordApplication.expectedSize
+      if ((left.size == right) != shouldBeTrue) {
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "didNotHaveExpectedSize" else "hadExpectedSize",
               left,
               right
             )
@@ -3133,8 +3269,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForSeq[E, T <: GenSeq[E]](left: T, shouldBeTrue: Boolean)
-      extends ResultOfNotWordForTraversable[E, T](left, shouldBeTrue) {
+  final class ResultOfNotWordForSeq[E, T[_] <: GenSeq[_]](left: T[E], shouldBeTrue: Boolean)
+      // extends ResultOfNotWordForTraversable[E, T[E]](left, shouldBeTrue) {
+      extends ResultOfNotWordForTraversable(left, shouldBeTrue) {
 
     /**
      * This method enables the following syntax:
@@ -3422,8 +3559,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                   ^
      * </pre>
      */
-    def equal(right: Any) {
-      if ((left == right) != shouldBeTrue)
+    def equal(right: Any)(implicit equality: Equality[T]) {
+      if (equality.areEqual(left, right) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
            if (shouldBeTrue) "didNotEqual" else "equaled",
@@ -4317,6 +4454,25 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </p>
    *
    */
+  def equal(right: Any): MatcherGen1[Any, Equality] =
+    new MatcherGen1[Any, Equality] {
+      def matcher[T <: Any : Equality]: Matcher[T] = {
+        val equality = implicitly[Equality[T]]
+        new Matcher[T] {
+          def apply(left: T): MatchResult = {
+            val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+            MatchResult(
+              equality.areEqual(left, right),
+              FailureMessages("didNotEqual", leftee, rightee),
+              FailureMessages("equaled", left, right)
+            )
+          }
+        }
+      }
+    }
+
+  // Going back to original, legacy one to get to a good place to check in.
+/*
   def equal(right: Any): Matcher[Any] =
       new Matcher[Any] {
         def apply(left: Any): MatchResult = {
@@ -4328,6 +4484,145 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         }
       }
+*/
+
+  def legacyEqual(right: Any): Matcher[Any] =
+      new Matcher[Any] {
+        def apply(left: Any): MatchResult = {
+          val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+          MatchResult(
+            areEqualComparingArraysStructurally(left, right),
+            FailureMessages("didNotEqual", leftee, rightee),
+            FailureMessages("equaled", left, right)
+          )
+        }
+      }
+
+  private def andMatchersAndApply[T](left: T, leftMatcher: Matcher[T], rightMatcher: Matcher[T]): MatchResult = {
+    val leftMatchResult = leftMatcher(left)
+    val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
+    if (!leftMatchResult.matches)
+      MatchResult(
+        false,
+        leftMatchResult.failureMessage,
+        leftMatchResult.negatedFailureMessage,
+        leftMatchResult.midSentenceFailureMessage,
+        leftMatchResult.midSentenceNegatedFailureMessage
+      )
+    else {
+      MatchResult(
+        rightMatchResult.matches,
+        Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
+        Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
+        Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
+        Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
+      )
+    }
+  }
+
+  private def orMatchersAndApply[T](left: T, leftMatcher: Matcher[T], rightMatcher: Matcher[T]): MatchResult = {
+    val leftMatchResult = leftMatcher(left)
+    val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
+    if (leftMatchResult.matches)
+      MatchResult(
+        true,
+        leftMatchResult.negatedFailureMessage,
+        leftMatchResult.failureMessage,
+        leftMatchResult.midSentenceNegatedFailureMessage,
+        leftMatchResult.midSentenceFailureMessage
+      )
+    else {
+      MatchResult(
+        rightMatchResult.matches,
+        Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceFailureMessage),
+        Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
+        Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
+        Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
+      )
+    }
+  }
+
+  abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { thisMatcherGen1 =>
+
+    def matcher[T <: SUPERCLASS : TYPECLASS]: Matcher[T]
+
+    // (equal (7) and ...)
+    def and[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
+      new MatcherGen1[U, TYPECLASS] {
+        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+          new Matcher[V] {
+            def apply(left: V): MatchResult = {
+              val leftMatcher = thisMatcherGen1.matcher
+              andMatchersAndApply(left, leftMatcher, rightMatcher)
+/*
+              val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
+              if (!leftMatchResult.matches)
+                MatchResult(
+                  false,
+                  leftMatchResult.failureMessage,
+                  leftMatchResult.negatedFailureMessage,
+                  leftMatchResult.midSentenceFailureMessage,
+                  leftMatchResult.midSentenceNegatedFailureMessage
+                )
+              else {
+                MatchResult(
+                  rightMatchResult.matches,
+                  Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
+                  Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
+                  Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
+                  Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
+                )
+              }
+*/
+            }
+          }
+        }
+      }
+
+    // (equal (7) or ...)
+    def or[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
+      new MatcherGen1[U, TYPECLASS] {
+        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+          new Matcher[V] {
+            def apply(left: V): MatchResult = {
+              val leftMatcher = thisMatcherGen1.matcher
+              orMatchersAndApply(left, leftMatcher, rightMatcher)
+            }
+          }
+        }
+      }
+
+// XXX
+// Need one for the same typeclass and one for a different typeclass, yes, and can overload because
+// one returns a MatcherGen1 the other a MatcherGen2.
+     // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
+    def or[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
+      new MatcherGen1[U, TYPECLASS] {
+        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+          new Matcher[V] {
+            def apply(left: V): MatchResult = {
+              val leftMatcher = thisMatcherGen1.matcher
+              val rightMatcher = rightMatcherGen1.matcher
+              orMatchersAndApply(left, leftMatcher, rightMatcher)
+            }
+          }
+        }
+      }
+
+    // "hi" should (equal ("ho") and {mockClown.hasBigRedNose; equal ("ho")})
+    def and[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
+      new MatcherGen1[U, TYPECLASS] {
+        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+          new Matcher[V] {
+            def apply(left: V): MatchResult = {
+              val leftMatcher = thisMatcherGen1.matcher
+              val rightMatcher = rightMatcherGen1.matcher
+              andMatchersAndApply(left, leftMatcher, rightMatcher)
+            }
+          }
+        }
+      }
+  }
 
   /**
    * This method enables syntax such as the following:
@@ -4895,6 +5190,29 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
 
     /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * hasNoSize should not { have size (2) and equal (hasNoSize) }
+     *                      ^
+     * </pre>
+     */
+    def apply[S <: Any, TYPECLASS[_]](matcherGen1: MatcherGen1[S, TYPECLASS]): MatcherGen1[S, TYPECLASS] = {
+      new MatcherGen1[S, TYPECLASS] {
+        def matcher[V <: S : TYPECLASS]: Matcher[V] = {
+          val innerMatcher: Matcher[V] = matcherGen1.matcher
+          new Matcher[V] {
+            def apply(left: V): MatchResult = {
+              innerMatcher(left) match {
+                case MatchResult(bool, s1, s2, s3, s4) => MatchResult(!bool, s2, s1, s4, s3)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    /**
      * This method enables any <code>BeMatcher</code> to be negated by passing it to <code>not</code>. 
      * For example, if you have a <code>BeMatcher[Int]</code> called <code>odd</code>, which matches
      * <code>Int</code>s that are odd, you can negate it to get a <code>BeMatcher[Int]</code> that matches
@@ -4937,7 +5255,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                 ^
      * </pre>
      */
-    def equal(right: Any): Matcher[Any] = apply(matchers.equal(right))
+    def equal(right: Any): Matcher[Any] = apply(matchers.legacyEqual(right))
 
     /**
      * This method enables the following syntax for the "primitive" numeric types: 
