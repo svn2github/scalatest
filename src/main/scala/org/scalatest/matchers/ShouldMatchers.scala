@@ -1316,7 +1316,6 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
    * @author Bill Venners
    */
   final class MapShouldWrapper[K, V, L[_, _] <: scala.collection.GenMap[_, _]](left: L[K, V]) {
-  // final class MapShouldWrapper[K, V](left: scala.collection.GenMap[K, V]) {
 
     /**
      * This method enables syntax such as the following:
@@ -1340,6 +1339,21 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      */
     def should(rightMatcherGen1: MatcherGen1[L[K, V], Equality])(implicit equality: Equality[L[K, V]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * map shouldEqual Map(1 -> "one", 2 -> "two")
+     *     ^
+     * </pre>
+     */
+    def shouldEqual(right: L[K, V])(implicit equality: Equality[L[K, V]]) {
+      if (!equality.areEqual(left, right)) {
+        val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+        throw newTestFailedException(FailureMessages("didNotEqual", leftee, rightee))
+      }
     }
 
     /**
@@ -1454,8 +1468,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      *        ^
      * </pre>
      */
-    def shouldEqual(right: T) {
-      if (left != right) {
+    def shouldEqual(right: T)(implicit equality: Equality[T]) {
+      if (!equality.areEqual(left, right)) {
         val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
         throw newTestFailedException(FailureMessages("didNotEqual", leftee, rightee))
       }
@@ -1726,7 +1740,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * javaCollection should equal (aJavaSet)
+     * javaCollection should be (aJavaSet)
      *                ^
      * </pre>
      */
@@ -1738,12 +1752,24 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
+     * javaCollection should equal (aJavaSet)
+     *                ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[L[E], Equality])(implicit equality: Equality[L[E]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
      * javaCollection should have size (3)
      *                ^
      * </pre>
      */
-    def should(haveWord: HaveWord): ResultOfHaveWordForJavaCollection[E] =
-      new ResultOfHaveWordForJavaCollection(left.asInstanceOf[java.util.Collection[E]], true)
+    def should(haveWord: HaveWord): ResultOfHaveWordForJavaCollection[E, L] =
+      new ResultOfHaveWordForJavaCollection(left, true)
 
     /**
      * This method enables syntax such as the following:
@@ -1763,8 +1789,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      *                ^
      * </pre>
      */
-    def should(notWord: NotWord): ResultOfNotWordForJavaCollection[E, java.util.Collection[E]] =
-      new ResultOfNotWordForJavaCollection(left.asInstanceOf[java.util.Collection[E]], false)
+    def should(notWord: NotWord): ResultOfNotWordForJavaCollection[E, L] =
+      new ResultOfNotWordForJavaCollection(left, false)
 
     /**
      * This method enables syntax such as the following:
@@ -1797,8 +1823,19 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
    *
    * @author Bill Venners
    */
-  // final class JavaMapShouldWrapper[K, V](left: java.util.Map[K, V]) {
   final class JavaMapShouldWrapper[K, V, L[_, _] <: java.util.Map[_, _]](left: L[K, V]) {
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * javaMap should be (someJavaMap)
+     *         ^
+     * </pre>
+     */
+    def should(rightMatcherX8: Matcher[L[K, V]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX8)
+    }
 
     /**
      * This method enables syntax such as the following:
@@ -1808,8 +1845,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      *         ^
      * </pre>
      */
-    def should(rightMatcherX8: Matcher[L[K, V]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcherX8)
+    def should(rightMatcherGen1: MatcherGen1[L[K, V], Equality])(implicit equality: Equality[L[K, V]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
     /**
@@ -1844,8 +1881,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      *         ^
      * </pre>
      */
-    def should(notWord: NotWord): ResultOfNotWordForJavaMap[K, V] = {
-      new ResultOfNotWordForJavaMap[K, V](left.asInstanceOf[java.util.Map[K, V]], false)
+    def should(notWord: NotWord): ResultOfNotWordForJavaMap[K, V, L] = {
+      new ResultOfNotWordForJavaMap[K, V, L](left, false)
     }
 
     /**
@@ -2092,7 +2129,19 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
    *
    * @author Bill Venners
    */
-  final class JavaListShouldWrapper[T](left: java.util.List[T]) {
+  final class JavaListShouldWrapper[E, L[_] <: java.util.List[_]](left: L[E]) {
+
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * javaList should be (someOtherJavaList)
+     *          ^
+     * </pre>
+     */
+    def should(rightMatcherX12: Matcher[L[E]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherX12)
+    }
 
     /**
      * This method enables syntax such as the following:
@@ -2102,8 +2151,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      *          ^
      * </pre>
      */
-    def should(rightMatcherX12: Matcher[java.util.List[T]]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcherX12)
+    def should(rightMatcherGen1: MatcherGen1[L[E], Equality])(implicit equality: Equality[L[E]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
     /**
@@ -2114,7 +2163,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      *          ^
      * </pre>
      */
-    def should(haveWord: HaveWord): ResultOfHaveWordForJavaList[T] = {
+    def should(haveWord: HaveWord): ResultOfHaveWordForJavaList[E, L] = {
       new ResultOfHaveWordForJavaList(left, true)
     }
 
@@ -2126,7 +2175,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      *          ^
      * </pre>
      */
-    def should(notWord: NotWord): ResultOfNotWordForJavaList[T, java.util.List[T]] = {
+    def should(notWord: NotWord): ResultOfNotWordForJavaList[E, L] = {
       new ResultOfNotWordForJavaList(left, false)
     }
 
@@ -2138,7 +2187,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
      *        ^
      * </pre>
      */
-    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[java.util.List[T], U]) {
+    def should[U](inv: TripleEqualsInvocation[U])(implicit constraint: EqualityConstraint[L[E], U]) {
       if ((constraint.areEqual(left, inv.right)) != inv.expectingEqual)
         throw newTestFailedException(
           FailureMessages(
@@ -2294,7 +2343,8 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
    * to enable <code>should</code> methods to be invokable on that object. This conversion is necessary to enable
    * <code>length</code> to be used on Java <code>List</code>s.
    */
-  implicit def convertToJavaListShouldWrapper[T](o: java.util.List[T]): JavaListShouldWrapper[T] = new JavaListShouldWrapper[T](o)
+  // implicit def convertToJavaListShouldWrapper[T](o: java.util.List[T]): JavaListShouldWrapper[T] = new JavaListShouldWrapper[T](o)
+  implicit def convertToJavaListShouldWrapper[E, L[_] <: java.util.List[_]](o: L[E]): JavaListShouldWrapper[E, L] = new JavaListShouldWrapper[E, L](o)
 
   /**
    * Implicitly converts an object of type <code>java.util.Map[K, V]</code> to a <code>JavaMapShouldWrapper[K, V]</code>,

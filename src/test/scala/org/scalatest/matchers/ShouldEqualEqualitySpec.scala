@@ -63,18 +63,17 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
       3 should equal (4)
       3 shouldEqual 4
     }
-/*
     object `for Map` {
       def `with default equality` {
         Map("I" -> 1, "II" -> 2) should equal (Map("I" -> 1, "II" -> 2))
+        Map("I" -> 1, "II" -> 2) shouldEqual Map("I" -> 1, "II" -> 2)
         Map("I" -> 1, "II" -> 2) should not equal (Map("one" -> 1, "two" -> 2))
         implicit val e = new Equality[GenMap[String, Int]] {
           def areEqual(a: GenMap[String, Int], b: Any): Boolean = a != b
         }
-        Map("I" -> 1, "II" -> 2).should(equal (Map("I" -> 1, "II" -> 2)))(defaultEquality[Map[String, Int]])
         Map("I" -> 1, "II" -> 2) should equal (Map("I" -> 1, "II" -> 2))
+        Map("I" -> 1, "II" -> 2) shouldEqual Map("I" -> 1, "II" -> 2)
         Map("I" -> 1, "II" -> 2) should not equal (Map("one" -> 1, "two" -> 2))
-        // Map("I" -> 1, "II" -> 2).should(not).equal(Map("one" -> 1, "two" -> 2))(defaultEquality[Map[String, Int]])
       }
       def `with inferred GenMap equality` {
         implicit def travEq[T <: GenMap[String, Int]] = new Equality[T] {
@@ -82,6 +81,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Map("I" -> 1, "II" -> 2) should not equal (Map("I" -> 1, "II" -> 2))
         Map("I" -> 1, "II" -> 2) should equal (Map("one" -> 1, "two" -> 2))
+        Map("I" -> 1, "II" -> 2) shouldEqual Map("one" -> 1, "two" -> 2)
       }
       def `with specific Map equality` {
         implicit val e = new Equality[Map[String, Int]] {
@@ -89,6 +89,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Map("I" -> 1, "II" -> 2) should not equal (Map("I" -> 1, "II" -> 2))
         Map("I" -> 1, "II" -> 2) should equal (Map("one" -> 1, "two" -> 2))
+        Map("I" -> 1, "II" -> 2) shouldEqual Map("one" -> 1, "two" -> 2)
       }
       def `with both GenMap and specific Map equality, though I don't know why this compiles` {
         implicit val e = new Equality[GenMap[String, Int]] {
@@ -99,6 +100,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Map("I" -> 1, "II" -> 2) should not equal (Map("I" -> 1, "II" -> 2))
         Map("I" -> 1, "II" -> 2) should equal (Map("one" -> 1, "two" -> 2))
+        Map("I" -> 1, "II" -> 2) shouldEqual Map("one" -> 1, "two" -> 2)
       }
       def `with both inferred GenMap and specific Map equality` {
         implicit def travEq[T <: GenMap[String, Int]] = new Equality[T] {
@@ -109,16 +111,19 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Map("I" -> 1, "II" -> 2) should not equal (Map("I" -> 1, "II" -> 2))
         Map("I" -> 1, "II" -> 2) should equal (Map("one" -> 1, "two" -> 2))
+        Map("I" -> 1, "II" -> 2) shouldEqual Map("one" -> 1, "two" -> 2)
       }
     }
     object `for mutable.Map` {
       def `with default equality` {
         mutable.Map("I" -> 1, "II" -> 2) should equal (mutable.Map("I" -> 1, "II" -> 2))
+        mutable.Map("I" -> 1, "II" -> 2) shouldEqual mutable.Map("I" -> 1, "II" -> 2)
         mutable.Map("I" -> 1, "II" -> 2) should not equal (mutable.Map("one" -> 1, "two" -> 2))
         implicit val e = new Equality[GenMap[String, Int]] {
           def areEqual(a: GenMap[String, Int], b: Any): Boolean = a != b
         }
         mutable.Map("I" -> 1, "II" -> 2) should equal (mutable.Map("I" -> 1, "II" -> 2))
+        mutable.Map("I" -> 1, "II" -> 2) shouldEqual mutable.Map("I" -> 1, "II" -> 2)
         mutable.Map("I" -> 1, "II" -> 2) should not equal (mutable.Map("one" -> 1, "two" -> 2))
       }
       def `with inferred GenMap equality` {
@@ -127,6 +132,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         mutable.Map("I" -> 1, "II" -> 2) should not equal (mutable.Map("I" -> 1, "II" -> 2))
         mutable.Map("I" -> 1, "II" -> 2) should equal (mutable.Map("one" -> 1, "two" -> 2))
+        mutable.Map("I" -> 1, "II" -> 2) shouldEqual mutable.Map("one" -> 1, "two" -> 2)
       }
       def `with specific mutable.Map equality` {
         implicit val e = new Equality[mutable.Map[String, Int]] {
@@ -134,6 +140,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         mutable.Map("I" -> 1, "II" -> 2) should not equal (mutable.Map("I" -> 1, "II" -> 2))
         mutable.Map("I" -> 1, "II" -> 2) should equal (mutable.Map("one" -> 1, "two" -> 2))
+        mutable.Map("I" -> 1, "II" -> 2) shouldEqual mutable.Map("one" -> 1, "two" -> 2)
       }
       def `with both GenMap and specific mutable.Map equality, though I don't know why this compiles` {
         implicit val e = new Equality[GenMap[String, Int]] {
@@ -144,6 +151,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         mutable.Map("I" -> 1, "II" -> 2) should not equal (mutable.Map("I" -> 1, "II" -> 2))
         mutable.Map("I" -> 1, "II" -> 2) should equal (mutable.Map("one" -> 1, "two" -> 2))
+        mutable.Map("I" -> 1, "II" -> 2) shouldEqual mutable.Map("one" -> 1, "two" -> 2)
       }
       def `with both inferred GenMap and specific mutable.Map equality` {
         implicit def travEq[T <: GenMap[String, Int]] = new Equality[T] {
@@ -154,21 +162,25 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         mutable.Map("I" -> 1, "II" -> 2) should not equal (mutable.Map("I" -> 1, "II" -> 2))
         mutable.Map("I" -> 1, "II" -> 2) should equal (mutable.Map("one" -> 1, "two" -> 2))
+        mutable.Map("I" -> 1, "II" -> 2) shouldEqual mutable.Map("one" -> 1, "two" -> 2)
       }
     }
     def `for AnyRef` {
       case class Person(name: String)
       Person("Joe") should equal (Person("Joe"))
+      Person("Joe") shouldEqual Person("Joe")
       Person("Joe") should not equal (Person("Sally"))
       implicit val e = new Equality[Person] {
         def areEqual(a: Person, b: Any): Boolean = a != b
       }
       Person("Joe") should not equal (Person("Joe"))
       Person("Joe") should equal (Person("Sally"))
+      Person("Joe") shouldEqual Person("Sally")
     }
     object `for Traversable` {
       def `with default equality` {
         Set(1, 2, 3) should equal (Set(1, 2, 3))
+        Set(1, 2, 3) shouldEqual Set(1, 2, 3)
         Set(1, 2, 3) should not equal (Set(1, 2, 4))
 
         implicit val e = new Equality[GenTraversable[Int]] {
@@ -176,6 +188,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
 
         Set(1, 2, 3) should equal (Set(1, 2, 3))
+        Set(1, 2, 3) shouldEqual Set(1, 2, 3)
         Set(1, 2, 3) should not equal (Set(1, 2, 4))
       }
       def `with inferred GenTraversable equality` {
@@ -184,6 +197,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Set(1, 2, 3) should not equal (Set(1, 2, 3))
         Set(1, 2, 3) should equal (Set(1, 2, 4))
+        Set(1, 2, 3) shouldEqual Set(1, 2, 4)
       }
       def `with specific Traversable equality` {
         implicit val e = new Equality[Set[Int]] {
@@ -191,6 +205,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Set(1, 2, 3) should not equal (Set(1, 2, 3))
         Set(1, 2, 3) should equal (Set(1, 2, 4))
+        Set(1, 2, 3) shouldEqual Set(1, 2, 4)
       }
       def `with both GenTraversable and specific Traversable equality` {
         implicit val e = new Equality[GenTraversable[Int]] {
@@ -201,6 +216,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Set(1, 2, 3) should not equal (Set(1, 2, 3))
         Set(1, 2, 3) should equal (Set(1, 2, 4))
+        Set(1, 2, 3) shouldEqual Set(1, 2, 4)
       }
       def `with both inferred GenTraversable and specific Traversable equality` {
         implicit def travEq[T <: GenTraversable[Int]] = new Equality[T] {
@@ -210,12 +226,13 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
           def areEqual(a: Set[Int], b: Any): Boolean = a != b
         }
         Set(1, 2, 3) should not equal (Set(1, 2, 3))
-        Set(1, 2, 3) should equal (Set(1, 2, 4))
+        Set(1, 2, 3) shouldEqual Set(1, 2, 4)
       }
     }
     object `for mutable.Traversable` {
       def `with default equality` {
         mutable.Set(1, 2, 3) should equal (mutable.Set(1, 2, 3))
+        mutable.Set(1, 2, 3) shouldEqual mutable.Set(1, 2, 3)
         mutable.Set(1, 2, 3) should not equal (mutable.Set(1, 2, 4))
 
         implicit val e = new Equality[GenTraversable[Int]] {
@@ -223,6 +240,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
 
         mutable.Set(1, 2, 3) should equal (mutable.Set(1, 2, 3))
+        mutable.Set(1, 2, 3) shouldEqual mutable.Set(1, 2, 3)
         mutable.Set(1, 2, 3) should not equal (mutable.Set(1, 2, 4))
       }
       def `with inferred GenTraversable equality` {
@@ -231,6 +249,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         mutable.Set(1, 2, 3) should not equal (mutable.Set(1, 2, 3))
         mutable.Set(1, 2, 3) should equal (mutable.Set(1, 2, 4))
+        mutable.Set(1, 2, 3) shouldEqual mutable.Set(1, 2, 4)
       }
       def `with specific mutable.Traversable equality` {
         implicit val e = new Equality[mutable.Set[Int]] {
@@ -238,6 +257,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         mutable.Set(1, 2, 3) should not equal (mutable.Set(1, 2, 3))
         mutable.Set(1, 2, 3) should equal (mutable.Set(1, 2, 4))
+        mutable.Set(1, 2, 3) shouldEqual mutable.Set(1, 2, 4)
       }
       def `with both GenTraversable and specific Traversable equality` {
         implicit val e = new Equality[GenTraversable[Int]] {
@@ -248,6 +268,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         mutable.Set(1, 2, 3) should not equal (mutable.Set(1, 2, 3))
         mutable.Set(1, 2, 3) should equal (mutable.Set(1, 2, 4))
+        mutable.Set(1, 2, 3) shouldEqual mutable.Set(1, 2, 4)
       }
       def `with both inferred GenTraversable and specific Traversable equality` {
         implicit def travEq[T <: GenTraversable[Int]] = new Equality[T] {
@@ -258,6 +279,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         mutable.Set(1, 2, 3) should not equal (mutable.Set(1, 2, 3))
         mutable.Set(1, 2, 3) should equal (mutable.Set(1, 2, 4))
+        mutable.Set(1, 2, 3) shouldEqual mutable.Set(1, 2, 4)
       }
     }
     object `for Java Collection` {
@@ -274,21 +296,23 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
 
       def `with default equality` {
         javaSet123 should equal (javaSet123)
+        javaSet123 shouldEqual javaSet123
         javaSet123 should not equal (javaSet124)
         implicit val e = new Equality[java.util.Collection[Int]] {
           def areEqual(a: java.util.Collection[Int], b: Any): Boolean = a != b
         }
         javaSet123 should equal (javaSet123)
+        javaSet123 shouldEqual javaSet123
         javaSet123 should not equal (javaSet124)
       }
 
       def `with inferred Collection equality` {
-        // implicit val e = new Equality[GenTraversable[Int]] { ... does not and should not compile
         implicit def travEq[T <: java.util.Collection[Int]] = new Equality[T] {
           def areEqual(a: T, b: Any): Boolean = a != b
         }
         javaSet123 should not equal (javaSet123)
         javaSet123 should equal (javaSet124)
+        javaSet123 shouldEqual javaSet124
       }
 
       def `with specific Collection equality` {
@@ -297,6 +321,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaSet123 should not equal (javaSet123)
         javaSet123 should equal (javaSet124)
+        javaSet123 shouldEqual javaSet124
       }
 
       def `with both Collection and specific Collection equality` {
@@ -308,6 +333,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaSet123 should not equal (javaSet123)
         javaSet123 should equal (javaSet124)
+        javaSet123 shouldEqual javaSet124
       }
       def `with both inferred Collection and specific Collection equality` {
         implicit def travEq[T <: java.util.Collection[Int]] = new Equality[T] {
@@ -318,6 +344,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaSet123 should not equal (javaSet123)
         javaSet123 should equal (javaSet124)
+        javaSet123 shouldEqual javaSet124
       }
     }
 
@@ -335,11 +362,13 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
 
       def `with default equality` {
         javaMap123 should equal (javaMap123)
+        javaMap123 shouldEqual javaMap123
         javaMap123 should not equal (javaMap124)
         implicit val e = new Equality[java.util.Map[String, Int]] {
           def areEqual(a: java.util.Map[String, Int], b: Any): Boolean = a != b
         }
         javaMap123 should equal (javaMap123)
+        javaMap123 shouldEqual javaMap123
         javaMap123 should not equal (javaMap124)
       }
 
@@ -349,6 +378,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaMap123 should not equal (javaMap123)
         javaMap123 should equal (javaMap124)
+        javaMap123 shouldEqual javaMap124
       }
 
       def `with specific HashMap equality` {
@@ -357,6 +387,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaMap123 should not equal (javaMap123)
         javaMap123 should equal (javaMap124)
+        javaMap123 shouldEqual javaMap124
       }
 
       def `with both Map and specific HashMap equality` {
@@ -368,6 +399,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaMap123 should not equal (javaMap123)
         javaMap123 should equal (javaMap124)
+        javaMap123 shouldEqual javaMap124
       }
       def `with both inferred Map and specific HashMap equality` {
         implicit def travEq[T <: java.util.Map[String, Int]] = new Equality[T] {
@@ -378,12 +410,14 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaMap123 should not equal (javaMap123)
         javaMap123 should equal (javaMap124)
+        javaMap123 shouldEqual javaMap124
       }
     }
 
     object `for Seq` {
       def `with default equality` {
         Vector(1, 2, 3) should equal (Vector(1, 2, 3))
+        Vector(1, 2, 3) shouldEqual Vector(1, 2, 3)
         Vector(1, 2, 3) should not equal (Vector(1, 2, 4))
       }
       def `with inferred GenSeq equality` {
@@ -392,6 +426,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Vector(1, 2, 3) should not equal (Vector(1, 2, 3))
         Vector(1, 2, 3) should equal (Vector(1, 2, 4))
+        Vector(1, 2, 3) shouldEqual Vector(1, 2, 4)
       }
       def `with specific Seq equality` {
         implicit val e = new Equality[Vector[Int]] {
@@ -399,6 +434,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Vector(1, 2, 3) should not equal (Vector(1, 2, 3))
         Vector(1, 2, 3) should equal (Vector(1, 2, 4))
+        Vector(1, 2, 3) shouldEqual Vector(1, 2, 4)
       }
       def `with both GenSeq and specific Seq equality` {
         implicit val e = new Equality[GenSeq[Int]] {
@@ -409,6 +445,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Vector(1, 2, 3) should not equal (Vector(1, 2, 3))
         Vector(1, 2, 3) should equal (Vector(1, 2, 4))
+        Vector(1, 2, 3) shouldEqual Vector(1, 2, 4)
       }
       def `with both inferred GenSeq and specific Seq equality` {
         implicit def travEq[T <: GenSeq[Int]] = new Equality[T] {
@@ -419,11 +456,13 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         Vector(1, 2, 3) should not equal (Vector(1, 2, 3))
         Vector(1, 2, 3) should equal (Vector(1, 2, 4))
+        Vector(1, 2, 3) shouldEqual Vector(1, 2, 4)
       }
     }
     object `for mutable.Seq` {
       def `with default equality` {
         ListBuffer(1, 2, 3) should equal (ListBuffer(1, 2, 3))
+        ListBuffer(1, 2, 3) shouldEqual ListBuffer(1, 2, 3)
         ListBuffer(1, 2, 3) should not equal (ListBuffer(1, 2, 4))
       }
       def `with inferred GenSeq equality` {
@@ -432,6 +471,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         ListBuffer(1, 2, 3) should not equal (ListBuffer(1, 2, 3))
         ListBuffer(1, 2, 3) should equal (ListBuffer(1, 2, 4))
+        ListBuffer(1, 2, 3) shouldEqual ListBuffer(1, 2, 4)
       }
       def `with specific Seq equality` {
         implicit val e = new Equality[ListBuffer[Int]] {
@@ -439,6 +479,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         ListBuffer(1, 2, 3) should not equal (ListBuffer(1, 2, 3))
         ListBuffer(1, 2, 3) should equal (ListBuffer(1, 2, 4))
+        ListBuffer(1, 2, 3) shouldEqual ListBuffer(1, 2, 4)
       }
       def `with both GenSeq and specific Seq equality` {
         implicit val e = new Equality[GenSeq[Int]] {
@@ -449,6 +490,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         ListBuffer(1, 2, 3) should not equal (ListBuffer(1, 2, 3))
         ListBuffer(1, 2, 3) should equal (ListBuffer(1, 2, 4))
+        ListBuffer(1, 2, 3) shouldEqual ListBuffer(1, 2, 4)
       }
       def `with both inferred GenSeq and specific Seq equality` {
         implicit def travEq[T <: GenSeq[Int]] = new Equality[T] {
@@ -458,17 +500,19 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
           def areEqual(a: ListBuffer[Int], b: Any): Boolean = a != b
         }
         ListBuffer(1, 2, 3) should not equal (ListBuffer(1, 2, 3))
-        ListBuffer(1, 2, 3) should equal (ListBuffer(1, 2, 4))
+        ListBuffer(1, 2, 3) shouldEqual ListBuffer(1, 2, 4)
       }
     }
     def `for Array` {
       Array(1, 2, 3) should equal (Array(1, 2, 3))
+      Array(1, 2, 3) shouldEqual Array(1, 2, 3)
       Array(1, 2, 3) should not equal (Array(1, 2, 4))
       implicit val e = new Equality[Array[Int]] {
         def areEqual(a: Array[Int], b: Any): Boolean = a.deep != b.asInstanceOf[Array[Int]].deep
       }
       Array(1, 2, 3) should not equal (Array(1, 2, 3))
       Array(1, 2, 3) should equal (Array(1, 2, 4))
+      Array(1, 2, 3) shouldEqual Array(1, 2, 4)
     }
     object `for Java List` {
 
@@ -484,11 +528,13 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
       
       def `with default equality` {
         javaList123 should equal (javaList123)
+        javaList123 shouldEqual javaList123
         javaList123 should not equal (javaList124)
         implicit val e = new Equality[java.util.Collection[Int]] {
           def areEqual(a: java.util.Collection[Int], b: Any): Boolean = a != b
         }
         javaList123 should equal (javaList123)
+        javaList123 shouldEqual javaList123
         javaList123 should not equal (javaList124)
       }
       def `with inferred java.util.Collection equality` {
@@ -497,6 +543,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaList123 should not equal (javaList123)
         javaList123 should equal (javaList124)
+        javaList123 shouldEqual javaList124
       }
       def `with specific java.util.List equality` {
         implicit val e = new Equality[java.util.List[Int]] {
@@ -504,6 +551,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaList123 should not equal (javaList123)
         javaList123 should equal (javaList124)
+        javaList123 shouldEqual javaList124
       }
       def `with both java.util.Collection and java.util.List equality` {
         implicit val e = new Equality[java.util.Collection[Int]] {
@@ -514,6 +562,7 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaList123 should not equal (javaList123)
         javaList123 should equal (javaList124)
+        javaList123 shouldEqual javaList124
       }
       def `with both inferred java.util.List and specific java.util.List equality` {
         implicit def travEq[T <: java.util.List[Int]] = new Equality[T] {
@@ -524,9 +573,9 @@ class ShouldEqualEqualitySpec extends Spec with ShouldMatchers {
         }
         javaList123 should not equal (javaList123)
         javaList123 should equal (javaList124)
+        javaList123 shouldEqual javaList124
       }
     }
-*/
   }
 }
 

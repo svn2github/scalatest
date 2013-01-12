@@ -52,7 +52,7 @@
     <property name="demodoc" value="${demo}/example/javadoc" />
     <property name="example" value="${demo}/example" />
 
-    <property name="jvmargs" value="-Xmx3000M -Xss10M"/>
+    <property name="jvmargs" value="-Xmx4000M -Xss10M"/>
     <property name="mvn.deploy.plugin"
               value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
 
