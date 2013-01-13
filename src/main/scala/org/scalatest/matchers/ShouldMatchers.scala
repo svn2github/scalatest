@@ -1511,6 +1511,12 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
 
     def shouldBe = new ResultOfBeWordForAnyRef(left, true)
     
+    def shouldBe[U](right: Null) {
+      if (left != null) {
+        throw newTestFailedException(FailureMessages("wasNotNull", left))
+      }
+    }
+
     def shouldBe[U](right: AType[U]) {
       if (!right.isAssignableFromClassOf(left)) {
         throw newTestFailedException(FailureMessages("wasNotAnInstanceOf", left, UnquotedString(right.className)))
@@ -1518,7 +1524,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
     }
 
     def shouldBe(right: AnyRef) {
-      
+
       def shouldBeEqual(right: AnyRef): Boolean = {
         if (right.isInstanceOf[ResultOfAWordToBePropertyMatcherApplication[AnyRef]]) {
           // need to put in if because NoSuchMethodError when pattern match ResultOfAWordToBePropertyMatcherApplication
@@ -1545,7 +1551,7 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
           }
         }
       }
-      
+
       if (!shouldBeEqual(right)) {
         val (resourceName, leftee, rightee) = 
           if (right.isInstanceOf[ResultOfAWordToBePropertyMatcherApplication[AnyRef]]) {
