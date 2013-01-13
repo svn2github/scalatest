@@ -28,11 +28,6 @@ import org.scalatest.exceptions.TestFailedException
 import scala.collection.GenTraversable
 import scala.collection.GenSeq
 import scala.collection.GenMap
-import org.scalautils.Tolerance
-import org.scalautils.Interval
-import org.scalautils.TripleEqualsInvocation
-import scala.annotation.tailrec
-import org.scalautils.Equality
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -149,22 +144,22 @@ import Helper.accessProperty
  *
  * @author Bill Venners
  */
-trait ClassicMatchers extends Assertions with Tolerance { matchers =>
+trait ClassicMatchers extends Assertions { matchers =>
 
   // TODO: Can probably rewrite this with a Thread.currentStackTrace or whatever the method is. No need
   // to create the temporary RuntimeException
-  private[scalatest] def newTestFailedException(message: String, optionalCause: Option[Throwable] = None, stackDepthAdjustment: Int = 0): Throwable = {
+  private[scalatest] def newTestFailedException(message: String, optionalCause: Option[Throwable] = None): Throwable = {
     val fileNames = List("Matchers.scala", "ShouldMatchers.scala", "MustMatchers.scala")
     val temp = new RuntimeException
     val stackDepth = temp.getStackTrace.takeWhile(stackTraceElement => fileNames.exists(_ == stackTraceElement.getFileName) || stackTraceElement.getMethodName == "newTestFailedException").length
     // if (stackDepth != 4) throw new OutOfMemoryError("stackDepth in Matchers.scala is: " + stackDepth)
     optionalCause match {
-      case Some(cause) => new TestFailedException(message, cause, stackDepth + stackDepthAdjustment)
-      case None => new TestFailedException(message, stackDepth + stackDepthAdjustment)
+      case Some(cause) => new TestFailedException(message, cause, stackDepth)
+      case None => new TestFailedException(message, stackDepth)
     }
   }
 
-  private[scalatest] def matchSymbolToPredicateMethod[S <: AnyRef](left: S, right: Symbol, hasArticle: Boolean, articleIsA: Boolean): MatchResult = {
+  private def matchSymbolToPredicateMethod[S <: AnyRef](left: S, right: Symbol, hasArticle: Boolean, articleIsA: Boolean): MatchResult = {
 
     // If 'empty passed, rightNoTick would be "empty"
     val propertyName = right.name
@@ -247,8 +242,6 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
     def and[U <: T](rightMatcher: Matcher[U]): Matcher[U] =
       new Matcher[U] {
         def apply(left: U): MatchResult = {
-          andMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
           val leftMatchResult = leftMatcher(left)
           val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
           if (!leftMatchResult.matches)
@@ -267,40 +260,6 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
               Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
               Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
             )
-          }
-*/
-        }
-      }
-
-    def and[U <: T, TYPECLASS[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val rightMatcher = rightMatcherGen1.matcher
-              andMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
-              val leftMatchResult = leftMatcher(left)
-              val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-              if (!leftMatchResult.matches)
-                MatchResult(
-                  false,
-                  leftMatchResult.failureMessage,
-                  leftMatchResult.negatedFailureMessage,
-                  leftMatchResult.midSentenceFailureMessage,
-                  leftMatchResult.midSentenceNegatedFailureMessage
-                )
-              else {
-                MatchResult(
-                  rightMatchResult.matches,
-                  Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-                  Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-                )
-              }
-*/
-            }
           }
         }
       }
@@ -636,41 +595,7 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        * </pre>
        */
       def equal(any: Any): Matcher[T] =
-        matchersWrapper.and(matchers.not.apply(matchers.legacyEqual(any)))
-
-      /**
-       * This method enables the following syntax, for the "primitive" numeric types:
-       *
-       * <pre class="stHighlight">
-       * sevenDotOh should (not equal (17.0 plusOrMinus 0.2) and not equal (17.0 plusOrMinus 0.2))
-       *                                                         ^
-       * </pre>
-       */
-      def equal[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.and(matchers.not.equal(interval))
-
-      /**
-       * This method enables the following syntax:
-       *
-       * <pre class="stHighlight">
-       * aNullRef should (not equal ("hi") and not equal (null))
-       *                                   ^
-       * </pre>
-       */
-      def equal(o: Null): Matcher[T] = {
-        matchersWrapper and {
-          new Matcher[T] {
-            def apply(left: T): MatchResult = {
-              MatchResult(
-                left != null,
-                FailureMessages("equaledNull"),
-                FailureMessages("didNotEqualNull", left),
-                FailureMessages("midSentenceEqualedNull"),
-                FailureMessages("didNotEqualNull", left)
-              )
-            }
-          }
-        }
-      }
+        matchersWrapper.and(matchers.not.apply(matchers.equal(any)))
 
       /**
        * This method enables the following syntax:
@@ -778,8 +703,8 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        *                                  ^
        * </pre>
        */
-      def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[T] =
-        matchersWrapper.and(matchers.not.be(tripleEqualsInvocation))
+      def be(resultOfTripleEqualsApplication: ResultOfTripleEqualsApplication): Matcher[T] =
+        matchersWrapper.and(matchers.not.be(resultOfTripleEqualsApplication))
 
       /**
        * This method enables the following syntax:
@@ -862,14 +787,64 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
       def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = matchersWrapper.and(matchers.not.be(resultOfTheSameInstanceAsApplication))
 
       /**
-       * This method enables the following syntax, for the "primitive" numeric types:
+       * This method enables the following syntax:
        *
        * <pre class="stHighlight">
        * sevenDotOh should (not be (17.0 plusOrMinus 0.2) and not be (17.0 plusOrMinus 0.2))
        *                                                          ^
        * </pre>
        */
-      def be[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.and(matchers.not.be(interval))
+      def be(doubleTolerance: DoubleTolerance): Matcher[T with Double] = matchersWrapper.and(matchers.not.be(doubleTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenDotOhFloat should (not be (17.0f plusOrMinus 0.2f) and not be (17.0f plusOrMinus 0.2f))
+       *                                                                 ^
+       * </pre>
+       */
+      def be(floatTolerance: FloatTolerance): Matcher[T with Float] = matchersWrapper.and(matchers.not.be(floatTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenLong should (not be (17L plusOrMinus 2L) and not be (17L plusOrMinus 2L))
+       *                                                       ^
+       * </pre>
+       */
+      def be(longTolerance: LongTolerance): Matcher[T with Long] = matchersWrapper.and(matchers.not.be(longTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenInt should (not be (17 plusOrMinus 2) and not be (17 plusOrMinus 2))
+       *                                                    ^
+       * </pre>
+       */
+      def be(intTolerance: IntTolerance): Matcher[T with Int] = matchersWrapper.and(matchers.not.be(intTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenShort should (not be (17.toShort plusOrMinus 2.toShort) and not be (17.toShort plusOrMinus 2.toShort))
+       *                                                                      ^
+       * </pre>
+       */
+      def be(shortTolerance: ShortTolerance): Matcher[T with Short] = matchersWrapper.and(matchers.not.be(shortTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenByte should ((not be (19.toByte plusOrMinus 2.toByte)) and (not be (19.toByte plusOrMinus 2.toByte)))
+       *                                                                      ^
+       * </pre>
+       */
+      def be(byteTolerance: ByteTolerance): Matcher[T with Byte] = matchersWrapper.and(matchers.not.be(byteTolerance))
 
       /**
        * This method enables the following syntax:
@@ -1018,8 +993,6 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
     def or[U <: T](rightMatcher: Matcher[U]): Matcher[U] =
       new Matcher[U] {
         def apply(left: U): MatchResult = {
-          orMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
           val leftMatchResult = leftMatcher(left)
           val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
           if (leftMatchResult.matches)
@@ -1038,40 +1011,6 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
               Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
               Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
             )
-          }
-*/
-        }
-      }
-
-    def or[U <: T, TYPECLASS[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val rightMatcher = rightMatcherGen1.matcher
-              orMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
-              val leftMatchResult = leftMatcher(left)
-              val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-              if (leftMatchResult.matches)
-                MatchResult(
-                  true,
-                  leftMatchResult.negatedFailureMessage,
-                  leftMatchResult.failureMessage,
-                  leftMatchResult.midSentenceNegatedFailureMessage,
-                  leftMatchResult.midSentenceFailureMessage
-                )
-              else {
-                MatchResult(
-                  rightMatchResult.matches,
-                  Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-                  Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-                )
-              }
-*/
-            }
           }
         }
       }
@@ -1407,41 +1346,7 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        * </pre>
        */
       def equal(any: Any): Matcher[T] =
-        matchersWrapper.or(matchers.not.apply(matchers.legacyEqual(any)))
-
-      /**
-       * This method enables the following syntax for the "primitive" numeric types:
-       *
-       * <pre class="stHighlight">
-       * sevenDotOh should (not equal (17.0 plusOrMinus 0.2) or not equal (17.0 plusOrMinus 0.2))
-       *                                                        ^
-       * </pre>
-       */
-      def equal[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.equal(interval))
-
-      /**
-       * This method enables the following syntax:
-       *
-       * <pre class="stHighlight">
-       * aNullRef should (not equal (null) or not equal (null))
-       *                                   ^
-       * </pre>
-       */
-      def equal(o: Null): Matcher[T] = {
-        matchersWrapper or {
-          new Matcher[T] {
-            def apply(left: T): MatchResult = {
-              MatchResult(
-                left != null,
-                FailureMessages("equaledNull"),
-                FailureMessages("didNotEqualNull", left),
-                FailureMessages("midSentenceEqualedNull"),
-                FailureMessages("didNotEqualNull", left)
-              )
-            }
-          }
-        }
-      }
+        matchersWrapper.or(matchers.not.apply(matchers.equal(any)))
 
       /**
        * This method enables the following syntax:
@@ -1549,8 +1454,8 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
        *                                 ^
        * </pre>
        */
-      def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[T] =
-        matchersWrapper.or(matchers.not.be(tripleEqualsInvocation))
+      def be(resultOfTripleEqualsApplication: ResultOfTripleEqualsApplication): Matcher[T] =
+        matchersWrapper.or(matchers.not.be(resultOfTripleEqualsApplication))
 
       /**
        * This method enables the following syntax:
@@ -1633,14 +1538,64 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
       def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = matchersWrapper.or(matchers.not.be(resultOfTheSameInstanceAsApplication))
 
       /**
-       * This method enables the following syntax for the "primitive" numeric types:
+       * This method enables the following syntax:
        *
        * <pre class="stHighlight">
        * sevenDotOh should (not be (17.0 plusOrMinus 0.2) or not be (17.0 plusOrMinus 0.2))
        *                                                         ^
        * </pre>
        */
-      def be[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.be(interval))
+      def be(doubleTolerance: DoubleTolerance): Matcher[T with Double] = matchersWrapper.or(matchers.not.be(doubleTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenDotOhFloat should (not be (17.0f plusOrMinus 0.2f) or not be (17.0f plusOrMinus 0.2f))
+       *                                                                ^
+       * </pre>
+       */
+      def be(floatTolerance: FloatTolerance): Matcher[T with Float] = matchersWrapper.or(matchers.not.be(floatTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenLong should (not be (17L plusOrMinus 2L) or not be (17L plusOrMinus 2L))
+       *                                                      ^
+       * </pre>
+       */
+      def be(longTolerance: LongTolerance): Matcher[T with Long] = matchersWrapper.or(matchers.not.be(longTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenInt should (not be (17 plusOrMinus 2) or not be (17 plusOrMinus 2))
+       *                                                   ^
+       * </pre>
+       */
+      def be(intTolerance: IntTolerance): Matcher[T with Int] = matchersWrapper.or(matchers.not.be(intTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenShort should (not be (17.toShort plusOrMinus 2.toShort) or not be (17.toShort plusOrMinus 2.toShort))
+       *                                                                     ^
+       * </pre>
+       */
+      def be(shortTolerance: ShortTolerance): Matcher[T with Short] = matchersWrapper.or(matchers.not.be(shortTolerance))
+
+      /**
+       * This method enables the following syntax:
+       *
+       * <pre class="stHighlight">
+       * sevenByte should ((not be (19.toByte plusOrMinus 2.toByte)) or (not be (19.toByte plusOrMinus 2.toByte)))
+       *                                                                     ^
+       * </pre>
+       */
+      def be(byteTolerance: ByteTolerance): Matcher[T with Byte] = matchersWrapper.or(matchers.not.be(byteTolerance))
 
       /**
        * This method enables the following syntax:
@@ -2005,18 +1960,7 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
             FailureMessages("containedExpectedElement", left, expectedElement)
           )
       }
-    
-    /**
-     * This method enables the following syntax, where <code>num</code> is, for example, of type <code>Int</code> and
-     * <code>odd</code> refers to a <code>BeMatcher[Int]</code>:
-     *
-     * <pre class="stHighlight">
-     * num should contain (odd)
-     *               ^
-     * </pre>
-     */
-    def apply[T](right: ContainMatcher[T]) = right
-    
+
     //
     // This key method is called when "contain" is used in a logical expression, such as:
     // map should { contain key 1 and equal (Map(1 -> "Howdy")) }. It results in a matcher
@@ -2323,13 +2267,9 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
    * Sealed supertrait for <code>Length</code> and <code>Size</code> type classes.
    *
    * <p>
-   * This sealed trait has two subclasses, <code>Length[T]</code> and <code>Size[T]</code>.
-   * Objects of type T for which an implicit <code>Length[T]</code> is available can be used
-   * with the <code>should have length</code> syntax.
-   * Similarly, objects of type T for which an implicit <code>Size[T]</code> is available can be used
-   * with the <code>should have size</code> syntax.
-   * By creating an appropriate type class, therefore, you can enable the size and length checking syntax with arbitrary objects.
-   * As an example, consider <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
+   * These traits enable you to use ScalaTest matchers' &ldquo;<code>have length</code>&rdquo; and
+   * &ldquo;<code>have size</code>&rdquo; syntax to be used with arbitrary objects. As an example, consider
+   * <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
    * can't be used with ScalaTest's <code>have length</code> syntax. 
    * </p>
    *
@@ -2373,11 +2313,8 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
    * Supertrait for <code>Length</code> type classes.
    *
    * <p>
-   * Trait <code>Length</code> is a type class trait for objects that can be queried for length.
-   * Objects of type T for which an implicit <code>Length[T]</code> is available can be used
-   * with the <code>should have length</code> syntax.
-   * In other words, this trait enables you to use the length checking
-   * syntax with arbitrary objects. As an example, consider
+   * This traits enable you to use ScalaTest matchers' &ldquo;<code>have length</code>&rdquo; 
+   * syntax to be used with arbitrary objects. As an example, consider
    * <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
    * can't be used with ScalaTest's <code>have length</code> syntax. 
    * </p>
@@ -2414,17 +2351,14 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
    *
    * @author Bill Venners
    */
-  trait Length[T] extends Extent[T]
+  trait Length[T] extends Extent[T] // TODO: Fix the ScalaDoc
 
   /**
    * Supertrait for <code>Size</code> type classes.
    *
    * <p>
-   * Trait <code>Size</code> is a type class trait for objects that can be queried for size.
-   * Objects of type T for which an implicit <code>Size[T]</code> is available can be used
-   * with the <code>should have size</code> syntax.
-   * In other words, this trait enables you to use the size checking
-   * syntax with arbitrary objects. As an example, consider
+   * This traits enable you to use ScalaTest matchers' &ldquo;<code>have size</code>&rdquo; 
+   * syntax to be used with arbitrary objects. As an example, consider
    * <code>java.net.DatagramPacket</code>, which has a <code>getLength</code> method. By default, this
    * can't be used with ScalaTest's <code>have length</code> syntax. 
    * </p>
@@ -2460,7 +2394,7 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
    *
    * @author Bill Venners
    */
-  trait Size[T] extends Extent[T]
+  trait Size[T] extends Extent[T] // TODO Fix the scaladoc
 
   // This guy is generally done through an implicit conversion from a symbol. It takes that symbol, and 
   // then represents an object with an apply method. So it gives an apply method to symbols.
@@ -2854,7 +2788,7 @@ trait ClassicMatchers extends Assertions with Tolerance { matchers =>
    *
    * @author Bill Venners
    */
-  sealed class ResultOfHaveWordForJavaCollection[E, L[_] <: java.util.Collection[_]](left: L[E], shouldBeTrue: Boolean) {
+  sealed class ResultOfHaveWordForJavaCollection[T](left: java.util.Collection[T], shouldBeTrue: Boolean) {
 
     /**
      * This method enables the following syntax:
@@ -2980,7 +2914,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  sealed class ResultOfNotWordForTraversable[E, T[_] <: GenTraversable[_]](left: T[E], shouldBeTrue: Boolean)
+  sealed class ResultOfNotWordForTraversable[E, T <: GenTraversable[E]](left: T, shouldBeTrue: Boolean)
       extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
 
     /**
@@ -3001,23 +2935,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             )
           )
-      }
-    }
-    
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * collection should not contain containMatcher
-     *                       ^
-     * </pre>
-     */
-    def contain(right: ContainMatcher[E]) {
-      val result = right(left.asInstanceOf[scala.collection.GenTraversable[E]])
-      if (result.matches != shouldBeTrue) {
-        throw newTestFailedException(
-          if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
-        )
       }
     }
 
@@ -3049,7 +2966,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  sealed class ResultOfNotWordForJavaCollection[E, T[_] <: java.util.Collection[_]](left: T[E], shouldBeTrue: Boolean)
+  sealed class ResultOfNotWordForJavaCollection[E, T <: java.util.Collection[E]](left: T, shouldBeTrue: Boolean)
       extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
 
     /**
@@ -3101,8 +3018,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForMap[K, V, L[_, _] <: scala.collection.GenMap[_, _]](left: L[K, V], shouldBeTrue: Boolean)
-      extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
+  final class ResultOfNotWordForMap[K, V](left: scala.collection.GenMap[K, V], shouldBeTrue: Boolean)
+      extends ResultOfNotWordForTraversable[(K, V), scala.collection.GenMap[K, V]](left, shouldBeTrue) {
+
 
     /**
      * This method enables the following syntax:
@@ -3114,7 +3032,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def contain(resultOfKeyWordApplication: ResultOfKeyWordApplication[K]) {
       val right = resultOfKeyWordApplication.expectedKey
-      if ((left.asInstanceOf[GenMap[K, V]].exists(_._1 == right)) != shouldBeTrue) {
+      if ((left.exists(_._1 == right)) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainKey" else "containedKey",
@@ -3135,74 +3053,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def contain(resultOfValueWordApplication: ResultOfValueWordApplication[V]) {
       val right = resultOfValueWordApplication.expectedValue
-      if ((left.asInstanceOf[GenMap[K, V]].exists(_._2 == right)) != shouldBeTrue) {
+      if ((left.exists(_._2 == right)) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainValue" else "containedValue",
-              left,
-              right
-            )
-          )
-      }
-    }
-
-    // TODO: Had to pull these methods out of ReusltOfNotWordForTraversable, because can't exent
-    // it without losing precision on the inferred types. Map[String, Int] becomes GenIterable[(Any, Any)]
-    // So the wrong Equality type class was chosen. By going around ResultOfNotWordForTraversable, I can
-    // get the precise Map type up to ResultOfNotWord's equal method, which requires the Equality type class.
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * iterable should not contain ("one")
-     *                     ^
-     * </pre>
-     */
-    def contain(expectedElement: (K, V)) {
-      val right = expectedElement
-      if ((left.exists(_ == right)) != shouldBeTrue) {
-        throw newTestFailedException(
-          FailureMessages(
-            if (shouldBeTrue) "didNotContainExpectedElement" else "containedExpectedElement",
-              left,
-              right
-            )
-          )
-      }
-    }
-    
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * collection should not contain containMatcher
-     *                       ^
-     * </pre>
-     */
-    def contain(right: ContainMatcher[(K, V)]) {
-      val result = right(left.asInstanceOf[scala.collection.GenTraversable[(K, V)]])
-      if (result.matches != shouldBeTrue) {
-        throw newTestFailedException(
-          if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
-        )
-      }
-    }
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * collection should not have size (3)
-     *                       ^
-     * </pre>
-     */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication) {
-      val right = resultOfSizeWordApplication.expectedSize
-      if ((left.size == right) != shouldBeTrue) {
-        throw newTestFailedException(
-          FailureMessages(
-            if (shouldBeTrue) "didNotHaveExpectedSize" else "hadExpectedSize",
               left,
               right
             )
@@ -3217,7 +3071,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForJavaMap[K, V, L[_, _] <: java.util.Map[_, _]](left: L[K, V], shouldBeTrue: Boolean)
+  final class ResultOfNotWordForJavaMap[K, V](left: java.util.Map[K, V], shouldBeTrue: Boolean)
       extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
 
     /**
@@ -3269,8 +3123,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForSeq[E, T[_] <: GenSeq[_]](left: T[E], shouldBeTrue: Boolean)
-      extends ResultOfNotWordForTraversable(left, shouldBeTrue) {
+  final class ResultOfNotWordForSeq[E, T <: GenSeq[E]](left: T, shouldBeTrue: Boolean)
+      extends ResultOfNotWordForTraversable[E, T](left, shouldBeTrue) {
 
     /**
      * This method enables the following syntax:
@@ -3374,7 +3228,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfHaveWordForJavaList[E, L[_] <: java.util.List[_]](left: L[E], shouldBeTrue: Boolean) extends ResultOfHaveWordForJavaCollection[E, L](left, shouldBeTrue) {
+  final class ResultOfHaveWordForJavaList[T](left: java.util.List[T], shouldBeTrue: Boolean) extends ResultOfHaveWordForJavaCollection[T](left, shouldBeTrue) {
 
     /**
      * This method enables the following syntax:
@@ -3406,7 +3260,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForJavaList[E, T[_] <: java.util.List[_]](left: T[E], shouldBeTrue: Boolean)
+  final class ResultOfNotWordForJavaList[E, T <: java.util.List[E]](left: T, shouldBeTrue: Boolean)
       extends ResultOfNotWordForJavaCollection[E, T](left, shouldBeTrue) {
 
     /**
@@ -3462,26 +3316,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         )
     }
-
-    /* *
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * result should be a [String]
-     *                  ^
-     * </pre>
-    def a[EXPECTED : ClassManifest] {
-      val clazz = implicitly[ClassManifest[EXPECTED]].erasure.asInstanceOf[Class[EXPECTED]]
-      if (clazz.isAssignableFrom(left.getClass)) {
-        throw newTestFailedException(
-          if (shouldBeTrue)
-            FailureMessages("wasNotAnInstanceOf", left, UnquotedString(clazz.getName))
-          else
-            FailureMessages("wasAnInstanceOf")
-        )
-      }
-    }
-     */
 
     /**
      * This method enables the following syntax:
@@ -3578,8 +3412,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                   ^
      * </pre>
      */
-    def equal(right: Any)(implicit equality: Equality[T]) {
-      if (equality.areEqual(left, right) != shouldBeTrue)
+    def equal(right: Any) {
+      if ((left == right) != shouldBeTrue)
         throw newTestFailedException(
           FailureMessages(
            if (shouldBeTrue) "didNotEqual" else "equaled",
@@ -3588,8 +3422,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         )
     }
-
-// TODO: Why isn't there an equal that takes a tolerance? (and later one that takes a null?)
 
     /**
      * This method enables the following syntax:
@@ -3698,8 +3530,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                   ^
      * </pre>
      */
-    def be(comparison: TripleEqualsInvocation[_]) {
-      if ((left == comparison.right) != shouldBeTrue) {
+    def be(comparison: ResultOfTripleEqualsApplication) {
+      if (comparison(left) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "wasNotEqualTo" else "wasEqualTo",
@@ -4155,46 +3987,186 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfNotWordForNumeric[T : Numeric](left: T, shouldBeTrue: Boolean)
-      extends ResultOfNotWord[T](left, shouldBeTrue) {
+  final class ResultOfNotWordForDouble(left: Double, shouldBeTrue: Boolean)
+      extends ResultOfNotWord[Double](left, shouldBeTrue) {
 
     /**
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * sevenDotOh should not be (6.5 +- 0.2)
+     * sevenDotOh should not be (6.5 plusOrMinus 0.2)
      *                       ^
      * </pre>
      */
-    def be(interval: Interval[T]) {
-      if (interval.isWithin(left) != shouldBeTrue) {
+    def be(doubleTolerance: DoubleTolerance) {
+      import doubleTolerance._
+      if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
             left,
-            interval.right,
-            interval.tolerance
+            right,
+            tolerance
           )
         )
       }
     }
+  }
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class ResultOfNotWordForFloat(left: Float, shouldBeTrue: Boolean)
+      extends ResultOfNotWord[Float](left, shouldBeTrue) {
 
     /**
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * sevenDotOh should not equal (6.5 +- 0.2)
-     *                       ^
+     * sevenDotOhFloat should not be (6.5f plusOrMinus 0.2f)
+     *                            ^
      * </pre>
      */
-    def equal(interval: Interval[T]) {
-      if (interval.isWithin(left) != shouldBeTrue) {
+    def be(floatTolerance: FloatTolerance) {
+      import floatTolerance._
+      if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
-            if (shouldBeTrue) "didNotEqualPlusOrMinus" else "equaledPlusOrMinus",
+            if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
             left,
-            interval.right,
-            interval.tolerance
+            right,
+            tolerance
+          )
+        )
+      }
+    }
+  }
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class ResultOfNotWordForLong(left: Long, shouldBeTrue: Boolean)
+      extends ResultOfNotWord[Long](left, shouldBeTrue) {
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOhLong should not be (4L plusOrMinus 2L)
+     *                           ^
+     * </pre>
+     */
+    def be(longTolerance: LongTolerance) {
+      import longTolerance._
+      if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
+            left,
+            right,
+            tolerance
+          )
+        )
+      }
+    }
+  }
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class ResultOfNotWordForInt(left: Int, shouldBeTrue: Boolean)
+      extends ResultOfNotWord[Int](left, shouldBeTrue) {
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOhInt should not be (4 plusOrMinus 2)
+     *                          ^
+     * </pre>
+     */
+    def be(intTolerance: IntTolerance) {
+      import intTolerance._
+      if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
+            left,
+            right,
+            tolerance
+          )
+        )
+      }
+    }
+  }
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class ResultOfNotWordForShort(left: Short, shouldBeTrue: Boolean)
+      extends ResultOfNotWord[Short](left, shouldBeTrue) {
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOhShort should not be (4.toShort plusOrMinus 2.toShort)
+     *                            ^
+     * </pre>
+     */
+    def be(shortTolerance: ShortTolerance) {
+      import shortTolerance._
+      if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
+            left,
+            right,
+            tolerance
+          )
+        )
+      }
+    }
+  }
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class ResultOfNotWordForByte(left: Byte, shouldBeTrue: Boolean)
+      extends ResultOfNotWord[Byte](left, shouldBeTrue) {
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOhByte should not be (4.toByte plusOrMinus 2.toByte)
+     *                            ^
+     * </pre>
+     */
+    def be(byteTolerance: ByteTolerance) {
+      import byteTolerance._
+      if ((left <= right + tolerance && left >= right - tolerance) != shouldBeTrue) {
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
+            left,
+            right,
+            tolerance
           )
         )
       }
@@ -4473,25 +4445,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </p>
    *
    */
-  def equal(right: Any): MatcherGen1[Any, Equality] =
-    new MatcherGen1[Any, Equality] {
-      def matcher[T <: Any : Equality]: Matcher[T] = {
-        val equality = implicitly[Equality[T]]
-        new Matcher[T] {
-          def apply(left: T): MatchResult = {
-            val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
-            MatchResult(
-              equality.areEqual(left, right),
-              FailureMessages("didNotEqual", leftee, rightee),
-              FailureMessages("equaled", left, right)
-            )
-          }
-        }
-      }
-    }
-
-  // Going back to original, legacy one to get to a good place to check in.
-/*
   def equal(right: Any): Matcher[Any] =
       new Matcher[Any] {
         def apply(left: Any): MatchResult = {
@@ -4503,185 +4456,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           )
         }
       }
-*/
-
-  def legacyEqual(right: Any): Matcher[Any] =
-      new Matcher[Any] {
-        def apply(left: Any): MatchResult = {
-          val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
-          MatchResult(
-            areEqualComparingArraysStructurally(left, right),
-            FailureMessages("didNotEqual", leftee, rightee),
-            FailureMessages("equaled", left, right)
-          )
-        }
-      }
-
-  private def andMatchersAndApply[T](left: T, leftMatcher: Matcher[T], rightMatcher: Matcher[T]): MatchResult = {
-    val leftMatchResult = leftMatcher(left)
-    val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-    if (!leftMatchResult.matches)
-      MatchResult(
-        false,
-        leftMatchResult.failureMessage,
-        leftMatchResult.negatedFailureMessage,
-        leftMatchResult.midSentenceFailureMessage,
-        leftMatchResult.midSentenceNegatedFailureMessage
-      )
-    else {
-      MatchResult(
-        rightMatchResult.matches,
-        Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-        Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-        Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-        Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-      )
-    }
-  }
-
-  private def orMatchersAndApply[T](left: T, leftMatcher: Matcher[T], rightMatcher: Matcher[T]): MatchResult = {
-    val leftMatchResult = leftMatcher(left)
-    val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-    if (leftMatchResult.matches)
-      MatchResult(
-        true,
-        leftMatchResult.negatedFailureMessage,
-        leftMatchResult.failureMessage,
-        leftMatchResult.midSentenceNegatedFailureMessage,
-        leftMatchResult.midSentenceFailureMessage
-      )
-    else {
-      MatchResult(
-        rightMatchResult.matches,
-        Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceFailureMessage),
-        Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-        Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
-        Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-      )
-    }
-  }
-
-  abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { thisMatcherGen1 =>
-
-    def matcher[T <: SUPERCLASS : TYPECLASS]: Matcher[T]
-
-    // (equal (7) and ...)
-    def and[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val leftMatcher = thisMatcherGen1.matcher
-              andMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
-              val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-              if (!leftMatchResult.matches)
-                MatchResult(
-                  false,
-                  leftMatchResult.failureMessage,
-                  leftMatchResult.negatedFailureMessage,
-                  leftMatchResult.midSentenceFailureMessage,
-                  leftMatchResult.midSentenceNegatedFailureMessage
-                )
-              else {
-                MatchResult(
-                  rightMatchResult.matches,
-                  Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-                  Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-                )
-              }
-*/
-            }
-          }
-        }
-      }
-
-    // (equal (7) or ...)
-    def or[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val leftMatcher = thisMatcherGen1.matcher
-              orMatchersAndApply(left, leftMatcher, rightMatcher)
-            }
-          }
-        }
-      }
-
-// Need one for the same typeclass and one for a different typeclass, yes, and can overload because
-// one returns a MatcherGen1 the other a MatcherGen2.
-     // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
-    def or[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val leftMatcher = thisMatcherGen1.matcher
-              val rightMatcher = rightMatcherGen1.matcher
-              orMatchersAndApply(left, leftMatcher, rightMatcher)
-            }
-          }
-        }
-      }
-
-    // "hi" should (equal ("ho") and {mockClown.hasBigRedNose; equal ("ho")})
-    def and[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val leftMatcher = thisMatcherGen1.matcher
-              val rightMatcher = rightMatcherGen1.matcher
-              andMatchersAndApply(left, leftMatcher, rightMatcher)
-            }
-          }
-        }
-      }
-  }
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * result should equal (100 +- 1)
-   *        ^
-   * </pre>
-   */
-  def equal[T](interval: Interval[T]): Matcher[T] = {
-    new Matcher[T] {
-      def apply(left: T): MatchResult = {
-        MatchResult(
-          interval.isWithin(left),
-          FailureMessages("didNotEqualPlusOrMinus", left, interval.right, interval.tolerance),
-          FailureMessages("equaledPlusOrMinus", left, interval.right, interval.tolerance)
-        )
-      }
-    }
-  }
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * result should equal (null)
-   *        ^
-   * </pre>
-   */
-  def equal(o: Null): Matcher[AnyRef] = 
-    new Matcher[AnyRef] {
-      def apply(left: AnyRef): MatchResult = {
-        MatchResult(
-          left == null,
-          FailureMessages("didNotEqualNull", left),
-          FailureMessages("equaledNull"),
-          FailureMessages("didNotEqualNull", left),
-          FailureMessages("midSentenceEqualedNull")
-        )
-      }
-    }
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -5011,21 +4785,121 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
 
     /**
-     * This method enables the following syntax for the "primitive" numeric types: 
+     * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
      * sevenDotOh should be (7.1 plusOrMinus 0.2)
      *                      ^
      * </pre>
      */
-    def apply[U](interval: Interval[U]): Matcher[U] =
-      new Matcher[U] {
-        def apply(left: U): MatchResult = {
+    def apply(doubleTolerance: DoubleTolerance): Matcher[Double] =
+      new Matcher[Double] {
+        def apply(left: Double): MatchResult = {
+          import doubleTolerance._
           MatchResult(
-            interval.isWithin(left),
-            // left <= right + tolerance && left >= right - tolerance,
-            FailureMessages("wasNotPlusOrMinus", left, interval.right, interval.tolerance),
-            FailureMessages("wasPlusOrMinus", left, interval.right, interval.tolerance)
+            left <= right + tolerance && left >= right - tolerance,
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOhFloat should be (7.1f plusOrMinus 0.2f)
+     *                           ^
+     * </pre>
+     */
+    def apply(floatTolerance: FloatTolerance): Matcher[Float] =
+      new Matcher[Float] {
+        def apply(left: Float): MatchResult = {
+          import floatTolerance._
+          MatchResult(
+            left <= right + tolerance && left >= right - tolerance,
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenLong should be (7L plusOrMinus 2L)
+     *                     ^
+     * </pre>
+     */
+    def apply(longTolerance: LongTolerance): Matcher[Long] =
+      new Matcher[Long] {
+        def apply(left: Long): MatchResult = {
+          import longTolerance._
+          MatchResult(
+            left <= right + tolerance && left >= right - tolerance,
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenInt should be (7 plusOrMinus 2)
+     *                     ^
+     * </pre>
+     */
+    def apply(intTolerance: IntTolerance): Matcher[Int] =
+      new Matcher[Int] {
+        def apply(left: Int): MatchResult = {
+          import intTolerance._
+          MatchResult(
+            left <= right + tolerance && left >= right - tolerance,
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenShort should be (7.toShort plusOrMinus 2.toShort)
+     *                     ^
+     * </pre>
+     */
+    def apply(shortTolerance: ShortTolerance): Matcher[Short] =
+      new Matcher[Short] {
+        def apply(left: Short): MatchResult = {
+          import shortTolerance._
+          MatchResult(
+            left <= right + tolerance && left >= right - tolerance,
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenByte should be (7.toByte plusOrMinus 2.toByte)
+     *                     ^
+     * </pre>
+     */
+    def apply(byteTolerance: ByteTolerance): Matcher[Byte] =
+      new Matcher[Byte] {
+        def apply(left: Byte): MatchResult = {
+          import byteTolerance._
+          MatchResult(
+            left <= right + tolerance && left >= right - tolerance,
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance)
           )
         }
       }
@@ -5093,26 +4967,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             FailureMessages("midSentenceWasNull")
           )
         }
-      }
-
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * set should be ('empty)
-     *               ^
-     * </pre>
-     */
-    def apply[T](right: AType[T]): Matcher[Any] =
-      new Matcher[Any] {
-        def apply(left: Any): MatchResult = 
-          MatchResult(
-            right.isAssignableFromClassOf(left),
-            FailureMessages("wasNotAnInstanceOf", left, UnquotedString(right.className)),
-            FailureMessages("wasAnInstanceOf"), // TODO, missing the left, right.className here. Write a test and fix it.
-            FailureMessages("wasNotAnInstanceOf", left, UnquotedString(right.className)),
-            FailureMessages("wasAnInstanceOf")
-          )
       }
 
     /**
@@ -5228,29 +5082,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
 
     /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * hasNoSize should not { have size (2) and equal (hasNoSize) }
-     *                      ^
-     * </pre>
-     */
-    def apply[S <: Any, TYPECLASS[_]](matcherGen1: MatcherGen1[S, TYPECLASS]): MatcherGen1[S, TYPECLASS] = {
-      new MatcherGen1[S, TYPECLASS] {
-        def matcher[V <: S : TYPECLASS]: Matcher[V] = {
-          val innerMatcher: Matcher[V] = matcherGen1.matcher
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              innerMatcher(left) match {
-                case MatchResult(bool, s1, s2, s3, s4) => MatchResult(!bool, s2, s1, s4, s3)
-              }
-            }
-          }
-        }
-      }
-    }
-
-    /**
      * This method enables any <code>BeMatcher</code> to be negated by passing it to <code>not</code>. 
      * For example, if you have a <code>BeMatcher[Int]</code> called <code>odd</code>, which matches
      * <code>Int</code>s that are odd, you can negate it to get a <code>BeMatcher[Int]</code> that matches
@@ -5293,48 +5124,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                 ^
      * </pre>
      */
-    def equal(right: Any): Matcher[Any] = apply(matchers.legacyEqual(right))
-
-    /**
-     * This method enables the following syntax for the "primitive" numeric types: 
-     *
-     * <pre class="stHighlight">
-     * sevenDotOh should ((not equal (17.1 plusOrMinus 0.2)) and (not equal (27.1 plusOrMinus 0.2)))
-     *                         ^
-     * </pre>
-     */
-    def equal[U](interval: Interval[U]): Matcher[U] = {
-      new Matcher[U] {
-        def apply(left: U): MatchResult = {
-          MatchResult(
-            !(interval.isWithin(left)),
-            FailureMessages("equaledPlusOrMinus", left, interval.right, interval.tolerance),
-            FailureMessages("didNotEqualPlusOrMinus", left, interval.right, interval.tolerance)
-          )
-        }
-      }
-    }
-
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * map should (not equal (null))
-     *                 ^
-     * </pre>
-     */
-    def equal(o: Null): Matcher[AnyRef] =
-      new Matcher[AnyRef] {
-        def apply(left: AnyRef): MatchResult = {
-          MatchResult(
-            left != null,
-            FailureMessages("equaledNull"),
-            FailureMessages("didNotEqualNull", left),
-            FailureMessages("midSentenceEqualedNull"),
-            FailureMessages("didNotEqualNull", left)
-          )
-        }
-      }
+    def equal(right: Any): Matcher[Any] = apply(matchers.equal(right))
 
     /**
      * This method enables the following syntax: 
@@ -5495,13 +5285,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                 ^
      * </pre>
      */
-    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[Any] = {
+    def be(resultOfTripleEqualsApplication: ResultOfTripleEqualsApplication): Matcher[Any] = {
       new Matcher[Any] {
         def apply(left: Any): MatchResult =
           MatchResult(
-            !(left == tripleEqualsInvocation.right),
-            FailureMessages("wasEqualTo", left, tripleEqualsInvocation.right),
-            FailureMessages("wasNotEqualTo", left, tripleEqualsInvocation.right)
+            !resultOfTripleEqualsApplication(left),
+            FailureMessages("wasEqualTo", left, resultOfTripleEqualsApplication.right),
+            FailureMessages("wasNotEqualTo", left, resultOfTripleEqualsApplication.right)
           )
       }
     }
@@ -5655,21 +5445,126 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
     }
 
     /**
-     * This method enables the following syntax for the "primitive" numeric types: 
+     * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
      * sevenDotOh should ((not be (17.1 plusOrMinus 0.2)) and (not be (27.1 plusOrMinus 0.2)))
      *                         ^
      * </pre>
      */
-    def be[U](interval: Interval[U]): Matcher[U] = {
-      new Matcher[U] {
-        def apply(left: U): MatchResult = {
+    def be(doubleTolerance: DoubleTolerance): Matcher[Double] = {
+      import doubleTolerance._
+      new Matcher[Double] {
+        def apply(left: Double): MatchResult = {
           MatchResult(
-            // !(left <= right + tolerance && left >= right - tolerance),
-            !(interval.isWithin(left)),
-            FailureMessages("wasPlusOrMinus", left, interval.right, interval.tolerance),
-            FailureMessages("wasNotPlusOrMinus", left, interval.right, interval.tolerance)
+            !(left <= right + tolerance && left >= right - tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+    }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenDotOhFloat should ((not be (17.1f plusOrMinus 0.2f)) and (not be (27.1f plusOrMinus 0.2f)))
+     *                         ^
+     * </pre>
+     */
+    def be(floatTolerance: FloatTolerance): Matcher[Float] = {
+      import floatTolerance._
+      new Matcher[Float] {
+        def apply(left: Float): MatchResult = {
+          MatchResult(
+            !(left <= right + tolerance && left >= right - tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+    }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenLong should ((not be (19L plusOrMinus 2L)) and (not be (29L plusOrMinus 2L)))
+     *                        ^
+     * </pre>
+     */
+    def be(longTolerance: LongTolerance): Matcher[Long] = {
+      import longTolerance._
+      new Matcher[Long] {
+        def apply(left: Long): MatchResult = {
+          MatchResult(
+            !(left <= right + tolerance && left >= right - tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+    }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenInt should ((not be (19 plusOrMinus 2)) and (not be (29 plusOrMinus 2)))
+     *                       ^
+     * </pre>
+     */
+    def be(intTolerance: IntTolerance): Matcher[Int] = {
+      import intTolerance._
+      new Matcher[Int] {
+        def apply(left: Int): MatchResult = {
+          MatchResult(
+            !(left <= right + tolerance && left >= right - tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+    }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenShort should ((not be (19.toShort plusOrMinus 2.toShort)) and (not be (29.toShort plusOrMinus 2.toShort)))
+     *                         ^
+     * </pre>
+     */
+    def be(shortTolerance: ShortTolerance): Matcher[Short] = {
+      import shortTolerance._
+      new Matcher[Short] {
+        def apply(left: Short): MatchResult = {
+          MatchResult(
+            !(left <= right + tolerance && left >= right - tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance)
+          )
+        }
+      }
+    }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * sevenByte should ((not be (19.toByte plusOrMinus 2.toByte)) and (not be (29.toByte plusOrMinus 2.toByte)))
+     *                        ^
+     * </pre>
+     */
+    def be(byteTolerance: ByteTolerance): Matcher[Byte] = {
+      import byteTolerance._
+      new Matcher[Byte] {
+        def apply(left: Byte): MatchResult = {
+          MatchResult(
+            !(left <= right + tolerance && left >= right - tolerance),
+            FailureMessages("wasPlusOrMinus", left, right, tolerance),
+            FailureMessages("wasNotPlusOrMinus", left, right, tolerance)
           )
         }
       }
@@ -6437,6 +6332,228 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
+  final case class DoubleTolerance(right: Double, tolerance: Double)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class DoublePlusOrMinusWrapper(right: Double) {
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * sevenDotOh should be (17.0 plusOrMinus 0.2)
+     *                            ^
+     * </pre>
+     */
+    def plusOrMinus(tolerance: Double): DoubleTolerance = {
+      if (tolerance <= 0.0)
+        throw newTestFailedException(Resources("negativeOrZeroRange", tolerance.toString))
+      DoubleTolerance(right, tolerance)
+    }
+  }
+
+  /**
+   * Implicitly converts an object of type <code>Double</code> to a <code>DoublePlusOrMinusWrapper</code>,
+   * to enable a <code>plusOrMinus</code> method to be invokable on that object.
+   */
+  implicit def convertDoubleToPlusOrMinusWrapper(right: Double): DoublePlusOrMinusWrapper = new DoublePlusOrMinusWrapper(right)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final case class FloatTolerance(right: Float, tolerance: Float)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class FloatPlusOrMinusWrapper(right: Float) {
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * sevenDotOh should be (17.0f plusOrMinus 0.2f)
+     *                             ^
+     * </pre>
+     */
+    def plusOrMinus(tolerance: Float): FloatTolerance = {
+      if (tolerance <= 0.0f)
+        throw newTestFailedException(Resources("negativeOrZeroRange", tolerance.toString))
+      FloatTolerance(right, tolerance)
+    }
+  }
+
+  /**
+   * Implicitly converts an object of type <code>Float</code> to a <code>FloatPlusOrMinusWrapper</code>,
+   * to enable a <code>plusOrMinus</code> method to be invokable on that object.
+   */
+  implicit def convertFloatToPlusOrMinusWrapper(right: Float): FloatPlusOrMinusWrapper = new FloatPlusOrMinusWrapper(right)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final case class LongTolerance(right: Long, tolerance: Long)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class LongPlusOrMinusWrapper(right: Long) {
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * seven should be (17L plusOrMinus 2)
+     *                      ^
+     * </pre>
+     */
+    def plusOrMinus(tolerance: Long): LongTolerance = {
+      if (tolerance <= 0L)
+        throw newTestFailedException(Resources("negativeOrZeroRange", tolerance.toString))
+      LongTolerance(right, tolerance)
+    }
+  }
+
+  /**
+   * Implicitly converts an object of type <code>Long</code> to a <code>LongPlusOrMinusWrapper</code>,
+   * to enable a <code>plusOrMinus</code> method to be invokable on that object.
+   */
+  implicit def convertLongToPlusOrMinusWrapper(right: Long): LongPlusOrMinusWrapper = new LongPlusOrMinusWrapper(right)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final case class IntTolerance(right: Int, tolerance: Int)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class IntPlusOrMinusWrapper(right: Int) {
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * seven should be (17 plusOrMinus 2)
+     *                     ^
+     * </pre>
+     */
+    def plusOrMinus(tolerance: Int): IntTolerance = {
+      if (tolerance <= 0)
+        throw newTestFailedException(Resources("negativeOrZeroRange", tolerance.toString))
+      IntTolerance(right, tolerance)
+    }
+  }
+
+  /**
+   * Implicitly converts an object of type <code>Int</code> to a <code>IntPlusOrMinusWrapper</code>,
+   * to enable a <code>plusOrMinus</code> method to be invokable on that object.
+   */
+  implicit def convertIntToPlusOrMinusWrapper(right: Int): IntPlusOrMinusWrapper = new IntPlusOrMinusWrapper(right)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final case class ShortTolerance(right: Short, tolerance: Short)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class ShortPlusOrMinusWrapper(right: Short) {
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * seven should be (17.toShort plusOrMinus 2.toShort)
+     *                             ^
+     * </pre>
+     */
+    def plusOrMinus(tolerance: Short): ShortTolerance = {
+      if (tolerance <= 0)
+        throw newTestFailedException(Resources("negativeOrZeroRange", tolerance.toString))
+      ShortTolerance(right, tolerance)
+    }
+  }
+
+  /**
+   * Implicitly converts an object of type <code>Short</code> to a <code>ShortPlusOrMinusWrapper</code>,
+   * to enable a <code>plusOrMinus</code> method to be invokable on that object.
+   */
+  implicit def convertShortToPlusOrMinusWrapper(right: Short): ShortPlusOrMinusWrapper = new ShortPlusOrMinusWrapper(right)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final case class ByteTolerance(right: Byte, tolerance: Byte)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
+  final class BytePlusOrMinusWrapper(right: Byte) {
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * seven should be (17.toByte plusOrMinus 2.toByte)
+     *                            ^
+     * </pre>
+     */
+    def plusOrMinus(tolerance: Byte): ByteTolerance = {
+      if (tolerance <= 0)
+        throw newTestFailedException(Resources("negativeOrZeroRange", tolerance.toString))
+      ByteTolerance(right, tolerance)
+    }
+  }
+
+  /**
+   * Implicitly converts an object of type <code>Byte</code> to a <code>BytePlusOrMinusWrapper</code>,
+   * to enable a <code>plusOrMinus</code> method to be invokable on that object.
+   */
+  implicit def convertByteToPlusOrMinusWrapper(right: Byte): BytePlusOrMinusWrapper = new BytePlusOrMinusWrapper(right)
+
+  /**
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
+   * the matchers DSL.
+   *
+   * @author Bill Venners
+   */
   final class ResultOfNotWordForSize[A <: AnyRef : Size](left: A, shouldBeTrue: Boolean)
       extends ResultOfNotWordForAnyRef(left, shouldBeTrue) {
 
@@ -6846,7 +6963,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-/* TODEL
   final class ResultOfTripleEqualsApplication(val right: Any) {
 
     /**
@@ -6869,7 +6985,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def apply(left: Any): Boolean = left == right
   }
-*/
 
   /**
    * This method enables the following syntax: 
@@ -6923,10 +7038,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                   ^
    * </pre>
    */
-/* TODEL
   def === (right: Any): ResultOfTripleEqualsApplication =
     new ResultOfTripleEqualsApplication(right)
-*/
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
@@ -6966,561 +7079,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
   def produce[T](implicit manifest: Manifest[T]): ResultOfProduceInvocation[T] =
     new ResultOfProduceInvocation(manifest.erasure.asInstanceOf[Class[T]])
 
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfContainWordForTraversable[T](left: GenTraversable[T], shouldBeTrue: Boolean = true) {
-    
-    private[scalatest] def apply(containMatcher: ContainMatcher[T]) {
-      val result = containMatcher(left)
-      if (result.matches != shouldBeTrue)
-        throw newTestFailedException(
-          if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
-        )
-    }
-  
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * traversable should contain theSameElementsAs anotherTraversable
-     *                            ^
-     * </pre>
-     */
-    def theSameElementsAs(right: GenTraversable[T]) {
-      apply(new TheSameElementsAsContainMatcher(right))
-    }
-    
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * traversable should contain theSameIteratedElementsAs anotherTraversable
-     *                            ^
-     * </pre>
-     */
-    def theSameIteratedElementsAs(right: GenTraversable[T]) {
-      apply(new TheSameIteratedElementsAsContainMatcher(right))
-    }
-    
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * traversable should contain allOf (1, 2)
-     *                            ^
-     * </pre>
-     */
-    def allOf(right: T*) {
-      apply(new AllOfContainMatcher(right))
-    }
-    
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * traversable should contain inOrder (1, 2)
-     *                            ^
-     * </pre>
-     */
-    def inOrder(right: T*) {
-      apply(new InOrderContainMatcher(right))
-    }
-    
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * traversable should contain oneOf (1, 2)
-     *                            ^
-     * </pre>
-     */
-    def oneOf(right: T*) {
-      apply(new OneOfContainMatcher(right))
-    }
-    
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * traversable should contain only (1, 2)
-     *                            ^
-     * </pre>
-     */
-    def only(right: T*) {
-      apply(new OnlyContainMatcher(right))
-    }
-    
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * traversable should contain inOrderOnly (1, 2)
-     *                            ^
-     * </pre>
-     */
-    def inOrderOnly(right: T*) {
-      apply(new InOrderOnlyContainMatcher(right))
-    }
-    
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * traversable should contain noneOf (1, 2)
-     *                            ^
-     * </pre>
-     */
-    def noneOf(right: T*) {
-      apply(new NoneOfContainMatcher(right))
-    }
-  }
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  class TheSameElementsAsContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
-    @tailrec
-    private def checkEqual(left: Iterator[T], right: Iterator[T], remains: IndexedSeq[T]): Boolean = {
-      if (left.hasNext) {
-        val nextLeft = left.next
-        // Let's look from the remains first
-        val idx = remains.indexOf(nextLeft)
-        if (idx >= 0) {
-          // Found in remains, let's remove it from remains and continue
-          val (first, second) = remains.splitAt(idx)
-          checkEqual(left, right, first ++: second.tail)
-        }
-        else {
-          // Not found in remains, let's try right iterator
-          if (right.isEmpty) // right is empty, so the element not found
-            false
-          else {
-            val newRemains = right.takeWhile(_ != nextLeft)
-            checkEqual(left, right, remains ++: newRemains.toIndexedSeq)
-          }
-        }
-      }
-      else
-        right.isEmpty && remains.isEmpty
-    }
-    
-    /**
-     * This method contains the matching code for theSameElementsAs.
-     */
-    def apply(left: GenTraversable[T]): MatchResult = 
-      MatchResult(
-        checkEqual(left.toIterator, right.toIterator, IndexedSeq.empty), 
-        FailureMessages("didNotContainSameElements", left, right), 
-        FailureMessages("containedSameElements", left, right)
-      )
-    
-  }
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * traversable should contain (theSameElementsAs(anotherTraversable))
-   *                             ^
-   * </pre>
-   */
-  def theSameElementsAs[T](xs: GenTraversable[T]) = 
-    new TheSameElementsAsContainMatcher(xs)
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  class TheSameIteratedElementsAsContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
-    @tailrec
-    private def checkEqual(left: Iterator[T], right: Iterator[T]): Boolean = {
-      if (left.hasNext && right.hasNext) {
-        val nextLeft = left.next
-        val nextRight = right.next
-        if (nextLeft != nextRight)
-          false
-        else
-          checkEqual(left, right)
-      }
-      else
-        left.isEmpty && right.isEmpty
-    }
-    
-    /**
-     * This method contains the matching code for theSameIteratedElementsAs.
-     */
-    def apply(left: GenTraversable[T]): MatchResult = 
-      MatchResult(
-        checkEqual(left.toIterator, right.toIterator), 
-        FailureMessages("didNotContainSameIteratedElements", left, right), 
-        FailureMessages("containedSameIteratedElements", left, right)
-      )
-    
-  }
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * traversable should contain (theSameIteratedElementsAs(anotherTraversable))
-   *                             ^
-   * </pre>
-   */
-  def theSameIteratedElementsAs[T](xs: GenTraversable[T]) = 
-    new TheSameIteratedElementsAsContainMatcher(xs)
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  class AllOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
-    @tailrec
-    private def checkEqual(left: GenTraversable[T], rightItr: Iterator[T], processedSet: Set[T]): Boolean = {
-      if (rightItr.hasNext) {
-        val nextRight = rightItr.next
-        if (processedSet.contains(nextRight))
-          throw new IllegalArgumentException(FailureMessages("allOfDuplicate", nextRight))
-        if (left.exists(_ == nextRight)) 
-          checkEqual(left, rightItr, processedSet + nextRight)
-        else
-          false // Element not found, let's fail early
-      }
-      else // No more element in right, left contains all of right.
-        true
-    }
-    
-    /**
-     * This method contains the matching code for theSameIteratedElementsAs.
-     */
-    def apply(left: GenTraversable[T]): MatchResult = 
-      MatchResult(
-        checkEqual(left, right.toIterator, Set.empty), 
-        FailureMessages("didNotContainAllOfElements", left, UnquotedString(right.mkString(", "))),
-        FailureMessages("containedAllOfElements", left, UnquotedString(right.mkString(", ")))
-      )
-  }
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * List(1, 2, 3) should contain (allOf(1, 2))
-   *                               ^
-   * </pre>
-   */
-  def allOf[T](xs: T*) = 
-    new AllOfContainMatcher(xs)
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  class InOrderContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
-    
-    @tailrec
-    private def lastIndexOf(itr: Iterator[T], element: T, idx: Option[Int], i: Int): Option[Int] = {
-      if (itr.hasNext) {
-        val next = itr.next
-        if (next == element)
-          lastIndexOf(itr, element, Some(i), i + 1)
-        else
-          lastIndexOf(itr, element, idx, i + 1)
-      }
-      else
-        idx
-    }
-    
-    @tailrec
-    private def checkEqual(left: GenTraversable[T], rightItr: Iterator[T], processedSet: Set[T]): Boolean = {
-      
-      if (rightItr.hasNext) {
-        val nextRight = rightItr.next
-        if (processedSet.contains(nextRight))
-            throw new IllegalArgumentException(FailureMessages("inOrderDuplicate", nextRight))
-        lastIndexOf(left.toIterator, nextRight, None, 0) match {
-          case Some(idx) => 
-            checkEqual(left.drop(idx).tail, rightItr, processedSet + nextRight)
-          case None => 
-            false // Element not found, let's fail early
-        }
-      }
-      else // No more element in right, left contains all of right.
-        true
-    }
-    
-    /**
-     * This method contains the matching code for theSameIteratedElementsAs.
-     */
-    def apply(left: GenTraversable[T]): MatchResult = 
-      MatchResult(
-        checkEqual(left, right.toIterator, Set.empty), 
-        FailureMessages("didNotContainAllOfElementsInOrder", left, UnquotedString(right.mkString(", "))),
-        FailureMessages("containedAllOfElementsInOrder", left, UnquotedString(right.mkString(", ")))
-      )
-  }
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * List(1, 2, 3) should contain (inOrder(1, 2))
-   *                               ^
-   * </pre>
-   */
-  def inOrder[T](xs: T*) = 
-    new InOrderContainMatcher(xs)
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  class OneOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
-    
-    @tailrec
-    private def checkEqual(left: GenTraversable[T], rightItr: Iterator[T], processedSet: Set[T]): Boolean = {
-      
-      if (rightItr.hasNext) {
-        val nextRight = rightItr.next
-        if (processedSet.contains(nextRight))
-            throw new IllegalArgumentException(FailureMessages("oneOfDuplicate", nextRight))
-        if (left.exists(_ == nextRight)) // Found one of right in left, can succeed early
-          true
-        else
-          checkEqual(left, rightItr, processedSet + nextRight)
-      }
-      else // No more element in right, left does not contain one of right.
-        false
-    }
-    
-    /**
-     * This method contains the matching code for theSameIteratedElementsAs.
-     */
-    def apply(left: GenTraversable[T]): MatchResult = 
-      MatchResult(
-        checkEqual(left, right.toIterator, Set.empty), 
-        FailureMessages("didNotContainOneOfElements", left, UnquotedString(right.mkString(", "))),
-        FailureMessages("containedOneOfElements", left, UnquotedString(right.mkString(", ")))
-      )
-  }
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * List(1, 2, 3) should contain (oneOf(1, 2))
-   *                               ^
-   * </pre>
-   */
-  def oneOf[T](xs: T*) = 
-    new OneOfContainMatcher(xs)
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  class OnlyContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
-    
-    @tailrec
-    private def findNext(value: T, rightItr: Iterator[T], processedSet: Set[T]): Set[T] = 
-      if (rightItr.hasNext) {
-        val nextRight = rightItr.next
-        if (processedSet.contains(nextRight))
-            throw new IllegalArgumentException(FailureMessages("onlyDuplicate", nextRight))
-        if (nextRight == value)
-          processedSet + nextRight
-        else
-          findNext(value, rightItr, processedSet + nextRight)
-      }
-      else
-        processedSet
-     
-    @tailrec
-    private def checkEqual(leftItr: Iterator[T], rightItr: Iterator[T], processedSet: Set[T]): Boolean = {
-      if (leftItr.hasNext) {
-        val nextLeft = leftItr.next
-        if (processedSet.contains(nextLeft)) // The nextLeft is contained in right, let's continue next
-          checkEqual(leftItr, rightItr, processedSet)
-        else {
-          val newProcessedSet = findNext(nextLeft, rightItr, processedSet)
-          if (newProcessedSet.contains(nextLeft)) // The nextLeft is contained in right, let's continue next
-            checkEqual(leftItr, rightItr, newProcessedSet)
-          else // The nextLeft is not in right, let's fail early
-            false
-        }
-      }
-      else // No more element in left, left contains only elements of right.
-        true
-    }
-    
-    /**
-     * This method contains the matching code for theSameIteratedElementsAs.
-     */
-    def apply(left: GenTraversable[T]): MatchResult = 
-      MatchResult(
-        checkEqual(left.toIterator, right.toIterator, Set.empty), 
-        FailureMessages("didNotContainOnlyElements", left, UnquotedString(right.mkString(", "))),
-        FailureMessages("containedOnlyElements", left, UnquotedString(right.mkString(", ")))
-      )
-  }
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * List(1, 2, 3) should contain (only(1, 2))
-   *                               ^
-   * </pre>
-   */
-  def only[T](xs: T*) = 
-    new OnlyContainMatcher(xs)
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  class InOrderOnlyContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
-    
-    @tailrec
-    private def findNext(value: T, rightItr: Iterator[T], processedList: IndexedSeq[T]): IndexedSeq[T] = 
-      if (rightItr.hasNext) {
-        val nextRight = rightItr.next
-        if (processedList.contains(nextRight))
-            throw new IllegalArgumentException(FailureMessages("inOrderOnlyDuplicate", nextRight))
-        if (nextRight == value)
-          processedList :+ nextRight
-        else
-          findNext(value, rightItr, processedList :+ nextRight)
-      }
-      else
-        processedList
-    
-    @tailrec
-    private def checkEqual(leftItr: Iterator[T], rightItr: Iterator[T], currentRight: T, processedList: IndexedSeq[T]): Boolean = {
-      
-      if (leftItr.hasNext) {
-        val nextLeft = leftItr.next
-        if (nextLeft == currentRight) // The nextLeft is contained in right, let's continue next
-          checkEqual(leftItr, rightItr, currentRight, processedList)
-        else {
-          val newProcessedList = findNext(nextLeft, rightItr, processedList)
-          if (newProcessedList.last == nextLeft) // The nextLeft is contained in right, let's continue next
-            checkEqual(leftItr, rightItr, nextLeft, newProcessedList) // nextLeft will be the new currentRight
-          else // The nextLeft is not in right, let's fail early
-            false
-        }
-      }
-      else // No more element in left, left contains only elements of right.
-        true
-    }
-    
-    /**
-     * This method contains the matching code for theSameIteratedElementsAs.
-     */
-    def apply(left: GenTraversable[T]): MatchResult = {
-      val rightItr = right.toIterator
-      val rightFirst = rightItr.next
-      MatchResult(
-        if (rightItr.hasNext) checkEqual(left.toIterator, rightItr, rightFirst, IndexedSeq(rightFirst)) else left.isEmpty, 
-        FailureMessages("didNotContainInOrderOnlyElements", left, UnquotedString(right.mkString(", "))),
-        FailureMessages("containedInOrderOnlyElements", left, UnquotedString(right.mkString(", ")))
-      )
-    }
-  }
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * List(1, 2, 3) should contain (inOrderOnly(1, 2))
-   *                               ^
-   * </pre>
-   */
-  def inOrderOnly[T](xs: T*) = 
-    new InOrderOnlyContainMatcher(xs)
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  class NoneOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
-    
-    @tailrec
-    private def findNext(value: T, rightItr: Iterator[T], processedSet: Set[T]): Set[T] = 
-      if (rightItr.hasNext) {
-        val nextRight = rightItr.next
-        if (processedSet.contains(nextRight))
-            throw new IllegalArgumentException(FailureMessages("noneOfDuplicate", nextRight))
-        if (nextRight == value)
-          processedSet + nextRight
-        else
-          findNext(value, rightItr, processedSet + nextRight)
-      }
-      else
-        processedSet
-    
-    @tailrec
-    private def checkEqual(leftItr: Iterator[T], rightItr: Iterator[T], processedSet: Set[T]): Boolean = {
-      
-      if (leftItr.hasNext) {
-        val nextLeft = leftItr.next
-        if (processedSet.contains(nextLeft)) // nextLeft is found in right, let's fail early
-          false
-        else {
-          val newProcessedSet = findNext(nextLeft, rightItr, processedSet)
-          if (newProcessedSet.contains(nextLeft)) // nextLeft is found in right, let's fail early
-            false
-          else // nextLeft not found in right, let's continue to next element in left
-            checkEqual(leftItr, rightItr, newProcessedSet)
-        }
-      }
-      else // No more element in left, left contains only elements of right.
-        true
-    }
-    
-    /**
-     * This method contains the matching code for theSameIteratedElementsAs.
-     */
-    def apply(left: GenTraversable[T]): MatchResult = {
-      MatchResult(
-        checkEqual(left.toIterator, right.toIterator, Set.empty), 
-        FailureMessages("containedOneOfElements", left, UnquotedString(right.mkString(", "))),
-        FailureMessages("didNotContainOneOfElements", left, UnquotedString(right.mkString(", ")))
-      )
-    }
-  }
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * List(1, 2, 3) should contain (noneOf(1, 2))
-   *                               ^
-   * </pre>
-   */
-  def noneOf[T](xs: T*) = 
-    new NoneOfContainMatcher(xs)
-  
   // For safe keeping
   private implicit def nodeToCanonical(node: scala.xml.Node) = new Canonicalizer(node)
 
@@ -7541,17 +7099,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
   }
-
-  class AType[T : ClassManifest] {
-
-    private val clazz = implicitly[ClassManifest[T]].erasure.asInstanceOf[Class[T]]
-
-    def isAssignableFromClassOf(o: Any): Boolean = clazz.isAssignableFrom(o.getClass)
-
-    def className: String = clazz.getName
-  }
-
-  def a[T : ClassManifest]: AType[T] = new AType[T]
 }
 
 /*
