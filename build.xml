@@ -21,8 +21,8 @@
     <property name="javasrc" value="src/main/java" />
     <property name="scalasrc.test" value="src/test/scala" />
     <property name="javasrc.test" value="src/test/java" />
-    <property name="scalasrc.examples" value="src/examples/scala" />
-    <property name="javasrc.examples" value="src/examples/java" />
+    <property name="scalasrc.examples" value="src/examples/scala" /> <!-- OLD EXAMPLES -->
+    <property name="javasrc.examples" value="src/examples/java" /> <!-- OLD EXAMPLES -->
     <property name="osgi-test-src" value="src/test-osgi/scala" />
     <property name="resources" value="src/main/resources" />
     <property name="html" value="src/main/html" />
@@ -38,7 +38,7 @@
 	<property name="build.generated.tests.bin" value="gentests/${build}/scala-${scala.version}/bin" />
     <property name="build.tests" value="${build}/tests" />
     <property name="build.tests.jar" value="${build}/tests.jar" />
-    <property name="build.examples" value="${build}/examples" />
+    <property name="build.examples" value="${build}/examples" /> <!-- OLD EXAMPLES -->
     <property name="build.generators" value="${build}/generators" />
     <property name="build.coverage" value="${build}/coverage" />
     <property name="build.osgi-tests" value="${build}/osgi-tests" />
@@ -334,7 +334,7 @@
       </scalac>
     </target>
 
-    <target name="compile-examples" depends="compile-main">
+    <target name="compile-examples" depends="compile-main"> <!-- OLD EXAMPLES -->
 
         <!-- Compile the Scala code from ${scalasrc.examples} into ${build.examples} -->
         <scalac srcdir="${scalasrc.examples}:${javasrc.examples}" destdir="${build.examples}" target="jvm-1.5" classpathref="build.test.class.path" addparams="-no-specialization" deprecation="yes" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC"/>
@@ -346,7 +346,7 @@
     <!-- Compile demo into its own directory. I.e., the class files will sit alongside the java files
        so that people can more easily look at them. All of these source files are used as demonstrations
        of something, usually described in articles on Artima.com. -->
-    <target name="demo" depends="dist">
+    <target name="demo" depends="dist"> <!-- I think this may also be the OLD EXAMPLES -->
         <javac srcdir="${example}" destdir="${example}" compiler="javac1.5" classpath="${classes}:${junit:junit:jar}" debug="yes" />
     </target>
 
@@ -596,7 +596,7 @@
         </scalatest>
     </target>
 
-    <target name="examples" depends="compile-main,compile-examples,copyprops,taskdefscalatest">
+    <target name="examples" depends="compile-main,compile-examples,copyprops,taskdefscalatest"> <!-- OLD EXAMPLES -->
         <scalatest runpath="${build.examples}" concurrent="false" haltonfailure="true">
             <reporter type="graphic"/>
             <reporter type="stdout"/>
@@ -728,8 +728,8 @@
         </scalatest>
     </target>
 
-    <target name="runexample" depends="compile,copyprops,taskdefscalatest"
-            description="run a specified suite (use -Dclass=classname)">
+    <target name="runexample" depends="compile,copyprops,taskdefscalatest" 
+            description="run a specified suite (use -Dclass=classname)"> <!-- OLD EXAMPLES -->
 
         <fail message="class not defined (use -Dclass=classname)"
               unless="class" />
@@ -1258,7 +1258,7 @@
       </antcall>
     </target>
 
-    <target name="test-junit">
+    <target name="test-junit"> <!-- OLD EXAMPLES -->
         <junit>
            <batchtest fork="yes" todir="target/argh">
                 <fileset dir="${build.examples}">
