@@ -16,25 +16,31 @@
 package org.scalatest
 
 /**
- * Trait that can be mixed into suites that need methods invoked before and after executing the
- * suite.
+ * Trait that can be mixed into suites that need methods that make use of the config map invoked before and/or after
+ * executing the suite.
  *
  * <p>
  * This trait allows code to be executed before and/or after all the tests and nested suites of a
  * suite are run. This trait overrides <code>run</code> and calls the
- * <code>beforeAll</code> method, then calls <code>super.run</code>. After the <code>super.run</code>
+ * <code>beforeAll(ConfigMap)</code> method, then calls <code>super.run</code>. After the <code>super.run</code>
  * invocation completes, whether it returns normally or completes abruptly with an exception,
- * this trait's <code>run</code> method will invoke <code>afterAll</code>.
+ * this trait's <code>run</code> method will invoke <code>afterAll(ConfigMap)</code>.
  * </p>
  *
  * <p>
- * Trait <code>BeforeAndAfterAll</code> defines <code>beforeAll</code>
- * and <code>afterAll</code> methods that take no parameters. This trait's implementation of these
- * methods do nothing.
+ * Note that this trait differs from <code>BeforeAndAfterAll</code> in that it gives
+ * the <code>beforeAll</code> and <code>afterAll</code> code access to the config map. If you don't need
+ * the config map, use <a href="BeforeAndAfterAll.html"><code>BeforeAndAfterAll</code></a> instead.
  * </p>
  *
  * <p>
- * For example, the following <code>ExampleSpec</code> mixes in <code>BeforeAndAfterAll</code> and
+ * Trait <code>BeforeAndAfterAllConfigMap</code> defines <code>beforeAll</code>
+ * and <code>afterAll</code> methods that take a <code>configMap</code>.
+ * This trait's implemention of each method does nothing.
+ * </p>
+ *
+ * <p>
+ * For example, the following <code>ExampleSpec</code> mixes in <code>BeforeAndAfterAllConfigMap</code> and
  * in <code>beforeAll</code>, creates and writes to a temp file, taking the name of the temp file
  * from the <code>configMap</code>. This same <code>configMap</code> is then passed to the <code>run</code>
  * methods of the nested suites, <code>OneSpec</code>, <code>TwoSpec</code>, <code>RedSpec</code>,
@@ -47,18 +53,17 @@ package org.scalatest
  * </p>
  * 
  * <pre class="stHighlight">
- * package org.scalatest.examples.beforeandafterall
+ * package org.scalatest.examples.beforeandafterallconfigmap
  *
  * import org.scalatest._
  * import java.io._
  * 
  * trait TempFileExistsSpec extends fixture.FlatSpec {
  * 
- *   private val tempFileName = "tmp.txt"
- * 
  *   type FixtureParam = File
  *   override def withFixture(test: OneArgTest) {
- *     val file = new File(tempFileName)
+ *     val fileName = test.configMap.getRequired[String]("tempFileName")
+ *     val file = new File(fileName)
  *     withFixture(test.toNoArgTest(file)) // loan the fixture to the test
  *   }
  * 
@@ -79,17 +84,25 @@ package org.scalatest
  *   new BlueSpec
  * ) with TempFileExistsSpec with BeforeAndAfterAll {
  * 
+ *   private val tempFileName = "tempFileName"
+ * 
  *   // Set up the temp file needed by the test, taking
  *   // a file name from the config map
- *   override def beforeAll() {
- *     val writer = new FileWriter(tempFileName)
+ *   override def beforeAll(cm: ConfigMap) {
+ *     assume(
+ *       cm.isDefinedAt(tempFileName),
+ *       "must place a temp file name in the config map under the key: " + tempFileName
+ *     )
+ *     val fileName = cm.getRequired[String](tempFileName)
+ *     val writer = new FileWriter(fileName)
  *     try writer.write("Hello, suite of tests!")
  *     finally writer.close()
  *   }
  * 
  *   // Delete the temp file
- *   override def afterAll() {
- *     val file = new File(tempFileName)
+ *   override def afterAll(cm: ConfigMap) {
+ *     val fileName = cm.getRequired[String]("tempFileName")
+ *     val file = new File(fileName)
  *     file.delete()
  *   }
  * }
@@ -139,58 +152,36 @@ package org.scalatest
  *
  * @author Bill Venners
  */
-trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
+trait BeforeAndAfterAllConfigMap  extends SuiteMixin { this: Suite =>
 
   /**
-   * Defines a method to be run before any of this suite's tests or nested suites are run.
+   * Defines a method (that takes a <code>configMap</code>) to be run before any
+   * of this suite's tests or nested suites are run.
    *
    * <p>
    * This trait's implementation
-   * of <code>run</code> invokes the overloaded form of this method that
-   * takes a <code>configMap</code> (which has been deprecated) before executing
-   * any tests or nested suites. This trait's implementation of that <code>beforeAll(ConfigMap)</code>
-   * method simply invokes this <code>beforeAll()</code>
-   * method. Thus this method can be used to set up a test fixture
-   * needed by the entire suite, when you don't need anything from the <code>configMap</code>.
-   * This trait's implementation of this method does nothing.
+   * of <code>run</code> invokes this method before executing
+   * any tests or nested suites (passing in the <code>configMap</code> passed to it), thus this
+   * method can be used to set up a test fixture
+   * needed by the entire suite. This trait's implementation of this method does nothing.
    * </p>
    */
-  protected def beforeAll() = ()
-
-  /**
-   * <strong>This overloaded form of <code>beforeAll</code> has been deprecated and will
-   * be removed in a future version of ScalaTest. Please use the <code>beforeAll(ConfigMap)</code> method
-   * of trait <code>BeforeAndAfterAllConfigMap</code> instead.</strong>
-   */
-  @deprecated("Please use the beforeAll(ConfigMap) method of trait BeforeAndAfterAllConfigMap instead.")
   protected def beforeAll(configMap: ConfigMap) {
-    beforeAll()
   }
 
   /**
-   * Defines a method to be run after all of this suite's tests and nested suites have
-   * been run.
+   * Defines a method (that takes a <code>configMap</code>) to be run after
+   * all of this suite's tests and nested suites have been run.
    *
    * <p>
    * This trait's implementation
-   * of <code>run</code> invokes the overloaded form of this method that
-   * takes a <code>configMap</code> (which has been deprecated) after executing
-   * all tests and nested suites. This trait's implementation of that <code>afterAll(ConfigMap)</code> method simply invokes this
-   * <code>afterAll()</code> method. Thus this method can be used to tear down a test fixture
-   * needed by the entire suite, when you don't need anything from the <code>configMap</code>.
-   * This trait's implementation of this method does nothing.
+   * of <code>run</code> invokes this method after executing all tests
+   * and nested suites (passing in the <code>configMap</code> passed to it), thus this
+   * method can be used to tear down a test fixture
+   * needed by the entire suite. This trait's implementation of this method does nothing.
    * </p>
    */
-  protected def afterAll() = ()
-
-  /**
-   * <strong>This overloaded form of <code>afterAll</code> has been deprecated and will
-   * be removed in a future version of ScalaTest. Please use the <code>afterAll(ConfigMap)</code> method
-   * of trait <code>BeforeAndAfterAllConfigMap</code> instead.</strong>
-   */
-  @deprecated("Please use the afterAll(ConfigMap) method of trait BeforeAndAfterAllConfigMap instead.")
   protected def afterAll(configMap: ConfigMap) {
-    afterAll()
   }
 
   /**

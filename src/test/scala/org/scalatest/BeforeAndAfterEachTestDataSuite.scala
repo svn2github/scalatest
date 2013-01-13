@@ -37,7 +37,7 @@ class BeforeAndAfterEachTestDataSuite extends FunSuite {
     }
   }
   
-  class MySuite extends TheSuper with BeforeAndAfterEachTestData with BeforeAndAfterAll {
+  class MySuite extends TheSuper with BeforeAndAfterEachTestData with BeforeAndAfterAllConfigMap {
     var beforeEachTestDataCalledBeforeRunTest = false
     var afterEachTestDataCalledAfterRunTest = false
     var beforeAllConfigCalledBeforeExecute = false
@@ -144,8 +144,8 @@ class BeforeAndAfterEachTestDataSuite extends FunSuite {
   test("If any invocation of beforeEach completes abruptly with an exception, runTest " +
     "will complete abruptly with the same exception.") {
     
-    class MySuite extends Suite with BeforeAndAfterEach with BeforeAndAfterAll {
-      override def beforeEach() { throw new NumberFormatException } 
+    class MySuite extends Suite with BeforeAndAfterEachTestData with BeforeAndAfterAllConfigMap {
+      override def beforeEach(td: TestData) { throw new NumberFormatException } 
     }
     intercept[NumberFormatException] {
       val a = new MySuite
@@ -160,9 +160,9 @@ class BeforeAndAfterEachTestDataSuite extends FunSuite {
         throw new NumberFormatException
       }
     }
-    class MySuite extends FunkySuite with BeforeAndAfterEach with BeforeAndAfterAll {
+    class MySuite extends FunkySuite with BeforeAndAfterEachTestData with BeforeAndAfterAllConfigMap {
       var afterEachCalled = false
-      override def afterEach() {
+      override def afterEach(td: TestData) {
         afterEachCalled = true
       }
     }
@@ -180,9 +180,9 @@ class BeforeAndAfterEachTestDataSuite extends FunSuite {
         throw new NumberFormatException
       }
     }
-    class MySuite extends FunkySuite with BeforeAndAfterEach with BeforeAndAfterAll {
+    class MySuite extends FunkySuite with BeforeAndAfterEachTestData with BeforeAndAfterAllConfigMap {
       var afterEachCalled = false
-      override def afterEach() {
+      override def afterEach(td: TestData) {
         afterEachCalled = true
         throw new IllegalArgumentException
       }
@@ -197,8 +197,8 @@ class BeforeAndAfterEachTestDataSuite extends FunSuite {
   test("If super.runTest returns normally, but afterEach completes abruptly with an " +
     "exception, runTest will complete abruptly with the same exception.") {
        
-    class MySuite extends Suite with BeforeAndAfterEach with BeforeAndAfterAll {
-      override def afterEach() { throw new NumberFormatException }
+    class MySuite extends Suite with BeforeAndAfterEachTestData with BeforeAndAfterAllConfigMap {
+      override def afterEach(td: TestData) { throw new NumberFormatException }
       def testJuly() = ()
     }
     intercept[NumberFormatException] {
@@ -211,8 +211,8 @@ class BeforeAndAfterEachTestDataSuite extends FunSuite {
   test("If any invocation of beforeAll completes abruptly with an exception, run " +
     "will complete abruptly with the same exception.") {
     
-    class MySuite extends Suite with BeforeAndAfterEach with BeforeAndAfterAll {
-      override def beforeAll() { throw new NumberFormatException }
+    class MySuite extends Suite with BeforeAndAfterEachTestData with BeforeAndAfterAllConfigMap {
+      override def beforeAll(cm: ConfigMap) { throw new NumberFormatException }
       def testJuly() = ()
     }
     intercept[NumberFormatException] {
@@ -228,9 +228,9 @@ class BeforeAndAfterEachTestDataSuite extends FunSuite {
         throw new NumberFormatException
       }
     }
-    class MySuite extends FunkySuite with BeforeAndAfterEach with BeforeAndAfterAll {
+    class MySuite extends FunkySuite with BeforeAndAfterEachTestData with BeforeAndAfterAllConfigMap {
       var afterAllCalled = false
-      override def afterAll() {
+      override def afterAll(cm: ConfigMap) {
         afterAllCalled = true
       }
     }
@@ -248,9 +248,9 @@ class BeforeAndAfterEachTestDataSuite extends FunSuite {
         throw new NumberFormatException
       }
     }
-    class MySuite extends FunkySuite with BeforeAndAfterEach with BeforeAndAfterAll {
+    class MySuite extends FunkySuite with BeforeAndAfterEachTestData with BeforeAndAfterAllConfigMap {
       var afterAllCalled = false
-      override def afterAll() {
+      override def afterAll(cm: ConfigMap) {
         afterAllCalled = true
         throw new IllegalArgumentException
       }
@@ -265,8 +265,8 @@ class BeforeAndAfterEachTestDataSuite extends FunSuite {
   test("If super.run returns normally, but afterAll completes abruptly with an " +
     "exception, run will complete abruptly with the same exception.") {
        
-    class MySuite extends Suite with BeforeAndAfterEach with BeforeAndAfterAll {
-      override def afterAll() { throw new NumberFormatException }
+    class MySuite extends Suite with BeforeAndAfterEachTestData with BeforeAndAfterAllConfigMap {
+      override def afterAll(cm: ConfigMap) { throw new NumberFormatException }
       def testJuly() = ()
     }
     intercept[NumberFormatException] {
