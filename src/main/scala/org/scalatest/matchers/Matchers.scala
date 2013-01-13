@@ -3463,6 +3463,26 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         )
     }
 
+    /* *
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * result should be a [String]
+     *                  ^
+     * </pre>
+    def a[EXPECTED : ClassManifest] {
+      val clazz = implicitly[ClassManifest[EXPECTED]].erasure.asInstanceOf[Class[EXPECTED]]
+      if (clazz.isAssignableFrom(left.getClass)) {
+        throw newTestFailedException(
+          if (shouldBeTrue)
+            FailureMessages("wasNotAnInstanceOf", left, UnquotedString(clazz.getName))
+          else
+            FailureMessages("wasAnInstanceOf")
+        )
+      }
+    }
+     */
+
     /**
      * This method enables the following syntax:
      *
@@ -5073,6 +5093,26 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             FailureMessages("midSentenceWasNull")
           )
         }
+      }
+
+    /**
+     * This method enables the following syntax: 
+     *
+     * <pre class="stHighlight">
+     * set should be ('empty)
+     *               ^
+     * </pre>
+     */
+    def apply[T](right: AType[T]): Matcher[Any] =
+      new Matcher[Any] {
+        def apply(left: Any): MatchResult = 
+          MatchResult(
+            right.isAssignableFromClassOf(left),
+            FailureMessages("wasNotAnInstanceOf", left, UnquotedString(right.className)),
+            FailureMessages("wasAnInstanceOf"), // TODO, missing the left, right.className here. Write a test and fix it.
+            FailureMessages("wasNotAnInstanceOf", left, UnquotedString(right.className)),
+            FailureMessages("wasAnInstanceOf")
+          )
       }
 
     /**
@@ -7501,6 +7541,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
   }
+
+  class AType[T : ClassManifest] {
+
+    private val clazz = implicitly[ClassManifest[T]].erasure.asInstanceOf[Class[T]]
+
+    def isAssignableFromClassOf(o: Any): Boolean = clazz.isAssignableFrom(o.getClass)
+
+    def className: String = clazz.getName
+  }
+
+  def a[T : ClassManifest]: AType[T] = new AType[T]
 }
 
 /*

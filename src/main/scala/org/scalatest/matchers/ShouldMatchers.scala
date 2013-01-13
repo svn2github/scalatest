@@ -1511,6 +1511,12 @@ trait ShouldMatchers extends Matchers with ShouldVerb with AsAny with LoneElemen
 
     def shouldBe = new ResultOfBeWordForAnyRef(left, true)
     
+    def shouldBe[U](right: AType[U]) {
+      if (!right.isAssignableFromClassOf(left)) {
+        throw newTestFailedException(FailureMessages("wasNotAnInstanceOf", left, UnquotedString(right.className)))
+      }
+    }
+
     def shouldBe(right: AnyRef) {
       
       def shouldBeEqual(right: AnyRef): Boolean = {
