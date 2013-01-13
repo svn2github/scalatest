@@ -128,7 +128,7 @@ class CustomMatcherSpec extends FunSpec with ShouldMatchers with CustomMatchers 
 
         case class Product(name: String)
         case class LineItem(product: Product)
-        def haveProduct(p: Product) = equal(p).matcher[Product] compose { (lineItem: LineItem) => lineItem.product }
+        def haveProduct(p: Product) = equal(p) compose { (lineItem: LineItem) => lineItem.product }
 
         LineItem(Product("widgets")) should (haveProduct(Product("widgets")))
       }

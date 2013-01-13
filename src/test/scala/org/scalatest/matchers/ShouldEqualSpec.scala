@@ -32,7 +32,6 @@ class ShouldEqualSpec extends Spec with ShouldMatchers with Checkers with Return
 
     def `should do nothing when equal` {
       1 should equal (1)
-      1 shouldEqual 1
 
       // objects should equal themselves
       check((s: String) => returnsNormally(s should equal (s)))
@@ -98,11 +97,6 @@ class ShouldEqualSpec extends Spec with ShouldMatchers with Checkers with Return
         1 should not (not equal (2))
       }
       assert(caught2.getMessage === "1 did not equal 2")
-
-      val caught3 = intercept[TestFailedException] {
-        1 shouldEqual 2
-      }
-      assert(caught3.getMessage === "1 did not equal 2")
     }
 
     def `should throw a TFE when equal but used with should not` {

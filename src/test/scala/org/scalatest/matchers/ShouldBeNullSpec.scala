@@ -180,17 +180,17 @@ class ShouldBeNullSpec extends Spec with ShouldMatchers with Checkers with Retur
       nullMap should (not (be (null)) or be (null))
     }
   }
-
+  
   object `the shouldBe null syntax` {
-
+    
     def `should work in its basic` {
       nullMap shouldBe null
-
+      
       val caught1 = intercept[TestFailedException] {
         map shouldBe null
       }
-      assert(caught1.getMessage === "Map(1 -> one, 2 -> two) was not null")
+      assert(caught1.getMessage === "Map(1 -> one, 2 -> two) was not equal to null")
     }
+
   }
 }
-
