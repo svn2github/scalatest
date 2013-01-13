@@ -16,7 +16,8 @@
 package org.scalatest
 
 /**
- * Stackable trait that can be mixed into suites that need code executed before and after running each test.
+ * Stackable trait that can be mixed into suites that need code that makes use of test data (test name, tags, config map, <em>etc.</em>) executed
+ * before and/or after running each test.
  *
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
@@ -32,7 +33,7 @@ package org.scalatest
  * When multiple tests need to work with the same fixtures, it is important to try and avoid
  * duplicating the fixture code across those tests. The more code duplication you have in your
  * tests, the greater drag the tests will have on refactoring the actual production code.
- * Trait <code>BeforeAndAfterEachConfigData</code> offers one way to eliminate such code duplication:
+ * Trait <code>BeforeAndAfterEachTestData</code> offers one way to eliminate such code duplication:
  * a <code>beforeEach(TestData)</code> method that will be run before each test (like JUnit's <code>setUp</code>),
  * and an <code>afterEach(TestData)</code> method that will be run after (like JUnit's <code>tearDown</code>).
  * </p>
@@ -118,7 +119,7 @@ package org.scalatest
  * <a href="BeforeAndAfter.html"><code>BeforeAndAfter</code></a> instead
  * of <code>BeforeAndAfterEachTestData</code>.
  * If you need trait stacking, but not access to the <code>TestData</code>, use
- * <code>BeforeAndAfterEach</code> instead.
+ * <a href="BeforeAndAfterEach.html"><code>BeforeAndAfterEach</code></a> instead.
  * </p>
  *
  * @author Bill Venners

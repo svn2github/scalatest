@@ -16,7 +16,7 @@
 package org.scalatest
 
 /**
- * Stackable trait that can be mixed into suites that need code executed before and after running each test.
+ * Stackable trait that can be mixed into suites that need code executed before and/or after running each test.
  *
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
@@ -107,30 +107,13 @@ package org.scalatest
  * </p>
  *
  * <p>
- * Besides enabling trait stacking, the other main advantage of <code>BeforeAndAfterEach</code> over <code>BeforeAndAfter</code> is
- * that <code>BeforeAndAfterEach</code> allows you to make use of test data (the test name and the config map) in your before
- * and/or after code, whereas <code>BeforeAndAfter</code> does not. To access the test data, simply override the form of
- * <code>beforeEach</code> and/or <code>afterEach</code> that takes a <code>TestData</code> parameter, like this.
- * </p>
- *
- * <pre class="stHighlight">
- *   override def beforeEach(td: TestData) {
- *     // Can now use the test data in your "before" code:
- *     //   td.name is the name of the test
- *     //   td.configMap is the config map passed to runTest
- *   }
- *
- *   override def afterEach(td: TestData) {
- *     // Can now use the test data in your "after" code:
- *     //   td.name is the name of the test
- *     //   td.configMap is the config map passed to runTest
- *   }
- * </pre>
- *
- * <p>
+ * The main advantage of <code>BeforeAndAfterEach</code> over <code>BeforeAndAfter</code> is that <code>BeforeAndAfterEach</code>.
+ * enables trait stacking.
  * The main disadvantage of <code>BeforeAndAfterEach</code> compared to <code>BeforeAndAfter</code> is that <code>BeforeAndAfterEach</code>
- * requires more boilerplate. If you don't need trait stacking or access to the test data, use <a href="BeforeAndAfter.html"><code>BeforeAndAfter</code></a> instead
+ * requires more boilerplate. If you don't need trait stacking, use <a href="BeforeAndAfter.html"><code>BeforeAndAfter</code></a> instead
  * of <code>BeforeAndAfterEach</code>.
+ * If you want to make use of test data (the test name, config map, <em>etc.</em>) in your <code>beforeEach</code>
+ * or <code>afterEach</code> method, use trait <a href="BeforeAndAfterEachTestData.html"><code>BeforeAndAfterEachTestData</code></a> instead.
  * </p>
  *
  * @author Bill Venners
@@ -156,7 +139,8 @@ trait BeforeAndAfterEach extends SuiteMixin {
 
   /**
    * <strong>This overloaded form of <code>beforeEach</code> has been deprecated and will
-   * be removed in a future version of ScalaTest. Please use <code>beforeEach(TestData)</code> instead.</strong>
+   * be removed in a future version of ScalaTest. Please use the <code>beforeEach(TestData)</code> method
+   * of trait <code>BeforeAndAfterEachTestData</code> instead.</strong>
    *
    * <p>
    * During the deprecation cycle, this trait's implementation
@@ -165,7 +149,7 @@ trait BeforeAndAfterEach extends SuiteMixin {
    * overloaded form of <code>beforeEach</code> that takes no <code>configMap</code>.
    * </p>
    */
-  @deprecated("Please use beforeEach(TestData) instead.")
+  @deprecated("Please use the beforeEach(TestData) method of trait BeforeAndAfterEachTestData instead.")
   protected def beforeEach(configMap: ConfigMap) {
     beforeEach()
   }
@@ -184,6 +168,7 @@ trait BeforeAndAfterEach extends SuiteMixin {
    * After the deprecation cycle, this method will invoke the no-arg form of <code>beforeEach</code>.
    * </p>
    */
+  @deprecated("Please use the beforeEach(TestData) method of trait BeforeAndAfterEachTestData instead.")
   protected def beforeEach(testData: TestData) {
     beforeEach(testData.configMap)
   }
@@ -205,34 +190,32 @@ trait BeforeAndAfterEach extends SuiteMixin {
 
   /**
    * <strong>This overloaded form of <code>afterEach</code> has been deprecated and will
-   * be removed in a future version of ScalaTest. Please use <code>afterEach(TestData)</code> instead.</strong>
+   * be removed in a future version of ScalaTest. Please use the <code>afterEach(TestData)</code> method
+   * of trait <code>BeforeAndAfterEachTestData</code> instead.</strong>
    *
    * <p>
    * During the deprecation cycle, this trait's implementation
-   * of <code>afterEach(TestData)</code> invokes will this method.
+   * of <code>afterEach(TestData)</code> will invoke this method.
    * This trait's implementation of this method invokes the
    * overloaded form of <code>afterEach</code> that takes no <code>configMap</code>.
    * </p>
    */
-  @deprecated("Please use afterEach(TestData) instead.")
+  @deprecated("Please use the afterEach(TestData) method of trait BeforeAndAfterEachTestData instead.")
   protected def afterEach(configMap: ConfigMap) {
     afterEach()
   }
-  
+
   /**
-   * Defines a method (that takes a <code>TestData</code>) to be run after
-   * each of this suite's tests.
+   * <strong>This overloaded form of <code>afterEach</code> has been deprecated and will
+   * be removed in a future version of ScalaTest. Please use the <code>afterEach(TestData)</code> method
+   * of trait <code>BeforeAndAfterEachTestData</code> instead.</strong>
    *
    * <p>
-   * This trait's implementation
-   * of <code>runTest</code> invokes this method after running
-   * each test (passing in a <code>TestData</code> containing the <code>configMap</code> passed
-   * to it), thus this method can be used to tear down a test fixture
-   * needed by each test. This trait's implementation of this method invokes the
-   * overloaded form of <code>afterEach</code> that takes <code>configMap</code>.
-   * After the deprecation cycle, this method will invoke the no-arg form of <code>afterEach</code>.
+   * This trait's implementation of this method invokes the
+   * overloaded form of <code>afterEach</code> that takes no <code>configMap</code>.
    * </p>
    */
+  @deprecated("Please use the afterEach(TestData) method of trait BeforeAndAfterEachTestData instead.")
   protected def afterEach(testData: TestData) {
     afterEach(testData.configMap)
   }
