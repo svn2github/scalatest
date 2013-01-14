@@ -14,7 +14,7 @@
   </properties>
 	
   <groupId>org.scalautils</groupId>
-  <artifactId>scalautils_@SCALA_VERSION@</artifactId>
+  <artifactId>scalautils_@DEPLOY_SCALA_VERSION@</artifactId>
   <version>@RELEASE@</version>
   <packaging>jar</packaging>
 
