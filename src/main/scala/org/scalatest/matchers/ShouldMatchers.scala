@@ -880,7 +880,7 @@ import Assertions.areEqualComparingArraysStructurally
  * forget a set of needed parentheses.
  * </p>
  */
-trait ShouldMatchers extends Matchers with ShouldVerb {
+trait ShouldMatchers extends ClassicMatchers with ShouldVerb {
 
   private object ShouldMethodHelper {
     def shouldMatcher[T](left: T, rightMatcher: Matcher[T]) {

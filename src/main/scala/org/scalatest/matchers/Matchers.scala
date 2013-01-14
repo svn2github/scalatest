@@ -7101,9 +7101,3 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
   }
 }
 
-/*
-<strong>The name Matchers has been deprecated and will be used in a different way in a future version of ScalaTest. Please use <code>ClassicMatchers</code> instead.</strong>
-*/
-@deprecated("The name Matchers has been deprecated and will be used in a different way in a future version of ScalaTest. Please use ClassicMatchers instead.")
-trait Matchers extends ClassicMatchers
-
