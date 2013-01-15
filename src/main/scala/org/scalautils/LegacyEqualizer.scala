@@ -17,11 +17,21 @@ package org.scalautils
 
 /**
  * Class used via an implicit conversion to enable any two objects to be compared with
- * <code>===</code> with an <code>Option[String]</code> result and no enforced type constraint between
+ * <code>===</code> and <code>!==</code> with an <code>Option[String]</code> result and no enforced type constraint between
  * two object types. For example:
  *
  * <pre class="stHighlight">
  * assert(a === b)
+ * assert(c !== d)
+ * </pre>
+ *
+ * <p>
+ * You can also check numeric values against another with a tolerance. Here are some examples:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * assert(a === (2.0 +- 0.1))
+ * assert(c !== (2.0 +- 0.1))
  * </pre>
  *
  * <p>
@@ -45,7 +55,7 @@ package org.scalautils
  * </p>
  *
  * @param left An object to convert to <code>Equalizer</code>, which represents the <code>left</code> value
- *     of a <code>===</code> equality check.
+ *     of a <code>===</code> or <code>!==</code> equality check.
  *
  * @author Bill Venners
  */
@@ -107,6 +117,7 @@ class LegacyEqualizer[L](left: L) {
    * Compare two objects for equality, returning an <code>Option[String]</code>, using the <code>Equality</code> type class passed as <code>equality</code>.
    *
    * @param right the object to compare for equality with <code>left</code>, passed to the constructor
+   * @param equality an implicit <code>Equality</code> type class that defines a way of calculating equality for objects of type <code>L</code>
    * @return None if the <code>left</code> and <code>right</code> objects are equal according to the passed <code>Equality</code> type class.
    *    else returns an error message string wrapped in a <code>Some</code>.
    */
@@ -122,6 +133,7 @@ class LegacyEqualizer[L](left: L) {
    * Compare two objects for inequality, returning an <code>Option[String]</code>, using the <code>Equality</code> type class passed as <code>equality</code>.
    *
    * @param right the object to compare for inequality with <code>left</code>, passed to the constructor
+   * @param equality an implicit <code>Equality</code> type class that defines a way of calculating equality for objects of type <code>L</code>
    * @return None if the <code>left</code> and <code>right</code> objects are <em>not</em> equal according to the passed <code>Equality</code> type class.
    *    else returns an error message string wrapped in a <code>Some</code>.
    */

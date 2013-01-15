@@ -17,15 +17,25 @@ package org.scalautils
 
 /**
  * Class used via an implicit conversion to enable any two objects to be compared with
- * <code>===</code> with a <code>Boolean</code> result and no enforced type constraint between
+ * <code>===</code> and <code>!==</code> with a <code>Boolean</code> result and no enforced type constraint between
  * two object types. For example:
  *
  * <pre class="stHighlight">
  * assert(a === b)
+ * assert(c !== d)
+ * </pre>
+ *
+ * <p>
+ * You can also check numeric values against another with a tolerance. Here are some examples:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * assert(a === (2.0 +- 0.1))
+ * assert(c !== (2.0 +- 0.1))
  * </pre>
  *
  * @param left An object to convert to <code>Equalizer</code>, which represents the value
- *     on the left side of a <code>===</code> invocation.
+ *     on the left side of a <code>===</code> or <code>!==</code> invocation.
  *
  * @author Bill Venners
  */
@@ -35,6 +45,7 @@ class Equalizer[L](left: L) {
    * Compare two objects for equality, returning a <code>Boolean</code>, using the <code>Equality</code> type class passed as <code>equality</code>.
    *
    * @param right the object to compare for equality with <code>left</code>, passed to the constructor
+   * @param equality an implicit <code>Equality</code> type class that defines a way of calculating equality for objects of type <code>L</code>
    * @return true if the <code>left</code> and <code>right</code> objects are equal according to the passed <code>Equality</code> type class.
    */
   def ===(right: Any)(implicit equality: Equality[L]): Boolean = equality.areEqual(left, right)
@@ -43,6 +54,7 @@ class Equalizer[L](left: L) {
    * Compare two objects for inequality, returning a <code>Boolean</code>, using the <code>Equality</code> type class passed as <code>equality</code>.
    *
    * @param right the object to compare for inequality with <code>left</code>, passed to the constructor
+   * @param equality an implicit <code>Equality</code> type class that defines a way of calculating equality for objects of type <code>L</code>
    * @return true if the <code>left</code> and <code>right</code> objects are <em>not</em> equal according to the passed <code>Equality</code> type class.
    */
   def !==(right: Any)(implicit equality: Equality[L]): Boolean = !equality.areEqual(left, right)
