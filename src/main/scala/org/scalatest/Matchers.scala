@@ -1014,13 +1014,9 @@ import Helper.accessProperty
  */
 trait Matchers extends Assertions with Tolerance with ShouldVerb with AsAny with LoneElement { matchers =>
 
-  // TODO: Can probably rewrite this with a Thread.currentStackTrace or whatever the method is. No need
-  // to create the temporary RuntimeException
   private[scalatest] def newTestFailedException(message: String, optionalCause: Option[Throwable] = None, stackDepthAdjustment: Int = 0): Throwable = {
-    val fileNames = List("Matchers.scala", "ShouldMatchers.scala", "MustMatchers.scala")
     val temp = new RuntimeException
-    val stackDepth = temp.getStackTrace.takeWhile(stackTraceElement => fileNames.exists(_ == stackTraceElement.getFileName) || stackTraceElement.getMethodName == "newTestFailedException").length
-    // if (stackDepth != 4) throw new OutOfMemoryError("stackDepth in Matchers.scala is: " + stackDepth)
+    val stackDepth = temp.getStackTrace.indexWhere(_.getFileName != "Matchers.scala")
     optionalCause match {
       case Some(cause) => new TestFailedException(message, cause, stackDepth + stackDepthAdjustment)
       case None => new TestFailedException(message, stackDepth + stackDepthAdjustment)
@@ -3879,7 +3875,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       val result = right(left.asInstanceOf[scala.collection.GenTraversable[E]])
       if (result.matches != shouldBeTrue) {
         throw newTestFailedException(
-          if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
+          if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage, 
+          None, 
+          3
         )
       }
     }
@@ -4133,7 +4131,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * @author Bill Venners
    */
   final class ResultOfNotWordForSeq[E, T[_] <: GenSeq[_]](left: T[E], shouldBeTrue: Boolean)
-      extends ResultOfNotWordForTraversable(left, shouldBeTrue) {
+      extends ResultOfNotWordForTraversable[E, T](left, shouldBeTrue) {
 
     /**
      * This method enables the following syntax:
@@ -7841,7 +7839,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       val result = containMatcher(left)
       if (result.matches != shouldBeTrue)
         throw newTestFailedException(
-          if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
+          if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage, 
+          None, 
+          3
         )
     }
   
@@ -8491,7 +8491,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -8514,7 +8514,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -8537,7 +8537,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               comparison.right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -8561,7 +8561,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               comparison.right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -8585,7 +8585,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               comparison.right
             ), 
             None, 
-            10
+            11
           ) 
         }
       }
@@ -8609,7 +8609,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               comparison.right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -8633,7 +8633,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               comparison.right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -8683,7 +8683,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             else
               FailureMessages("was", e, UnquotedString(result.propertyName)), 
             None, 
-            10
+            11
           )
         }
       }
@@ -8708,7 +8708,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             else
               FailureMessages("wasA", e, UnquotedString(result.propertyName)), 
             None, 
-            10
+            11
           )
         }
       }
@@ -8733,7 +8733,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             else
               FailureMessages("wasAn", e, UnquotedString(result.propertyName)), 
             None, 
-            10
+            11
           )
         }
       }
@@ -8759,7 +8759,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
                   resultOfSameInstanceAsApplication.right
                 ), 
                 None, 
-                10
+                11
               )
             }
           case _ => 
@@ -8806,7 +8806,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
                   e
                 ), 
                 None, 
-                10
+                11
               )
             case None =>
               // This is this cases, thus will only get here if shouldBeTrue is false
@@ -8823,7 +8823,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
                 }
                 else FailureMessages("allPropertiesHadExpectedValues", e)
 
-              throw newTestFailedException(failureMessage, None, 10)
+              throw newTestFailedException(failureMessage, None, 11)
           } 
         }
       }
@@ -8857,7 +8857,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             else
               FailureMessages("wasNull"), 
             None, 
-            10
+            11
           )
         }
       }
@@ -8878,7 +8878,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           throw newTestFailedException(
             if (shouldBeTrue) matcherResult.failureMessage else matcherResult.negatedFailureMessage, 
             None, 
-            10
+            11
           )
         }
       }
@@ -8899,7 +8899,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           throw newTestFailedException(
             if (shouldBeTrue) matcherResult.failureMessage else matcherResult.negatedFailureMessage, 
             None, 
-            10
+            11
           )
         }
       }
@@ -8920,7 +8920,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           throw newTestFailedException(
             if (shouldBeTrue) matcherResult.failureMessage else matcherResult.negatedFailureMessage, 
               None, 
-              10
+              11
             )
         }
       }
@@ -8956,7 +8956,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -8981,7 +8981,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9005,7 +9005,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -9034,7 +9034,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               rightRegex
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -9057,7 +9057,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedSubstring
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -9082,7 +9082,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               rightRegex
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -9111,7 +9111,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               rightRegex
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -9134,7 +9134,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedSubstring
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -9163,7 +9163,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               rightRegex
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -9198,7 +9198,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9223,7 +9223,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9248,7 +9248,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9284,7 +9284,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9317,7 +9317,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           throw newTestFailedException(
             if (shouldBeTrue) matcherResult.failureMessage else matcherResult.negatedFailureMessage, 
             None, 
-            10
+            11
           )
         }
       }
@@ -9384,7 +9384,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9409,7 +9409,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9434,7 +9434,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9470,7 +9470,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9495,7 +9495,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9532,7 +9532,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9562,7 +9562,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9587,7 +9587,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9624,7 +9624,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9654,7 +9654,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9679,7 +9679,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9704,7 +9704,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9749,7 +9749,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               right
             ),
             None, 
-            10
+            11
           )
       }
     }
@@ -9769,7 +9769,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           throw newTestFailedException(
             if (shouldBeTrue) matcherResult.failureMessage else matcherResult.negatedFailureMessage, 
             None, 
-            10
+            11
           )
         }
       }
@@ -9791,7 +9791,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           throw newTestFailedException(
             if (shouldBeTrue) matcherResult.failureMessage else matcherResult.negatedFailureMessage, 
             None, 
-            10
+            11
           )
         }
       }
@@ -9817,7 +9817,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             else
               FailureMessages("wasA", e, UnquotedString(result.propertyName)), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9842,7 +9842,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             else
               FailureMessages("wasAn", e, UnquotedString(beTrueMatchResult.propertyName)), 
             None, 
-            10
+            11
           )
         }
       }
@@ -9916,7 +9916,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(xs) should equal (3)
+     * all(xs) should be (3)
      *         ^
      * </pre>
      */
@@ -9924,7 +9924,27 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 11)
+          case _ => ()
+        }
+      }
+    }
+    
+    // TODO: To implement it correctly using Equality
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all(xs) should equal (3)
+     *         ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[T, Equality])(implicit equality: Equality[T]) {
+      val rightMatcher = rightMatcherGen1.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 11)
           case _ => ()
         }
       }
@@ -9965,11 +9985,31 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(xs) should equal (3)
+     * all(xs) should be (3)
      *         ^
      * </pre>
      */
     def should(rightMatcher: Matcher[T]) {
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 11)
+          case _ => ()
+        }
+      }
+    }
+    
+    // TODO: To implement it correctly using Equality
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all(xs) should equal (3)
+     *         ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[T, Equality])(implicit equality: Equality[T]) {
+      val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -10014,11 +10054,31 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(string) should equal ("hi")
+     * all(string) should be ("hi")
      *             ^
      * </pre>
      */
     def should(rightMatcher: Matcher[String]) {
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 11)
+          case _ => ()
+        }
+      }
+    }
+    
+    // TODO: To implement it correctly using Equality
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all(xs) should equal (3)
+     *         ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[String, Equality])(implicit equality: Equality[String]) {
+      val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -10132,7 +10192,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedLength
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -10155,7 +10215,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedSize
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -10178,7 +10238,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                              ^
      * </pre>
      */
-    def regex(rightRegexString: String) { regex(rightRegexString.r) }
+    def regex(rightRegexString: String) { checkRegex(rightRegexString.r) }
 
     /**
      * This method enables the following syntax: 
@@ -10188,7 +10248,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                              ^
      * </pre>
      */
-    def regex(rightRegex: Regex) {
+    def regex(rightRegex: Regex) { checkRegex(rightRegex) }
+    
+    def checkRegex(rightRegex: Regex) {
       doCollected(collected, xs, "regex", 2) { e =>
         if (rightRegex.pattern.matcher(e).lookingAt != shouldBeTrue)
           throw newTestFailedException(
@@ -10198,7 +10260,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               rightRegex
             ), 
             None, 
-            11
+            12
           )
       }
     }
@@ -10221,7 +10283,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                            ^
      * </pre>
      */
-    def regex(rightRegexString: String) { regex(rightRegexString.r) }
+    def regex(rightRegexString: String) { checkRegex(rightRegexString.r) }
 
     /**
      * This method enables the following syntax: 
@@ -10231,7 +10293,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                            ^
      * </pre>
      */
-    def regex(rightRegex: Regex) {
+    def regex(rightRegex: Regex) { checkRegex(rightRegex) }
+    
+    private def checkRegex(rightRegex: Regex) {
       doCollected(collected, xs, "regex", 2) { e =>
         if (rightRegex.findFirstIn(e).isDefined != shouldBeTrue)
           throw newTestFailedException(
@@ -10241,7 +10305,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               rightRegex
             ), 
             None, 
-            11
+            12
           )
       }
     }
@@ -10264,7 +10328,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                            ^
      * </pre>
      */
-    def regex(rightRegexString: String) { regex(rightRegexString.r) }
+    def regex(rightRegexString: String) { checkRegex(rightRegexString.r) }
 
     /**
      * This method enables the following syntax: 
@@ -10274,7 +10338,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                            ^
      * </pre>
      */
-    def regex(rightRegex: Regex) {
+    def regex(rightRegex: Regex) { checkRegex(rightRegex) }
+    
+    private def checkRegex(rightRegex: Regex) {
       doCollected(collected, xs, "regex", 2) { e =>
         val allMatches = rightRegex.findAllIn(e)
         if ((allMatches.hasNext && (allMatches.end == e.length)) != shouldBeTrue)
@@ -10285,7 +10351,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               rightRegex
             ), 
             None, 
-            11
+            12
           )
       }
     }
@@ -10308,7 +10374,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                              ^
      * </pre>
      */
-    def regex(rightRegexString: String) { regex(rightRegexString.r) }
+    def regex(rightRegexString: String) { checkRegex(rightRegexString.r) }
 
     /**
      * This method enables the following syntax: 
@@ -10318,7 +10384,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                               ^
      * </pre>
      */
-    def regex(rightRegex: Regex) {
+    def regex(rightRegex: Regex) { checkRegex(rightRegex) }
+    
+    private def checkRegex(rightRegex: Regex) {
       doCollected(collected, xs, "regex", 2) { e =>
         if (rightRegex.pattern.matcher(e).matches != shouldBeTrue)
           throw newTestFailedException(
@@ -10328,7 +10396,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               rightRegex
             ), 
             None, 
-            11
+            12
           )
       }
     }
@@ -10358,11 +10426,31 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfTraversable) should equal (Set(1, 2, 3))
+     * all(colOfTraversable) should be (Set(1, 2, 3))
      *                       ^
      * </pre>
      */
     def should(rightMatcher: Matcher[GenTraversable[T]]) {
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 11)
+          case _ => ()
+        }
+      }
+    }
+    
+    // TODO: To implement it correctly using Equality
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all(colOfTraversable) should equal (3)
+     *                       ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[GenTraversable[T], Equality])(implicit equality: Equality[GenTraversable[T]]) {
+      val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -10421,7 +10509,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedSize
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -10444,7 +10532,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedLength
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -10474,11 +10562,31 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfSeq) should equal (List(1, 2, 3))
+     * all(colOfSeq) should be (List(1, 2, 3))
      *               ^
      * </pre>
      */
     def should(rightMatcher: Matcher[GenSeq[T]]) {
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 11)
+          case _ => ()
+        }
+      }
+    }
+    
+    // TODO: To implement it correctly using Equality
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all(xs) should equal (3)
+     *         ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[GenSeq[T], Equality])(implicit equality: Equality[GenSeq[T]]) {
+      val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -10537,7 +10645,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedLength
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -10560,7 +10668,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedSize
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -10590,13 +10698,33 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfTraversable) should equal (Set(1, 2, 3))
+     * all(colOfTraversable) should be (Set(1, 2, 3))
      *                       ^
      * </pre>
      */
     def should[T](rightMatcher: Matcher[GenTraversable[T]]) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e.deep.asInstanceOf[IndexedSeq[T]]) match {  // TODO: Ugly but safe cast here because e is Array[T]
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 11)
+          case _ => ()
+        }
+      }
+    }
+    
+    // TODO: To implement it correctly using Equality
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all(colOfTraversable) should equal (3)
+     *                       ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[GenTraversable[T], Equality])(implicit equality: Equality[GenTraversable[T]]) {
+      val rightMatcher = rightMatcherGen1.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e.deep.asInstanceOf[IndexedSeq[T]]) match {
           case MatchResult(false, failureMessage, _, _, _) => 
             throw newTestFailedException(failureMessage, None, 10)
           case _ => ()
@@ -10653,7 +10781,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedSize
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -10676,7 +10804,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               expectedLength
             ), 
             None, 
-            10
+            11
           )
       }
     }
@@ -10706,11 +10834,31 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfMap) should equal (Map(1 -> "one", 2 -> "two"))
+     * all(colOfMap) should be (Map(1 -> "one", 2 -> "two"))
      *               ^
      * </pre>
      */
     def should(rightMatcher: Matcher[GenMap[K, V]]) {
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 10)
+          case _ => ()
+        }
+      }
+    }
+    
+    // TODO: To implement it correctly using Equality
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all(colOfMap) should equal (3)
+     *               ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[GenMap[K, V], Equality])(implicit equality: Equality[GenMap[K, V]]) {
+      val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -10768,7 +10916,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               e,
               expectedKey), 
               None, 
-              10
+              11
           )
       }
     }
@@ -10790,7 +10938,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               e,
               expectedValue), 
             None, 
-            10
+            11
           )
       }
     }
@@ -10821,11 +10969,31 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaCol) should equal (aJavaSet)
+     * all(colOfJavaCol) should be (aJavaSet)
      *                   ^
      * </pre>
      */
     def should(rightMatcher: Matcher[java.util.Collection[T]]) {
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 11)
+          case _ => ()
+        }
+      }
+    }
+    
+    // TODO: To implement it correctly using Equality
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all(colOfJavaCol) should equal (3)
+     *                   ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[java.util.Collection[T], Equality])(implicit equality: Equality[java.util.Collection[T]]) {
+      val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -10883,7 +11051,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               e,
               expectedSize), 
             None, 
-            10
+            11
           )
        }
     }
@@ -10910,7 +11078,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               e,
               expectedLength), 
             None, 
-            10
+            11
           )
         }
     }
@@ -10951,11 +11119,31 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaMap) should equal (someJavaMap)
+     * all(colOfJavaMap) should be (someJavaMap)
      *                   ^
      * </pre>
      */
     def should(rightMatcher: Matcher[java.util.Map[K, V]]) {
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 11)
+          case _ => ()
+        }
+      }
+    }
+    
+    // TODO: To implement it correctly using Equality
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all(colOfJavaMap) should equal (3)
+     *                   ^
+     * </pre>
+     */
+    def should(rightMatcherGen1: MatcherGen1[java.util.Map[K, V], Equality])(implicit equality: Equality[java.util.Map[K, V]]) {
+      val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -11013,7 +11201,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               e,
               expectedSize), 
             None, 
-            10
+            11
           )
       }
     }
@@ -11035,7 +11223,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               e,
               expectedLength), 
             None, 
-            10
+            11
           )
       }
     }
@@ -11068,7 +11256,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               e,
               expectedKey), 
             None, 
-            10
+            11
           )
       }
     }
@@ -11090,7 +11278,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
               e,
               expectedValue), 
               None, 
-              10
+              11
           )
       }
     }
@@ -11291,9 +11479,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
   override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = new AsAnyWrapper(o)
 
   private object ShouldMethodHelper {
-    def shouldMatcher[T](left: T, rightMatcher: Matcher[T]) {
+    def shouldMatcher[T](left: T, rightMatcher: Matcher[T], stackDepthAdjustment: Int = 0) {
       rightMatcher(left) match {
-        case MatchResult(false, failureMessage, _, _, _) => throw newTestFailedException(failureMessage)
+        case MatchResult(false, failureMessage, _, _, _) => throw newTestFailedException(failureMessage, None, 4 + stackDepthAdjustment)
         case _ => ()
       }
     }
@@ -12128,7 +12316,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             left,
             left.size), 
           None, 
-          1
+          2
         )
     }
   }

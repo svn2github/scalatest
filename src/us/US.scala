@@ -140,7 +140,7 @@ trait StateSuite extends Suite {
     val testSucceededIcon = "-"
     val formattedText = indentation(level - 1) + (testSucceededIcon + " " + testText)
     report(TestIgnored(tracker.nextOrdinal(), suiteName, suiteId, Some(getClass.getName), testName, testText, Some(IndentedText(formattedText, testText, level)),
-      Some(ToDoLocation)))
+      None))
 
   }
 
@@ -181,7 +181,7 @@ trait StateSuite extends Suite {
           val e = intercept[TestCanceledException] { cancel("Because of rain") }
           val message = getMessageForException(e)
           val formatter = getIndentedText(testName, 1, true)
-          args.reporter(TestCanceled(args.tracker.nextOrdinal(), message, suiteName, suiteId, Some(getClass.getName), testName, testName, Vector.empty, Some(e), Some(duration), Some(formatter), Some(ToDoLocation), None))
+          args.reporter(TestCanceled(args.tracker.nextOrdinal(), message, suiteName, suiteId, Some(getClass.getName), testName, testName, Vector.empty, Some(e), Some(duration), Some(formatter), None, None))
           org.scalatest.SucceededStatus
       case Failed(duration, remaining) =>
         if (remaining > 1)

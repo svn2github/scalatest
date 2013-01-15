@@ -26,7 +26,6 @@ import matchers.HavePropertyMatchResult
 import matchers.BePropertyMatcher
 import matchers.BePropertyMatchResult
 
-@Ignore
 class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropertyChecks with SharedHelpers {
 
   def examples =

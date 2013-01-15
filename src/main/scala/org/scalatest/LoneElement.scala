@@ -31,7 +31,7 @@ trait LoneElement {
                    xs,
                    xs.size)), 
             None, 
-            1
+            2
           )
       }
   }
