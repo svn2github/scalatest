@@ -1709,4 +1709,4 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
   }
 }
 
-class ParallelWebBrowserSpec extends WebBrowserSpec with ParallelTestExecution
+// class ParallelWebBrowserSpec extends WebBrowserSpec with ParallelTestExecution
