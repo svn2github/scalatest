@@ -193,7 +193,6 @@ class LegacyCheckingEqualizer[L](left: L) {
         Some(FailureMessages("wasPlusOrMinus", left, interval.pivot, interval.tolerance))
     }
 
-  // TODO: Add Scaladoc
-  def asAny: Any = left
+  // def asAny: Any = left
 }
 
