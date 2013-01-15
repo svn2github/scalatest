@@ -382,9 +382,12 @@
         <include name="**/*.scala" />
       </scaladoc>
 
+<!-- George, can you concat the actual template.css and our addl.css files, then reenable this? template.css
+     changed in 2.10, and I'm sure will change again. So it is best if we don't store a copy.
       <concat destfile="${doc}/lib/template.css" force="yes">
         <filelist dir="${html}" files="template.css, addl.css"/>
       </concat>
+-->
     </target>
 
     <target name="docutils" depends="compile-main">
