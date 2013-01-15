@@ -64,8 +64,16 @@ trait AsAny {
    * as type <code>Any</code>.
    *
    * @param o the object to return from <code>asAny</code>
+   *
+   * @author Bill Venners
    */
   class AsAnyWrapper(o: Any) {
+
+    /**
+     * Returns the object, <code>o</code>, passed to the constructor.
+     *
+     * @return the object passed to the constructor
+     */
     def asAny: Any = o
   }
 
