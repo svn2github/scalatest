@@ -25,7 +25,7 @@ class IntervalSpec extends Spec {
         intercept[IllegalArgumentException] {
           new Interval(3, -1)
         }
-      assert(caught.getMessage.includes("tolerance must be zero or greater, but was -1"))
+      assert(caught.getMessage.endsWith("tolerance must be zero or greater, but was -1"))
     }
   }
 }
