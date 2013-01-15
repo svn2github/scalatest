@@ -255,7 +255,7 @@ class LegacyCheckingEqualizer[L](left: L) {
       if (interval.isWithin(left))
         None
       else
-        Some(FailureMessages("wasNotPlusOrMinus", left, interval.right, interval.tolerance))
+        Some(FailureMessages("wasNotPlusOrMinus", left, interval.pivot, interval.tolerance))
     }
 
   def !==(interval: Interval[L]): Option[String] =
@@ -271,7 +271,7 @@ class LegacyCheckingEqualizer[L](left: L) {
       if (if (interval != null) !interval.isWithin(left) else left != interval)
         None
       else
-        Some(FailureMessages("wasPlusOrMinus", left, interval.right, interval.tolerance))
+        Some(FailureMessages("wasPlusOrMinus", left, interval.pivot, interval.tolerance))
     }
 
   // TODO: Add Scaladoc

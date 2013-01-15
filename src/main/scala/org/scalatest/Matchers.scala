@@ -5035,7 +5035,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           FailureMessages(
             if (shouldBeTrue) "wasNotPlusOrMinus" else "wasPlusOrMinus",
             left,
-            interval.right,
+            interval.pivot,
             interval.tolerance
           )
         )
@@ -5056,7 +5056,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           FailureMessages(
             if (shouldBeTrue) "didNotEqualPlusOrMinus" else "equaledPlusOrMinus",
             left,
-            interval.right,
+            interval.pivot,
             interval.tolerance
           )
         )
@@ -5518,8 +5518,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       def apply(left: T): MatchResult = {
         MatchResult(
           interval.isWithin(left),
-          FailureMessages("didNotEqualPlusOrMinus", left, interval.right, interval.tolerance),
-          FailureMessages("equaledPlusOrMinus", left, interval.right, interval.tolerance)
+          FailureMessages("didNotEqualPlusOrMinus", left, interval.pivot, interval.tolerance),
+          FailureMessages("equaledPlusOrMinus", left, interval.pivot, interval.tolerance)
         )
       }
     }
@@ -5887,8 +5887,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           MatchResult(
             interval.isWithin(left),
             // left <= right + tolerance && left >= right - tolerance,
-            FailureMessages("wasNotPlusOrMinus", left, interval.right, interval.tolerance),
-            FailureMessages("wasPlusOrMinus", left, interval.right, interval.tolerance)
+            FailureMessages("wasNotPlusOrMinus", left, interval.pivot, interval.tolerance),
+            FailureMessages("wasPlusOrMinus", left, interval.pivot, interval.tolerance)
           )
         }
       }
@@ -6171,8 +6171,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         def apply(left: U): MatchResult = {
           MatchResult(
             !(interval.isWithin(left)),
-            FailureMessages("equaledPlusOrMinus", left, interval.right, interval.tolerance),
-            FailureMessages("didNotEqualPlusOrMinus", left, interval.right, interval.tolerance)
+            FailureMessages("equaledPlusOrMinus", left, interval.pivot, interval.tolerance),
+            FailureMessages("didNotEqualPlusOrMinus", left, interval.pivot, interval.tolerance)
           )
         }
       }
@@ -6531,8 +6531,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           MatchResult(
             // !(left <= right + tolerance && left >= right - tolerance),
             !(interval.isWithin(left)),
-            FailureMessages("wasPlusOrMinus", left, interval.right, interval.tolerance),
-            FailureMessages("wasNotPlusOrMinus", left, interval.right, interval.tolerance)
+            FailureMessages("wasPlusOrMinus", left, interval.pivot, interval.tolerance),
+            FailureMessages("wasNotPlusOrMinus", left, interval.pivot, interval.tolerance)
           )
         }
       }
@@ -11626,7 +11626,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def shouldEqual(interval: Interval[T]) {
       if (!interval.isWithin(left)) {
-        throw newTestFailedException(FailureMessages("didNotEqualPlusOrMinus", left, interval.right, interval.tolerance))
+        throw newTestFailedException(FailureMessages("didNotEqualPlusOrMinus", left, interval.pivot, interval.tolerance))
       }
     }
 
@@ -11695,7 +11695,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           FailureMessages(
             if (inv.expectingEqual) "didNotEqualPlusOrMinus" else "equaledPlusOrMinus",
             left,
-            inv.interval.right,
+            inv.interval.pivot,
             inv.interval.tolerance
           )
         )
