@@ -17,56 +17,35 @@ package org.scalautils
 
 /**
  * Class used via an implicit conversion to enable any two objects to be compared with
- * <code>===</code> in assertions in tests. For example:
+ * <code>===</code> with an <code>Option[String]</code> result and no enforced type constraint between
+ * two object types. For example:
  *
  * <pre class="stHighlight">
  * assert(a === b)
  * </pre>
  *
  * <p>
- * The benefit of using <code>assert(a === b)</code> rather than <code>assert(a == b)</code> is
+ * The benefit of using <code>assert(a === b)</code> rather than <code>assert(a == b)</code> in ScalaTest code is
  * that a <code>TestFailedException</code> produced by the former will include the values of <code>a</code> and <code>b</code>
  * in its detail message.
- * The implicit method that performs the conversion from <code>Any</code> to <code>Equalizer</code> is
- * <code>convertToEqualizer</code> in trait <code>Assertions</code>.
  * </p>
  *
  * <p>
- * In case you're not familiar with how implicit conversions work in Scala, here's a quick explanation.
- * The <code>convertToEqualizer</code> method in <code>Assertions</code> is defined as an "implicit" method that takes an
- * <code>Any</code>, which means you can pass in any object, and it will convert it to an <code>Equalizer</code>.
- * The <code>Equalizer</code> has <code>===</code> defined. Most objects don't have <code>===</code> defined as a method
- * on them. Take two Strings, for example:
+ * <em>
+ * Note: This class has "Legacy" in its name because its approach to error messages will eventually be replaced by macros. Once ScalaTest no longer supports Scala 2.9, 
+ * this class will be deprecated in favor of class <code>Equalizer</code>. Instead of obtaining nice error messages via the <code>Option[String]</code>
+ * returned by the methods of this class, the error messages will be obtained by a macro. The "legacy" approach to good error messages will continue to be
+ * used, however, until ScalaTest no longer supports Scala 2.9, since macros were introduced to Scala (in experimental form) in 2.10.
+ * </em>
  * </p>
  *
- * <pre class="stHighlight">
- * assert("hello" === "world")
- * </pre>
- *
- * <p>
- * Given this code, the Scala compiler looks for an <code>===</code> method on class <code>String</code>, because that's the class of
- * <code>"hello"</code>. <code>String</code> doesn't define <code>===</code>, so the compiler looks for an implicit conversion from
- * <code>String</code> to something that does have an <code>===</code> method, and it finds the <code>convertToEqualizer</code> method. It
- * then rewrites the code to this:
- * </p>
- *
- * <pre class="stHighlight">
- * assert(convertToEqualizer("hello").===("world"))
- * </pre>
- *
- * <p>
- * So inside a <code>Suite</code> (which mixes in <code>Assertions</code>, <code>===</code> will work on anything. The only
- * situation in which the implicit conversion wouldn't 
- * happen is on types that have an <code>===</code> method already defined.
- * </p>
- * 
  * <p>
  * The primary constructor takes one object, <code>left</code>, whose type is being converted to <code>Equalizer</code>. The <code>left</code>
  * value may be a <code>null</code> reference, because this is allowed by Scala's <code>==</code> operator.
  * </p>
  *
  * @param left An object to convert to <code>Equalizer</code>, which represents the <code>left</code> value
- *     of an assertion.
+ *     of a <code>===</code> equality check.
  *
  * @author Bill Venners
  */
@@ -111,7 +90,7 @@ class LegacyEqualizer[L](left: L) {
 
   // If the objects are two strings, replace them with whatever is returned by diffStrings.
   // Otherwise, use the same objects.
-  def getObjectsForFailureMessage(a: Any, b: Any) =
+  private def getObjectsForFailureMessage(a: Any, b: Any) =
     a match {
       case aStr: String => {
         b match {
@@ -124,6 +103,13 @@ class LegacyEqualizer[L](left: L) {
       case _ => (a, b)
     }
 
+  /**
+   * Compare two objects for equality, returning an <code>Option[String]</code>, using the <code>Equality</code> type class passed as <code>equality</code>.
+   *
+   * @param right the object to compare for equality with <code>left</code>, passed to the constructor
+   * @return None if the <code>left</code> and <code>right</code> objects are equal according to the passed <code>Equality</code> type class.
+   *    else returns an error message string wrapped in a <code>Some</code>.
+   */
   def ===(right: Any)(implicit equality: Equality[L]): Option[String] = 
     if (equality.areEqual(left, right))
       None
@@ -132,6 +118,13 @@ class LegacyEqualizer[L](left: L) {
       Some(FailureMessages("didNotEqual", leftee, rightee))
     }
 
+  /**
+   * Compare two objects for inequality, returning an <code>Option[String]</code>, using the <code>Equality</code> type class passed as <code>equality</code>.
+   *
+   * @param right the object to compare for inequality with <code>left</code>, passed to the constructor
+   * @return None if the <code>left</code> and <code>right</code> objects are <em>not</em> equal according to the passed <code>Equality</code> type class.
+   *    else returns an error message string wrapped in a <code>Some</code>.
+   */
   def !==(right: Any)(implicit equality: Equality[L]): Option[String] =
     if (!equality.areEqual(left, right))
       None
@@ -140,20 +133,13 @@ class LegacyEqualizer[L](left: L) {
       Some(FailureMessages("equaled", leftee, rightee))
     }
 
-/*
-  def ===(interval: Interval[L]): Option[String] =
-    if (if (interval != null) interval.isWithin(left) else left == interval)
-      None
-    else
-      Some(FailureMessages("wasNotPlusOrMinus", left, interval.pivot, interval.tolerance))
-
-  def !==(interval: Interval[L]): Option[String] =
-    if (if (interval != null) !interval.isWithin(left) else left != interval)
-      None
-    else
-      Some(FailureMessages("wasPlusOrMinus", left, interval.pivot, interval.tolerance))
-*/
-
+  /**
+   * Determine whether a numeric object is within the passed <code>Interval</code>, returning an <code>Option[String]</code>.
+   *
+   * @param interval the <code>Interval</code> against which to compare the value passed to the constructor as <code>left</code> 
+   * @return None if the value passed to the constructor as <code>left</code> is <em>not</em> within the <code>Interval</code> passed to this method, 
+   *    else returns an error message string wrapped in a <code>Some</code>.
+   */
   def ===(interval: Interval[L]): Option[String] =
     if (interval == null) {
       if (left == null)
@@ -170,6 +156,13 @@ class LegacyEqualizer[L](left: L) {
         Some(FailureMessages("wasNotPlusOrMinus", left, interval.pivot, interval.tolerance))
     }
 
+  /**
+   * Determine whether a numeric object is outside the passed <code>Interval</code>, returning an <code>Option[String]</code>.
+   *
+   * @param interval the <code>Interval</code> against which to compare the value passed to the constructor as <code>left</code> 
+   * @return true if the value passed to the constructor as <code>left</code> is <em>not</em> within the <code>Interval</code> passed to this method.
+   *    else returns an error message string wrapped in a <code>Some</code>.
+   */
   def !==(interval: Interval[L]): Option[String] =
     if (interval == null) {
       if (left != null)
