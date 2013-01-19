@@ -15,6 +15,10 @@
  */
 package org.scalautils
 
+/**
+ * Trait that provides <code>===</code> and <code>!==</code> operators that can be configured to enforce type constraints for
+ * equality comparisons at compile time.
+ */
 trait EqualityConstraints {
 
   def defaultEquality[A]: Equality[A] = new DefaultEquality[A]
