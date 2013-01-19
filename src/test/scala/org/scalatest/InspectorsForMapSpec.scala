@@ -9,7 +9,7 @@ import scala.collection.GenTraversable
 import scala.annotation.tailrec
 import collection._
 
-class InspectorsForMapSpec extends Spec with ShouldMatchers with TableDrivenPropertyChecks with Inspectors with SharedHelpers {
+class InspectorsForMapSpec extends Spec with Matchers with TableDrivenPropertyChecks with SharedHelpers {
 
   def examples =
     Table[Map[Int, String] => collection.GenMap[Int, String]](
