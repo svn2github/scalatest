@@ -29,10 +29,10 @@ class ShouldBeATypeSpec extends Spec with Matchers {
   // Checking for a specific size
   object `The be a [Type] syntax` {
 
-    def `should do nothing if the property is true` {
+    def `should do nothing if the property is true` { pending
 
-      new Book("A Tale of Two Cities") should be (a [Book])
-      new Book("A Tale of Two Cities") shouldBe a [Book]
+      // new Book("A Tale of Two Cities") should be (a [Book])
+      // new Book("A Tale of Two Cities") shouldBe a [Book]
 /*
       book should be (goodRead)
       book should be a (goodRead)
@@ -44,17 +44,17 @@ class ShouldBeATypeSpec extends Spec with Matchers {
 */
     }
 
-    def `should throw TestFailedException if the property is false` {
+    def `should throw TestFailedException if the property is false` { pending
 
-      val caught1 = intercept[TestFailedException] {
-        new Book("A Tale of Two Cities") should be (a [String])
-      }
-      assert(caught1.getMessage === "Book(A Tale of Two Cities) was not an instance of java.lang.String")
+      // val caught1 = intercept[TestFailedException] {
+      //   new Book("A Tale of Two Cities") should be (a [String])
+      // }
+      // assert(caught1.getMessage === "Book(A Tale of Two Cities) was not an instance of java.lang.String")
 
-      val caught2 = intercept[TestFailedException] {
-        new Book("A Tale of Two Cities") shouldBe a [String]
-      }
-      assert(caught2.getMessage === "Book(A Tale of Two Cities) was not an instance of java.lang.String")
+      // val caught2 = intercept[TestFailedException] {
+      //   new Book("A Tale of Two Cities") shouldBe a [String]
+      // }
+      // assert(caught2.getMessage === "Book(A Tale of Two Cities) was not an instance of java.lang.String")
 /*
       val caught1 = intercept[TestFailedException] {
         badBook should be (goodRead)

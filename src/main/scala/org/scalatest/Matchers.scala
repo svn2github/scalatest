@@ -6272,14 +6272,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
 
-    /**
+    /* *
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
      * set should be ('empty)
      *               ^
      * </pre>
-     */
     def apply[T](right: AType[T]): Matcher[Any] =
       new Matcher[Any] {
         def apply(left: Any): MatchResult = 
@@ -6291,6 +6290,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             FailureMessages("wasAnInstanceOf")
           )
       }
+     */
 
     /**
      * This method enables the following syntax: 
@@ -8735,6 +8735,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
     }
   }
 
+/*
   class AType[T : ClassManifest] {
 
     private val clazz = implicitly[ClassManifest[T]].erasure.asInstanceOf[Class[T]]
@@ -8745,6 +8746,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
   }
 
   def a[T : ClassManifest]: AType[T] = new AType[T]
+*/
 
   // This is where InspectorShorthands started
 
@@ -12434,11 +12436,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
 
+/*
     def shouldBe[U](right: AType[U]) {
       if (!right.isAssignableFromClassOf(left)) {
         throw newTestFailedException(FailureMessages("wasNotAnInstanceOf", left, UnquotedString(right.className)))
       }
     }
+*/
 
     def shouldBe(right: AnyRef) {
 
