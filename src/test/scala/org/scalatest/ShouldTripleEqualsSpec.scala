@@ -345,6 +345,7 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Matche
 
     object `with TypeCheckedTripleEquals` {
 
+/*
       def `should compare supertypes with subtypes on either side` {
 
         new TypeCheckedTripleEquals {
@@ -454,7 +455,6 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Matche
         }
       }
 
-/*
       def `should be overridable with TripleEquals locally when TypeCheckedTripleEquals imported` {
 
         object O extends TypeCheckedTripleEquals
@@ -615,6 +615,7 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Matche
 
     object `with ConversionCheckedTripleEquals` {
 
+/*
       def `should compare supertypes with subtypes on either side as well as types with implicit conversions in either direction` {
 
         new ConversionCheckedTripleEquals {
@@ -726,7 +727,6 @@ class ShouldTripleEqualsSpec extends Spec with NonImplicitAssertions with Matche
         }
       }
 
-/*
       def `should be overridable with TripleEquals locally when ConversionCheckedTripleEquals imported` {
 
         object O extends ConversionCheckedTripleEquals

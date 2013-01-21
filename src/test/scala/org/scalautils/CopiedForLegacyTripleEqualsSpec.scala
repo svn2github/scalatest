@@ -265,6 +265,7 @@ class CopiedForLegacyTripleEqualsSpec extends Spec with NonImplicitAssertions {
 
     object `with TypeCheckedLegacyTripleEquals` {
 
+/*
       def `should compare supertypes with subtypes on either side` {
 
         new TypeCheckedLegacyTripleEquals {
@@ -316,7 +317,6 @@ class CopiedForLegacyTripleEqualsSpec extends Spec with NonImplicitAssertions {
         }
       }
 
-/*
       def `should be overridable with LegacyTripleEquals locally when TypeCheckedLegacyTripleEquals imported` {
 
         object O extends TypeCheckedLegacyTripleEquals
@@ -477,6 +477,7 @@ class CopiedForLegacyTripleEqualsSpec extends Spec with NonImplicitAssertions {
 
     object `with ConversionCheckedLegacyTripleEquals` {
 
+/*
       def `should compare supertypes with subtypes on either side as well as types with implicit conversions in either direction` {
 
         new ConversionCheckedLegacyTripleEquals {
@@ -530,7 +531,6 @@ class CopiedForLegacyTripleEqualsSpec extends Spec with NonImplicitAssertions {
         }
       }
 
-/*
       def `should be overridable with LegacyTripleEquals locally when ConversionCheckedLegacyTripleEquals imported` {
 
         object O extends ConversionCheckedLegacyTripleEquals

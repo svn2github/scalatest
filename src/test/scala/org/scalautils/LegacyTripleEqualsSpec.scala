@@ -79,3 +79,4 @@ class LegacyTripleEqualsSpec extends FunSpec with LegacyTripleEquals with Option
     }
   }
 }
+
