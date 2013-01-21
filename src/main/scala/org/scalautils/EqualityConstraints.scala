@@ -98,7 +98,7 @@ trait EqualityConstraints { // TODO: Maybe say DefaultEquality[A] as the return 
    *
    * @return a <code>DefaultEquality</code> for type <code>A</code>
    */
-  def defaultEquality[A]: Equality[A] = new DefaultEquality[A]
+  def defaultEquality[A]: Equality[A]
 
   /**
    * Convert to an <a href="Equalizer.html"><code>Equalizer</code></a> that provides <code>===</code> and <code>!==</code> operators that
@@ -111,7 +111,7 @@ trait EqualityConstraints { // TODO: Maybe say DefaultEquality[A] as the return 
    * @param left the object whose type to convert to <code>Equalizer</code>.
    * @throws NullPointerException if <code>left</code> is <code>null</code>.
    */
-  def convertToEqualizer[T](left: T): Equalizer[T] = new Equalizer(left)
+  def convertToEqualizer[T](left: T): Equalizer[T]
 
   /**
    * Convert to a <a href="LegacyEqualizer.html"><code>LegacyEqualizer</code></a> that provides <code>===</code> and <code>!==</code> operators that
@@ -124,7 +124,7 @@ trait EqualityConstraints { // TODO: Maybe say DefaultEquality[A] as the return 
    * @param left the object whose type to convert to <code>LegacyEqualizer</code>.
    * @throws NullPointerException if <code>left</code> is <code>null</code>.
    */
-  def convertToLegacyEqualizer[T](left: T): LegacyEqualizer[T] = new LegacyEqualizer(left)
+  def convertToLegacyEqualizer[T](left: T): LegacyEqualizer[T]
 
   /**
    * Convert to an <a href="CheckingEqualizer.html"><code>CheckingEqualizer</code></a> that provides <code>===</code> and <code>!==</code> operators that result in <code>Boolean</code> and enforce a type constraint.
@@ -137,7 +137,7 @@ trait EqualityConstraints { // TODO: Maybe say DefaultEquality[A] as the return 
    * @param left the object whose type to convert to <code>CheckingEqualizer</code>.
    * @throws NullPointerException if <code>left</code> is <code>null</code>.
    */
-  def convertToCheckingEqualizer[T](left: T): CheckingEqualizer[T] = new CheckingEqualizer(left)
+  def convertToCheckingEqualizer[T](left: T): CheckingEqualizer[T]
 
   /**
    * Convert to a <a href="LegacyCheckingEqualizer.html"><code>LegacyCheckingEqualizer</code></a> that provides <code>===</code> and <code>!==</code> operators that result in <code>Option[String]</code> and
@@ -151,18 +151,18 @@ trait EqualityConstraints { // TODO: Maybe say DefaultEquality[A] as the return 
    * @param left the object whose type to convert to <code>LegacyCheckingEqualizer</code>.
    * @throws NullPointerException if <code>left</code> is <code>null</code>.
    */
-  def convertToLegacyCheckingEqualizer[T](left: T): LegacyCheckingEqualizer[T] = new LegacyCheckingEqualizer(left)
+  def convertToLegacyCheckingEqualizer[T](left: T): LegacyCheckingEqualizer[T]
 
   /**
    * 
    */
-  def unconstrainedEquality[A, B](implicit equalityOfA: Equality[A]): EqualityConstraint[A, B] = new BasicEqualityConstraint[A, B](equalityOfA)
+  def unconstrainedEquality[A, B](implicit equalityOfA: Equality[A]): EqualityConstraint[A, B]
 
-  def lowPriorityTypeCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], ev: A <:< B): EqualityConstraint[A, B] = new BasicEqualityConstraint[A, B](equalityOfA)
-  def typeCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], ev: B <:< A): EqualityConstraint[A, B] = new BasicEqualityConstraint[A, B](equalityOfA)
+  def lowPriorityTypeCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], ev: A <:< B): EqualityConstraint[A, B]
+  def typeCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], ev: B <:< A): EqualityConstraint[A, B]
 
-  def lowPriorityConversionCheckedEqualityConstraint[A, B](implicit equalityOfB: Equality[B], cnv: A => B): EqualityConstraint[A, B] = new AToBEqualityConstraint[A, B](equalityOfB, cnv)
-  def conversionCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], cnv: B => A): EqualityConstraint[A, B] = new BToAEqualityConstraint[A, B](equalityOfA, cnv)
+  def lowPriorityConversionCheckedEqualityConstraint[A, B](implicit equalityOfB: Equality[B], cnv: A => B): EqualityConstraint[A, B]
+  def conversionCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], cnv: B => A): EqualityConstraint[A, B]
 
   def ===[T](right: T): TripleEqualsInvocation[T] = new TripleEqualsInvocation[T](right, true)
   def !==[T](right: T): TripleEqualsInvocation[T] = new TripleEqualsInvocation[T](right, false)
