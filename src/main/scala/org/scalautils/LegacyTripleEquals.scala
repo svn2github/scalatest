@@ -15,7 +15,14 @@
  */
 package org.scalautils
 
+/**
+ * This method is extended by <code>org.scalatest.Assertions</code>, because it provides the same kind of <code>===</code> operator that was
+ * historically provided by <code>Assertions</code>.
+ */
 trait LegacyTripleEquals extends EqualityConstraints {
+
+// TODO: Maybe found the source of the bug whereby should === initially requires a type constraint that isn't there. There's no
+// unconstrainedEquality implicit override here. I think there likely should be. Yup. That's why it says it can't find a constraint.
 
   implicit override def defaultEquality[A]: Equality[A] = new DefaultEquality[A]
 
