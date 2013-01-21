@@ -3511,38 +3511,45 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with AsAny with
    * </p>
    *
    * <pre>
-   * scala> import java.net.DatagramPacket
+   * scala&gt; import java.net.DatagramPacket
    * import java.net.DatagramPacket
    * 
-   * scala> import org.scalatest.matchers.ShouldMatchers._
+   * scala&gt; import org.scalatest.matchers.ShouldMatchers._
    * import org.scalatest.matchers.ShouldMatchers._
    *
-   * scala> val dp = new DatagramPacket(Array(0x0, 0x1, 0x2, 0x3), 4)
+   * scala&gt; val dp = new DatagramPacket(Array(0x0, 0x1, 0x2, 0x3), 4)
    * dp: java.net.DatagramPacket = java.net.DatagramPacket@54906181
    * 
-   * scala> dp.getLength
+   * scala&gt; dp.getLength
    * res0: Int = 4
    *
-   * scala> dp should have length 4
+   * scala&gt; dp should have length 4
    * <console>:13: error: could not find implicit value for parameter ev: org.scalatest.matchers.ShouldMatchers.Extent[java.net.DatagramPacket]
    *          dp should have length 4
    *             ^
    *
-   * scala> implicit val lengthOfDatagramPacket =
+   * scala&gt; implicit val lengthOfDatagramPacket =
    *     |   new Length[DatagramPacket] {
    *     |     def extentOf(dp: DatagramPacket): Long = dp.getLength
    *     |   }
    * lengthOfDatagramPacket: java.lang.Object with org.scalatest.matchers.ShouldMatchers.Length[java.net.DatagramPacket] = $anon$1@550c6b37
    *
-   * scala> dp should have length 4
+   * scala&gt; dp should have length 4
    *
-   * scala> dp should have length 3
+   * scala&gt; dp should have length 3
    * org.scalatest.exceptions.TestFailedException:  java.net.DatagramPacket@54906181 had length 4, not length 3
    * </pre>
    *
    * @author Bill Venners
    */
   sealed trait Extent[T] {
+
+    /**
+     * Returns the extent (<em>i.e.</em>, length or size) of the passed object.
+     *
+     * @param the object whose extent to return
+     * @return the extent of the passed object
+     */
     def extentOf(o: T): Long
   }
 
@@ -3560,32 +3567,32 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with AsAny with
    * </p>
    *
    * <pre>
-   * scala> import java.net.DatagramPacket
+   * scala&gt; import java.net.DatagramPacket
    * import java.net.DatagramPacket
    * 
-   * scala> import org.scalatest.matchers.ShouldMatchers._
+   * scala&gt; import org.scalatest.matchers.ShouldMatchers._
    * import org.scalatest.matchers.ShouldMatchers._
    *
-   * scala> val dp = new DatagramPacket(Array(0x0, 0x1, 0x2, 0x3), 4)
+   * scala&gt; val dp = new DatagramPacket(Array(0x0, 0x1, 0x2, 0x3), 4)
    * dp: java.net.DatagramPacket = java.net.DatagramPacket@54906181
    * 
-   * scala> dp.getLength
+   * scala&gt; dp.getLength
    * res0: Int = 4
    *
-   * scala> dp should have length 4
+   * scala&gt; dp should have length 4
    * <console>:13: error: could not find implicit value for parameter ev: org.scalatest.matchers.ShouldMatchers.Extent[java.net.DatagramPacket]
    *          dp should have length 4
    *             ^
    *
-   * scala> implicit val lengthOfDatagramPacket =
+   * scala&gt; implicit val lengthOfDatagramPacket =
    *     |   new Length[DatagramPacket] {
    *     |     def extentOf(dp: DatagramPacket): Long = dp.getLength
    *     |   }
    * lengthOfDatagramPacket: java.lang.Object with org.scalatest.matchers.ShouldMatchers.Length[java.net.DatagramPacket] = $anon$1@550c6b37
    *
-   * scala> dp should have length 4
+   * scala&gt; dp should have length 4
    *
-   * scala> dp should have length 3
+   * scala&gt; dp should have length 3
    * org.scalatest.exceptions.TestFailedException:  java.net.DatagramPacket@54906181 had length 4, not length 3
    * </pre>
    *
@@ -3607,31 +3614,31 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with AsAny with
    * </p>
    *
    * <pre>
-   * scala> import java.awt.image.DataBufferByte
+   * scala&gt; import java.awt.image.DataBufferByte
    * import java.awt.image.DataBufferByte
    * 
-   * scala> import org.scalatest.matchers.ShouldMatchers._
+   * scala&gt; import org.scalatest.matchers.ShouldMatchers._
    * import org.scalatest.matchers.ShouldMatchers._
    *
-   * scala> val db = new DataBufferByte(4)
+   * scala&gt; val db = new DataBufferByte(4)
    * db: java.awt.image.DataBufferByte = java.awt.image.DataBufferByte@33d5e94f
    * 
-   * scala> db.getSize
+   * scala&gt; db.getSize
    * res0: Int = 4
    *
-   * scala> db should have size 4
+   * scala&gt; db should have size 4
    * <console>:17: error: could not find implicit value for parameter ev: org.scalatest.matchers.ShouldMatchers.Extent[java.awt.image.DataBufferByte]
    *               db should have size 4
    *                  ^
-   * scala> implicit val sizeOfDataBufferByte =
+   * scala&gt; implicit val sizeOfDataBufferByte =
    *      |   new Size[DataBufferByte] {
    *      |     def extentOf(db: DataBufferByte): Long = db.getSize
    *      |   }
    * sizeOfDataBufferByte: java.lang.Object with org.scalatest.matchers.ShouldMatchers.Size[java.awt.image.DataBufferByte] = $anon$1@4c69bdf8
    *
-   * scala> db should have size 4
+   * scala&gt; db should have size 4
    *
-   * scala> db should have size 3
+   * scala&gt; db should have size 3
    * org.scalatest.exceptions.TestFailedException:  java.awt.image.DataBufferByte@33d5e94f had size 4, not size 3
    * </pre>
    *
