@@ -266,13 +266,70 @@ trait EqualityConstraints { // TODO: Maybe say DefaultEquality[A] as the return 
    */
   def conversionCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], cnv: B => A): EqualityConstraint[A, B]
 
+  /**
+   * Returns a <code>TripleEqualsInvocation[T]</code>, given an object of type <code>T</code>, to facilitate
+   * the &ldquo;<code><em>&lt;left&gt;</em> should === <em>&lt;right&gt;</em></code>&rdquo; syntax
+   * of <a href="../scalatest/Matchers.html"><code>Matchers</code></a>.
+   *
+   * @param right the right-hand side value for an equality assertion
+   * @return a <code>TripleEqualsInvocation</code> wrapping the passed <em>right</em> value, with <code>expectingEqual</code>
+   *    set to <code>true</code>.
+   */
   def ===[T](right: T): TripleEqualsInvocation[T] = new TripleEqualsInvocation[T](right, true)
+
+  /**
+   * Returns a <code>TripleEqualsInvocation[T]</code>, given an object of type <code>T</code>, to facilitate
+   * the &ldquo;<code><em>&lt;left&gt;</em> should !== <em>&lt;right&gt;</em></code>&rdquo; syntax
+   * of <a href="../scalatest/Matchers.html"><code>Matchers</code></a>.
+   *
+   * @param right the right-hand side value for an equality assertion
+   * @return a <code>TripleEqualsInvocation</code> wrapping the passed <em>right</em> value, with <code>expectingEqual</code>
+   *    set to <code>false</code>.
+   */
   def !==[T](right: T): TripleEqualsInvocation[T] = new TripleEqualsInvocation[T](right, false)
 
+  /**
+   * Returns a <code>TripleEqualsInvocation[Null]</code>, given a <code>null</code> reference, to facilitate
+   * the &ldquo;<code><em>&lt;left&gt;</em> should === null</code>&rdquo; syntax
+   * of <a href="../scalatest/Matchers.html"><code>Matchers</code></a>.
+   *
+   * @param right a null reference
+   * @return a <code>TripleEqualsInvocation</code> wrapping the passed <code>null</code> value, with <code>expectingEqual</code>
+   *    set to <code>true</code>.
+   */
   def ===(right: Null): TripleEqualsInvocation[Null] = new TripleEqualsInvocation[Null](right, true)
+
+  /**
+   * Returns a <code>TripleEqualsInvocation[Null]</code>, given a <code>null</code> reference, to facilitate
+   * the &ldquo;<code><em>&lt;left&gt;</em> should !== null</code>&rdquo; syntax
+   * of <a href="../scalatest/Matchers.html"><code>Matchers</code></a>.
+   *
+   * @param right a null reference
+   * @return a <code>TripleEqualsInvocation</code> wrapping the passed <code>null</code> value, with <code>expectingEqual</code>
+   *    set to <code>false</code>.
+   */
   def !==(right: Null): TripleEqualsInvocation[Null] = new TripleEqualsInvocation[Null](right, false)
 
+  /**
+   * Returns a <code>TripleEqualsInvocationOnInterval[T]</code>, given an <code>Interval[T]</code>, to facilitate
+   * the &ldquo;<code><em>&lt;left&gt;</em> should === (<em>&lt;pivot&gt;</em> +- <em>&lt;tolerance&gt;</em>)</code>&rdquo;
+   * syntax of <a href="../scalatest/Matchers.html"><code>Matchers</code></a>.
+   *
+   * @param right the <code>Interval[T]</code> against which to compare the left-hand value
+   * @return a <code>TripleEqualsInvocationOnInterval</code> wrapping the passed <code>Interval[T]</code> value, with
+   * <code>expectingEqual</code> set to <code>true</code>.
+   */
   def ===[T](right: Interval[T]): TripleEqualsInvocationOnInterval[T] = new TripleEqualsInvocationOnInterval[T](right, true)
+
+  /**
+   * Returns a <code>TripleEqualsInvocationOnInterval[T]</code>, given an <code>Interval[T]</code>, to facilitate
+   * the &ldquo;<code><em>&lt;left&gt;</em> should !== (<em>&lt;pivot&gt;</em> +- <em>&lt;tolerance&gt;</em>)</code>&rdquo;
+   * syntax of <a href="../scalatest/Matchers.html"><code>Matchers</code></a>.
+   *
+   * @param right the <code>Interval[T]</code> against which to compare the left-hand value
+   * @return a <code>TripleEqualsInvocationOnInterval</code> wrapping the passed <code>Interval[T]</code> value, with
+   * <code>expectingEqual</code> set to <code>false</code>.
+   */
   def !==[T](right: Interval[T]): TripleEqualsInvocationOnInterval[T] = new TripleEqualsInvocationOnInterval[T](right, false)
 }
 
