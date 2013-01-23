@@ -304,16 +304,45 @@
 	    <copy file="${resources}/org/scalatest/d3.v2.min.js" todir="${jar.contents}/org/scalatest" />
     </target>
 
-    <target name="compile-tests" depends="compile-main">
-
-      <!-- Compile the Scala code from ${scalasrc.test} into ${build.tests} -->
-      <scalac srcdir="${scalasrc.test}:${javasrc.test}" destdir="${build.tests}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC"/>
+    <target name="compile-tests" depends="compile-main,write-excludes-file">
+      <scalac destdir="${build.tests}" target="jvm-1.5"
+              classpathref="build.test.class.path" deprecation="yes"
+              addparams="-no-specialization" fork="true" 
+              jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC">
+        <src path="${scalasrc.test}:${javasrc.test}"/>
+        <excludesfile name="${build}/scalac_excludes"/>
+      </scalac>
 
       <!-- Compile the Java code from ${javasrc.test} into ${build.tests} -->
       <javac srcdir="${javasrc.test}" destdir="${build.tests}" compiler="javac1.5" memoryMaximumSize="2000M" fork="true" classpath="${classes}:${org.scala-lang:scala-library:jar}:${junit:junit:jar}" debug="yes" />
     </target>
+
+    <!--
+      - Writes file scalac_excludes to target directory, for use in
+      - excluding specific files from being compiled by compile-tests target
+      - when building under scala 2.9.  Files to be excluded are specified in
+      - file src/test/scala/2.9_excludes.
+      -->
+    <target name="write-excludes-file">
+      <condition property="is.2.9">
+        <contains string="${scala.version}" substring="2.9"/>
+      </condition>
+
+      <antcall target="write-2.9-excludes-file"/>
+      <antcall target="write-empty-excludes-file"/>
+    </target>
+    <!-- -->
+    <target name="write-2.9-excludes-file" if="is.2.9">
+      <echo message="Excluding files listed in 2.9_excludes file."/>
+      <copy file="src/test/scala/2.9_excludes"
+            tofile="${build}/scalac_excludes"/>
+    </target>
+    <!-- -->
+    <target name="write-empty-excludes-file" unless="is.2.9">
+      <echo file="${build}/scalac_excludes"/>
+    </target>
 	
-	<target name="compile-gentests" depends="compile-tests">
+    <target name="compile-gentests" depends="compile-tests">
       <scalac srcdir="${build.generated.tests.src}" destdir="${build.generated.tests.bin}" target="jvm-1.5" classpathref="build.test.class.path" deprecation="yes" addparams="-no-specialization" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC">
 		<include name="org/scalatest/junit/*.scala"/>
 		<include name="org/scalatest/matchers/*.scala"/>
