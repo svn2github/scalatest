@@ -741,7 +741,7 @@ final case class TestPending (
  * </p>
  *
  * <pre class="stHighlight">
- * report(TestPending(ordinal, userFriendlyName, suiteName, Some(thisSuite.getClass.getName), testName))
+ * report(TestCanceled(ordinal, userFriendlyName, suiteName, Some(thisSuite.getClass.getName), testName))
  * </pre>
  *
  * <p>
