@@ -58,7 +58,8 @@ package org.scalautils
  * <code>===</code> operator returned an
  * <code>Option[String]</code> to facilitate better error messages. With the advent of macros in Scala 2.10, it is possible to obtain good error messages by making
  * <code>assert</code> a macro. Once ScalaTest no longer supports Scala 2.9, the legacy variants (<code>LegacyTripleEquals</code>,
- * <code>ConversionCheckedLegacyTripleEquals</code>, and <code>TypeCheckedLegacyTripleEquals</code>) will be deprecated and eventually removed, and good error
+ * <code>ConversionCheckedLegacyTripleEquals</code>, and <code>TypeCheckedLegacyTripleEquals</code>) will be deprecated and eventually removed, <code>===</code> will
+ * return only <code>Boolean</code>, and good error
  * messages will be obtained via macros. 
  * </p>
  * 
