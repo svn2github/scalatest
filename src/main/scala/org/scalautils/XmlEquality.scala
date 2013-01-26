@@ -21,12 +21,13 @@ trait XmlEquality {
 
   import XmlEquality.normalize
 
-  implicit def xmlEquality[T <: xml.Node]: Equality[T] =
+  implicit def xmlEquality[T <: collection.immutable.Seq[xml.Node]]: Equality[T] =
+  // implicit def xmlEquality[T <: xml.Node]: Equality[T] =
     new Equality[T] {
       def areEqual(a: T, b: Any): Boolean = {
-        b match {
-          case bNode: xml.Node => normalize(a) == normalize(bNode)
-          case _ => false
+        (a, b) match {
+          case (aNode: xml.Node, bNode: xml.Node) => normalize(aNode) == normalize(bNode)
+          case _ => a == b
         }
       }
     }
