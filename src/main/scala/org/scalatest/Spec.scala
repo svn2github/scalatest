@@ -29,9 +29,10 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * Trait <code>Spec</code> allows you to define tests as methods, which saves one generated class file per test compared to style traits that represent tests as functions.
- * As a result, using <code>Spec</code> can be a good choice in large projects where class file generation is a concern as well as when generating tests programatically
- * via a static code generator.
+ * Trait <code>Spec</code> allows you to define tests as methods, which saves one function literal per test compared to style traits that represent tests as functions.
+ * Fewer function literals translates into faster compile times and fewer generated class files, which can help minimize build times.
+ * As a result, using <code>Spec</code> can be a good choice in large projects where build times are a concern as well as when generating large numbers of
+ * tests programatically via static code generators.
  * </td></tr></table>
  * 
  * <p>
