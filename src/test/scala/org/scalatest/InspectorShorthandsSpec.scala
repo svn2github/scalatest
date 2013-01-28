@@ -206,7 +206,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         }
         e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
-        e.message should be (Some("forAll failed, because: \n" +
+        e.message should be (Some("'all' inspection failed, because: \n" +
                                    "  at index " + getIndex(col, 2) + ", 2 equaled 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 5) + ") \n" +
                                    "in " + col))
         e.getCause match {
@@ -230,7 +230,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[Int](col, _ >= 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not less than 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -253,7 +253,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[Int](col, _ == 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not equal 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -276,7 +276,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[Int](col, _ != 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " equaled 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -299,7 +299,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[Int](col, _ == 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not equal to 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -322,7 +322,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[Int](col, _ == 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was equal to 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -345,7 +345,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[Int](col, _ < 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not less than 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -368,7 +368,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[Int](col, _ < 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was less than 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -391,7 +391,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[Int](col, _ <= 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not less than or equal to 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -414,7 +414,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[Int](col, _ <= 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was less than or equal to 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -437,7 +437,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[Int](col, _ > 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not greater than 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -460,7 +460,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[Int](col, _ > 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was greater than 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -483,7 +483,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[Int](col, _ >= 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not greater than or equal to 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -506,7 +506,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[Int](col, _ >= 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was greater than or equal to 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -529,7 +529,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[Int](col, _ == 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not equal to 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -552,7 +552,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[Int](col, _ == 2)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was equal to 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -575,7 +575,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = col.head
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was not null (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -609,7 +609,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
             e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
             e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
             val firstViolation = getFirst[String](col, _ == null)
-            e2.message should be (Some("forAll failed, because: \n" +
+            e2.message should be (Some("'all' inspection failed, because: \n" +
                                        "  at index " + getIndex(col, firstViolation) + ", The reference was null (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                        "in " + col))
             e2.getCause match {
@@ -635,7 +635,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was not empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -658,7 +658,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -686,7 +686,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was not empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -709,7 +709,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -732,7 +732,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was not a empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -755,7 +755,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was a empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -778,7 +778,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was not a empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -801,7 +801,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was a empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -824,7 +824,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was not an empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -847,7 +847,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was an empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -870,7 +870,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was not an empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -893,7 +893,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was an empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -917,7 +917,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _ eq theInstance)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was not the same instance as \"" + theInstance + "\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -941,7 +941,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _ eq theInstance)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" was the same instance as \"" + theInstance + "\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -971,7 +971,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", The length property had value " + firstViolation.length + ", instead of its expected value 0, on object \"" + firstViolation + "\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -995,7 +995,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", The length property had its expected value 5, on object \"" + firstViolation + "\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1018,7 +1018,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" did not have length 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1041,7 +1041,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" had length 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1064,7 +1064,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" did not have size 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1087,7 +1087,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" had size 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1110,7 +1110,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.startsWith("hello"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" did not start with substring \"hello\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1133,7 +1133,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.startsWith("hello"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" started with substring \"hello\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1156,7 +1156,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.endsWith("folks"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" did not end with substring \"folks\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1179,7 +1179,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.endsWith("folks"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" ended with substring \"folks\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1202,7 +1202,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.indexOf("folks") >= 0)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" did not include substring \"folks\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1225,7 +1225,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.indexOf("folks") >= 0)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" included substring \"folks\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1248,7 +1248,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.startsWith("hello"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" did not start with a substring that matched the regular expression hel*o (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1271,7 +1271,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.startsWith("hello"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" started with a substring that matched the regular expression hel*o (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1294,7 +1294,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.endsWith("folks!"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" did not end with a substring that matched the regular expression folks! (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1317,7 +1317,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.endsWith("folks!"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" ended with a substring that matched the regular expression folks! (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1340,7 +1340,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.indexOf("folks") >= 0)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" did not include substring that matched regex folks (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1363,7 +1363,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.indexOf("folks") >= 0)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + "\" included substring that matched regex folks (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1386,7 +1386,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[String](col, _.matches("""(-)?(\d+)(\.\d*)?"""))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + """" did not fully match the regular expression (-)?(\d+)(\.\d*)? (InspectorShorthandsSpec.scala:""" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1409,7 +1409,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[String](col, _.matches("""(-)?(\d+)(\.\d*)?"""))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", \"" + firstViolation + """" fully matched the regular expression (-)?(\d+)(\.\d*)? (InspectorShorthandsSpec.scala:""" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1432,7 +1432,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[GenTraversable[String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1455,7 +1455,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[GenTraversable[String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1478,7 +1478,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[GenSeq[String]](col, _.length == 0)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not have length 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1501,7 +1501,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[GenSeq[String]](col, _.length == 0)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " had length 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1524,7 +1524,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[GenTraversable[String]](col, _.size == 0)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not have size 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1547,7 +1547,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[GenTraversable[String]](col, _.size == 0)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " had size 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1570,7 +1570,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[GenTraversable[String]](col, _.exists(_ == "2"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain element \"2\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1593,7 +1593,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[GenTraversable[String]](col, _.exists(_ == "2"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained element \"2\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1616,7 +1616,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[GenMap[String, String]](col, _.exists(_._1 == "2"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain key \"2\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1639,7 +1639,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[GenMap[String, String]](col, _.exists(_._1 == "2"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained key \"2\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1662,7 +1662,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[GenMap[String, String]](col, _.exists(_._2 == "two"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain value \"two\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1685,7 +1685,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[GenMap[String, String]](col, _.exists(_._2 == "two"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained value \"two\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1715,7 +1715,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[java.util.Collection[String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1738,7 +1738,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[java.util.Collection[String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1761,7 +1761,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[java.util.Collection[String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not have size 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1784,7 +1784,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[java.util.Collection[String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " had size 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1807,7 +1807,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[java.util.Collection[String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not have length 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1830,7 +1830,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[java.util.Collection[String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " had length 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1853,7 +1853,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[java.util.Collection[String]](col, _.contains("2"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain element \"2\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1876,7 +1876,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[java.util.Collection[String]](col, _.contains("2"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained element \"2\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1906,7 +1906,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[java.util.Map[String, String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was not empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1929,7 +1929,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[java.util.Map[String, String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " was empty (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1952,7 +1952,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[java.util.Map[String, String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not have size 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1975,7 +1975,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[java.util.Map[String, String]](col, _.isEmpty)
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " had size 0 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -1998,7 +1998,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[java.util.Map[String, String]](col, _.containsKey("2"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain key \"2\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -2021,7 +2021,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[java.util.Map[String, String]](col, _.containsKey("2"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained key \"2\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -2044,7 +2044,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirstNot[java.util.Map[String, String]](col, _.containsValue("two"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain value \"two\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {
@@ -2067,7 +2067,7 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
         e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
         val firstViolation = getFirst[java.util.Map[String, String]](col, _.containsValue("two"))
-        e2.message should be (Some("forAll failed, because: \n" +
+        e2.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained value \"two\" (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
         e2.getCause match {

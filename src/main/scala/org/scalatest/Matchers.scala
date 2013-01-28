@@ -8771,31 +8771,31 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
   def doCollected[T](collected: Collected, xs: GenTraversable[T], methodName: String, stackDepth: Int)(fun: T => Unit) {
     collected match {
       case AllCollected =>
-        doForAll(xs, "Matchers.scala", methodName, stackDepth) { e => 
+        doForAll(xs, "allShorthandFailed", "Matchers.scala", methodName, stackDepth) { e => 
           fun(e)
         }
       case AtLeastCollected(num) => 
-        doForAtLeast(num, xs, "Matchers.scala", methodName, stackDepth) { e =>
+        doForAtLeast(num, xs, "atLeastShorthandFailed", "Matchers.scala", methodName, stackDepth) { e =>
           fun(e)
         }
       case EveryCollected => 
-        doForEvery(xs, "Matchers.scala", methodName, stackDepth) { e =>
+        doForEvery(xs, "everyShorthandFailed", "Matchers.scala", methodName, stackDepth) { e =>
           fun(e)
         }
       case ExactlyCollected(num) => 
-        doForExactly(num, xs, "Matchers.scala", methodName, stackDepth) { e =>
+        doForExactly(num, xs, "exactlyShorthandFailed", "Matchers.scala", methodName, stackDepth) { e =>
           fun(e)
         }
       case NoCollected =>
-        doForNo(xs, "Matchers.scala", methodName, stackDepth) { e =>
+        doForNo(xs, "noShorthandFailed", "Matchers.scala", methodName, stackDepth) { e =>
           fun(e)
         }
       case BetweenCollected(from, to) =>
-        doForBetween(from, to, xs, "Matchers.scala", methodName, stackDepth) { e =>
+        doForBetween(from, to, xs, "betweenShorthandFailed", "Matchers.scala", methodName, stackDepth) { e =>
           fun(e)
         }
       case AtMostCollected(num) =>
-        doForAtMost(num, xs, "Matchers.scala", methodName, stackDepth) { e =>
+        doForAtMost(num, xs, "atMostShorthandFailed", "Matchers.scala", methodName, stackDepth) { e =>
           fun(e)
         }
     }

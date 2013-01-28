@@ -94,17 +94,17 @@ object GenInspectors {
       "in \" + " + xsName + ""
   }
   
-  class ForAllErrMsgTemplate(detail: ErrorDetailTemplate) extends ErrorMessageTemplate {
-    val header = "forAll failed, because: \\n\" + " + "\n"
+  class ForAllErrMsgTemplate(headerFailedPrefix: String, detail: ErrorDetailTemplate) extends ErrorMessageTemplate {
+    val header = headerFailedPrefix + " failed, because: \\n\" + " + "\n"
     override val children = List(detail)
   }
   
-  class ForAtLeastErrMsgTemplate(min: Int, elementText: String, details: List[Template]) extends ErrorMessageTemplate {
-    val header = "forAtLeast(" + min + ") failed, because " + elementText + " satisfied the assertion block: \\n\" + " + "\n"
+  class ForAtLeastErrMsgTemplate(headerFailedPrefix: String, elementText: String, details: List[Template]) extends ErrorMessageTemplate {
+    val header = headerFailedPrefix + " failed, because " + elementText + " satisfied the assertion block: \\n\" + " + "\n"
     override val children = details
   }
   
-  class ForAtMostErrMsgTemplate(max: Int, elementText: String, okFun: String, errorFun: String, errorValue: String, colType: String) extends Template {
+  class ForAtMostErrMsgTemplate(headerFailedPrefix: String, max: Int, elementText: String, okFun: String, errorFun: String, errorValue: String, colType: String) extends Template {
     val xsName: String = "xs"
     val maxSucceed = max + 1
     def extractXsName =
@@ -125,33 +125,33 @@ object GenInspectors {
       else
         xsName
     override def toString = 
-      "forAtMost(" + max + ") failed, because " + elementText + " satisfied the assertion block at \" + failEarlySucceededIndexes" + getErrorMessageValuesFunName(colType, okFun) + "(" + extractXsName + ", " + errorValue + ", " + maxSucceed + ") + \" in \" + " + xsName
+      headerFailedPrefix + " failed, because " + elementText + " satisfied the assertion block at \" + failEarlySucceededIndexes" + getErrorMessageValuesFunName(colType, okFun) + "(" + extractXsName + ", " + errorValue + ", " + maxSucceed + ") + \" in \" + " + xsName
   }
   
-  class ForExactlyErrMsgTemplate(count: Int, elementText: String, okFun: String, errorFun: String, errorValue: String, colType: String, details: List[Template]) extends ErrorMessageTemplate {
-    val header = "forExactly(" + count + ") failed, because " + elementText + " satisfied the assertion block" + (if (elementText == "no element") "" else " at \" + succeededIndexes" + getErrorMessageValuesFunName(colType, okFun) + "(xs, " + errorValue + ") + \"") + ": \\n\" + " + "\n"
+  class ForExactlyErrMsgTemplate(headerFailedPrefix: String, elementText: String, okFun: String, errorFun: String, errorValue: String, colType: String, details: List[Template]) extends ErrorMessageTemplate {
+    val header = headerFailedPrefix + " failed, because " + elementText + " satisfied the assertion block" + (if (elementText == "no element") "" else " at \" + succeededIndexes" + getErrorMessageValuesFunName(colType, okFun) + "(xs, " + errorValue + ") + \"") + ": \\n\" + " + "\n"
     override val children = details
   }
   
-  class ForNoErrMsgTemplate(index: String) extends Template {
+  class ForNoErrMsgTemplate(headerFailedPrefix: String, index: String) extends Template {
     val xsName: String = "xs"
     override def toString = 
-      "forNo failed, because 1 element satisfied the assertion block at index " + index + " in \" + " + xsName
+      headerFailedPrefix + " failed, because 1 element satisfied the assertion block at index " + index + " in \" + " + xsName
   }
   
-  class ForBetweenLessErrMsgTemplate(from: Int, upTo: Int, elementText: String, okFun: String, errorFun: String, errorValue: String, colType: String, details: List[Template]) extends ErrorMessageTemplate {
-    val header = "forBetween(" + from + ", " + upTo + ") failed, because " + elementText + " satisfied the assertion block" + (if (elementText == "no element") "" else " at \" + succeededIndexes" + getErrorMessageValuesFunName(colType, okFun) + "(xs, " + errorValue + ") + \"") + ": \\n\" + " + "\n"
+  class ForBetweenLessErrMsgTemplate(headerFailedPrefix: String, elementText: String, okFun: String, errorFun: String, errorValue: String, colType: String, details: List[Template]) extends ErrorMessageTemplate {
+    val header = headerFailedPrefix + " failed, because " + elementText + " satisfied the assertion block" + (if (elementText == "no element") "" else " at \" + succeededIndexes" + getErrorMessageValuesFunName(colType, okFun) + "(xs, " + errorValue + ") + \"") + ": \\n\" + " + "\n"
     override val children = details
   }
   
-  class ForBetweenMoreErrMsgTemplate(from: Int, upTo: Int, elementText: String, indexesTemplate: IndexesTemplate) extends Template {
+  class ForBetweenMoreErrMsgTemplate(headerFailedPrefix: String, elementText: String, indexesTemplate: IndexesTemplate) extends Template {
     val xsName: String = "xs"
     override def toString = 
-      "forBetween(" + from + ", " + upTo + ") failed, because " + elementText + " satisfied the assertion block at " + indexesTemplate + " in \" + " + xsName
+      headerFailedPrefix + " failed, because " + elementText + " satisfied the assertion block at " + indexesTemplate + " in \" + " + xsName
   }
   
-  class ForEveryErrMsgTemplate(details: List[Template]) extends ErrorMessageTemplate {
-    val header = "forEvery failed, because: \\n\" + \n"
+  class ForEveryErrMsgTemplate(headerFailedPrefix: String, details: List[Template]) extends ErrorMessageTemplate {
+    val header = headerFailedPrefix + " failed, because: \\n\" + \n"
     override val children = details
   }
   
@@ -199,7 +199,7 @@ object GenInspectors {
           errorValue: String, causeErrMsg: String, xsText: String) extends Template {
     
     val causeErrorMessage = new SimpleMessageTemplate(causeErrMsg)
-    val errorMessage = new ForAllErrMsgTemplate(new DynamicFirstIndexErrorDetailTemplate(colType, getErrorMessageValuesFunName(colType, errorFun), errorValue, fileName, "assertLineNumber", causeErrorMessage)) {
+    val errorMessage = new ForAllErrMsgTemplate("'all' inspection", new DynamicFirstIndexErrorDetailTemplate(colType, getErrorMessageValuesFunName(colType, errorFun), errorValue, fileName, "assertLineNumber", causeErrorMessage)) {
       override val xsName: String = xsText
     }
     val testName = colText + " should throw TestFailedException with correct stack depth and message when " + condition
@@ -232,7 +232,7 @@ object GenInspectors {
           xsText: String) extends Template {
     
     val details = buildList(totalCount - passedCount, detailErrorMessage) map { errMsg => new DynamicNextIndexErrorDetailTemplate(errorValue, fileName, "assertLineNumber", new SimpleMessageTemplate(errMsg.toString), getErrorMessageValuesFunName(colType, errorFun)) }
-    val errorMessage = new ForAtLeastErrMsgTemplate(min, (if (passedCount > 0) "only " else "") + new ElementTemplate(passedCount).toString, details)  {
+    val errorMessage = new ForAtLeastErrMsgTemplate("'atLeast(" + min + ")' inspection", (if (passedCount > 0) "only " else "") + new ElementTemplate(passedCount).toString, details)  {
       override val xsName: String = xsText
     }
     
@@ -256,7 +256,7 @@ object GenInspectors {
           xsText: String) extends Template {
     
     val details = buildList(totalCount - passedCount, detailErrorMessage) map { errMsg => new DynamicNextIndexErrorDetailTemplate(errorValue, fileName, "assertLineNumber", new SimpleMessageTemplate(errMsg.toString), getErrorMessageValuesFunName(colType, errorFun)) }
-    val errorMessage = new ForEveryErrMsgTemplate(details)  {
+    val errorMessage = new ForEveryErrMsgTemplate("'every' inspection", details)  {
       override val xsName: String = xsText
     }
     
@@ -280,7 +280,7 @@ object GenInspectors {
           xsText: String) extends Template {
     
     val details = buildList(totalCount - passedCount, detailErrorMessage) map { errMsg => new DynamicNextIndexErrorDetailTemplate(errorValue, fileName, "assertLineNumber", new SimpleMessageTemplate(errMsg.toString), getErrorMessageValuesFunName(colType, errorFun)) }
-    val errorMessage = new ForExactlyErrMsgTemplate(count, (if (passedCount > 0) "only " else "") + new ElementTemplate(passedCount).toString, okFun, errorFun, errorValue, colType, details)  {
+    val errorMessage = new ForExactlyErrMsgTemplate("'exactly(" + count + ")' inspection", (if (passedCount > 0) "only " else "") + new ElementTemplate(passedCount).toString, okFun, errorFun, errorValue, colType, details)  {
       override val xsName: String = xsText
     }
     
@@ -301,7 +301,7 @@ object GenInspectors {
                                              fileName: String, colType: String, okFun: String, errorFun: String, errorValue: String, 
                                              xsText: String) extends Template {
 
-    val errorMessage = new ForNoErrMsgTemplate("\" + getIndex(xs, getFirst" + getErrorMessageValuesFunName(colType, okFun) + "(xs, " + errorValue + ")) + \"")  {
+    val errorMessage = new ForNoErrMsgTemplate("'no' inspection", "\" + getIndex(xs, getFirst" + getErrorMessageValuesFunName(colType, okFun) + "(xs, " + errorValue + ")) + \"")  {
       override val xsName: String = xsText
     }
 
@@ -324,7 +324,7 @@ object GenInspectors {
                                              xsText: String) extends Template {
 
     val details = buildList(totalCount - passedCount, detailErrorMessage) map { errMsg => new DynamicNextIndexErrorDetailTemplate(errorValue, fileName, "assertLineNumber", new SimpleMessageTemplate(errMsg.toString), getErrorMessageValuesFunName(colType, errorFun)) }
-    val errorMessage = new ForBetweenLessErrMsgTemplate(from, upTo, (if (passedCount > 0) "only " else "") + new ElementTemplate(passedCount).toString, okFun, errorFun, errorValue, colType, details)  {
+    val errorMessage = new ForBetweenLessErrMsgTemplate("'between(" + from + ", " + upTo + ")' inspection", (if (passedCount > 0) "only " else "") + new ElementTemplate(passedCount).toString, okFun, errorFun, errorValue, colType, details)  {
       override val xsName: String = xsText
     }
 
@@ -346,7 +346,7 @@ object GenInspectors {
                                                  max: Int, passedCount: Int, detailErrorMessage: String,
                                                  xsText: String) extends Template {
 
-    val errorMessage = new ForAtMostErrMsgTemplate(max, new ElementTemplate(passedCount).toString, okFun, errorFun, errorValue, colType)  {
+    val errorMessage = new ForAtMostErrMsgTemplate("'atMost(" + max + ")' inspection", max, new ElementTemplate(passedCount).toString, okFun, errorFun, errorValue, colType)  {
       override val xsName: String = xsText
     }
 
@@ -487,7 +487,7 @@ object GenInspectors {
   def getMessageTemplate(name: String, index: Int, xs: List[_], fileName: String, lineNumber: String, detailTemplate: Template, forNested: Boolean = false): Template = {
     name match {
       case "forAll" => 
-        new ForAllErrMsgTemplate(new ErrorDetailTemplate("0", fileName, lineNumber, detailTemplate)) {
+        new ForAllErrMsgTemplate("forAll", new ErrorDetailTemplate("0", fileName, lineNumber, detailTemplate)) {
           override val xsName: String = "xs(" + index + ")"
         }
                  
@@ -496,12 +496,12 @@ object GenInspectors {
           for (x <- 0 until xs.length) yield {
             new ErrorDetailTemplate(x + "", fileName, lineNumber, detailTemplate)
           }
-      new ForAtLeastErrMsgTemplate(3, "no element", details.toList) {
+      new ForAtLeastErrMsgTemplate("forAtLeast(3)", "no element", details.toList) {
           override val xsName: String = "xs(" + index + ")"
         }
                             
       case "forAtMost" => 
-        new ForAtMostErrMsgTemplate(3, xs.length + " elements", "NotEqualBoolean", "EqualBoolean", "false", if (forNested) "Int" else "List[Int]") {
+        new ForAtMostErrMsgTemplate("forAtMost(3)", 3, xs.length + " elements", "NotEqualBoolean", "EqualBoolean", "false", if (forNested) "Int" else "List[Int]") {
           override val xsName: String = "xs(" + index + ")"
         }
                             
@@ -510,12 +510,12 @@ object GenInspectors {
           for (x <- 0 until xs.length) yield {
             new ErrorDetailTemplate(x + "", fileName, lineNumber, detailTemplate)
           }
-        new ForExactlyErrMsgTemplate(4, "no element", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]", details.toList) {
+        new ForExactlyErrMsgTemplate("forExactly(4)", "no element", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]", details.toList) {
           override val xsName: String = "xs(" + index + ")"
         }
                   
       case "forNo" => 
-        new ForNoErrMsgTemplate("0") {
+        new ForNoErrMsgTemplate("forNo", "0") {
           override val xsName: String = "xs(" + index + ")"
         }
                   
@@ -524,7 +524,7 @@ object GenInspectors {
           for (x <- 0 until xs.length) yield {
             new ErrorDetailTemplate(x + "", fileName, lineNumber, detailTemplate)
           }
-        new ForBetweenLessErrMsgTemplate(2, 4, "no element", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]", details.toList) {
+        new ForBetweenLessErrMsgTemplate("forBetween(2, 4)", "no element", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]", details.toList) {
           override val xsName: String = "xs(" + index + ")"
         }
              
@@ -533,7 +533,7 @@ object GenInspectors {
           for (x <- 0 until xs.length) yield {
             new ErrorDetailTemplate(x + "", fileName, lineNumber, detailTemplate)
           }
-        new ForEveryErrMsgTemplate(details.toList) {
+        new ForEveryErrMsgTemplate("forEvery", details.toList) {
           override val xsName: String = "xs(" + index + ")"
         }
     }
@@ -554,13 +554,13 @@ object GenInspectors {
       new ErrorDetailTemplate(index + "", fileName, innerLineNumber, new SimpleMessageTemplate(template.toString + " + \""))
     }
     outerName match {
-      case "forAll" => new ForAllErrMsgTemplate(innerDetails(0)) // should have at least one element
-      case "forAtLeast" => new ForAtLeastErrMsgTemplate(3, "no element", innerDetails.toList)
-      case "forAtMost" => new ForAtMostErrMsgTemplate(1, "2 elements", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]")
-      case "forExactly" => new ForExactlyErrMsgTemplate(1, "no element", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]", innerDetails.toList)
-      case "forNo" => new ForNoErrMsgTemplate("0")
-      case "forBetween" => new ForBetweenLessErrMsgTemplate(2, 4, "no element", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]", innerDetails.toList)
-      case "forEvery" => new ForEveryErrMsgTemplate(innerDetails.toList)
+      case "forAll" => new ForAllErrMsgTemplate("forAll", innerDetails(0)) // should have at least one element
+      case "forAtLeast" => new ForAtLeastErrMsgTemplate("forAtLeast(3)", "no element", innerDetails.toList)
+      case "forAtMost" => new ForAtMostErrMsgTemplate("forAtMost(1)", 1, "2 elements", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]")
+      case "forExactly" => new ForExactlyErrMsgTemplate("forExactly(1)", "no element", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]", innerDetails.toList)
+      case "forNo" => new ForNoErrMsgTemplate("forNo", "0")
+      case "forBetween" => new ForBetweenLessErrMsgTemplate("forBetween(2, 4)", "no element", "NotEqualBoolean", "EqualBoolean", "false", "List[Int]", innerDetails.toList)
+      case "forEvery" => new ForEveryErrMsgTemplate("forEvery", innerDetails.toList)
     }
   }
   
