@@ -810,9 +810,13 @@ object Runner {
           (if (configSet.contains(FilterTestSucceeded)) {_ != PresentTestSucceeded} else etp => true) filter
           (if (configSet.contains(FilterTestIgnored)) {_ != PresentTestIgnored} else etp => true) filter
           (if (configSet.contains(FilterTestPending)) {_ != PresentTestPending} else etp => true) filter
+          (if (configSet.contains(FilterScopeOpened)) {_ != PresentScopeOpened} else etp => true) filter
+          (if (configSet.contains(FilterScopeClosed)) {_ != PresentScopeClosed} else etp => true) filter
+          (if (configSet.contains(FilterScopePending)) {_ != PresentScopePending} else etp => true) filter
           (if (configSet.contains(FilterSuiteStarting)) {_ != PresentSuiteStarting} else etp => true) filter
           (if (configSet.contains(FilterSuiteCompleted)) {_ != PresentSuiteCompleted} else etp => true) filter
-          (if (configSet.contains(FilterInfoProvided)) {_ != PresentInfoProvided} else etp => true) 
+          (if (configSet.contains(FilterInfoProvided)) {_ != PresentInfoProvided} else etp => true) filter 
+          (if (configSet.contains(FilterMarkupProvided)) {_ != PresentMarkupProvided} else etp => true)
 
         val abq = new ArrayBlockingQueue[RunnerJFrame](1)
         usingEventDispatchThread {
@@ -1241,6 +1245,7 @@ object Runner {
         case 'P' => set += FilterScopeOpened
         case 'Q' => set += FilterScopeClosed
         case 'R' => set += FilterScopePending
+        case 'M' => set += FilterMarkupProvided
         case 'W' => set += PresentWithoutColor
         case 'F' => set += PresentFullStackTraces
         case 'S' => set += PresentShortStackTraces

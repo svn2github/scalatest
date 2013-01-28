@@ -357,7 +357,7 @@ private[scalatest] class RunnerJFrame(
                   if (trimmed.length > 0) Some(trimmed) else None
                     case _ => None
               }
-
+            
             import EventHolder.suiteAndTestName
 
             def nameFromNameInfo(nameInfo: Option[NameInfo]): Option[String] = 
@@ -390,6 +390,35 @@ private[scalatest] class RunnerJFrame(
                 case event: TestIgnored => Some(suiteAndTestName(event.suiteName, event.testName))
                 case event: TestSucceeded => Some(suiteAndTestName(event.suiteName, event.testName))
                 case event: TestFailed => Some(suiteAndTestName(event.suiteName, event.testName))
+              }
+            
+            def suiteIdFromNameInfo(nameInfo: Option[NameInfo]): Option[String] = 
+              nameInfo match {
+                case Some(NameInfo(suiteName, suiteId, suiteClassName, testName)) =>
+                  Some(suiteId)
+                case None => None
+              }
+            
+            val suiteId = 
+              holder.event match {
+                case event: RunStarting => None
+                case event: RunStopped => None
+                case event: RunAborted => None
+                case event: RunCompleted => None
+                case event: InfoProvided => suiteIdFromNameInfo(event.nameInfo)
+                case event: ScopeOpened => suiteIdFromNameInfo(Some(event.nameInfo))
+                case event: ScopeClosed => suiteIdFromNameInfo(Some(event.nameInfo))
+                case event: ScopePending => suiteIdFromNameInfo(Some(event.nameInfo))
+                case event: MarkupProvided => suiteIdFromNameInfo(event.nameInfo) // Should not get here because I'm not registering MarkupInfos
+                case event: SuiteStarting => Some(event.suiteId)
+                case event: SuiteCompleted => Some(event.suiteId)
+                case event: SuiteAborted => Some(event.suiteId)
+                case event: TestStarting => Some(event.suiteId)
+                case event: TestPending => Some(event.suiteId)
+                case event: TestCanceled => Some(event.suiteId)
+                case event: TestIgnored => Some(event.suiteId)
+                case event: TestSucceeded => Some(event.suiteId)
+                case event: TestFailed => Some(event.suiteId)
               }
 
             val duration =
@@ -434,10 +463,17 @@ private[scalatest] class RunnerJFrame(
                     else <!-- -->
                   }
                   {
+                    if (name.isDefined) {
+                      <tr valign="top"><td align="right"><span class="label">{ Resources("DetailsSuiteId") + ":" }</span></td><td align="left">{ suiteId.get }</td></tr>
+                    }
+                    else <!-- -->
+                  }
+                  {
                     if (mainMessage.isDefined) {
                       <tr valign="top"><td align="right"><span class="label">{ Resources("DetailsMessage") + ":" }</span></td><td align="left">
                       { // Put <br>'s in for line returns at least, so property check failure messages look better
-                        def lineSpans = for (line <- mainMessage.get.split('\n')) yield <span>{ line }<br/></span>
+                        // PCDATA and replace all spaces with &nbsp; so that leading spaces in message will be shown
+                        def lineSpans = for (line <- mainMessage.get.split('\n')) yield { <span>{ PCDATA(line.replaceAll(" ", "&nbsp;")) } <br/></span> }
                         if (isFailureEvent) {
                           <span class="dark">{ lineSpans }</span>
                         } else {
@@ -656,10 +692,15 @@ private[scalatest] class RunnerJFrame(
     viewMenu.add(optionsMap(PresentTestSucceeded))
     viewMenu.add(optionsMap(PresentTestFailed))
     viewMenu.add(optionsMap(PresentTestIgnored))
+    viewMenu.add(optionsMap(PresentTestPending))
+    viewMenu.add(optionsMap(PresentScopeOpened))
+    viewMenu.add(optionsMap(PresentScopeClosed))
+    viewMenu.add(optionsMap(PresentScopePending))
     viewMenu.add(optionsMap(PresentSuiteStarting))
     viewMenu.add(optionsMap(PresentSuiteCompleted))
     viewMenu.add(optionsMap(PresentSuiteAborted))
     viewMenu.add(optionsMap(PresentInfoProvided))
+    viewMenu.add(optionsMap(PresentMarkupProvided))
     viewMenu.add(optionsMap(PresentRunStopped))
     viewMenu.add(optionsMap(PresentRunCompleted))
     viewMenu.add(optionsMap(PresentRunAborted))
@@ -1003,6 +1044,9 @@ private[scalatest] class RunnerJFrame(
           }
           
         case MarkupProvided(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
+          usingEventDispatchThread {
+            registerEvent(event)
+          }
       }
     }
   }
@@ -1423,6 +1467,9 @@ private[scalatest] class RunnerJFrame(
           }
           
         case MarkupProvided(ordinal, message, nameInfo, formatter, location, payload, threadName, timeStamp) =>
+          usingEventDispatchThread {
+            registerRerunEvent(event)
+          }
       }
     }
   }
@@ -1527,7 +1574,7 @@ private[tools] object RunnerJFrame {
       case PresentScopeOpened => "SCOPE_OPENED"
       case PresentScopeClosed => "SCOPE_CLOSED"
       case PresentScopePending => "SCOPE_PENDING"
-      case PresentMarkupProvided => "MARKUP_PROVIDED" // Shouldn't get here, because not registering these events in the GUI
+      case PresentMarkupProvided => "MARKUP_PROVIDED"
       case PresentRunStopped => "RUN_STOPPED"
       case PresentRunAborted => "RUN_ABORTED"
       case PresentRunCompleted => "RUN_COMPLETED"

@@ -43,6 +43,7 @@ private[tools] class EventHolder(val event: Event, val message: Option[String], 
         event match {
           case _: SuiteStarting => rawText + ":"
           case _: TestPending => Resources("specTextAndNote", rawText, Resources("pendingNote"))
+          case _: ScopePending => Resources("specTextAndNote", rawText, Resources("pendingNote"))
           case _ => rawText
         }
       case _ =>

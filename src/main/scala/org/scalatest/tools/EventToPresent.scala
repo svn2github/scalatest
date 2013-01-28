@@ -40,7 +40,7 @@ private[tools] case object PresentInfoProvided extends EventToPresent
 private[tools] case object PresentScopeOpened extends EventToPresent
 private[tools] case object PresentScopeClosed extends EventToPresent
 private[tools] case object PresentScopePending extends EventToPresent
-private[tools] case object PresentMarkupProvided extends EventToPresent // Won't present these in the GUI reporter, but useful for completeness
+private[tools] case object PresentMarkupProvided extends EventToPresent
 private[tools] case object PresentRunStopped extends EventToPresent
 private[tools] case object PresentRunAborted extends EventToPresent
 private[tools] case object PresentRunCompleted extends EventToPresent
