@@ -45,7 +45,7 @@ trait LowPriorityTypeCheckedConstraint extends EqualityConstraints {
  *
  * <p>
  * For example, under <code>TypeCheckedTripleEquals</code>, the following use of <code>===</code> will not compile,
- * because <code>Int<code> and <code>Long</code> are not in a subtype/supertype relationship. (<em>I.e.</em>, <code>Int</code>
+ * because <code>Int</code> and <code>Long</code> are not in a subtype/supertype relationship. (<em>I.e.</em>, <code>Int</code>
  * is not a subtype or supertype of <code>Long</code>):
  * </p>
  *
