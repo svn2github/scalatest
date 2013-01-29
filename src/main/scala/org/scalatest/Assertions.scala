@@ -888,7 +888,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
   /**
    * Throws <code>TestFailedException</code> to indicate a test failed.
    */
-  def fail() = { throw newAssertionFailedException(None, None, 4) }
+  def fail(): Nothing = { throw newAssertionFailedException(None, None, 4) }
 
   /**
    * Throws <code>TestFailedException</code>, with the passed
@@ -898,7 +898,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * @param message A message describing the failure.
    * @throws NullPointerException if <code>message</code> is <code>null</code>
    */
-  def fail(message: String) = {
+  def fail(message: String): Nothing = {
 
     if (message == null)
         throw new NullPointerException("message is null")
@@ -915,7 +915,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * @param cause A <code>Throwable</code> that indicates the cause of the failure.
    * @throws NullPointerException if <code>message</code> or <code>cause</code> is <code>null</code>
    */
-  def fail(message: String, cause: Throwable) = {
+  def fail(message: String, cause: Throwable): Nothing = {
 
     if (message == null)
       throw new NullPointerException("message is null")
@@ -935,7 +935,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * @param cause a <code>Throwable</code> that indicates the cause of the failure.
    * @throws NullPointerException if <code>cause</code> is <code>null</code>
    */
-  def fail(cause: Throwable) = {
+  def fail(cause: Throwable): Nothing = {
 
     if (cause == null)
       throw new NullPointerException("cause is null")
@@ -946,7 +946,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
   /**
    * Throws <code>TestCanceledException</code> to indicate a test was canceled.
    */
-  def cancel() = { throw newTestCanceledException(None, None, 3) }
+  def cancel(): Nothing = { throw newTestCanceledException(None, None, 3) }
 
   /**
    * Throws <code>TestCanceledException</code>, with the passed
@@ -956,7 +956,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * @param message A message describing the cancellation.
    * @throws NullPointerException if <code>message</code> is <code>null</code>
    */
-  def cancel(message: String) = {
+  def cancel(message: String): Nothing = {
 
     if (message == null)
         throw new NullPointerException("message is null")
@@ -973,7 +973,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * @param cause A <code>Throwable</code> that indicates the cause of the failure.
    * @throws NullPointerException if <code>message</code> or <code>cause</code> is <code>null</code>
    */
-  def cancel(message: String, cause: Throwable) = {
+  def cancel(message: String, cause: Throwable): Nothing = {
 
     if (message == null)
       throw new NullPointerException("message is null")
@@ -993,7 +993,7 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * @param cause a <code>Throwable</code> that indicates the cause of the cancellation.
    * @throws NullPointerException if <code>cause</code> is <code>null</code>
    */
-  def cancel(cause: Throwable) = {
+  def cancel(cause: Throwable): Nothing = {
 
     if (cause == null)
       throw new NullPointerException("cause is null")
