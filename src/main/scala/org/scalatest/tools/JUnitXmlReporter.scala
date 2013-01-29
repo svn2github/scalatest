@@ -18,6 +18,7 @@ package org.scalatest.tools
 import org.scalatest._
 import org.scalatest.events._
 
+import Suite.unparsedXml
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.util.Enumeration
@@ -400,7 +401,7 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
               (throwableType, throwableText)
           }
         
-        <failure message = { failure.message }
+        <failure message = { { unparsedXml(failure.message.replaceAll("\n", "&#010;")) } }
                  type    = { throwableType   } >
           { throwableText }
         </failure>

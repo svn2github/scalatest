@@ -22,6 +22,9 @@ import org.scalatest.events.InfoProvided
 import org.scalatest.events.NameInfo
 import org.scalatest.events.LineInFile
 import org.scalatest.events.MarkupProvided
+import org.scalatest.events.TestFailed
+import org.scalatest.events.TestCanceled
+import org.scalatest.events.RecordableEvent
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.Span
 import org.scalatest.time.Seconds
@@ -105,7 +108,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
             if (line != null) {
               if (eventRawXml == "" && line.length > 0)
                 endingXml = line.substring(0, 1) + "/" + line.substring(1)
-              eventRawXml += line
+              eventRawXml += line + "\n"
               if (line.trim == endingXml.trim) 
                 eventXml = XML.loadString(eventRawXml)
               else if (!connection.isClosed && !in.ready)
@@ -501,6 +504,43 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       assert((eventRecorder.markupProvidedEvents(0) \ "location" \ "LineInFile" \ "fileName").text === "SocketReporterSpec.scala")
       assert((eventRecorder.markupProvidedEvents(0) \ "threadName").text === Thread.currentThread.getName)
       assert((eventRecorder.markupProvidedEvents(0) \ "timeStamp").text === timeStamp.toString)
+    }
+    
+    it("should send multilines indented error message correctly") {
+      
+      //forAll failed, because: 
+        //at index 0, forAll failed, because: 
+      val socket = new ServerSocket(0)
+      val eventRecorder = new SocketEventRecorder(socket)
+      val eventRecorderThread = new Thread(eventRecorder)
+      eventRecorderThread.start()
+      
+      val timeStamp = (new Date).getTime
+      
+      val rep = new SocketReporter("localhost", socket.getLocalPort)
+      rep(TestFailed(new Ordinal(0), "test <function1> failed, because: \n  <function1> is buggy.", "TestSuite", "com.test.TestSuite", Some("com.test.TestSuite"),
+                     "test 1", "test 1", collection.immutable.IndexedSeq.empty[RecordableEvent], Some(new RuntimeException("test <function1> failed, because: \n  <function1> is buggy."))))
+      rep(TestCanceled(new Ordinal(0), "test <function1> canceled, because: \n  <function1> is buggy.", "TestSuite", "com.test.TestSuite", Some("com.test.TestSuite"),
+                       "test 2", "test 2", collection.immutable.IndexedSeq.empty[RecordableEvent], Some(new RuntimeException("test <function1> canceled, because: \n  <function1> is buggy."))))
+      rep(InfoProvided(new Ordinal(0), "some <function1> info, because: \n  <function1> is buggy.", Some(NameInfo("TestSuite", "com.test.TestSuite", Some("com.test.TestSuite"), Some("test 2"))),
+          Some(new RuntimeException("some <function1> info, because: \n  <function1> is buggy.")), None, Some(LineInFile(168, "SocketReporterSpec.scala")), None, Thread.currentThread.getName, timeStamp))
+      eventRecorder.stopped = true
+      eventually(timeout(Span(10, Seconds))) { assert(eventRecorder.ready) } // Wait until the receiver is ready             
+      
+      assert(eventRecorder.testFailedEvents.length === 1)
+      val testFailed = eventRecorder.testFailedEvents(0)
+      assert((testFailed \ "message").text === "test <function1> failed, because: \n  <function1> is buggy.") 
+      assert((testFailed \ "throwable" \ "message").text === "test <function1> failed, because: \n  <function1> is buggy.")
+      
+      assert(eventRecorder.testCanceledEvents.length === 1)
+      val testCanceled = eventRecorder.testCanceledEvents(0)
+      assert((testCanceled \ "message").text === "test <function1> canceled, because: \n  <function1> is buggy.")
+      assert((testCanceled \ "throwable" \ "message").text === "test <function1> canceled, because: \n  <function1> is buggy.")
+      
+      assert(eventRecorder.infoProvidedEvents.length === 1)
+      val infoProvided = eventRecorder.infoProvidedEvents(0)
+      assert((infoProvided \ "message").text === "some <function1> info, because: \n  <function1> is buggy.")
+      assert((infoProvided \ "throwable" \ "message").text === "some <function1> info, because: \n  <function1> is buggy.")
     }
   }
 }

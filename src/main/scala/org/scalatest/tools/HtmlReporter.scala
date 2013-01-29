@@ -16,6 +16,8 @@
 package org.scalatest.tools
 
 import org.scalatest._
+import Suite.unparsedXml
+import Suite.xmlContent
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -36,6 +38,7 @@ import scala.xml.NodeSeq
 import scala.xml.XML
 import java.util.UUID
 import scala.xml.Node
+import scala.xml.NodeBuffer
 import scala.annotation.tailrec
 import java.net.URL
 import scala.io.Source
@@ -233,7 +236,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
           }
         }
         <script type="text/javascript">
-          { PCDATA(
+          { unparsedXml(
             "function toggleDetails(contentId, linkId) {" + "\n" + 
             "  var ele = document.getElementById(contentId);" + "\n" + 
             "  var text = document.getElementById(linkId);" + "\n" + 
@@ -393,7 +396,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
            <div id="printlink">(<a href={ getSuiteFileName(suiteResult) + ".html" } target="_blank">Open { suiteResult.suiteName } in new tab</a>)</div>
       </body>
       <script type="text/javascript">
-        { PCDATA("hideOpenInNewTabIfRequired();") }
+        { unparsedXml("hideOpenInNewTabIfRequired();") }
       </script>
     </html>
         
@@ -512,7 +515,7 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
         <script type="text/javascript" src="js/d3.v2.min.js"></script>
         <script type="text/javascript" src="js/sorttable.js"></script>
         <script type="text/javascript">
-          { PCDATA(
+          { unparsedXml(
             "var tagMap = {};" + "\n" +     
             "var SUCCEEDED_BIT = 1;" + "\n" + 
             "var FAILED_BIT = 2;" + "\n" + 
@@ -607,13 +610,13 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
           </div>
         </div>
         <script type="text/javascript">
-          { PCDATA(getPieChartScript(summary)) }
+          { unparsedXml(getPieChartScript(summary)) }
         </script>
         <script type="text/javascript">
-          { PCDATA(tagMapScript) }
+          { unparsedXml(tagMapScript) }
         </script>
         <script type="text/javascript">
-          { PCDATA("resizeDetailsView();") }
+          { unparsedXml("resizeDetailsView();") }
         </script>
       </body>
     </html>
@@ -758,7 +761,16 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
     def getHTMLForStackTrace(stackTraceList: List[StackTraceElement]) =
               stackTraceList.map((ste: StackTraceElement) => <div>{ ste.toString }</div>)
     
-    def getHTMLForCause(throwable: Throwable): scala.xml.NodeBuffer = {
+    def displayErrorMessage(errorMessage: String) = {
+      // scala automatically change <br /> to <br></br>, which will cause 2 line breaks, use unparsedXml("<br />") to solve it.
+      val messageLines = errorMessage.split("\n")
+      if (messageLines.size > 1)
+        messageLines.map(line => <span>{ xmlContent(line) }{ unparsedXml("<br />") }</span>)
+      else
+        <span>{ message }</span>
+    }
+              
+    def getHTMLForCause(throwable: Throwable): NodeBuffer = {
       val cause = throwable.getCause
       if (cause != null) {
         <table>
@@ -768,7 +780,14 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
           </tr>
           <tr valign="top">
             <td align="right"><span class="label">{ Resources("DetailsMessage") + ":" }</span></td>
-            <td align="left"><span>{ if (cause.getMessage != null) cause.getMessage else Resources("None") }</span></td>
+            <td align="left">
+              { 
+                if (cause.getMessage != null) 
+                  displayErrorMessage(cause.getMessage)
+                else 
+                  <span>{ Resources("None") }</span> 
+              }
+            </td>
           </tr>
         </table>
         <table>
@@ -825,21 +844,10 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
       <div id={ contentId } style="display: none">
         <table>
           {
-            //if (mainMessage.isDefined) {
-              <tr valign="top"><td align="left"><span class="label">{ Resources("DetailsMessage") + ":" }</span></td><td align="left">
-                <span>
-                { 
-                  // Put <br>'s in for line returns at least, so property check failure messages look better
-                  val messageLines = message.split("\n")
-                  if (messageLines.size > 1)
-                    messageLines.map(line => <span>{ line }<br/></span>)
-                  else
-                    <span>{ message }</span>
-                }
-                </span>
-              </td></tr>
-            //}
-            //else <!-- -->
+            <tr valign="top">
+              <td align="left"><span class="label">{ Resources("DetailsMessage") + ":" }</span></td>
+              <td align="left">{ displayErrorMessage(message) }</td>
+            </tr>
           }
           {
             fileAndLineOption match {
@@ -1044,8 +1052,4 @@ private[tools] object HtmlReporter {
   final val IGNORED_BIT = 4
   final val PENDING_BIT = 8
   final val CANCELED_BIT = 16
-}
-
-private[tools] object PCDATA {
-  def apply(in: String): Node = scala.xml.Unparsed(in)
 }

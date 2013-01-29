@@ -849,7 +849,8 @@ private[scalatest] class DashboardReporter(directory: String,
         val stackTrace = throwable.getStackTrace
         require(stackTrace.size > 0)
 
-        buf.append("<message>" + event.message + "</message>\n")
+        // PCData will enclose the message in CDATA.
+        buf.append("<message>" + scala.xml.PCData(event.message) + "</message>\n")
 
         if (throwable.isInstanceOf[StackDepthException]) {
           val sde = throwable.asInstanceOf[StackDepthException]

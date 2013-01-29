@@ -2088,6 +2088,12 @@ used for test events like succeeded/failed, etc.
   
   def indentLines(level: Int, lines: GenTraversable[String]) = 
     lines.map(line => line.split("\n").map(indentation(level) + _).mkString("\n"))
+    
+  def substituteHtmlSpace(value: String) = value.replaceAll(" ", "&nbsp;")
+    
+  def unparsedXml(value: String) = scala.xml.Unparsed(value)
+  
+  def xmlContent(value: String) = unparsedXml(substituteHtmlSpace(value))
 
   def reportTestFailed(theSuite: Suite, report: Reporter, throwable: Throwable, testName: String, testText: String,
                        recordedEvents: collection.immutable.IndexedSeq[RecordableEvent], rerunnable: Option[String], tracker: Tracker, duration: Long, formatter: Formatter, location: Option[Location]) {

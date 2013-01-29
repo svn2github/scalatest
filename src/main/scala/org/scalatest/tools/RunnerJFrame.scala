@@ -16,6 +16,8 @@
 package org.scalatest.tools
 
 import org.scalatest._
+import Suite.unparsedXml
+import Suite.xmlContent
 import java.awt.BorderLayout
 import java.awt.Container
 import java.awt.Dimension
@@ -338,7 +340,17 @@ private[scalatest] class RunnerJFrame(
                 </tr>
                 <tr valign="top">
                 <td align="right"><span class="label">{ Resources("DetailsMessage") + ":" }</span></td>
-                <td align="left"><span>{ if (cause.getMessage != null) cause.getMessage else Resources("None") }</span></td>
+                <td align="left">
+                  <span>
+                  { 
+                    if (cause.getMessage != null) 
+                      // scala automatically change <br /> to <br></br>, which will cause 2 line breaks, use unparsedXml("<br />") to solve it.
+                      for (line <- cause.getMessage.split('\n')) yield <span>{ xmlContent(line) }{ unparsedXml("<br />") }</span>
+                    else 
+                      Resources("None") 
+                  }
+                  </span>
+                </td>
                 </tr>
                 </table>
                 <table>
@@ -471,9 +483,9 @@ private[scalatest] class RunnerJFrame(
                   {
                     if (mainMessage.isDefined) {
                       <tr valign="top"><td align="right"><span class="label">{ Resources("DetailsMessage") + ":" }</span></td><td align="left">
-                      { // Put <br>'s in for line returns at least, so property check failure messages look better
-                        // PCDATA and replace all spaces with &nbsp; so that leading spaces in message will be shown
-                        def lineSpans = for (line <- mainMessage.get.split('\n')) yield { <span>{ PCDATA(line.replaceAll(" ", "&nbsp;")) } <br/></span> }
+                      { 
+                        // scala automatically change <br /> to <br></br>, which will cause 2 line breaks, use unparsedXml("<br />") to solve it.
+                        def lineSpans = for (line <- mainMessage.get.split('\n')) yield <span>{ xmlContent(line) }{ unparsedXml("<br />") }</span>
                         if (isFailureEvent) {
                           <span class="dark">{ lineSpans }</span>
                         } else {
