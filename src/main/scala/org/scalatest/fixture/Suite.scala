@@ -17,7 +17,7 @@ package org.scalatest.fixture
 
 import org.scalatest._
 import collection.immutable.TreeSet
-import Suite._
+// import Suite._
 import java.lang.reflect.{InvocationTargetException, Method, Modifier}
 import org.scalatest.events._
 import org.scalatest.Suite._
@@ -192,9 +192,9 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
     import args._
 
     val (stopRequested, report, method, testStartTime) =
-      getSuiteRunTestGoodies(stopper, reporter, testName)
+      getSuiteRunTestGoodies(thisSuite, stopper, reporter, testName)
 
-    reportTestStarting(thisSuite, report, tracker, testName, testName, thisSuite.rerunner, Some(getTopOfMethod(testName)))
+    reportTestStarting(thisSuite, report, tracker, testName, testName, thisSuite.rerunner, Some(getTopOfMethod(thisSuite, testName)))
 
     val formatter = getEscapedIndentedTextForTest(testName, 1, true)
 
@@ -248,7 +248,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
       }
 
       val duration = System.currentTimeMillis - testStartTime
-      reportTestSucceeded(thisSuite, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, thisSuite.rerunner, Some(getTopOfMethod(method)))
+      reportTestSucceeded(thisSuite, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, thisSuite.rerunner, Some(getTopOfMethod(thisSuite, method)))
       SucceededStatus
     }
     catch { 
@@ -258,32 +258,33 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
           case _: TestPendingException =>
             val duration = System.currentTimeMillis - testStartTime
             // testWasPending = true so info's printed out in the finally clause show up yellow
-            reportTestPending(thisSuite, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(method)))
+            reportTestPending(thisSuite, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(thisSuite, method)))
             SucceededStatus
           case e: TestCanceledException =>
             val duration = System.currentTimeMillis - testStartTime
             val message = getMessageForException(e)
             val formatter = getEscapedIndentedTextForTest(testName, 1, true)
             // testWasCanceled = true so info's printed out in the finally clause show up yellow
-            report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), testName, testName, messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(method)), thisSuite.rerunner))
+            report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), testName, testName, messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(thisSuite, method)), thisSuite.rerunner))
             SucceededStatus
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
-            handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
+            handleFailedTest(thisSuite, t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
             FailedStatus
           case e => throw e
         }
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
-        handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
+        handleFailedTest(thisSuite, e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
         FailedStatus
       case e: Throwable => throw e
     }
   }
 
+/*
   // Overriding this in fixture.Suite to reduce duplication of tags method
-  private[scalatest] override def getMethodForTestName(testName: String) = {
-    val candidateMethods = getClass.getMethods.filter(_.getName == Suite.simpleNameForTest(testName))
+  private[scalatest] override def getMethodForTestName(theSuite: org.scalatest.Suite, testName: String): Method = {
+    val candidateMethods = theSuite.getClass.getMethods.filter(_.getName == Suite.simpleNameForTest(testName))
     val found =
       if (testMethodTakesAFixtureAndInformer(testName))
         candidateMethods.find(
@@ -315,6 +316,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
          throw new IllegalArgumentException(Resources("testNotFound", testName))
      }
   }
+*/
   
   /**
    * Suite style name.
@@ -322,6 +324,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
   override val styleName: String = "org.scalatest.fixture.Suite"
 }
 
+/*
 private[scalatest] object Suite {
 
   val FixtureAndInformerInParens = "(FixtureParam, Informer)"
@@ -346,3 +349,4 @@ private[scalatest] object Suite {
     else
       Array(classOf[Informer])
 }
+*/

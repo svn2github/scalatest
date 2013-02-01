@@ -35,12 +35,16 @@ import Suite.formatterForSuiteAborted
 import Suite.anErrorThatShouldCauseAnAbort
 import Suite.getSimpleNameOfAnObjectsClass
 import Suite.takesInformer
-import Suite.takesCommunicator
+import Suite.handleFailedTest
 import Suite.isTestMethodGoodies
 import Suite.testMethodTakesAnInformer
 import scala.collection.immutable.TreeSet
 import Suite.getIndentedTextForTest
 import Suite.getEscapedIndentedTextForTest
+import Suite.getTopOfClass
+import Suite.getTopOfMethod
+import Suite.getTopOfMethod
+import Suite.getSuiteRunTestGoodies
 import Suite.autoTagClassAnnotations
 import org.scalatest.events._
 import org.scalatest.tools.StandardOutReporter
@@ -52,6 +56,8 @@ import Suite.reportTestPending
 import Suite.reportInfoProvided
 import Suite.createInfoProvided
 import Suite.createMarkupProvided
+import Suite.wrapReporterIfNecessary
+import Suite.getMethodForTestName
 import scala.reflect.NameTransformer
 import tools.SuiteDiscoveryHelper
 import tools.Runner
@@ -570,7 +576,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
      * Runs the code of the test.
      */
     def apply()
-
   }
 
   /**
@@ -817,7 +822,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     try {
 
       val formatter = formatterForSuiteStarting(thisSuite)
-      dispatch(SuiteStarting(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), formatter, Some(getTopOfClass)))
+      dispatch(SuiteStarting(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), formatter, Some(getTopOfClass(thisSuite))))
 
       run(
         None,
@@ -831,7 +836,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       )
       val suiteCompletedFormatter = formatterForSuiteCompleted(thisSuite)
       val duration = System.currentTimeMillis - suiteStartTime
-      dispatch(SuiteCompleted(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), Some(duration), suiteCompletedFormatter, Some(getTopOfClass)))
+      dispatch(SuiteCompleted(tracker.nextOrdinal(), thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), Some(duration), suiteCompletedFormatter, Some(getTopOfClass(thisSuite))))
       if (stats) {
         val duration = System.currentTimeMillis - runStartTime
         dispatch(RunCompleted(tracker.nextOrdinal(), Some(duration)))
@@ -920,7 +925,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   
   private def getTags(testName: String) =
     for {
-      a <- getMethodForTestName(testName).getDeclaredAnnotations
+      a <- getMethodForTestName(thisSuite, testName).getDeclaredAnnotations
       annotationClass = a.annotationType
       if annotationClass.isAnnotationPresent(classOf[TagAnnotation])
     } yield annotationClass.getName
@@ -1033,7 +1038,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       // Factored out to share code with fixture.Suite.testNames
       val (isInstanceMethod, simpleName, firstFour, paramTypes, hasNoParams, isTestNames, isTestTags, isTestDataFor) = isTestMethodGoodies(m)
 
-      isInstanceMethod && (firstFour == "test") && !isTestDataFor && ((hasNoParams && !isTestNames && !isTestTags) || takesInformer(m) || takesCommunicator(m))
+      isInstanceMethod && (firstFour == "test") && !isTestDataFor && ((hasNoParams && !isTestNames && !isTestTags) || takesInformer(m))
     }
 
     val testNameArray =
@@ -1051,10 +1056,9 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
   Old style method names will have (Informer) at the end still, but new ones will
   not. This method will find the one without a Rep if the same name is used
   with and without a Rep.
-   */
-  private[scalatest] def getMethodForTestName(testName: String) =
+  private[scalatest] def getMethodForTestName(theSuite: Suite, testName: String): Method =
     try {
-      getClass.getMethod(
+      theSuite.getClass.getMethod(
         simpleNameForTest(testName),
         (if (testMethodTakesAnInformer(testName)) Array(classOf[Informer]) else new Array[Class[_]](0)): _*
       )
@@ -1063,7 +1067,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       case e: NoSuchMethodException =>
         // Try (Rep) on the end
         try {
-          getClass.getMethod(simpleNameForTest(testName), classOf[Rep])
+          theSuite.getClass.getMethod(simpleNameForTest(testName), classOf[Rep])
         }
         catch {
           case e: NoSuchMethodException =>
@@ -1072,6 +1076,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       case e: Throwable =>
         throw e
     }
+   */
 
   /**
    *  Run the passed test function in the context of a fixture established by this method.
@@ -1099,24 +1104,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    */
   protected def withFixture(test: NoArgTest) {
     test()
-  }
-
-  // Factored out to share this with fixture.Suite.runTest
-  private[scalatest] def getSuiteRunTestGoodies(stopper: Stopper, reporter: Reporter, testName: String) = {
-    val (stopRequested, report, testStartTime) = getRunTestGoodies(stopper, reporter, testName)
-    val method = getMethodForTestName(testName)
-    (stopRequested, report, method, testStartTime)
-  }
-
-  // Sharing this with FunSuite and fixture.FunSuite as well as Suite and fixture.Suite
-  private[scalatest] def getRunTestGoodies(stopper: Stopper, reporter: Reporter, testName: String) = {
-
-    val stopRequested = stopper
-    val report = wrapReporterIfNecessary(reporter)
-
-    val testStartTime = System.currentTimeMillis
-
-    (stopRequested, report, testStartTime)
   }
 
   /**
@@ -1154,9 +1141,9 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     import args._
 
     val (stopRequested, report, method, testStartTime) =
-      getSuiteRunTestGoodies(stopper, reporter, testName)
+      getSuiteRunTestGoodies(thisSuite, stopper, reporter, testName)
 
-    reportTestStarting(this, report, tracker, testName, testName, rerunner, Some(getTopOfMethod(testName)))
+    reportTestStarting(this, report, tracker, testName, testName, rerunner, Some(getTopOfMethod(thisSuite, testName)))
 
     val formatter = getEscapedIndentedTextForTest(testName, 1, true)
 
@@ -1174,20 +1161,24 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         (message, _, isConstructingThread, testWasPending, testWasCanceled, location) => createMarkupProvided(thisSuite, report, tracker, Some(testName), message, 2, location, isConstructingThread) // TODO: Need a test that fails because testWasCanceleed isn't being passed
       )
 
+/*
     class RepImpl(val info: Informer, val markup: Documenter) extends Rep
 
     def testMethodTakesARep(method: Method): Boolean = {
       val paramTypes = method.getParameterTypes
       (paramTypes.size == 1) && (paramTypes(0) eq classOf[Rep])
     }
+*/
 
     val argsArray: Array[Object] =
       if (testMethodTakesAnInformer(testName)) {
         Array(informerForThisTest)  
       }
+/*
       else if (testMethodTakesARep(method)) {
         Array(new RepImpl(informerForThisTest, documenterForThisTest))
       }
+*/
       else Array()
 
     try {
@@ -1204,7 +1195,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         }
       )
       val duration = System.currentTimeMillis - testStartTime
-      reportTestSucceeded(this, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, rerunner, Some(getTopOfMethod(method)))
+      reportTestSucceeded(this, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, rerunner, Some(getTopOfMethod(thisSuite, method)))
       SucceededStatus
     }
     catch { 
@@ -1214,7 +1205,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
           case _: TestPendingException =>
             val duration = System.currentTimeMillis - testStartTime
             // testWasPending = true so info's printed out in the finally clause show up yellow
-            reportTestPending(this, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(method)))
+            reportTestPending(this, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(true, false), duration, formatter, Some(getTopOfMethod(thisSuite, method)))
             SucceededStatus
           case e: TestCanceledException =>
             val duration = System.currentTimeMillis - testStartTime
@@ -1226,13 +1217,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
             SucceededStatus                 
           case e if !anErrorThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
-            handleFailedTest(t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
+            handleFailedTest(thisSuite, t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
             FailedStatus
           case e => throw e
         }
       case e if !anErrorThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
-        handleFailedTest(e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
+        handleFailedTest(thisSuite, e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
         FailedStatus
       case e: Throwable => throw e  
     }
@@ -1326,7 +1317,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     // Wrap any non-DispatchReporter, non-CatchReporter in a CatchReporter,
     // so that exceptions are caught and transformed
     // into error messages on the standard error stream.
-    val report = wrapReporterIfNecessary(reporter)
+    val report = wrapReporterIfNecessary(thisSuite, reporter)
     val newArgs = args.copy(reporter = report)
     
     val statusBuffer = new ListBuffer[Status]()
@@ -1339,7 +1330,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         val (filterTest, ignoreTest) = filter(tn, tags, suiteId)
         if (!filterTest) {
           if (ignoreTest)
-            reportTestIgnored(thisSuite, report, tracker, tn, tn, getEscapedIndentedTextForTest(tn, 1, true), Some(getTopOfMethod(tn)))
+            reportTestIgnored(thisSuite, report, tracker, tn, tn, getEscapedIndentedTextForTest(tn, 1, true), Some(getTopOfMethod(thisSuite, tn)))
           else
             statusBuffer += runTest(tn, newArgs)
         }
@@ -1348,7 +1339,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
         for ((tn, ignoreTest) <- filter(theTestNames, tags, suiteId)) {
           if (!stopRequested()) {
             if (ignoreTest)
-              reportTestIgnored(thisSuite, report, tracker, tn, tn, getEscapedIndentedTextForTest(tn, 1, true), Some(getTopOfMethod(tn)))
+              reportTestIgnored(thisSuite, report, tracker, tn, tn, getEscapedIndentedTextForTest(tn, 1, true), Some(getTopOfMethod(thisSuite, tn)))
             else
               statusBuffer += runTest(tn, newArgs)
           }
@@ -1418,7 +1409,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     import args._
 
     val stopRequested = stopper
-    val report = wrapReporterIfNecessary(reporter)
+    val report = wrapReporterIfNecessary(thisSuite, reporter)
     val newArgs = args.copy(reporter = report)
 
     testName match {
@@ -1432,21 +1423,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       report(InfoProvided(tracker.nextOrdinal(), rawString, Some(NameInfo(thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), testName))))
     }
     status
-  }
-
-  // TODO see if I can take away the [scalatest] from the private
-  private[scalatest] def handleFailedTest(throwable: Throwable, testName: String, recordedEvents: collection.immutable.IndexedSeq[RecordableEvent], report: Reporter, tracker: Tracker, formatter: Formatter, duration: Long) {
-
-    val message = getMessageForException(throwable)
-    //val formatter = getEscapedIndentedTextForTest(testName, 1, true)
-    val payload = 
-      throwable match {
-        case optPayload: PayloadField => 
-          optPayload.payload
-        case _ => 
-          None
-      }
-    report(TestFailed(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), testName, testName, recordedEvents, Some(throwable), Some(duration), Some(formatter), Some(SeeStackDepthException), rerunner, payload))
   }
 
   /**
@@ -1488,7 +1464,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     import args._
 
     val stopRequested = stopper
-    val report = wrapReporterIfNecessary(reporter)
+    val report = wrapReporterIfNecessary(thisSuite, reporter)
 
     def callExecuteOnSuite(nestedSuite: Suite): Status = {
 
@@ -1565,7 +1541,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    *
    * @return this <code>Suite</code> object's suite name.
    */
-  def suiteName = getSimpleNameOfAnObjectsClass(thisSuite)
+  def suiteName: String = getSimpleNameOfAnObjectsClass(thisSuite)
 
   /**
    * A string ID for this <code>Suite</code> that is intended to be unique among all suites reported during a run.
@@ -1591,7 +1567,9 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    *
    * @return this <code>Suite</code> object's ID.
    */
-  def suiteId = thisSuite.getClass.getName
+  def suiteId: String = thisSuite.getClass.getName
+
+// XXX
 
   /**
    * Throws <code>TestPendingException</code> to indicate a test is pending.
@@ -1709,15 +1687,8 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
      countNestedSuiteTests(filter.runnableTestCount(testNames, tags, suiteId), nestedSuites.toList, filter)
   }
 
-  // Wrap any non-DispatchReporter, non-CatchReporter in a CatchReporter,
-  // so that exceptions are caught and transformed
-  // into error messages on the standard error stream.
-  private[scalatest] def wrapReporterIfNecessary(reporter: Reporter) = reporter match {
-    case cr: CatchReporter => cr
-    case _ => createCatchReporter(reporter)
-  }
-  
-  protected[scalatest] def createCatchReporter(reporter: Reporter) = new WrapperCatchReporter(reporter)
+  // MOVE IT
+  private[scalatest] def createCatchReporter(reporter: Reporter): Reporter = new WrapperCatchReporter(reporter)
   
   /**
    * The fully qualified class name of the rerunner to rerun this suite.  This implementation will look at this.getClass and see if it is
@@ -1733,10 +1704,6 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     else
       None
   }
-  
-  private[scalatest] def getTopOfClass = TopOfClass(this.getClass.getName)
-  private[scalatest] def getTopOfMethod(method:Method) = TopOfMethod(this.getClass.getName, method.toGenericString())
-  private[scalatest] def getTopOfMethod(testName:String) = TopOfMethod(this.getClass.getName, getMethodForTestName(testName).toGenericString())
   
   /**
    * Suite style name.
@@ -1781,15 +1748,15 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
 
 private[scalatest] object Suite {
 
-  private[scalatest] val TestMethodPrefix = "test"
-  private[scalatest] val InformerInParens = "(Informer)"
-  private[scalatest] val IgnoreAnnotation = "org.scalatest.Ignore"
+  val TestMethodPrefix = "test"
+  val InformerInParens = "(Informer)"
+  val IgnoreAnnotation = "org.scalatest.Ignore"
 
-  private[scalatest] def getSimpleNameOfAnObjectsClass(o: AnyRef) = stripDollars(parseSimpleName(o.getClass.getName))
+  def getSimpleNameOfAnObjectsClass(o: AnyRef) = stripDollars(parseSimpleName(o.getClass.getName))
 
   // [bv: this is a good example of the expression type refactor. I moved this from SuiteClassNameListCellRenderer]
   // this will be needed by the GUI classes, etc.
-  private[scalatest] def parseSimpleName(fullyQualifiedName: String) = {
+  def parseSimpleName(fullyQualifiedName: String) = {
 
     val dotPos = fullyQualifiedName.lastIndexOf('.')
 
@@ -1800,7 +1767,7 @@ private[scalatest] object Suite {
       fullyQualifiedName
   }
   
-  private[scalatest] def checkForPublicNoArgConstructor(clazz: java.lang.Class[_]) = {
+  def checkForPublicNoArgConstructor(clazz: java.lang.Class[_]) = {
     
     try {
       val constructor = clazz.getConstructor(new Array[java.lang.Class[T] forSome { type T }](0): _*)
@@ -1817,7 +1784,7 @@ private[scalatest] object Suite {
   // the interpreter started with "line". Now they don't, but in both cases they seemed to have at
   // least one "$iw$" in them. So now I leave the string alone unless I see a "$iw$" in it. Worst case
   // is sometimes people will get ugly strings coming out of the interpreter. -bv April 3, 2012
-  private[scalatest] def stripDollars(s: String): String = {
+  def stripDollars(s: String): String = {
     val lastDollarIndex = s.lastIndexOf('$')
     if (lastDollarIndex < s.length - 1)
       if (lastDollarIndex == -1 || !s.contains("$iw$")) s else s.substring(lastDollarIndex + 1)
@@ -1835,7 +1802,7 @@ private[scalatest] object Suite {
     }
   }
   
-  private[scalatest] def diffStrings(s: String, t: String): Tuple2[String, String] = {
+  def diffStrings(s: String, t: String): Tuple2[String, String] = {
     def findCommonPrefixLength(s: String, t: String): Int = {
       val max = s.length.min(t.length) // the maximum potential size of the prefix
       var i = 0
@@ -1874,7 +1841,7 @@ private[scalatest] object Suite {
   
   // If the objects are two strings, replace them with whatever is returned by diffStrings.
   // Otherwise, use the same objects.
-  private[scalatest] def getObjectsForFailureMessage(a: Any, b: Any) = 
+  def getObjectsForFailureMessage(a: Any, b: Any) = 
     a match {
       case aStr: String => {
         b match {
@@ -1887,22 +1854,24 @@ private[scalatest] object Suite {
       case _ => (a, b)
     }
 
-  private[scalatest] def formatterForSuiteStarting(suite: Suite): Option[Formatter] =
+  def formatterForSuiteStarting(suite: Suite): Option[Formatter] =
       Some(IndentedText(suite.suiteName + ":", suite.suiteName, 0))
 
-  private[scalatest] def formatterForSuiteCompleted(suite: Suite): Option[Formatter] =
+  def formatterForSuiteCompleted(suite: Suite): Option[Formatter] =
       Some(MotionToSuppress)
 
-  private[scalatest] def formatterForSuiteAborted(suite: Suite, message: String): Option[Formatter] =
+  def formatterForSuiteAborted(suite: Suite, message: String): Option[Formatter] =
       Some(IndentedText(message, message, 0))
 
-  private[scalatest] def simpleNameForTest(testName: String) =
+/*
+  def simpleNameForTest(testName: String) =
     if (testName.endsWith(InformerInParens))
       testName.substring(0, testName.length - InformerInParens.length)
     else
       testName
+*/
 
-  private[scalatest] def anErrorThatShouldCauseAnAbort(throwable: Throwable) =
+  def anErrorThatShouldCauseAnAbort(throwable: Throwable) =
     throwable match {
       case _: AnnotationFormatError | 
            _: CoderMalfunctionError |
@@ -1922,10 +1891,12 @@ private[scalatest] object Suite {
     paramTypes.length == 1 && classOf[Informer].isAssignableFrom(paramTypes(0))
   }
 
+/* TODO: Delete me if not needed
   def takesCommunicator(m: Method) = {
     val paramTypes = m.getParameterTypes
     paramTypes.length == 1 && classOf[Rep].isAssignableFrom(paramTypes(0))
   }
+*/
 
   def isTestMethodGoodies(m: Method) = {
 
@@ -2384,6 +2355,108 @@ used for test events like succeeded/failed, etc.
         Map.empty[String, Set[String]]
     
     Runner.mergeMap[String, Set[String]](List(tags, autoTestTags)) ( _ ++ _ )
+  }
+
+  def handleFailedTest(
+    theSuite: Suite,
+    throwable: Throwable,
+    testName: String,
+    recordedEvents: collection.immutable.IndexedSeq[RecordableEvent],
+    report: Reporter,
+    tracker: Tracker,
+    formatter: Formatter,
+    duration: Long
+  ) {
+    val message = getMessageForException(throwable)
+    //val formatter = getEscapedIndentedTextForTest(testName, 1, true)
+    val payload = 
+      throwable match {
+        case optPayload: PayloadField => 
+          optPayload.payload
+        case _ => 
+          None
+      }
+    report(TestFailed(tracker.nextOrdinal(), message, theSuite.suiteName, theSuite.suiteId, Some(theSuite.getClass.getName), testName, testName, recordedEvents, Some(throwable), Some(duration), Some(formatter), Some(SeeStackDepthException), theSuite.rerunner, payload))
+  }
+
+  def getTopOfClass(theSuite: Suite) = TopOfClass(theSuite.getClass.getName)
+  def getTopOfMethod(theSuite: Suite, method: Method) = TopOfMethod(theSuite.getClass.getName, method.toGenericString())
+  def getTopOfMethod(theSuite: Suite, testName: String) = TopOfMethod(theSuite.getClass.getName, getMethodForTestName(theSuite, testName).toGenericString())
+
+  // Factored out to share this with fixture.Suite.runTest
+  def getSuiteRunTestGoodies(theSuite: Suite, stopper: Stopper, reporter: Reporter, testName: String): (Stopper, Reporter, Method, Long) = {
+    val (stopRequested, report, testStartTime) = getRunTestGoodies(theSuite, stopper, reporter, testName)
+    val method = getMethodForTestName(theSuite, testName)
+    (stopRequested, report, method, testStartTime)
+  }
+
+  // Sharing this with FunSuite and fixture.FunSuite as well as Suite and fixture.Suite
+  def getRunTestGoodies(theSuite: Suite, stopper: Stopper, reporter: Reporter, testName: String): (Stopper, Reporter, Long) = {
+
+    val stopRequested = stopper
+    val report = wrapReporterIfNecessary(theSuite, reporter)
+
+    val testStartTime = System.currentTimeMillis
+
+    (stopRequested, report, testStartTime)
+  }
+
+  // Wrap any non-DispatchReporter, non-CatchReporter in a CatchReporter,
+  // so that exceptions are caught and transformed
+  // into error messages on the standard error stream.
+  def wrapReporterIfNecessary(theSuite: Suite, reporter: Reporter): Reporter = reporter match {
+    case cr: CatchReporter => cr
+    case _ => theSuite.createCatchReporter(reporter)
+  }
+
+  val FixtureAndInformerInParens = "(FixtureParam, Informer)"
+  val FixtureInParens = "(FixtureParam)"
+
+  def testMethodTakesAFixtureAndInformer(testName: String) = testName.endsWith(FixtureAndInformerInParens)
+  def testMethodTakesAFixture(testName: String) = testName.endsWith(FixtureInParens)
+
+  def simpleNameForTest(testName: String) =
+    if (testName.endsWith(FixtureAndInformerInParens))
+      testName.substring(0, testName.length - FixtureAndInformerInParens.length)
+    else if (testName.endsWith(FixtureInParens))
+      testName.substring(0, testName.length - FixtureInParens.length)
+    else if (testName.endsWith(InformerInParens))
+      testName.substring(0, testName.length - InformerInParens.length)
+    else
+      testName
+
+  def getMethodForTestName(theSuite: org.scalatest.Suite, testName: String): Method = {
+    val candidateMethods = theSuite.getClass.getMethods.filter(_.getName == Suite.simpleNameForTest(testName))
+    val found =
+      if (testMethodTakesAFixtureAndInformer(testName))
+        candidateMethods.find(
+          candidateMethod => {
+            val paramTypes = candidateMethod.getParameterTypes
+            paramTypes.length == 2 && paramTypes(1) == classOf[Informer]
+          }
+        )
+      else if (testMethodTakesAnInformer(testName))
+        candidateMethods.find(
+          candidateMethod => {
+            val paramTypes = candidateMethod.getParameterTypes
+            paramTypes.length == 1 && paramTypes(0) == classOf[Informer]
+          }
+        )
+      else if (testMethodTakesAFixture(testName))
+        candidateMethods.find(
+          candidateMethod => {
+            val paramTypes = candidateMethod.getParameterTypes
+            paramTypes.length == 1
+          }
+        )
+      else
+        candidateMethods.find(_.getParameterTypes.length == 0)
+
+     found match {
+       case Some(method) => method
+       case None =>
+         throw new IllegalArgumentException(Resources("testNotFound", testName))
+     }
   }
 }
 

@@ -26,6 +26,7 @@ import events.MotionToSuppress
 import org.testng.TestNG
 import org.testng.TestListenerAdapter
 import exceptions._
+import Suite.wrapReporterIfNecessary
 
 /**
  * A suite of tests that can be run with either TestNG or ScalaTest. This trait allows you to mark any
@@ -90,7 +91,7 @@ trait TestNGSuite extends Suite { thisSuite =>
   override def run(testName: Option[String], args: Args): Status = {
     import args._
     val status = new ScalaTestStatefulStatus
-    runTestNG(testName, wrapReporterIfNecessary(reporter), filter, tracker, status)
+    runTestNG(testName, wrapReporterIfNecessary(thisSuite, reporter), filter, tracker, status)
     
     status.setCompleted()
     status

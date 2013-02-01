@@ -36,74 +36,6 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
   }
 
   describe("A Suite") {
-/*
-    it("should send InfoProvided events with aboutAPendingTest set to true and aboutACanceledTest set to false for info " +
-            "calls made from a test that is pending") {
-      val a = new Suite {
-        def `test: something`(r: Rep) {
-          r.info("two integers")
-          r.info("one is subracted from the other")
-          r.info("the result is the difference between the two numbers")
-          pending
-        }
-      }
-      val rep = new EventRecordingReporter
-      a.run(None, Args(rep))
-      val testPending = rep.testPendingEventsReceived
-      assert(testPending.size === 1)
-      val recordedEvents = testPending(0).recordedEvents
-      assert(recordedEvents.size === 3)
-      for (event <- recordedEvents) {
-        val ip = event.asInstanceOf[InfoProvided]
-        assert(ip.aboutAPendingTest.isDefined && ip.aboutAPendingTest.get)
-        assert(ip.aboutACanceledTest.isDefined && !ip.aboutACanceledTest.get)
-      }
-    }
-    it("should send InfoProvided events with aboutAPendingTest and aboutACanceledTest set to false for info " +
-            "calls made from a test that is not pending or canceled") {
-      val a = new Suite {
-        def `test: something`(r: Rep) {
-          r.info("two integers")
-          r.info("one is subracted from the other")
-          r.info("the result is the difference between the two numbers")
-          assert(1 + 1 === 2)
-        }
-      }
-      val rep = new EventRecordingReporter
-      a.run(None, Args(rep))
-      val testSucceeded = rep.testSucceededEventsReceived
-      assert(testSucceeded.size === 1)
-      val recordedEvents = testSucceeded(0).recordedEvents
-      assert(recordedEvents.size === 3)
-      for (event <- recordedEvents) {
-        val ip = event.asInstanceOf[InfoProvided]
-        assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
-        assert(ip.aboutACanceledTest.isDefined && !ip.aboutACanceledTest.get)
-      }
-    }
-    it("should send InfoProvided events with aboutAPendingTest set to false and aboutACanceledTest set to true for info " +
-            "calls made from a test that is canceled") {
-      val a = new Suite {
-        def `test: something`(r: Rep) {
-          r.info("two integers")
-          r.info("one is subracted from the other")
-          r.info("the result is the difference between the two numbers")
-          cancel()
-        }
-      }
-      val rep = new EventRecordingReporter
-      a.run(None, Args(rep))
-      val testCanceled = rep.testCanceledEventsReceived
-      assert(testCanceled.size === 1)
-      val recordedEvents = testCanceled(0).recordedEvents
-      assert(recordedEvents.size === 3)
-      for (event <- recordedEvents) {
-        val ip = event.asInstanceOf[InfoProvided]
-        assert(ip.aboutAPendingTest.isDefined && !ip.aboutAPendingTest.get)
-        assert(ip.aboutACanceledTest.isDefined && ip.aboutACanceledTest.get)
-      }
-    }
-*/
     it("should return the test names in alphabetical order from testNames") {
       val a = new Suite {
         def `test: this`() {}
@@ -130,13 +62,13 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       }
     }
     
-    it("should return the proper testNames for test methods whether or not they take a Rep") {
+    it("should return the proper testNames for test methods whether or not they take an Informer") {
 
       val a = new Suite {
         def `test: this`() = ()
-        def `test: that`(r: Rep) = ()
+        def `test: that`(r: Informer) = ()
       }
-      assert(a.testNames === TreeSet(encode("test: that"), encode("test: this")))
+      assert(a.testNames === TreeSet(encode("test: that") + "(Informer)", encode("test: this")))
 
       val b = new Suite {}
       assert(b.testNames === TreeSet[String]())
@@ -171,7 +103,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         var theTestThisCalled = false
         var theTestThatCalled = false
         def `test: this`() { theTestThisCalled = true }
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
 
       val repA = new TestIgnoredTrackingReporter
@@ -185,7 +117,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         var theTestThatCalled = false
         @Ignore
         def `test: this`() { theTestThisCalled = true }
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
 
       val repB = new TestIgnoredTrackingReporter
@@ -201,14 +133,14 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         var theTestThatCalled = false
         def `test: this`() { theTestThisCalled = true }
         @Ignore
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
 
       val repC = new TestIgnoredTrackingReporter
       c.run(None, Args(repC))
       assert(repC.testIgnoredReceived)
       assert(repC.lastEvent.isDefined)
-      assert(repC.lastEvent.get.testName endsWith encode("test: that"), repC.lastEvent.get.testName)
+      assert(repC.lastEvent.get.testName endsWith encode("test: that") + "(Informer)", repC.lastEvent.get.testName)
       assert(c.theTestThisCalled)
       assert(!c.theTestThatCalled)
 
@@ -218,7 +150,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @Ignore
         def `test: this`() { theTestThisCalled = true }
         @Ignore
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
 
       val repD = new TestIgnoredTrackingReporter
@@ -237,7 +169,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         var theTestThatCalled = false
         @Ignore
         def `test: this`() { theTestThisCalled = true }
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
 
       val repE = new TestIgnoredTrackingReporter
@@ -254,7 +186,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         var theTestThatCalled = false
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
 
       val repE = new TestIgnoredTrackingReporter
@@ -269,7 +201,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         var theTestThisCalled = false
         var theTestThatCalled = false
         def `test: this`() { theTestThisCalled = true }
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
 
       intercept[IllegalArgumentException] {
@@ -286,7 +218,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         var theTestThatCalled = false
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
       val repA = new TestIgnoredTrackingReporter
       a.run(None, Args(repA))
@@ -300,7 +232,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         var theTestThatCalled = false
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
       val repB = new TestIgnoredTrackingReporter
       b.run(None, Args(repB, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), ConfigMap.empty, None, new Tracker, Set.empty))
@@ -315,7 +247,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
         @SlowAsMolasses
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
       val repC = new TestIgnoredTrackingReporter
       c.run(None, Args(repB, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set()), ConfigMap.empty, None, new Tracker, Set.empty))
@@ -331,7 +263,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
         @SlowAsMolasses
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
       }
       val repD = new TestIgnoredTrackingReporter
       d.run(None, Args(repD, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.Ignore")), ConfigMap.empty, None, new Tracker, Set.empty))
@@ -348,8 +280,8 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
         @SlowAsMolasses
-        def `test: that`(r: Rep) { theTestThatCalled = true }
-        def `test: the other`(r: Rep) { theTestTheOtherCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
+        def `test: the other`(r: Informer) { theTestTheOtherCalled = true }
       }
       val repE = new TestIgnoredTrackingReporter
       e.run(None, Args(repE, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
@@ -369,8 +301,8 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
         @SlowAsMolasses
-        def `test: that`(r: Rep) { theTestThatCalled = true }
-        def `test: the other`(r: Rep) { theTestTheOtherCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
+        def `test: the other`(r: Informer) { theTestTheOtherCalled = true }
       }
       val repF = new TestIgnoredTrackingReporter
       f.run(None, Args(repF, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
@@ -389,9 +321,9 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
         @SlowAsMolasses
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
         @Ignore
-        def `test: the other`(r: Rep) { theTestTheOtherCalled = true }
+        def `test: the other`(r: Informer) { theTestTheOtherCalled = true }
       }
       val repG = new TestIgnoredTrackingReporter
       g.run(None, Args(repG, Stopper.default, Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight")),
@@ -410,8 +342,8 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
         @SlowAsMolasses
-        def `test: that`(r: Rep) { theTestThatCalled = true }
-        def `test: the other`(r: Rep) { theTestTheOtherCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
+        def `test: the other`(r: Informer) { theTestTheOtherCalled = true }
       }
       val repH = new TestIgnoredTrackingReporter
       h.run(None, Args(repH, Stopper.default, Filter(None, Set("org.scalatest.FastAsLight")), ConfigMap.empty, None, new Tracker, Set.empty))
@@ -429,8 +361,8 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @SlowAsMolasses
         def `test: this`() { theTestThisCalled = true }
         @SlowAsMolasses
-        def `test: that`(r: Rep) { theTestThatCalled = true }
-        def `test: the other`(r: Rep) { theTestTheOtherCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
+        def `test: the other`(r: Informer) { theTestTheOtherCalled = true }
       }
       val repI = new TestIgnoredTrackingReporter
       i.run(None, Args(repI, Stopper.default, Filter(None, Set("org.scalatest.SlowAsMolasses")), ConfigMap.empty, None, new Tracker, Set.empty))
@@ -450,8 +382,8 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def `test: this`() { theTestThisCalled = true }
         @Ignore
         @SlowAsMolasses
-        def `test: that`(r: Rep) { theTestThatCalled = true }
-        def `test: the other`(r: Rep) { theTestTheOtherCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
+        def `test: the other`(r: Informer) { theTestTheOtherCalled = true }
       }
       val repJ = new TestIgnoredTrackingReporter
       j.run(None, Args(repJ, Stopper.default, Filter(None, Set("org.scalatest.SlowAsMolasses")), ConfigMap.empty, None, new Tracker, Set.empty))
@@ -471,9 +403,9 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def `test: this`() { theTestThisCalled = true }
         @Ignore
         @SlowAsMolasses
-        def `test: that`(r: Rep) { theTestThatCalled = true }
+        def `test: that`(r: Informer) { theTestThatCalled = true }
         @Ignore
-        def `test: the other`(r: Rep) { theTestTheOtherCalled = true }
+        def `test: the other`(r: Informer) { theTestTheOtherCalled = true }
       }
       val repK = new TestIgnoredTrackingReporter
       k.run(None, Args(repK, Stopper.default, Filter(None, Set("org.scalatest.SlowAsMolasses", "org.scalatest.Ignore")), ConfigMap.empty, None, new Tracker, Set.empty))
@@ -487,21 +419,21 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
 
       val a = new Suite {
         def `test: this`() = ()
-        def `test: that`(r: Rep) = ()
+        def `test: that`(r: Informer) = ()
       }
       assert(a.expectedTestCount(Filter()) === 2)
 
       val b = new Suite {
         @Ignore
         def `test: this`() = ()
-        def `test: that`(r: Rep) = ()
+        def `test: that`(r: Informer) = ()
       }
       assert(b.expectedTestCount(Filter()) === 1)
 
       val c = new Suite {
         @FastAsLight
         def `test: this`() = ()
-        def `test: that`(r: Rep) = ()
+        def `test: that`(r: Informer) = ()
       }
       assert(c.expectedTestCount(Filter(Some(Set("org.scalatest.FastAsLight")), Set())) === 1)
       assert(c.expectedTestCount(Filter(None, Set("org.scalatest.FastAsLight"))) === 1)
@@ -511,8 +443,8 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @SlowAsMolasses
         def `test: this`() = ()
         @SlowAsMolasses
-        def `test: that`(r: Rep) = ()
-        def `test: the other thing`(r: Rep) = ()
+        def `test: that`(r: Informer) = ()
+        def `test: the other thing`(r: Informer) = ()
       }
       assert(d.expectedTestCount(Filter(Some(Set("org.scalatest.FastAsLight")), Set())) === 1)
       assert(d.expectedTestCount(Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight"))) === 1)
@@ -524,9 +456,9 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         @SlowAsMolasses
         def `test: this`() = ()
         @SlowAsMolasses
-        def `test: that`(r: Rep) = ()
+        def `test: that`(r: Informer) = ()
         @Ignore
-        def `test: the other thing`(r: Rep) = ()
+        def `test: the other thing`(r: Informer) = ()
       }
       assert(e.expectedTestCount(Filter(Some(Set("org.scalatest.FastAsLight")), Set())) === 1)
       assert(e.expectedTestCount(Filter(Some(Set("org.scalatest.SlowAsMolasses")), Set("org.scalatest.FastAsLight"))) === 1)
@@ -631,7 +563,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       assert(a.withFixtureWasInvoked)
       assert(a.theTestWasInvoked)
     }
-    it("should invoke withFixture from runTest for a test method that takes a Rep") {
+    it("should invoke withFixture from runTest for a test method that takes an Informer") {
       val a = new Suite {
         var withFixtureWasInvoked = false
         var theTestWasInvoked = false
@@ -639,7 +571,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
           withFixtureWasInvoked = true
           super.withFixture(test)
         }
-        def `test: something`(r: Rep) {
+        def `test: something`(r: Informer) {
           theTestWasInvoked = true
         }
       }
@@ -651,10 +583,10 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       val a = new Suite {
         var correctTestNameWasPassed = false
         override def withFixture(test: NoArgTest) {
-          correctTestNameWasPassed = test.name == encode("test: something")
+          correctTestNameWasPassed = test.name == (encode("test: something") + "(Informer)")
           super.withFixture(test)
         }
-        def `test: something`(r: Rep) {}
+        def `test: something`(r: Informer) {}
       }
       a.run(None, Args(SilentReporter))
       assert(a.correctTestNameWasPassed)
@@ -666,7 +598,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
           correctConfigMapWasPassed = (test.configMap == ConfigMap("hi" -> 7))
           super.withFixture(test)
         }
-        def `test: something`(r: Rep) {}
+        def `test: something`(r: Informer) {}
       }
       a.run(None, Args(SilentReporter, Stopper.default, Filter(), ConfigMap("hi" -> 7), None, new Tracker(), Set.empty))
       assert(a.correctConfigMapWasPassed)
@@ -688,11 +620,11 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         }
       }
     }
-    it("should, when a test method takes a Rep and writes to its Informer, report the info in test completion event") {
+    it("should, when a test method takes an Informer and writes to its Informer, report the info in test completion event") {
       val msg = "hi there dude"
       class MySuite extends Suite {
-        def `test: with Informer`(r: Rep) {
-          r.info(msg)
+        def `test: with Informer`(info: Informer) {
+          info(msg)
         }
       }
       val myRep = new EventRecordingReporter

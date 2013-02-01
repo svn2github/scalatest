@@ -42,11 +42,10 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(gResult.keySet.size === 0)
   }
 
-  // TODO: ensure suite aborts if same name is used with and without communicator
   def `test: Suite should discover method names and tags` {
 
     val a = new Suite {
-      def testNames(r: Rep): Unit = ()
+      def testNames(r: Informer): Unit = ()
     }
     assert(a.expectedTestCount(Filter()) === 1)
     val tnResult: Set[String] = a.testNames
@@ -73,16 +72,6 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(a.tags.keySet.size === 0)
   }
 
-  def `test: test methods that return non-Unit should be discovered` {
-    val a = new Suite {
-      def `test: this`: Int = 1
-      def `test: that`(r: Rep): String = "hi"
-    }
-    assert(a.expectedTestCount(Filter()) === 2)
-    assert(a.testNames.size === 2)
-    assert(a.tags.keySet.size === 0)
-  }
-
   def `test: overloaded test methods should be discovered using deprecated Informer form` {
     val a = new Suite {
       def testThis() = ()
@@ -91,22 +80,6 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     assert(a.expectedTestCount(Filter()) === 2)
     assert(a.testNames.size === 2)
     assert(a.tags.keySet.size === 0)
-  }
-
-  def `test: overloaded test methods should cause an aborted suite` {
-    val a = new Suite {
-      def `test: this` = ()
-      def `test: this`(r: Rep) = ()
-    }
-    intercept[NotAllowedException] {
-      a.expectedTestCount(Filter())
-    }
-    intercept[NotAllowedException] {
-      a.testNames
-    }
-    intercept[NotAllowedException] {
-        a.tags
-    }
   }
 
   def testThatInterceptCatchesSubtypes() {

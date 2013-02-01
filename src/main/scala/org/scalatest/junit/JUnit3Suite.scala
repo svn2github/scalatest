@@ -32,6 +32,7 @@ import org.scalatest.events.MotionToSuppress
 import Suite.getIndentedTextForTest
 import org.scalatest.events._
 import exceptions._
+import Suite.wrapReporterIfNecessary
 
 /**
  * A <code>Suite</code> that is also a <code>junit.framework.TestCase</code>. 
@@ -147,7 +148,7 @@ import exceptions._
  * 
  * @author Bill Venners
  */
-class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
+class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit { thisSuite =>
 
   // This is volatile, because who knows what Thread JUnit will fire through this.
   @volatile private var theTracker = new Tracker
@@ -298,7 +299,7 @@ class JUnit3Suite extends TestCase with Suite with AssertionsForJUnit {
 
     if (!filter.tagsToInclude.isDefined) {
       val testResult = new TestResult
-      testResult.addListener(new MyTestListener(wrapReporterIfNecessary(reporter), tracker, status))
+      testResult.addListener(new MyTestListener(wrapReporterIfNecessary(thisSuite, reporter), tracker, status))
       testName match {
         case None => new TestSuite(this.getClass).run(testResult)
         case Some(tn) =>

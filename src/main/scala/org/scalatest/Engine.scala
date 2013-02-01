@@ -199,7 +199,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     import args._
 
     val (stopRequested, report, testStartTime) =
-      theSuite.getRunTestGoodies(stopper, reporter, testName)
+      Suite.getRunTestGoodies(theSuite, stopper, reporter, testName)
 
     if (!atomic.get.testsMap.contains(testName))
       throw new IllegalArgumentException("No test in this suite has name: \"" + testName + "\"")
@@ -374,7 +374,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     // Wrap any non-DispatchReporter, non-CatchReporter in a CatchReporter,
     // so that exceptions are caught and transformed
     // into error messages on the standard error stream.
-    val report = theSuite.wrapReporterIfNecessary(reporter)
+    val report = Suite.wrapReporterIfNecessary(theSuite, reporter)
     val newArgs = if (report eq reporter) args else args.copy(reporter = report)
     
     val statusBuffer = new ListBuffer[Status]()
@@ -416,7 +416,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     if (!registrationClosed)
       updateAtomic(oldBundle, Bundle(currentBranch, testNamesList, testsMap, tagsMap, true))
 
-    val report = theSuite.wrapReporterIfNecessary(reporter)
+    val report = Suite.wrapReporterIfNecessary(theSuite, reporter)
 
     val informerForThisSuite =
       ConcurrentInformer(
@@ -918,7 +918,7 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
     if (!registrationClosed)
       updateAtomic(oldBundle, Bundle(currentBranch, testNamesList, testsMap, tagsMap, true))
 
-    val report = theSuite.wrapReporterIfNecessary(reporter)
+    val report = Suite.wrapReporterIfNecessary(theSuite, reporter)
     val newArgs = if (report eq reporter) args else args.copy(reporter = report)
 
     val informerForThisSuite =

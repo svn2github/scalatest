@@ -24,6 +24,7 @@ import org.junit.runner.notification.RunListener
 import org.junit.runner.notification.Failure
 import org.scalatest.events._
 import org.scalatest.Suite.autoTagClassAnnotations
+import Suite.wrapReporterIfNecessary
 
 /**
  * A suite of tests that can be run with either JUnit or ScalaTest. This trait allows you to write JUnit 4 tests
@@ -266,7 +267,7 @@ trait JUnitSuite extends Suite with AssertionsForJUnit { thisSuite =>
 
     if (!filter.tagsToInclude.isDefined) {
       val jUnitCore = new JUnitCore
-      jUnitCore.addListener(new MyRunListener(wrapReporterIfNecessary(reporter), configMap, tracker, status))
+      jUnitCore.addListener(new MyRunListener(wrapReporterIfNecessary(thisSuite, reporter), configMap, tracker, status))
       val myClass = this.getClass
       testName match {
         case None => jUnitCore.run(myClass)
