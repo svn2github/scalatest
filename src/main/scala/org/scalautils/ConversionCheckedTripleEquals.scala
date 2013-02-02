@@ -21,12 +21,13 @@ trait LowPriorityConversionCheckedConstraint extends EqualityConstraints {
 
 /**
  * Provides <code>===</code> and <code>!==</code> operators that return <code>Boolean</code>, delegate the equality determination
- * to an <code>Equality</code> type class, and require the types of the two values compared either be in a subtype/supertype
+ * to an <code>Equality</code> type class, and require that either the types of the two values compared are in a subtype/supertype
  * relationship, or that an implicit conversion is available that can convert from one type to the other.
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * Trait <code>ConversionCheckedTripleEquals</code> is useful when you need determine equality for a type of object differently than its <code>equals</code>
+ * Trait <code>ConversionCheckedTripleEquals</code> is useful (in both production and test code) when you need determine equality for a type of object differently than
+ * its <code>equals</code>
  * method&#8212;either you can't change the <code>equals</code> method, or the <code>equals</code> method is sensible generally, but you're in a special situation where you
  * need something else&#8212;and/or you want a compile-time type check that allows types that are implicitly convertable in either (or both) directions.
  * </td></tr></table>
@@ -38,14 +39,14 @@ trait LowPriorityConversionCheckedConstraint extends EqualityConstraints {
  * and still compile. If <code>TypeCheckedTripleEquals</code> is mixed in or imported, however, only types in 
  * a subtype or supertype relationship with each other (including when both types are exactly the same) will compile.
  * <code>ConversionCheckedTripleEquals</code> is slightly more accomodating, because in addition to compiling any
- * use of <code>===</code> that will compile under</code>TypeCheckedTripleEquals</code>, it will also compile
- * type types that would be rejected by <code>TypeCheckedTripleEquals</code>, so long as their is an implicit
- * conversion (in either direction) from one type to another.
+ * use of <code>===</code> that will compile under </code>TypeCheckedTripleEquals</code>, it will also compile
+ * type types that would be rejected by <code>TypeCheckedTripleEquals</code>, so long as an implicit
+ * conversion (in either direction) from one type to another is available.
  * </p>
  *
  * <p>
  * For example, under <code>TypeCheckedTripleEquals</code>, the following use of <code>===</code> will not compile,
- * because <code>Int<code> and <code>Long</code> are not in a subtype/supertype relationship. (<em>I.e.</em>, <code>Int</code>
+ * because <code>Int</code> and <code>Long</code> are not in a subtype/supertype relationship. (<em>I.e.</em>, <code>Int</code>
  * is not a subtype or supertype of <code>Long</code>):
  * </p>
  *
@@ -67,7 +68,8 @@ trait LowPriorityConversionCheckedConstraint extends EqualityConstraints {
  *
  * <p>
  * Trait <code>TypeCheckedTripleEquals</code> rejects types <code>Int</code> and <code>Long</code> because they are not directly related via
- * subtyping. However, an implicit widening conversion from <code>Int</code> to </code>Long</code> does exist, so <code>ConversionCheckedTripleEquals</code>
+ * subtyping. However, an implicit widening conversion from <code>Int</code> to </code>Long</code> does exist (imported implicitly from
+ * <code>scala.Predef</code>), so <code>ConversionCheckedTripleEquals</code>
  * will allow it:
  * </p>
  * 
@@ -177,6 +179,34 @@ trait LowPriorityConversionCheckedConstraint extends EqualityConstraints {
  * will always be in force.
  * <p>
  *
+ * <p>
+ * An alternative way to solve an unwanted compiler error caused by an over-zealous equality type constraint is to convert one side or the other to type
+ * <code>Any</code>. Because <code>Any</code> is a supertype of everything, any level of equality type constraint will be satisfied. The <code>AsAny</code>
+ * trait offers a convenient syntax, the <code>asAny</code> method, for this purpose:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * scala&gt; import org.scalautils._
+ * import org.scalautils._
+ *
+ * scala&gt; import ConversionCheckedTripleEquals._
+ * import ConversionCheckedTripleEquals._
+ *
+ * scala&gt; List(1, 2, 3) === Vector(1, 2, 3)
+&lt;console&gt;:14: error: types List[Int] and scala.collection.immutable.Vector[Int] do not adhere to the equality constraint selected for
+ * the === and !== operators; they must either be in a subtype/supertype relationship, or, if
+ * ConversionCheckedTripleEquals is in force, implicitly convertible in one direction or the other;
+ * the missing implicit parameter is of type org.scalautils.EqualityConstraint[List[Int],scala.collection.immutable.Vector[Int]]
+ *               List(1, 2, 3) === Vector(1, 2, 3)
+ *                          ^
+ *
+ * scala&gt; import AsAny._
+ * import AsAny._
+ *
+ * scala&gt; List(1, 2, 3) === Vector(1, 2, 3).asAny
+ * res2: Boolean = true
+ * </pre>
+ * 
  * @author Bill Venners
  */
 trait ConversionCheckedTripleEquals extends LowPriorityConversionCheckedConstraint with AsAny {

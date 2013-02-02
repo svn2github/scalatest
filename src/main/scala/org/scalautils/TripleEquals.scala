@@ -22,9 +22,10 @@ package org.scalautils
  * 
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * Trait <code>TripleEquals</code> is useful when you need determine equality for a type of object differently than its <code>equals</code> method: 
- * either you can't change the <code>equals</code> method, or the <code>equals</code> method is sensible generally, but you're in a special situation where you
- * need something else. If you also want a compile-time type check, however, you should use one of <code>TripleEquals</code> sibling traits: 
+ * Trait <code>TripleEquals</code> is useful (in both production and test code) when you need determine equality for a type of object differently than its
+ * <code>equals</code> method: either you can't change the <code>equals</code> method, or the <code>equals</code> method is sensible generally, but
+ * you are in a special situation where you need something else. If you also want a compile-time type check, however, you should use one
+ * of <code>TripleEquals</code> sibling traits: 
  * <a href="ConversionCheckedTripleEquals.html"><code>ConversionCheckedTripleEquals</code></a> or <a href="TypeCheckedTripleEquals.html"><code>TypeCheckedTripleEquals</code></a>.
  * </td></tr></table>
  *
