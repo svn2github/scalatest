@@ -17,7 +17,7 @@ package org.scalautils
 
 import annotation.tailrec
 
-trait XmlEquality {
+private[scalautils] trait XmlEquality {
 
   import XmlEquality.normalize
 
@@ -33,7 +33,7 @@ trait XmlEquality {
     }
 }
 
-object XmlEquality extends XmlEquality {
+private[scalautils] object XmlEquality extends XmlEquality {
   private def normalize(node: xml.Node): xml.Node = {
     node match {
       case elem: xml.Elem =>

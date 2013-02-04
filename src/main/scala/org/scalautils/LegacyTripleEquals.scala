@@ -29,13 +29,15 @@ package org.scalautils
  * </td></tr></table>
  *
  * <p>
- * This method is extended by <code>org.scalatest.Assertions</code>, because it provides the same kind of <code>===</code> operator that was
+ * <em>
+ * Note: This trait is extended by <code>org.scalatest.Assertions</code>, because it provides the same kind of <code>===</code> operator that was
  * historically provided by <code>Assertions</code>.
  * The purpose of this trait is to maintain compatibility with existing ScalaTest code that uses the original <code>===</code> operator. After
  * ScalaTest no longer supports Scala 2.9, the &ldquo;legacy&rdquo; triple equals traits will be deprecated and eventually removed. Good error messages will
  * be obtained for both <code>==</code> and <code>===</code> through assert macros. In the transition phase, you can in production code use regular triple equals traits, 
  * whose <code>===</code> operators return <code>Boolean</code>, and in test code use "legacy" triple equals traits, whose <code>===</code>
  * operators return <code>Option[String]</code>.
+ * </em>
  * </p>
  *
  * <p>

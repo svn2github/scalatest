@@ -33,11 +33,13 @@ trait LowPriorityTypeCheckedLegacyConstraint extends EqualityConstraints {
  * </td></tr></table>
  *
  * <p>
- * The purpose of this trait is to maintain compatibility with existing ScalaTest code that uses the original <code>===</code> operator. After
+ * <em>
+ * Note: The purpose of this trait is to maintain compatibility with existing ScalaTest code that uses the original <code>===</code> operator. After
  * ScalaTest no longer supports Scala 2.9, the &ldquo;legacy&rdquo; triple equals traits will be deprecated and eventually removed. Good error messages will
  * be obtained for both <code>==</code> and <code>===</code> through assert macros. In the transition phase, you can in production code use regular triple equals traits, 
  * whose <code>===</code> operators return <code>Boolean</code>, and in test code use "legacy" triple equals traits, whose <code>===</code>
  * operators return <code>Option[String]</code>.
+ * </em>
  * </p>
  *
  * <p>
