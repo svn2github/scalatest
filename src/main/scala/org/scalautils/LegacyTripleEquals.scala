@@ -16,8 +16,44 @@
 package org.scalautils
 
 /**
+ * Provides <code>===</code> and <code>!==</code> operators that return <code>Boolean</code>, delegate the equality determination
+ * to an <code>Equality</code> type class, and require no relationship between the types of the two values compared. 
+ * 
+ * <table><tr><td class="usage">
+ * <strong>Recommended Usage</strong>:
+ * Trait <code>LegacyTripleEquals</code> is useful (in test, not production, code) when you need determine equality for a type of object differently than its
+ * <code>equals</code> method: either you can't change the <code>equals</code> method, or the <code>equals</code> method is sensible generally, but
+ * you are in a special situation where you need something else. If you also want a compile-time type check, however, you should use one
+ * of <code>LegacyTripleEquals</code> sibling traits: 
+ * <a href="ConversionCheckedLegacyTripleEquals.html"><code>ConversionCheckedLegacyTripleEquals</code></a> or <a href="TypeCheckedLegacyTripleEquals.html"><code>TypeCheckedLegacyTripleEquals</code></a>.
+ * </td></tr></table>
+ *
+ * <p>
  * This method is extended by <code>org.scalatest.Assertions</code>, because it provides the same kind of <code>===</code> operator that was
  * historically provided by <code>Assertions</code>.
+ * The purpose of this trait is to maintain compatibility with existing ScalaTest code that uses the original <code>===</code> operator. After
+ * ScalaTest no longer supports Scala 2.9, the &ldquo;legacy&rdquo; triple equals traits will be deprecated and eventually removed. Good error messages will
+ * be obtained for both <code>==</code> and <code>===</code> through assert macros. In the transition phase, you can in production code use regular triple equals traits, 
+ * whose <code>===</code> operators return <code>Boolean</code>, and in test code use "legacy" triple equals traits, whose <code>===</code>
+ * operators return <code>Option[String]</code>.
+ * </p>
+ *
+ * <p>
+ * This trait will override or hide implicit methods defined by its sibling traits,
+ * <a href="ConversionCheckedLegacyTripleEquals.html"><code>ConversionCheckedLegacyTripleEquals</code></a> or <a href="TypeCheckedLegacyTripleEquals.html"><code>TypeCheckedLegacyTripleEquals</code></a>,
+ * and can therefore be used to temporarily turn of type checking in a limited scope.
+ * Because the methods in <code>LegacyTripleEquals</code> (and its siblings)<em>override</em> all the methods defined in
+ * supertype <a href="EqualityConstraints.html"><code>EqualityConstraints</code></a>, you can achieve the same
+ * kind of nested tuning of equality constraints whether you mix in traits, import from companion objects, or use some combination of both.
+ * </p>
+ *
+ * <p>
+ * In short, you should be able to select a primary constraint level via either a mixin or import, then change that in nested scopes
+ * however you want, again either through a mixin or import, without getting any implicit conversion ambiguity. The innermost constraint level in scope
+ * will always be in force.
+ * <p>
+ *
+ * @author Bill Venners
  */
 trait LegacyTripleEquals extends EqualityConstraints {
 
@@ -74,4 +110,25 @@ trait LegacyTripleEquals extends EqualityConstraints {
   // implicit override def convertToEqualizer[T](left: T): Equalizer[T] = new Equalizer(left)
 }
 
+/**
+ * Companion object to trait <code>LegacyTripleEquals</code> that facilitates the importing of <code>LegacyTripleEquals</code> members as 
+ * an alternative to mixing it in. One use case is to import <code>LegacyTripleEquals</code> members so you can use
+ * them in the Scala interpreter:
+ *
+ * <pre class="stREPL">
+ * $ scala -classpath scalatest.jar
+ * Welcome to Scala version 2.10.0
+ * Type in expressions to have them evaluated.
+ * Type :help for more information.
+ *
+ * scala&gt; import org.scalautils._
+ * import org.scalautils._
+ *
+ * scala&gt; import LegacyTripleEquals._
+ * import LegacyTripleEquals._
+ *
+ * scala&gt; 1 + 1 === 2
+ * res0: Option[String] = None
+ * </pre>
+ */
 object LegacyTripleEquals extends LegacyTripleEquals

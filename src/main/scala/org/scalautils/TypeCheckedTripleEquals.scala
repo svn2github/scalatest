@@ -212,6 +212,8 @@ trait LowPriorityTypeCheckedConstraint extends EqualityConstraints {
  */
 trait TypeCheckedTripleEquals extends LowPriorityTypeCheckedConstraint with AsAny {
 
+  // Inherit the Scaladoc for these methods
+
   override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = super.convertToAsAnyWrapper(o)
 
   implicit override def defaultEquality[A]: Equality[A] = new DefaultEquality[A]
@@ -230,5 +232,26 @@ trait TypeCheckedTripleEquals extends LowPriorityTypeCheckedConstraint with AsAn
   override def conversionCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], cnv: B => A): EqualityConstraint[A, B] = new BToAEqualityConstraint[A, B](equalityOfA, cnv)
 }
 
+/**
+ * Companion object to trait <code>TypeCheckedTripleEquals</code> that facilitates the importing of <code>TypeCheckedTripleEquals</code> members as 
+ * an alternative to mixing it in. One use case is to import <code>TypeCheckedTripleEquals</code> members so you can use
+ * them in the Scala interpreter:
+ *
+ * <pre class="stREPL">
+ * $ scala -classpath scalatest.jar
+ * Welcome to Scala version 2.10.0
+ * Type in expressions to have them evaluated.
+ * Type :help for more information.
+ *
+ * scala&gt; import org.scalautils._
+ * import org.scalautils._
+ *
+ * scala&gt; import TypeCheckedTripleEquals._
+ * import TypeCheckedTripleEquals._
+ *
+ * scala&gt; 1 + 1 === 2
+ * res0: Boolean = true
+ * </pre>
+ */
 object TypeCheckedTripleEquals extends TypeCheckedTripleEquals
 
