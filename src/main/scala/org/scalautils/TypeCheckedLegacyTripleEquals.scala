@@ -15,9 +15,11 @@
  */
 package org.scalautils
 
+/*
 trait LowPriorityTypeCheckedLegacyConstraint extends EqualityConstraints {
   implicit override def lowPriorityTypeCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], ev: A <:< B): EqualityConstraint[A, B] = new BasicEqualityConstraint[A, B](equalityOfA)
 }
+*/
 
 /**
  * Provides <code>===</code> and <code>!==</code> operators that return <code>Boolean</code>, delegate the equality determination
@@ -148,7 +150,7 @@ trait LowPriorityTypeCheckedLegacyConstraint extends EqualityConstraints {
  * 
  * @author Bill Venners
  */
-trait TypeCheckedLegacyTripleEquals extends LowPriorityTypeCheckedLegacyConstraint with AsAny {
+trait TypeCheckedLegacyTripleEquals extends LowPriorityTypeCheckedConstraint with AsAny {
 
   override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = super.convertToAsAnyWrapper(o)
 

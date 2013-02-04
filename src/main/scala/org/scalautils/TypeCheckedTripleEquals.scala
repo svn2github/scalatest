@@ -15,9 +15,11 @@
  */
 package org.scalautils
 
+/*
 trait LowPriorityTypeCheckedConstraint extends EqualityConstraints {
   implicit override def lowPriorityTypeCheckedEqualityConstraint[A, B](implicit equalityOfA: Equality[A], ev: A <:< B): EqualityConstraint[A, B] = new BasicEqualityConstraint[A, B](equalityOfA)
 }
+*/
 
 /**
  * Provides <code>===</code> and <code>!==</code> operators that return <code>Boolean</code>, delegate the equality determination

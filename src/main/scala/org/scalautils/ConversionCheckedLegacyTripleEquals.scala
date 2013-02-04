@@ -15,9 +15,12 @@
  */
 package org.scalautils
 
+/*
 trait LowPriorityConversionCheckedLegacyConstraint extends EqualityConstraints {
+
   implicit override def lowPriorityConversionCheckedEqualityConstraint[A, B](implicit equalityOfB: Equality[B], cnv: A => B): EqualityConstraint[A, B] = new AToBEqualityConstraint[A, B](equalityOfB, cnv)
 }
+*/
 
 /**
  * Provides <code>===</code> and <code>!==</code> operators that return <code>Boolean</code>, delegate the equality determination
@@ -147,7 +150,7 @@ trait LowPriorityConversionCheckedLegacyConstraint extends EqualityConstraints {
  * 
  * @author Bill Venners
  */
-trait ConversionCheckedLegacyTripleEquals extends LowPriorityConversionCheckedLegacyConstraint with AsAny {
+trait ConversionCheckedLegacyTripleEquals extends LowPriorityConversionCheckedConstraint with AsAny {
 
   override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = super.convertToAsAnyWrapper(o)
 

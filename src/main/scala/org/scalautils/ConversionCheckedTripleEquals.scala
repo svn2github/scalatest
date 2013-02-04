@@ -15,9 +15,14 @@
  */
 package org.scalautils
 
+/*
 trait LowPriorityConversionCheckedConstraint extends EqualityConstraints {
+
+  // Inherit the Scaladoc for this method
+
   implicit override def lowPriorityConversionCheckedEqualityConstraint[A, B](implicit equalityOfB: Equality[B], cnv: A => B): EqualityConstraint[A, B] = new AToBEqualityConstraint[A, B](equalityOfB, cnv)
 }
+*/
 
 /**
  * Provides <code>===</code> and <code>!==</code> operators that return <code>Boolean</code>, delegate the equality determination
