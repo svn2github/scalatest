@@ -16,7 +16,7 @@
 package org.scalautils
 
 /**
- * Provides implicit conversion that will be applied only if a higher-priority implicit conversion declared a subtrait
+ * Provides an implicit conversion that will be applied only if a higher-priority implicit conversion declared a subtrait
  * is not applicable.
  *
  * <p>
@@ -25,7 +25,7 @@ package org.scalautils
  * <code>Int</code> to <code>Long</code> will be applied on the left hand side in this expression:
  * </p>
  * 
- * <pre>
+ * <pre class="stHighlight">
  * 1 === 1L
  * </pre>
  *
@@ -33,9 +33,9 @@ package org.scalautils
  * But in the next expression, it will be applied on the right hand side:
  * </p>
  * 
- * <p>
+ * <pre class="stHighlight">
  * 1L === 1
- * </p>
+ * </pre>
  *
  * <p>
  * The first expression above is enabled by the implicit conversion <code>conversionCheckedEqualityConstraint</code> in traits

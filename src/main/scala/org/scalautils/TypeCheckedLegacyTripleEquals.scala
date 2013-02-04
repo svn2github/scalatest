@@ -150,9 +150,9 @@ trait LowPriorityTypeCheckedLegacyConstraint extends EqualityConstraints {
  * 
  * @author Bill Venners
  */
-trait TypeCheckedLegacyTripleEquals extends LowPriorityTypeCheckedConstraint with AsAny {
+trait TypeCheckedLegacyTripleEquals extends LowPriorityTypeCheckedConstraint {
 
-  override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = super.convertToAsAnyWrapper(o)
+  // override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = super.convertToAsAnyWrapper(o)
 
   implicit override def defaultEquality[A]: Equality[A] = new DefaultEquality[A]
 

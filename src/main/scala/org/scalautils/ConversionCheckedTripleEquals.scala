@@ -214,11 +214,11 @@ trait LowPriorityConversionCheckedConstraint extends EqualityConstraints {
  * 
  * @author Bill Venners
  */
-trait ConversionCheckedTripleEquals extends LowPriorityConversionCheckedConstraint with AsAny {
+trait ConversionCheckedTripleEquals extends LowPriorityConversionCheckedConstraint {
 
   // Inherit the Scaladoc for these methods
 
-  override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = super.convertToAsAnyWrapper(o)
+  // override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = super.convertToAsAnyWrapper(o)
 
   implicit override def defaultEquality[A]: Equality[A] = new DefaultEquality[A]
 

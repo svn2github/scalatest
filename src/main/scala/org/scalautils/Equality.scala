@@ -17,6 +17,68 @@ package org.scalautils
 
 /**
  * Type class defining a custom way to determine equality for a type.
+ *
+ * <p>
+ * For example, here's how you could define equality between <code>Double</code>s such that
+ * a tolerance of &plusmn; 0.01 is allowed:
+ * </p>
+ *
+ * <pre>
+ * class TolerantDoubleEquality extends Equality[Double] {
+ *
+ *   private val Tol = 0.01
+ *
+ *   def areEqual(a: Double, b: Any): Boolean = {
+ *     b match {
+ *       case bDouble: Double =&gt; (a <= bDouble + Tol) && (a >= bDouble - Tol)
+ *       case _ =&gt; false
+ *     }
+ *   }
+ * }
+ * </pre>
+ *
+ * <p>
+ * If an implicit instance of <code>TolerantDoubleEquality</code> is in scope, it will be
+ * used by ScalaTest's <code>===</code> operators and its <code>should equal</code> and <code>should ===</code> matcher
+ * syntax. Here's an example:
+ * </p>
+ *
+ * <pre>
+ * $ scala -cp target/jar_contents/
+ * Welcome to Scala version 2.10.0 (Java HotSpot(TM) 64-Bit Server VM, Java 1.6.0_33).
+ * Type in expressions to have them evaluated.
+ * Type :help for more information.
+
+ * scala&gt; import org.scalautils._
+ * import org.scalautils._
+
+ * scala&gt; class TolerantDoubleEquality extends Equality[Double] {
+ *      | 
+ *      |   private val Tol = 0.01
+ *      | 
+ *      |   def areEqual(a: Double, b: Any): Boolean = {
+ *      |     b match {
+ *      |       case bDouble: Double =&gt; (a <= bDouble + Tol) && (a &gt;= bDouble - Tol)
+ *      |       case _ =&gt; false
+ *      |     }
+ *      |   }
+ *      | }
+ * defined class TolerantDoubleEquality
+ *
+ * scala&gt; import TripleEquals._
+ * import TripleEquals._
+ *
+ * scala&gt; 2.0 === 2.001
+ * res0: Boolean = false
+ *
+ * scala&gt; implicit val tolerantDoubleEquality = new TolerantDoubleEquality
+ * tolerantDoubleEquality: TolerantDoubleEquality = TolerantDoubleEquality@70c13c17
+ *
+ * scala&gt; 2.0 === 2.001
+ * res1: Boolean = true
+ * </pre>
+ *
+ * @tparam A the type whose equality is being customized
  */
 abstract class Equality[A] {
 

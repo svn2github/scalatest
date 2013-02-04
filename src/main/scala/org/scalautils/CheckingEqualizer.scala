@@ -76,6 +76,5 @@ class CheckingEqualizer[L](left: L) {
    * @return true if the value passed to the constructor as <code>left</code> is <em>not</em> within the <code>Interval</code> passed to this method.
    */
   def !==(interval: Interval[L]): Boolean = if (interval != null) !interval.isWithin(left) else left != interval
-  // def asAny: Any = left
 }
 

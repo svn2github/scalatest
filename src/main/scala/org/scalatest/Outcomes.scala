@@ -21,7 +21,7 @@ import exceptions.TestOmittedException
 // Note no Ignored outcome, because ignore is done with a tag and is known
 // before a test is executed. Outcome is only modeling the outcomes of
 // executing a test body.
-trait Outcomes {
+private[scalatest] trait Outcomes {
   trait FailedOrCanceled
   sealed abstract class Outcome {
     def isSucceeded: Boolean = false

@@ -38,7 +38,6 @@ import org.scalautils.Equality
 import org.scalatest.verb.ShouldVerb
 import org.scalautils.TripleEqualsInvocationOnInterval
 import org.scalautils.EqualityConstraint
-import org.scalautils.AsAny
 import org.scalatest.matchers.HavePropertyMatcher
 import org.scalatest.matchers.HavePropertyMatchResult
 import org.scalatest.matchers.BePropertyMatcher
@@ -1012,7 +1011,7 @@ import Helper.accessProperty
  * forget a set of needed parentheses.
  * </p>
  */
-trait Matchers extends Assertions with Tolerance with ShouldVerb with AsAny with LoneElement with Inspectors { matchers =>
+trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElement with Inspectors { matchers =>
 
   private[scalatest] def newTestFailedException(message: String, optionalCause: Option[Throwable] = None, stackDepthAdjustment: Int = 0): Throwable = {
     val temp = new RuntimeException
@@ -12569,7 +12568,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
   // This is where ShouldMatchers.scala started 
 
   // Turn off this implicit conversion, becase asAny method is added via AnyShouldWrapper
-  override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = new AsAnyWrapper(o)
+  // override def convertToAsAnyWrapper(o: Any): AsAnyWrapper = new AsAnyWrapper(o)
 
   private object ShouldMethodHelper {
     def shouldMatcher[T](left: T, rightMatcher: Matcher[T], stackDepthAdjustment: Int = 0) {
