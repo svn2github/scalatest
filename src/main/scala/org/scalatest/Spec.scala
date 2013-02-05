@@ -24,12 +24,12 @@ import scala.reflect.NameTransformer._
 import java.lang.reflect.{Method, Modifier, InvocationTargetException}
 
 /**
- * Trait that facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
+ * Facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
  * are methods, optionally nested inside singleton objects defining textual scopes.
  *
  * <table><tr><td class="usage">
  * <strong>Recommended Usage</strong>:
- * Trait <code>Spec</code> allows you to define tests as methods, which saves one function literal per test compared to style traits that represent tests as functions.
+ * Class <code>Spec</code> allows you to define tests as methods, which saves one function literal per test compared to style classes that represent tests as functions.
  * Fewer function literals translates into faster compile times and fewer generated class files, which can help minimize build times.
  * As a result, using <code>Spec</code> can be a good choice in large projects where build times are a concern as well as when generating large numbers of
  * tests programatically via static code generators.

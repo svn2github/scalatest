@@ -26,7 +26,7 @@ import Suite.anErrorThatShouldCauseAnAbort
 import Suite.autoTagClassAnnotations
 
 /**
- * Trait that facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
+ * Facilitates a &#8220;behavior-driven&#8221; style of development (BDD), in which tests
  * are combined with text that specifies the behavior the tests verify.
  * 
  * <table><tr><td class="usage">
@@ -37,7 +37,7 @@ import Suite.autoTagClassAnnotations
  * </td></tr></table>
  * 
  * <p>
- * Trait <code>WordSpec</code> is so named because you specification text is structured by placing words after strings.
+ * Class <code>WordSpec</code> is so named because you specification text is structured by placing words after strings.
  * Here's an example <code>WordSpec</code>:
  * </p>
  *
@@ -358,7 +358,7 @@ import Suite.autoTagClassAnnotations
  * </p>
  *
  * <p>
- * <em>Note: Trait <code>WordSpec</code> is in part inspired by class <code>org.specs.Specification</code>, designed by
+ * <em>Note: Class <code>WordSpec</code> is in part inspired by class <code>org.specs.Specification</code>, designed by
  * Eric Torreborre for the <a href="http://code.google.com/p/specs/" target="_blank">specs framework</a>.</em>
  * </p>
  *
@@ -1306,7 +1306,7 @@ import Suite.autoTagClassAnnotations
  * </pre>
  *
  * <p>
- * By mixing in both the <code>Builder</code> and <code>Buffer</code> traits, <code>ExampleSuite</code> gets both fixtures, which will be
+ * By mixing in both the <code>Builder</code> and <code>Buffer</code> traits, <code>ExampleSpec</code> gets both fixtures, which will be
  * initialized before each test and cleaned up after. The order the traits are mixed together determines the order of execution.
  * In this case, <code>Builder</code> is &ldquo;super&rdquo; to <code>Buffer</code>. If you wanted <code>Buffer</code> to be &ldquo;super&rdquo;
  * to <code>Builder</code>, you need only switch the order you mix them together, like this: 
