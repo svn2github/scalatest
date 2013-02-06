@@ -93,7 +93,7 @@ import Suite.indentLines
  *     at index 1, 2 was not less than 2 (&lt;console&gt;:20) 
  *   in List(1, 2, 3) (&lt;console&gt;:20) 
  * in List(List(1, 2, 3), List(1, 2, 3), List(1, 2, 3))
- * 	at org.scalatest.InspectorsHelper$.doForAll(Inspectors.scala:146)
+ *      at org.scalatest.InspectorsHelper$.doForAll(Inspectors.scala:146)
  *      ...
  * </pre>
  *
@@ -121,7 +121,7 @@ import Suite.indentLines
  * org.scalatest.exceptions.TestFailedException: forAll failed, because: 
  *   at index 2, 3 was not less than 3 (&lt;console&gt;:18) 
  * in List(1, 2, 3, 4, 5)
- * 	at org.scalatest.InspectorsHelper$.doForAll(Inspectors.scala:146)
+ *      at org.scalatest.InspectorsHelper$.doForAll(Inspectors.scala:146)
  *      ...
  *
  * scala&gt; forEvery (xs) { x =&gt; x should be &lt; 3 }
@@ -130,8 +130,22 @@ import Suite.indentLines
  *   at index 3, 4 was not less than 3 (&lt;console&gt;:18), 
  *   at index 4, 5 was not less than 3 (&lt;console&gt;:18) 
  * in List(1, 2, 3, 4, 5)
- * 	at org.scalatest.InspectorsHelper$.doForEvery(Inspectors.scala:226)
+ *      at org.scalatest.InspectorsHelper$.doForEvery(Inspectors.scala:226)
  *      ...
+ * </pre>
+ *
+ * <p>
+ * Note that if you're using matchers, you can alternatively use <em>inspector shorthands</em> for writing non-nested
+ * inspections. Here's an example:
+ * </p>
+ * 
+ * <pre>
+ * 
+ * scala&gt; all (xs) should be &gt; 3
+ * org.scalatest.exceptions.TestFailedException: 'all' inspection failed, because: 
+ *   at index 0, 1 was not greater than 3 
+ * in List(1, 2, 3, 4, 5)
+ *      at org.scalatest.InspectorsHelper$.doForAll(Inspectors.scala:146)
  * </pre>
  */
 trait Inspectors {
