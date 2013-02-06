@@ -1057,6 +1057,24 @@ trait SharedHelpers extends Assertions {
             (TEMP_DIR_ATTEMPTS - 1) + ')');
     }
   }
+  
+  def javaSet[T](elements: T*): java.util.Set[T] = {
+    val javaSet = new java.util.HashSet[T]()
+    elements.foreach(javaSet.add(_))
+    javaSet
+  }
+    
+  def javaList[T](elements: T*): java.util.List[T] = {
+    val javaList = new java.util.ArrayList[T]()
+    elements.foreach(javaList.add(_))
+    javaList
+  }
+  
+  def javaMap[K, V](elements: (K, V)*): java.util.Map[K, V] = {
+    val javaMap = new java.util.LinkedHashMap[K, V]()
+    elements.foreach(t => javaMap.put(t._1, t._2))
+    javaMap
+  }
 }
 
 // Selfless trait pattern

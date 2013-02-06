@@ -19,6 +19,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import collection.GenTraversable
 import collection.GenSeq
 import collection.GenMap
+import collection.mutable.LinkedHashMap
 import scala.annotation.tailrec
 
 import matchers.HavePropertyMatcher
@@ -1890,8 +1891,8 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       }
     }
     
-    private def javaMap(valueMap: Map[String, String]): java.util.Map[String, String] = {
-      val javaMap = new java.util.HashMap[String, String]()
+    private def javaMap(valueMap: GenMap[String, String]): java.util.Map[String, String] = {
+      val javaMap = new java.util.LinkedHashMap[String, String]()
       for ((key, value) <- valueMap)
         javaMap.put(key, value)
       javaMap
@@ -2203,13 +2204,67 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         }
       }
     
-      // TODO: To support java collection and map in contain matcher first
-      /*def `should work correctly with all(javaCol) should contain succeeded` {
+      def `should work correctly with all(javaCol) should contain succeeded` {
         forAll(javaColExamples) { colFun => 
           val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
           all(col) should contain theSameElementsAs List("1", "2", "3")
         }
-      }*/
+      }
+      
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should contain failed` {
+        val right = Set("1", "2", "8")
+        forAll(javaColExamples) { colFun => 
+          val col = colFun(Set(javaCol(Set("1", "2", "8")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain theSameElementsAs right
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Collection[String]](col, e => e.size == 3 && e.contains("1") && e.contains("2") && e.contains("8") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain the same elements as " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " did not contain the same elements as " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
+          all(col) should contain theSameElementsAs Map("1" -> "one", "2" -> "two", "3" -> "three")
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
+        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain theSameElementsAs right
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Map[String, String]](col, map => map.size == 3 && map.get("1") == "one" && map.get("2") == "two" && map.get("8")== "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain the same elements as " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " did not contain the same elements as " + right.toString))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
       
       def `should work correctly with all(traversable) should not contain succeeded` {
         forAll(traversableExamples) { colFun => 
@@ -2330,6 +2385,69 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           }
         }
       }
+
+      def `should work correctly with all(javaCol) should not contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
+          all(col) should not contain theSameElementsAs (List("1", "2", "8"))
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should not contain failed` {
+        val right = Set("1", "2", "8")
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Set("1", "2", "8")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain theSameElementsAs (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Collection[String]](col, e => e.size == 3 && e.contains("1") && e.contains("2") && e.contains("8") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained the same elements as " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " contained the same elements as " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should not contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
+          all(col) should not contain theSameElementsAs (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
+        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain theSameElementsAs (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Map[String, String]](col, map => map.size == 3 && map.get("1") == "one" && map.get("2") == "two" && map.get("8")== "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained the same elements as " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " contained the same elements as " + right.toString))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
     }
     
     object `when work with theSameIteratedElementsAs contain matcher` {
@@ -2453,14 +2571,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           }
         }
       }
-    
-      // TODO: To support java collection and map in contain matcher first
-      /*def `should work correctly with all(javaCol) should contain succeeded` {
-        forAll(javaColExamples) { colFun => 
-          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
-          all(col) should contain theSameElementsAs List("1", "2", "3")
+
+      def `should work correctly with all(javaCol) should contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Set("1", "2", "3"))))
+          all(col) should contain theSameIteratedElementsAs List("1", "2", "3")
         }
-      }*/
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should contain failed` {
+        val right = Set("1", "2", "8")
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Set("1", "2", "8")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain theSameIteratedElementsAs right
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Collection[String]](col, e => e.size == 3 && e.toArray()(0) == "1" && e.toArray()(1) == "2" && e.toArray()(2) == "8" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain the same iterated elements as " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " did not contain the same iterated elements as " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "3" -> "three"))))
+          all(col) should contain theSameIteratedElementsAs LinkedHashMap("1" -> "one", "2" -> "two", "3" -> "three")
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
+        val right = LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(LinkedHashMap("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(LinkedHashMap("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain theSameIteratedElementsAs right
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Map[String, String]](col, map => map.size == 3 && map.keySet.toArray()(0) == "1" && map.values().toArray()(0) == "one" && map.keySet.toArray()(1) == "2" && map.values().toArray()(1) == "two" && map.keySet.toArray()(2) == "8" && map.values.toArray()(2) == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain the same iterated elements as " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " did not contain the same iterated elements as " + right.toString))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
       
       def `should work correctly with all(traversable) should not contain succeeded` {
         forAll(traversableExamples) { colFun => 
@@ -2568,6 +2740,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
           val firstViolation = getFirst[GenMap[String, String]](col, map => map.size == 3 && map.toList(0)._1 == "1" && map.toList(0)._2 == "one" && map.toList(1)._1 == "2" && map.toList(1)._2 == "two" && map.toList(2)._1 == "8" && map.toList(2)._2 == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained the same iterated elements as " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " contained the same iterated elements as " + right.toString))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
+      def `should work correctly with all(javaCol) should not contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
+          all(col) should not contain theSameIteratedElementsAs (List("1", "2", "8"))
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should not contain failed` {
+        val right = Set("1", "2", "8")
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Set("1", "2", "8")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain theSameIteratedElementsAs (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Collection[String]](col, e => e.size == 3 && e.toArray()(0) == "1" && e.toArray()(1) == "2" && e.toArray()(2) == "8" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained the same iterated elements as " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " contained the same iterated elements as " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should not contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(LinkedHashMap("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(LinkedHashMap("3" -> "three", "2" -> "two", "1" -> "one"))))
+          all(col) should not contain theSameIteratedElementsAs (LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight"))
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
+        val right = LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(LinkedHashMap("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(LinkedHashMap("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain theSameIteratedElementsAs (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Map[String, String]](col, map => map.size == 3 && map.keySet.toArray()(0) == "1" && map.values.toArray()(0) == "one" && map.keySet.toArray()(1) == "2" && map.values.toArray()(1) == "two" && map.keySet.toArray()(2) == "8" && map.values.toArray()(2) == "eight" )
           e.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained the same iterated elements as " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
@@ -2704,14 +2938,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           }
         }
       }
-    
-      // TODO: To support java collection and map in contain matcher first
-      /*def `should work correctly with all(javaCol) should contain succeeded` {
-        forAll(javaColExamples) { colFun => 
-          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
-          all(col) should contain theSameElementsAs List("1", "2", "3")
+
+      def `should work correctly with all(javaCol) should contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("3", "2", "1", "8"))))
+          all(col) should contain allOf ("1", "2", "3")
         }
-      }*/
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should contain failed` {
+        val right = "(" + Array("1", "2", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Set("1", "2", "8")), javaCol(Set("2", "3", "1")), javaCol(Set("6", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain allOf ("1", "2", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Collection[String]](col, e => e.size == 3 && e.contains("1") && e.contains("2") && e.contains("8") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain all of " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " did not contain all of " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
+          all(col) should contain allOf Map("1" -> "one", "2" -> "two", "3" -> "three")
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
+        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain allOf Map("1" -> "one", "2" -> "two", "8" -> "eight")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Map[String, String]](col, map => map.size == 3 && map.get("1") == "one" && map.get("2") == "two" && map.get("8") == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain all of " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " did not contain all of " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
       
       def `should work correctly with all(traversable) should not contain succeeded` {
         forAll(traversableExamples) { colFun => 
@@ -2819,6 +3107,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
           val firstViolation = getFirst[GenMap[String, String]](col, map => map.size == 3 && map.toList(0)._1 == "1" && map.toList(0)._2 == "one" && map.toList(1)._1 == "2" && map.toList(1)._2 == "two" && map.toList(2)._1 == "8" && map.toList(2)._2 == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained all of (" + right.mkString(", ") + ") (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " contained all of (" + right.mkString(", ") + ")"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
+      def `should work correctly with all(javaCol) should not contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
+          all(col) should not contain allOf ("1", "2", "8")
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should not contain failed` {
+        val right = "(" + Array("1", "2", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain allOf ("1", "2", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Collection[String]](col, e => e.size == 3 && e.contains("1") && e.contains("2") && e.contains("8") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained all of " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " contained all of " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should not contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
+          all(col) should not contain allOf (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
+        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain allOf (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Map[String, String]](col, map => map.size == 3 && map.get("1") == "one" && map.get("2") == "two" && map.get("8") == "eight" )
           e.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained all of (" + right.mkString(", ") + ") (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
@@ -2955,14 +3305,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           }
         }
       }
-    
-      // TODO: To support java collection and map in contain matcher first
-      /*def `should work correctly with all(javaCol) should contain succeeded` {
-        forAll(javaColExamples) { colFun => 
-          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
-          all(col) should contain theSameElementsAs List("1", "2", "3")
+      
+      def `should work correctly with all(javaMap) should contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
+          all(col) should contain inOrder Map("1" -> "one", "2" -> "two", "3" -> "three")
         }
-      }*/
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
+        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain inOrder Map("1" -> "one", "2" -> "two", "8" -> "eight")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Map[String, String]](col, map => map.size == 3 && map.get("1") == "one" && map.get("2") == "two" && map.get("8") == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain all of " + right + " in order (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " did not contain all of " + right + " in order"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
+      def `should work correctly with all(javaCol) should contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("1", "2", "3", "8"))))
+          all(col) should contain inOrder ("1", "2", "3")
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should contain failed` {
+        val right = "(" + Array("1", "2", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("6", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain inOrder ("1", "2", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Collection[String]](col, e => e.size == 3 && e.toArray()(0) == "1" && e.toArray()(1) == "2" && e.toArray()(2) == "8" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain all of " + right + " in order (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " did not contain all of " + right + " in order"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
       
       def `should work correctly with all(traversable) should not contain succeeded` {
         forAll(traversableExamples) { colFun => 
@@ -3070,6 +3474,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
           val firstViolation = getFirst[GenMap[String, String]](col, map => map.size == 3 && map.toList(0)._1 == "1" && map.toList(0)._2 == "one" && map.toList(1)._1 == "2" && map.toList(1)._2 == "two" && map.toList(2)._1 == "8" && map.toList(2)._2 == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained all of (" + right.mkString(", ") + ") in order (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " contained all of (" + right.mkString(", ") + ") in order"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
+      def `should work correctly with all(javaCol) should not contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "2", "1"))))
+          all(col) should not contain inOrder ("1", "2", "8")
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should not contain failed` {
+        val right = "(" + Array("1", "2", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain inOrder ("1", "2", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Collection[String]](col, e => e.size == 3 && e.toArray()(0) == "1" && e.toArray()(1) == "2" && e.toArray()(2) == "8" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained all of " + right + " in order (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " contained all of " + right + " in order"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should not contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(LinkedHashMap("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(LinkedHashMap("3" -> "three", "2" -> "two", "1" -> "one"))))
+          all(col) should not contain inOrder (LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight"))
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
+        val right = LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(LinkedHashMap("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(LinkedHashMap("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain inOrder (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Map[String, String]](col, map => map.size == 3 && map.keySet.toArray()(0) == "1" && map.values.toArray()(0) == "one" && map.keySet.toArray()(1) == "2" && map.values.toArray()(1) == "two" && map.keySet.toArray()(2) == "8" && map.values.toArray()(2) == "eight" )
           e.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained all of (" + right.mkString(", ") + ") in order (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
@@ -3206,14 +3672,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           }
         }
       }
-    
-      // TODO: To support java collection and map in contain matcher first
-      /*def `should work correctly with all(javaCol) should contain succeeded` {
-        forAll(javaColExamples) { colFun => 
-          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
-          all(col) should contain theSameElementsAs List("1", "2", "3")
+
+      def `should work correctly with all(javaCol) should contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("1", "2", "3", "8"))))
+          all(col) should contain oneOf ("1", "2", "3")
         }
-      }*/
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should contain failed` {
+        val right = "(" + Array("3", "5", "9").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("6", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain oneOf ("3", "5", "9")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Collection[String]](col, e => e.contains("3") || e.contains("5") || e.contains("9") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain one of " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " did not contain one of " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
+          all(col) should contain oneOf Map("1" -> "one", "6" -> "six", "8" -> "eight")
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
+        val right = "(" + Map("3" -> "three", "5" -> "five", "7" -> "seven").mkString(", ") + ")"
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain oneOf Map("3" -> "three", "5" -> "five", "7" -> "seven")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Map[String, String]](col, map => map.get("3") == "three" || map.get("5") == "five" || map.get("7") == "seven" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain one of " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " did not contain one of " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
       
       def `should work correctly with all(traversable) should not contain succeeded` {
         forAll(traversableExamples) { colFun => 
@@ -3321,6 +3841,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
           val firstViolation = getFirst[GenMap[String, String]](col, map => map.exists(t => t._1 == "6" && t._2 == "six") || map.exists(t => t._1 == "7" && t._2 == "seven") || map.exists(t => t._1 == "8" && t._2 == "eight") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained one of (" + right.mkString(", ") + ") (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " contained one of (" + right.mkString(", ") + ")"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
+      def `should work correctly with all(javaCol) should not contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "2", "1"))))
+          all(col) should not contain oneOf ("6", "7", "8")
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should not contain failed` {
+        val right = "(" + Array("6", "7", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain oneOf ("6", "7", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Collection[String]](col, e => e.contains("6") || e.contains("7") || e.contains("8") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained one of " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " contained one of " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should not contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
+          all(col) should not contain oneOf (Map("6" -> "six", "7" -> "seven", "8" -> "eight"))
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
+        val right = Map("6" -> "six", "7" -> "seven", "8" -> "eight")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain oneOf (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Map[String, String]](col, map => map.get("6") == "six" || map.get("7") == "seven" || map.get("8") == "eight" )
           e.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained one of (" + right.mkString(", ") + ") (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
@@ -3457,14 +4039,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           }
         }
       }
-    
-      // TODO: To support java collection and map in contain matcher first
-      /*def `should work correctly with all(javaCol) should contain succeeded` {
-        forAll(javaColExamples) { colFun => 
-          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
-          all(col) should contain theSameElementsAs List("1", "2", "3")
+
+      def `should work correctly with all(javaCol) should contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("1", "3", "2"))))
+          all(col) should contain only ("1", "2", "3")
         }
-      }*/
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should contain failed` {
+        val right = "(" + Array("1", "2", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("6", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain only ("1", "2", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Collection[String]](col, e => e.size == 3 && e.contains("1") && e.contains("2") && e.contains("8") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain only " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " did not contain only " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
+          all(col) should contain only Map("1" -> "one", "2" -> "two", "3" -> "three")
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
+        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain only Map("1" -> "one", "2" -> "two", "8" -> "eight")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Map[String, String]](col, map => map.size == 3 && map.get("1") == "one" && map.get("2") == "two" && map.get("8") == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain only " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " did not contain only " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
       
       def `should work correctly with all(traversable) should not contain succeeded` {
         forAll(traversableExamples) { colFun => 
@@ -3572,6 +4208,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
           val firstViolation = getFirst[GenMap[String, String]](col, map => map.size == 3 && map.exists(t => t._1 == "1" && t._2 == "one") && map.exists(t => t._1 == "2" && t._2 == "two") && map.exists(t => t._1 == "8" && t._2 == "eight") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained only (" + right.mkString(", ") + ") (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " contained only (" + right.mkString(", ") + ")"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
+      def `should work correctly with all(javaCol) should not contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "2", "1"))))
+          all(col) should not contain only ("6", "7", "8")
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should not contain failed` {
+        val right = "(" + Array("1", "2", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain only ("1", "2", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Collection[String]](col, e => e.size == 3 && e.contains("1") && e.contains("2") && e.contains("8") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained only " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " contained only " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should not contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
+          all(col) should not contain only (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
+        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain only (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Map[String, String]](col, map => map.size == 3 && map.get("1") == "one" && map.get("2") == "two" && map.get("8") == "eight" )
           e.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained only (" + right.mkString(", ") + ") (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
@@ -3708,14 +4406,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           }
         }
       }
-    
-      // TODO: To support java collection and map in contain matcher first
-      /*def `should work correctly with all(javaCol) should contain succeeded` {
-        forAll(javaColExamples) { colFun => 
-          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
-          all(col) should contain theSameElementsAs List("1", "2", "3")
+      
+      def `should work correctly with all(javaMap) should contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
+          all(col) should contain inOrderOnly Map("1" -> "one", "2" -> "two", "3" -> "three")
         }
-      }*/
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
+        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain inOrderOnly Map("1" -> "one", "2" -> "two", "8" -> "eight")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Map[String, String]](col, map => map.size == 3 && map.get("1") == "one" && map.get("2") == "two" && map.get("8") == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain only " + right + " in order (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " did not contain only " + right + " in order"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
+      def `should work correctly with all(javaCol) should contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("1", "2"))))
+          all(col) should contain inOrderOnly ("1", "2", "3")
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should contain failed` {
+        val right = "(" + Array("1", "2", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "8", "1")), javaCol(Seq("8", "2", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain inOrderOnly ("1", "2", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirstNot[java.util.Collection[String]](col, e => e.size == 3 && e.toArray()(0) == "1" && e.toArray()(1) == "2" && e.toArray()(2) == "8" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain only " + right + " in order (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " did not contain only " + right + " in order"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
       
       def `should work correctly with all(traversable) should not contain succeeded` {
         forAll(traversableExamples) { colFun => 
@@ -3836,6 +4588,69 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           }
         }
       }
+
+      def `should work correctly with all(javaCol) should not contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "2", "1"))))
+          all(col) should not contain inOrderOnly ("1", "2", "8")
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should not contain failed` {
+        val right = "(" + Array("1", "2", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain inOrderOnly ("1", "2", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Collection[String]](col, e => e.size == 3 && e.toArray()(0) == "1" && e.toArray()(1) == "2" && e.toArray()(2) == "8" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained only " + right + " in order (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " contained only " + right + " in order"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should not contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
+          all(col) should not contain inOrderOnly (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
+        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain inOrderOnly (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Map[String, String]](col, map => map.size == 3 && map.keySet.toArray()(0) == "1" && map.values.toArray()(0) == "one" && map.keySet.toArray()(1) == "2" && map.values.toArray()(1) == "two" && map.keySet.toArray()(2) == "8" && map.values.toArray()(2) == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained only (" + right.mkString(", ") + ") in order (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " contained only (" + right.mkString(", ") + ") in order"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
     }
     
     object `when work with noneOf contain matcher` {
@@ -3960,13 +4775,67 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
         }
       }
     
-      // TODO: To support java collection and map in contain matcher first
-      /*def `should work correctly with all(javaCol) should contain succeeded` {
-        forAll(javaColExamples) { colFun => 
-          val col = colFun(Set(javaCol(Set("1", "2", "3")), javaCol(Set("2", "3", "1")), javaCol(Set("3", "2", "1"))))
-          all(col) should contain theSameElementsAs List("1", "2", "3")
+      def `should work correctly with all(javaCol) should contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("3", "2", "1", "8"))))
+          all(col) should contain noneOf ("6", "7", "9")
         }
-      }*/
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should contain failed` {
+        val right = "(" + Array("1", "2", "8").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("6", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain noneOf ("1", "2", "8")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Collection[String]](col, e => e.contains("1") || e.contains("2") || e.contains("8") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained one of " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " contained one of " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
+          all(col) should contain noneOf Map("6" -> "six", "7" -> "seven", "8" -> "eight")
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
+        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should contain noneOf Map("1" -> "one", "2" -> "two", "8" -> "eight")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Map[String, String]](col, map => map.get("1") == "one" || map.get("2") == "two" || map.get("8") == "eight" )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " contained one of " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " contained one of " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
       
       def `should work correctly with all(traversable) should not contain succeeded` {
         forAll(traversableExamples) { colFun => 
@@ -4074,6 +4943,68 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
           val firstViolation = getFirst[GenMap[String, String]](col, map => map.exists(t => t._1 != "6" && t._2 != "six") && map.exists(t => t._1 != "7" && t._2 != "seven") && map.exists(t => t._1 != "9" && t._2 != "nine") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain one of (" + right.mkString(", ") + ") (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation.toString + " did not contain one of (" + right.mkString(", ") + ")"))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+
+      def `should work correctly with all(javaCol) should not contain succeeded` {
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "3")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "2", "1"))))
+          all(col) should not contain noneOf ("1", "2", "8")
+        }
+      }
+
+      def `should throw TestFailedException with correct message and stack depth when all(javaCol) should not contain failed` {
+        val right = "(" + Array("6", "7", "9").mkString(", ") + ")"
+        forAll(javaColExamples) { colFun =>
+          val col = colFun(Set(javaCol(Seq("1", "2", "8")), javaCol(Seq("2", "3", "1")), javaCol(Seq("3", "8", "1"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain noneOf ("6", "7", "9")
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Collection[String]](col, e => !e.contains("6") && !e.contains("7") && !e.contains("9") )
+          e.message should be (Some("'all' inspection failed, because: \n" +
+            "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain one of " + right + " (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+            "in " + col))
+          e.getCause match {
+            case tfe: exceptions.TestFailedException =>
+              tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+              tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+              tfe.message should be (Some(firstViolation + " did not contain one of " + right))
+              tfe.getCause should be (null)
+            case other => fail("Expected cause to be TestFailedException, but got: " + other)
+          }
+        }
+      }
+      
+      def `should work correctly with all(javaMap) should not contain succeeded` {
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
+          all(col) should not contain noneOf (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+        }
+      }
+    
+      def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
+        val right = Map("6" -> "six", "7" -> "seven", "9" -> "nine")
+        forAll(javaMapExamples) { colFun => 
+          val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
+          val e = intercept[exceptions.TestFailedException] {
+            all(col) should not contain noneOf (right)
+          }
+          e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+          e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+          val firstViolation = getFirst[java.util.Map[String, String]](col, map => !map.containsKey("6") && !map.containsKey("7") && !map.containsKey("9") )
           e.message should be (Some("'all' inspection failed, because: \n" +
                                     "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not contain one of (" + right.mkString(", ") + ") (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
                                     "in " + col))
