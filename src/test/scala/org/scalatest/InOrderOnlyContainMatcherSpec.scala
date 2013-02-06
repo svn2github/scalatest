@@ -32,8 +32,8 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       List(4, 4, 4, 5, 5, 6, 6) should contain inOrderOnly (4, 5, 6)
       javaList(4, 4, 4, 5, 5, 6, 6) should contain inOrderOnly (4, 5, 6)
       
-      LinkedHashMap(4 -> "four", 5 -> "five", 6 -> "six") should contain inOrderOnly LinkedHashMap(4 -> "four", 5 -> "five", 6 -> "six")
-      javaMap(4 -> "four", 5 -> "five", 6 -> "six") should contain inOrderOnly LinkedHashMap(4 -> "four", 5 -> "five", 6 -> "six")
+      LinkedHashMap(4 -> "four", 5 -> "five", 6 -> "six") should contain inOrderOnly (4 -> "four", 5 -> "five", 6 -> "six")
+      javaMap(4 -> "four", 5 -> "five", 6 -> "six") should contain inOrderOnly (4 -> "four", 5 -> "five", 6 -> "six")
     }
     
     val matcher = new InOrderOnlyContainMatcher(List(1, 2, 3))
@@ -51,16 +51,16 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should contain (mapMatcher)
       javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain (mapMatcher)
       
-      LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should contain inOrderOnly LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain inOrderOnly LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
+      LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three")
     }
     
     def `should succeed when left list contains part of right list` {
       List(1, 2, 2, 3, 3, 3) should contain inOrderOnly (1, 2, 3, 4, 5)
       javaList(1, 2, 2, 3, 3, 3) should contain inOrderOnly (1, 2, 3, 4, 5)
       
-      LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should contain inOrderOnly LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five")
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain inOrderOnly LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five")
+      LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five")
     }
     
     def `should throw IllegalArgumentException when inOrderOnly contains duplicate element` {
@@ -91,9 +91,9 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       checkStackDepth(e3, left2, mapMatcherRight, thisLineNumber - 2)
       
       val e4 = intercept[exceptions.TestFailedException] {
-        left2 should contain inOrderOnly LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
+        left2 should contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e4, left2, LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e4, left2, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
       
       val e5 = intercept[exceptions.TestFailedException] {
         left3 should contain (matcher)
@@ -111,9 +111,9 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       checkStackDepth(e7, left4, mapMatcherRight, thisLineNumber - 2)
       
       val e8 = intercept[exceptions.TestFailedException] {
-        left4 should contain inOrderOnly LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
+        left4 should contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e8, left4, LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e8, left4, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List contains element not in right List` {
@@ -131,15 +131,15 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       
       val left3 = LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should contain inOrderOnly LinkedHashMap(1 -> "one", 2 -> "two")
+        left3 should contain inOrderOnly (1 -> "one", 2 -> "two")
       }
-      checkStackDepth(e3, left3, LinkedHashMap(1 -> "one", 2 -> "two"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(1 -> "one", 2 -> "two"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should contain inOrderOnly LinkedHashMap(1 -> "one", 2 -> "two")
+        left4 should contain inOrderOnly (1 -> "one", 2 -> "two")
       }
-      checkStackDepth(e4, left4, LinkedHashMap(1 -> "one", 2 -> "two"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(1 -> "one", 2 -> "two"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List contains only element in right List, but in different order` {
@@ -157,15 +157,15 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       
       val left3 = LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should contain inOrderOnly LinkedHashMap(3 -> "three", 2 -> "two", 1 -> "one")
+        left3 should contain inOrderOnly (3 -> "three", 2 -> "two", 1 -> "one")
       }
-      checkStackDepth(e3, left3, LinkedHashMap(3 -> "three", 2 -> "two", 1 -> "one"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(3 -> "three", 2 -> "two", 1 -> "one"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should contain inOrderOnly LinkedHashMap(3 -> "three", 2 -> "two", 1 -> "one")
+        left4 should contain inOrderOnly (3 -> "three", 2 -> "two", 1 -> "one")
       }
-      checkStackDepth(e4, left4, LinkedHashMap(3 -> "three", 2 -> "two", 1 -> "one"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(3 -> "three", 2 -> "two", 1 -> "one"), thisLineNumber - 2)
     }
   }
   
@@ -181,16 +181,16 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       List(1, 2, 3) should not contain inOrderOnly (1, 2)
       javaList(1, 2, 3) should not contain inOrderOnly (1, 2)
       
-      LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (LinkedHashMap(1 -> "one", 2 -> "two"))
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (LinkedHashMap(1 -> "one", 2 -> "two"))
+      LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (1 -> "one", 2 -> "two")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (1 -> "one", 2 -> "two")
     }
     
     def `should succeed when left List contains element in right List but in different order` {
       List(1, 2, 3) should not contain inOrderOnly (3, 2, 1)
       javaList(1, 2, 3) should not contain inOrderOnly (3, 2, 1)
       
-      LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (LinkedHashMap(3 -> "three", 2 -> "two", 1 -> "one"))
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (LinkedHashMap(3 -> "three", 2 -> "two", 1 -> "one"))
+      LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (3 -> "three", 2 -> "two", 1 -> "one")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (3 -> "three", 2 -> "two", 1 -> "one")
     }
     
     val matcher = new InOrderOnlyContainMatcher(List(1, 2, 3))
@@ -208,8 +208,8 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       LinkedHashMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain mapMatcher
       javaMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain mapMatcher
       
-      LinkedHashMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain inOrderOnly (Map(3 -> "three", 2 -> "two", 1 -> "one"))
-      javaMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain inOrderOnly (Map(3 -> "three", 2 -> "two", 1 -> "one"))
+      LinkedHashMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain inOrderOnly (3 -> "three", 2 -> "two", 1 -> "one")
+      javaMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain inOrderOnly (3 -> "three", 2 -> "two", 1 -> "one")
     }
     
     def `should throw TestFailedException with correct stack depth and message when used with ContainMatcher directly` {
@@ -233,9 +233,9 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       checkStackDepth(e3, left2, mapMatcherRight, thisLineNumber - 2)
       
       val e4 = intercept[exceptions.TestFailedException] {
-        left2 should not contain inOrderOnly (LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"))
+        left2 should not contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e4, left2, LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e4, left2, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
       
       val e5 = intercept[exceptions.TestFailedException] {
         left3 should not contain matcher
@@ -253,9 +253,9 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       checkStackDepth(e7, left4, mapMatcherRight, thisLineNumber - 2)
       
       val e8 = intercept[exceptions.TestFailedException] {
-        left4 should not contain inOrderOnly (LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"))
+        left4 should not contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e8, left4, LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e8, left4, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List contains only element in right List in same order` {
@@ -273,15 +273,15 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       
       val left3 = LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should not contain inOrderOnly (LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"))
+        left3 should not contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e3, left3, LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should not contain inOrderOnly (LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"))
+        left4 should not contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e4, left4, LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
     }
   }
 }

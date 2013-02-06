@@ -34,12 +34,12 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       Set(1, 2, 2, 3, 3, 3) should contain only (1, 2, 3)
       javaSet(1, 2, 2, 3, 3, 3) should contain only (1, 2, 3)
       
-      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain only Map(1 -> "one", 2 -> "two", 3 -> "three")
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain only Map(1 -> "one", 2 -> "two", 3 -> "three")
+      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain only (1 -> "one", 2 -> "two", 3 -> "three")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain only (1 -> "one", 2 -> "two", 3 -> "three")
     }
     
     val matcher = new OnlyContainMatcher(List(1, 2, 3))
-    val mapMatcherRight = Map(1 -> "one", 2 -> "two", 3 -> "three")
+    val mapMatcherRight = Array(1 -> "one", 2 -> "two", 3 -> "three")
     val mapMatcher = new OnlyContainMatcher(mapMatcherRight)
     
     def `should work with ContainMatcher directly` {
@@ -57,10 +57,10 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaSet(1, 2, 3) should contain (only(1, 2, 3))
       
       Map(1 -> "one", 2 -> "two", 3 -> "three") should contain (mapMatcher)
-      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain only Map(1 -> "one", 2 -> "two", 3 -> "three")
+      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain only (1 -> "one", 2 -> "two", 3 -> "three")
       
       javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain (mapMatcher)
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain only Map(1 -> "one", 2 -> "two", 3 -> "three")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain only (1 -> "one", 2 -> "two", 3 -> "three")
     }
     
     def `should succeeded when left list contains part of right list` {
@@ -70,8 +70,8 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       Set(1, 2, 2, 3, 3, 3) should contain only (1, 2, 3, 4, 5)
       javaSet(1, 2, 2, 3, 3, 3) should contain only (1, 2, 3, 4, 5)
       
-      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain only Map(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five")
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain only Map(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five")
+      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain only (1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain only (1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five")
     }
     
     def `should throw IllegalArgumentException when only contains duplicate element` {
@@ -119,9 +119,9 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       checkStackDepth(e5, left3, mapMatcherRight, thisLineNumber - 2)
       
       val e6 = intercept[exceptions.TestFailedException] {
-        left3 should contain only Map(1 -> "one", 2 -> "two", 3 -> "three")
+        left3 should contain only (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e6, left3, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e6, left3, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
       
       val e7 = intercept[exceptions.TestFailedException] {
         left4 should contain (matcher)
@@ -149,9 +149,9 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       checkStackDepth(e11, left6, mapMatcherRight, thisLineNumber - 2)
       
       val e12 = intercept[exceptions.TestFailedException] {
-        left6 should contain only Map(1 -> "one", 2 -> "two", 3 -> "three")
+        left6 should contain only (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e12, left6, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e12, left6, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List contains element not in right List` {
@@ -169,15 +169,15 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       val left3 = Map(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should contain only Map(1 -> "one", 2 -> "two")
+        left3 should contain only (1 -> "one", 2 -> "two")
       }
-      checkStackDepth(e3, left3, Map(1 -> "one", 2 -> "two"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(1 -> "one", 2 -> "two"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should contain only Map(1 -> "one", 2 -> "two")
+        left4 should contain only (1 -> "one", 2 -> "two")
       }
-      checkStackDepth(e4, left4, Map(1 -> "one", 2 -> "two"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(1 -> "one", 2 -> "two"), thisLineNumber - 2)
     }
   }
   
@@ -196,8 +196,8 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       Set(1, 2, 3) should not contain only (1, 2)
       javaSet(1, 2, 3) should not contain only (1, 2)
       
-      Map(1 -> "one", 2 -> "two", 3 -> "three") should not contain only (Map(1 -> "one", 2 -> "two"))
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain only (Map(1 -> "one", 2 -> "two"))
+      Map(1 -> "one", 2 -> "two", 3 -> "three") should not contain only (1 -> "one", 2 -> "two")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain only (1 -> "one", 2 -> "two")
     }
     
     val matcher = new OnlyContainMatcher(List(1, 2, 3))
@@ -219,10 +219,10 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaSet(1, 2, 8) should not contain only (1, 2, 3)
       
       Map(1 -> "one", 2 -> "two", 8 -> "eight") should not contain mapMatcher
-      Map(1 -> "one", 2 -> "two", 8 -> "eight") should not contain only (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+      Map(1 -> "one", 2 -> "two", 8 -> "eight") should not contain only (1 -> "one", 2 -> "two", 3 -> "three")
       
       javaMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain mapMatcher
-      javaMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain only (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+      javaMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain only (1 -> "one", 2 -> "two", 3 -> "three")
     }
     
     def `should throw TestFailedException with correct stack depth and message when used with ContainMatcher directly` {
@@ -258,9 +258,9 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       checkStackDepth(e5, left3, mapMatcherRight, thisLineNumber - 2)
       
       val e6 = intercept[exceptions.TestFailedException] {
-        left3 should not contain only (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+        left3 should not contain only (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e6, left3, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e6, left3, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
       
       val e7 = intercept[exceptions.TestFailedException] {
         left4 should not contain matcher
@@ -288,9 +288,9 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       checkStackDepth(e11, left6, mapMatcherRight, thisLineNumber - 2)
       
       val e12 = intercept[exceptions.TestFailedException] {
-        left6 should not contain only (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+        left6 should not contain only (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e12, left6, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e12, left6, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List contains only element in right List in same order` {
@@ -308,15 +308,15 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       val left3 = Map(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should not contain only (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+        left3 should not contain only (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e3, left3, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should not contain only (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+        left4 should not contain only (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e4, left4, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List contains only element in right List in different order` {
@@ -334,15 +334,15 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       val left3 = Map(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should not contain only (Map(3 -> "three", 2 -> "two", 1 -> "one"))
+        left3 should not contain only (3 -> "three", 2 -> "two", 1 -> "one")
       }
-      checkStackDepth(e3, left3, Map(3 -> "three", 2 -> "two", 1 -> "one"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(3 -> "three", 2 -> "two", 1 -> "one"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should not contain only (Map(3 -> "three", 2 -> "two", 1 -> "one"))
+        left4 should not contain only (3 -> "three", 2 -> "two", 1 -> "one")
       }
-      checkStackDepth(e4, left4, Map(3 -> "three", 2 -> "two", 1 -> "one"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(3 -> "three", 2 -> "two", 1 -> "one"), thisLineNumber - 2)
     }
   }
 }

@@ -2176,12 +2176,12 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "2" -> "two", "1" -> "one")))
-          all(col) should contain theSameElementsAs Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain theSameElementsAs List("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = List("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
@@ -2238,12 +2238,12 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
-          all(col) should contain theSameElementsAs Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain theSameElementsAs List("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = List("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
@@ -2544,12 +2544,12 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three")))
-          all(col) should contain theSameIteratedElementsAs Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain theSameIteratedElementsAs List("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = List("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
@@ -2606,12 +2606,12 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "3" -> "three"))))
-          all(col) should contain theSameIteratedElementsAs LinkedHashMap("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain theSameIteratedElementsAs List("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
-        val right = LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = List("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(LinkedHashMap("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(LinkedHashMap("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
@@ -2911,16 +2911,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three")))
-          all(col) should contain allOf Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain allOf ("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain allOf Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain allOf ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -2973,16 +2973,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
-          all(col) should contain allOf Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain allOf ("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain allOf Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain allOf ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3093,16 +3093,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should not contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "2" -> "two", "1" -> "one")))
-          all(col) should not contain allOf (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain allOf ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should not contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = Array("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain allOf (right)
+            all(col) should not contain allOf ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3155,16 +3155,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should not contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
-          all(col) should not contain allOf (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain allOf ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = Array("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain allOf (right)
+            all(col) should not contain allOf ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3278,16 +3278,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three")))
-          all(col) should contain inOrder Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain inOrder ("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain inOrder Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain inOrder ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3309,16 +3309,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
-          all(col) should contain inOrder Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain inOrder ("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain inOrder Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain inOrder ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3460,16 +3460,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should not contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "2" -> "two", "1" -> "one")))
-          all(col) should not contain inOrder (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain inOrder ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should not contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = Array("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain inOrder (right)
+            all(col) should not contain inOrder ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3522,16 +3522,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should not contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(LinkedHashMap("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(LinkedHashMap("3" -> "three", "2" -> "two", "1" -> "one"))))
-          all(col) should not contain inOrder (LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain inOrder ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
-        val right = LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = Array("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(LinkedHashMap("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(LinkedHashMap("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(LinkedHashMap("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain inOrder (right)
+            all(col) should not contain inOrder ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3645,16 +3645,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three")))
-          all(col) should contain oneOf Map("1" -> "one", "6" -> "six", "8" -> "eight")
+          all(col) should contain oneOf ("1" -> "one", "6" -> "six", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should contain failed` {
-        val right = "(" + Map("3" -> "three", "5" -> "five", "7" -> "seven").mkString(", ") + ")"
+        val right = "(" + Array("3" -> "three", "5" -> "five", "7" -> "seven").mkString(", ") + ")"
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain oneOf Map("3" -> "three", "5" -> "five", "7" -> "seven")
+            all(col) should contain oneOf ("3" -> "three", "5" -> "five", "7" -> "seven")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3707,16 +3707,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
-          all(col) should contain oneOf Map("1" -> "one", "6" -> "six", "8" -> "eight")
+          all(col) should contain oneOf ("1" -> "one", "6" -> "six", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
-        val right = "(" + Map("3" -> "three", "5" -> "five", "7" -> "seven").mkString(", ") + ")"
+        val right = "(" + Array("3" -> "three", "5" -> "five", "7" -> "seven").mkString(", ") + ")"
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain oneOf Map("3" -> "three", "5" -> "five", "7" -> "seven")
+            all(col) should contain oneOf ("3" -> "three", "5" -> "five", "7" -> "seven")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3827,16 +3827,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should not contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "2" -> "two", "1" -> "one")))
-          all(col) should not contain oneOf (Map("6" -> "six", "7" -> "seven", "8" -> "eight"))
+          all(col) should not contain oneOf ("6" -> "six", "7" -> "seven", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should not contain failed` {
-        val right = Map("6" -> "six", "7" -> "seven", "8" -> "eight")
+        val right = Array("6" -> "six", "7" -> "seven", "8" -> "eight")
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain oneOf (right)
+            all(col) should not contain oneOf ("6" -> "six", "7" -> "seven", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -3889,16 +3889,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should not contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
-          all(col) should not contain oneOf (Map("6" -> "six", "7" -> "seven", "8" -> "eight"))
+          all(col) should not contain oneOf ("6" -> "six", "7" -> "seven", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
-        val right = Map("6" -> "six", "7" -> "seven", "8" -> "eight")
+        val right = Array("6" -> "six", "7" -> "seven", "8" -> "eight")
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain oneOf (right)
+            all(col) should not contain oneOf ("6" -> "six", "7" -> "seven", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4012,16 +4012,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three")))
-          all(col) should contain only Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain only ("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain only Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain only ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4074,16 +4074,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
-          all(col) should contain only Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain only ("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain only Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain only ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4194,16 +4194,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should not contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "2" -> "two", "1" -> "one")))
-          all(col) should not contain only (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain only ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should not contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = Array("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain only (right)
+            all(col) should not contain only ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4256,16 +4256,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should not contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
-          all(col) should not contain only (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain only ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = Array("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain only (right)
+            all(col) should not contain only ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4379,16 +4379,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three")))
-          all(col) should contain inOrderOnly Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain inOrderOnly ("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain inOrderOnly Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain inOrderOnly ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4410,16 +4410,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
-          all(col) should contain inOrderOnly Map("1" -> "one", "2" -> "two", "3" -> "three")
+          all(col) should contain inOrderOnly ("1" -> "one", "2" -> "two", "3" -> "three")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain inOrderOnly Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain inOrderOnly ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4561,16 +4561,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should not contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "2" -> "two", "1" -> "one")))
-          all(col) should not contain inOrderOnly (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain inOrderOnly ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should not contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = Array("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain inOrderOnly (right)
+            all(col) should not contain inOrderOnly ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4623,16 +4623,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should not contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
-          all(col) should not contain inOrderOnly (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain inOrderOnly ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
-        val right = Map("1" -> "one", "2" -> "two", "8" -> "eight")
+        val right = Array("1" -> "one", "2" -> "two", "8" -> "eight")
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain inOrderOnly (right)
+            all(col) should not contain inOrderOnly ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4747,16 +4747,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three")))
-          all(col) should contain noneOf Map("6" -> "six", "7" -> "seven", "8" -> "eight")
+          all(col) should contain noneOf ("6" -> "six", "7" -> "seven", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain noneOf Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain noneOf ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4809,16 +4809,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three"))))
-          all(col) should contain noneOf Map("6" -> "six", "7" -> "seven", "8" -> "eight")
+          all(col) should contain noneOf ("6" -> "six", "7" -> "seven", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should contain failed` {
-        val right = "(" + Map("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
+        val right = "(" + Array("1" -> "one", "2" -> "two", "8" -> "eight").mkString(", ") + ")"
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should contain noneOf Map("1" -> "one", "2" -> "two", "8" -> "eight")
+            all(col) should contain noneOf ("1" -> "one", "2" -> "two", "8" -> "eight")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4929,16 +4929,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(map) should not contain succeeded` {
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "3" -> "three"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "2" -> "two", "1" -> "one")))
-          all(col) should not contain noneOf (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain noneOf ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(map) should not contain failed` {
-        val right = Map("6" -> "six", "7" -> "seven", "9" -> "nine")
+        val right = Array("6" -> "six", "7" -> "seven", "9" -> "nine")
         forAll(mapExamples) { colFun => 
           val col = colFun(Set(Map("1" -> "one", "2" -> "two", "8" -> "eight"), Map("2" -> "two", "3" -> "three", "1" -> "one"), Map("3" -> "three", "8" -> "eight", "1" -> "one")))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain noneOf (right)
+            all(col) should not contain noneOf ("6" -> "six", "7" -> "seven", "9" -> "nine")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))
@@ -4991,16 +4991,16 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       def `should work correctly with all(javaMap) should not contain succeeded` {
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "3" -> "three")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "2" -> "two", "1" -> "one"))))
-          all(col) should not contain noneOf (Map("1" -> "one", "2" -> "two", "8" -> "eight"))
+          all(col) should not contain noneOf ("1" -> "one", "2" -> "two", "8" -> "eight")
         }
       }
     
       def `should throw TestFailedException with correct message and stack depth when all(javaMap) should not contain failed` {
-        val right = Map("6" -> "six", "7" -> "seven", "9" -> "nine")
+        val right = Array("6" -> "six", "7" -> "seven", "9" -> "nine")
         forAll(javaMapExamples) { colFun => 
           val col = colFun(Set(javaMap(Map("1" -> "one", "2" -> "two", "8" -> "eight")), javaMap(Map("2" -> "two", "3" -> "three", "1" -> "one")), javaMap(Map("3" -> "three", "8" -> "eight", "1" -> "one"))))
           val e = intercept[exceptions.TestFailedException] {
-            all(col) should not contain noneOf (right)
+            all(col) should not contain noneOf ("6" -> "six", "7" -> "seven", "9" -> "nine")
           }
           e.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
           e.failedCodeLineNumber should be (Some(thisLineNumber - 3))

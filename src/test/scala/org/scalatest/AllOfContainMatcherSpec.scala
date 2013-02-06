@@ -31,12 +31,12 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       List(5, 4, 3, 2, 1) should contain allOf(1, 3, 5)
       javaList(5, 4, 3, 2, 1) should contain allOf(1, 3, 5)
       
-      Map(5 -> "five", 4 -> "four", 3 -> "three", 2 -> "two", 1 -> "one") should contain allOf Map(1 -> "one", 3 -> "three", 5 -> "five")
-      javaMap(5 -> "five", 4 -> "four", 3 -> "three", 2 -> "two", 1 -> "one") should contain allOf Map(1 -> "one", 3 -> "three", 5 -> "five")
+      Map(5 -> "five", 4 -> "four", 3 -> "three", 2 -> "two", 1 -> "one") should contain allOf (1 -> "one", 3 -> "three", 5 -> "five")
+      javaMap(5 -> "five", 4 -> "four", 3 -> "three", 2 -> "two", 1 -> "one") should contain allOf (1 -> "one", 3 -> "three", 5 -> "five")
     }
     
     val matcher = new AllOfContainMatcher(List(1, 2))
-    val mapMatcherRight = Map(1 -> "one", 2 -> "two")
+    val mapMatcherRight = Array(1 -> "one", 2 -> "two")
     val mapMatcher = new AllOfContainMatcher(mapMatcherRight)
     
     def `should work with ContainMatcher directly` {
@@ -54,26 +54,26 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaSet(1, 2, 3) should contain (allOf(1, 2))
       
       Map(1 -> "one", 2 -> "two", 3 -> "three") should contain (mapMatcher)
-      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf Map(1 -> "one", 2 -> "two")
+      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf (1 -> "one", 2 -> "two")
       
       javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain (mapMatcher)
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf Map(1 -> "one", 2 -> "two")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf (1 -> "one", 2 -> "two")
     }
     
     def `should succeeded when left List contains same elements in different order as right List` {
       List(1, 2, 3) should contain allOf(2, 1, 3)
       javaList(1, 2, 3) should contain allOf(2, 1, 3)
       
-      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf Map(2 -> "two", 1 -> "one", 3 -> "three")
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf Map(2 -> "two", 1 -> "one", 3 -> "three")
+      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf (2 -> "two", 1 -> "one", 3 -> "three")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf (2 -> "two", 1 -> "one", 3 -> "three")
     }
     
     def `should succeeded when left List contains same elements in same order as right Set` {
       List(1, 2, 3) should contain allOf(1, 2, 3)
       javaList(1, 2, 3) should contain allOf(1, 2, 3)
       
-      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf Map(1 -> "one", 2 -> "two", 3 -> "three")
-      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf Map(1 -> "one", 2 -> "two", 3 -> "three")
+      Map(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf (1 -> "one", 2 -> "two", 3 -> "three")
+      javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain allOf (1 -> "one", 2 -> "two", 3 -> "three")
     }
     
     def `should throw IllegalArgumentException when allOf contains duplicate element` {
@@ -121,7 +121,7 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       checkStackDepth(e5, left3, mapMatcherRight, thisLineNumber - 2)
       
       val e6 = intercept[exceptions.TestFailedException] {
-        left3 should contain allOf Map(1 -> "one", 2 -> "two")
+        left3 should contain allOf (1 -> "one", 2 -> "two")
       }
       checkStackDepth(e6, left3, mapMatcherRight, thisLineNumber - 2)
       
@@ -151,7 +151,7 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       checkStackDepth(e11, left6, mapMatcherRight, thisLineNumber - 2)
       
       val e12 = intercept[exceptions.TestFailedException] {
-        left6 should contain allOf Map(1 -> "one", 2 -> "two")
+        left6 should contain allOf (1 -> "one", 2 -> "two")
       }
       checkStackDepth(e12, left6, mapMatcherRight, thisLineNumber - 2)
     }
@@ -171,15 +171,15 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       val left3 = Map(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should contain allOf Map(2 -> "two", 5 -> "five", 3 -> "three")
+        left3 should contain allOf (2 -> "two", 5 -> "five", 3 -> "three")
       }
-      checkStackDepth(e3, left3, Map(2 -> "two", 5 -> "five", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(2 -> "two", 5 -> "five", 3 -> "three"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should contain allOf Map(2 -> "two", 5 -> "five", 3 -> "three")
+        left4 should contain allOf (2 -> "two", 5 -> "five", 3 -> "three")
       }
-      checkStackDepth(e4, left4, Map(2 -> "two", 5 -> "five", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(2 -> "two", 5 -> "five", 3 -> "three"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List is shorter than right List` {
@@ -197,15 +197,15 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       val left3 = Map(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should contain allOf Map(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four")
+        left3 should contain allOf (1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four")
       }
-      checkStackDepth(e3, left3, Map(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should contain allOf Map(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four")
+        left4 should contain allOf (1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four")
       }
-      checkStackDepth(e4, left4, Map(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List is longer than right List` {
@@ -223,15 +223,15 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       val left3 = Map(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should contain allOf Map(1 -> "one", 5 -> "five")
+        left3 should contain allOf (1 -> "one", 5 -> "five")
       }
-      checkStackDepth(e3, left3, Map(1 -> "one", 5 -> "five"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(1 -> "one", 5 -> "five"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should contain allOf Map(1 -> "one", 5 -> "five")
+        left4 should contain allOf (1 -> "one", 5 -> "five")
       }
-      checkStackDepth(e4, left4, Map(1 -> "one", 5 -> "five"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(1 -> "one", 5 -> "five"), thisLineNumber - 2)
     }
   }
   
@@ -270,10 +270,10 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaSet(1, 2, 8) should not contain allOf (1, 2, 3)
       
       Map(1 -> "one", 2 -> "two", 8 -> "eight") should not contain mapMatcher
-      Map(1 -> "one", 2 -> "two", 8 -> "eight") should not contain allOf (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+      Map(1 -> "one", 2 -> "two", 8 -> "eight") should not contain allOf (1 -> "one", 2 -> "two", 3 -> "three")
       
       javaMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain mapMatcher
-      javaMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain allOf (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+      javaMap(1 -> "one", 2 -> "two", 8 -> "eight") should not contain allOf (1 -> "one", 2 -> "two", 3 -> "three")
     }
     
     def `should throw TestFailedException with correct stack depth and message when used with ContainMatcher directly` {
@@ -309,9 +309,9 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       checkStackDepth(e5, left3, mapMatcherRight, thisLineNumber - 2)
       
       val e6 = intercept[exceptions.TestFailedException] {
-        left3 should not contain allOf (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+        left3 should not contain allOf (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e6, left3, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e6, left3, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
       
       val e7 = intercept[exceptions.TestFailedException] {
         left4 should not contain matcher
@@ -339,9 +339,9 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       checkStackDepth(e11, left6, mapMatcherRight, thisLineNumber - 2)
       
       val e12 = intercept[exceptions.TestFailedException] {
-        left6 should not contain allOf (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+        left6 should not contain allOf (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e12, left6, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e12, left6, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left and right List contain same elements in different order` {
@@ -359,15 +359,15 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       val left3 = Map(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should not contain allOf (Map(2 -> "two", 1 -> "one", 3 -> "three"))
+        left3 should not contain allOf (2 -> "two", 1 -> "one", 3 -> "three")
       }
-      checkStackDepth(e3, left3, Map(2 -> "two", 1 -> "one", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(2 -> "two", 1 -> "one", 3 -> "three"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should not contain allOf (Map(2 -> "two", 1 -> "one", 3 -> "three"))
+        left4 should not contain allOf (2 -> "two", 1 -> "one", 3 -> "three")
       }
-      checkStackDepth(e4, left4, Map(2 -> "two", 1 -> "one", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(2 -> "two", 1 -> "one", 3 -> "three"), thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left and right List contain same elements in same order` {
@@ -385,15 +385,15 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       val left3 = Map(1 -> "one", 2 -> "two", 3 -> "three")
       val e3 = intercept[exceptions.TestFailedException] {
-        left3 should not contain allOf (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+        left3 should not contain allOf (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e3, left3, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e3, left3, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
       
       val left4 = javaMap(1 -> "one", 2 -> "two", 3 -> "three")
       val e4 = intercept[exceptions.TestFailedException] {
-        left4 should not contain allOf (Map(1 -> "one", 2 -> "two", 3 -> "three"))
+        left4 should not contain allOf (1 -> "one", 2 -> "two", 3 -> "three")
       }
-      checkStackDepth(e4, left4, Map(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      checkStackDepth(e4, left4, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
     }
   }
 }

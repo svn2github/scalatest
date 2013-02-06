@@ -2976,11 +2976,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * map should contain theSameElementsAs anotherMap
+     * map should contain theSameElementsAs List(1 -> "one", 2 -> "two", 3 -> "three")
      *                    ^
      * </pre>
      */
-    def theSameElementsAs(right: GenMap[K, V]) {
+    def theSameElementsAs(right: GenTraversable[(K, V)]) {
       matchContainMatcher(left, new TheSameElementsAsContainMatcher(right), shouldBeTrue)
     }
     
@@ -2988,11 +2988,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * map should contain theSameIteratedElementsAs anotherMap
+     * map should contain theSameIteratedElementsAs List(1 -> "one", 2 -> "two", 3 -> "three")
      *                    ^
      * </pre>
      */
-    def theSameIteratedElementsAs(right: GenMap[K, V]) {
+    def theSameIteratedElementsAs(right: GenTraversable[(K, V)]) {
       matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(right), shouldBeTrue)
     }
     
@@ -3000,11 +3000,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * map should contain allOf anotherMap
+     * map should contain allOf (1 -> "one", 2 -> "two", 3 -> "three")
      *                    ^
      * </pre>
      */
-    def allOf(right: GenMap[K, V]) {
+    def allOf(right: (K, V)*) {
       matchContainMatcher(left, new AllOfContainMatcher(right), shouldBeTrue)
     }
     
@@ -3012,11 +3012,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * map should contain inOrder anotherMap
+     * map should contain inOrder (1 -> "one", 2 -> "two", 3 -> "three")
      *                    ^
      * </pre>
      */
-    def inOrder(right: GenMap[K, V]) {
+    def inOrder(right: (K, V)*) {
       matchContainMatcher(left, new InOrderContainMatcher(right), shouldBeTrue)
     }
     
@@ -3024,11 +3024,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * map should contain oneOf anotherMap
+     * map should contain oneOf (1 -> "one", 2 -> "two", 3 -> "three")
      *                    ^
      * </pre>
      */
-    def oneOf(right: GenMap[K, V]) {
+    def oneOf(right: (K, V)*) {
       matchContainMatcher(left, new OneOfContainMatcher(right), shouldBeTrue)
     }
     
@@ -3036,11 +3036,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * map should contain only anotherMap
+     * map should contain only (1 -> "one", 2 -> "two", 3 -> "three")
      *                    ^
      * </pre>
      */
-    def only(right: GenMap[K, V]) {
+    def only(right: (K, V)*) {
       matchContainMatcher(left, new OnlyContainMatcher(right), shouldBeTrue)
     }
     
@@ -3048,11 +3048,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * map should contain inOrderOnly anotherMap
+     * map should contain inOrderOnly (1 -> "one", 2 -> "two", 3 -> "three")
      *                    ^
      * </pre>
      */
-    def inOrderOnly(right: GenMap[K, V]) {
+    def inOrderOnly(right: (K, V)*) {
       matchContainMatcher(left, new InOrderOnlyContainMatcher(right), shouldBeTrue)
     }
     
@@ -3060,11 +3060,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * map should contain noneOf anotherMap
+     * map should contain noneOf (1 -> "one", 2 -> "two", 3 -> "three")
      *                    ^
      * </pre>
      */
-    def noneOf(right: GenMap[K, V]) {
+    def noneOf(right: (K, V)*) {
       matchContainMatcher(left, new NoneOfContainMatcher(right), shouldBeTrue)
     }
   }
@@ -3119,11 +3119,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * javaCol should contain theSameElementsAs traversable
-     *                            ^
+     * javaMap should contain theSameElementsAs traversable
+     *                        ^
      * </pre>
      */
-    def theSameElementsAs(right: GenMap[K, V]) {
+    def theSameElementsAs(right: GenTraversable[(K, V)]) {
       matchContainMatcher(left, new TheSameElementsAsContainMatcher(right), shouldBeTrue)
     }
     
@@ -3131,11 +3131,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * javaCol should contain theSameIteratedElementsAs traversable
+     * javaMap should contain theSameIteratedElementsAs traversable
      *                        ^
      * </pre>
      */
-    def theSameIteratedElementsAs(right: GenMap[K, V]) {
+    def theSameIteratedElementsAs(right: GenTraversable[(K, V)]) {
       matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(right), shouldBeTrue)
     }
     
@@ -3143,11 +3143,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * javaCol should contain allOf (1, 2)
+     * javaMap should contain allOf (1, 2)
      *                        ^
      * </pre>
      */
-    def allOf(right: GenMap[K, V]) {
+    def allOf(right: (K, V)*) {
       matchContainMatcher(left, new AllOfContainMatcher(right), shouldBeTrue)
     }
     
@@ -3155,11 +3155,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * javaCol should contain inOrder (1, 2)
+     * javaMap should contain inOrder (1, 2)
      *                        ^
      * </pre>
      */
-    def inOrder(right: GenMap[K, V]) {
+    def inOrder(right: (K, V)*) {
       matchContainMatcher(left, new InOrderContainMatcher(right), shouldBeTrue)
     }
     
@@ -3167,11 +3167,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * javaCol should contain oneOf (1, 2)
+     * javaMap should contain oneOf (1, 2)
      *                        ^
      * </pre>
      */
-    def oneOf(right: GenMap[K, V]) {
+    def oneOf(right: (K, V)*) {
       matchContainMatcher(left, new OneOfContainMatcher(right), shouldBeTrue)
     }
     
@@ -3179,11 +3179,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * javaCol should contain only (1, 2)
+     * javaMap should contain only (1, 2)
      *                        ^
      * </pre>
      */
-    def only(right: GenMap[K, V]) {
+    def only(right: (K, V)*) {
       matchContainMatcher(left, new OnlyContainMatcher(right), shouldBeTrue)
     }
     
@@ -3191,11 +3191,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * javaCol should contain inOrderOnly (1, 2)
+     * javaMap should contain inOrderOnly (1, 2)
      *                        ^
      * </pre>
      */
-    def inOrderOnly(right: GenMap[K, V]) {
+    def inOrderOnly(right: (K, V)*) {
       matchContainMatcher(left, new InOrderOnlyContainMatcher(right), shouldBeTrue)
     }
     
@@ -3203,11 +3203,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * javaCol should contain noneOf (1, 2)
+     * javaMap should contain noneOf (1, 2)
      *                        ^
      * </pre>
      */
-    def noneOf(right: GenMap[K, V]) {
+    def noneOf(right: (K, V)*) {
       matchContainMatcher(left, new NoneOfContainMatcher(right), shouldBeTrue)
     }
   }
@@ -8830,17 +8830,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
     new AllOfContainMatcher(xs)
   
   /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * Map(1 -> "one", 2 -> "two", 3 -> "three") should not contain allOf (Map(1 -> "one", 2 -> "two"))
-   *                                                              ^
-   * </pre>
-   */
-  def allOf[K, V](xs: GenMap[K, V]) = 
-    new AllOfContainMatcher(xs)
-  
-  /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
    * the matchers DSL.
    *
@@ -8902,17 +8891,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
     new InOrderContainMatcher(xs)
   
   /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * Map(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrder (Map(1 -> "one", 2 -> "two"))
-   *                                                              ^
-   * </pre>
-   */
-  def inOrder[K, V](xs: GenMap[K, V]) = 
-    new InOrderContainMatcher(xs)
-  
-  /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
    * the matchers DSL.
    *
@@ -8956,17 +8934,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </pre>
    */
   def oneOf[T](xs: T*) = 
-    new OneOfContainMatcher(xs)
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * Map(1 -> "one", 2 -> "two", 3 -> "three") should not contain oneOf (Map(1 -> "one", 2 -> "two"))
-   *                                                              ^
-   * </pre>
-   */
-  def oneOf[K, V](xs: GenMap[K, V]) = 
     new OneOfContainMatcher(xs)
   
   /**
@@ -9029,17 +8996,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </pre>
    */
   def only[T](xs: T*) = 
-    new OnlyContainMatcher(xs)
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * Map(1 -> "one", 2 -> "two", 3 -> "three") should not contain only (Map(1 -> "one", 2 -> "two"))
-   *                                                              ^
-   * </pre>
-   */
-  def only[K, V](xs: GenMap[K, V]) = 
     new OnlyContainMatcher(xs)
   
   /**
@@ -9109,17 +9065,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
     new InOrderOnlyContainMatcher(xs)
   
   /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * Map(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (Map(1 -> "one", 2 -> "two"))
-   *                                                              ^
-   * </pre>
-   */
-  def inOrderOnly[K, V](xs: GenMap[K, V]) = 
-    new InOrderOnlyContainMatcher(xs)
-  
-  /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
    * the matchers DSL.
    *
@@ -9181,17 +9126,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </pre>
    */
   def noneOf[T](xs: T*) = 
-    new NoneOfContainMatcher(xs)
-  
-  /**
-   * This method enables the following syntax: 
-   *
-   * <pre class="stHighlight">
-   * Map(1 -> "one", 2 -> "two", 3 -> "three") should not contain noneOf (Map(7 -> "seven", 8 -> "eight"))
-   *                                                              ^
-   * </pre>
-   */
-  def noneOf[K, V](xs: GenMap[K, V]) = 
     new NoneOfContainMatcher(xs)
   
   // For safe keeping
@@ -12224,11 +12158,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * all(colOfMap) should contain theSameElementsAs List(1, 2, 3)
+     * all(colOfMap) should contain theSameElementsAs List(1 -> "one", 2 -> "two", 3 -> "three")
      *                              ^
      * </pre>
      */
-    def theSameElementsAs(right: GenMap[K, V]) {
+    def theSameElementsAs(right: GenTraversable[(K, V)]) {
       val containMatcher = new TheSameElementsAsContainMatcher(right)
       doCollected(collected, xs, "theSameElementsAs", 1) { e =>
         val result = containMatcher(e)
@@ -12245,11 +12179,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * all(colOfMap) should contain theSameElementsAs List(1, 2, 3)
+     * all(colOfMap) should contain theSameElementsAs List(1 -> "one", 2 -> "two", 3 -> "three")
      *                              ^
      * </pre>
      */
-    def theSameIteratedElementsAs(right: GenMap[K, V]) {
+    def theSameIteratedElementsAs(right: GenTraversable[(K, V)]) {
       val containMatcher = new TheSameIteratedElementsAsContainMatcher(right)
       doCollected(collected, xs, "theSameIteratedElementsAs", 1) { e =>
         val result = containMatcher(e)
@@ -12266,11 +12200,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * all(colOfMap) should contain allOf Map(1 -> "one", 2 -> "two", 3 -> "three")
+     * all(colOfMap) should contain allOf List(1 -> "one", 2 -> "two", 3 -> "three")
      *                              ^
      * </pre>
      */
-    def allOf(right: GenMap[K, V]) {
+    def allOf(right: (K, V)*) {
       val containMatcher = new AllOfContainMatcher(right)
       doCollected(collected, xs, "allOf", 1) { e =>
         val result = containMatcher(e)
@@ -12287,11 +12221,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables the following syntax: 
      *
      * <pre class="stHighlight">
-     * all(colOfMap) should contain inOrder Map(1 -> "one", 2 -> "two", 3 -> "three")
+     * all(colOfMap) should contain inOrder List(1 -> "one", 2 -> "two", 3 -> "three")
      *                              ^
      * </pre>
      */
-    def inOrder(right: GenMap[K, V]) {
+    def inOrder(right: (K, V)*) {
       val containMatcher = new InOrderContainMatcher(right)
       doCollected(collected, xs, "inOrder", 1) { e =>
         val result = containMatcher(e)
@@ -12312,7 +12246,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                              ^
      * </pre>
      */
-    def oneOf(right: GenMap[K, V]) {
+    def oneOf(right: (K, V)*) {
       val containMatcher = new OneOfContainMatcher(right)
       doCollected(collected, xs, "oneOf", 1) { e =>
         val result = containMatcher(e)
@@ -12333,7 +12267,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                              ^
      * </pre>
      */
-    def only(right: GenMap[K, V]) {
+    def only(right: (K, V)*) {
       val containMatcher = new OnlyContainMatcher(right)
       doCollected(collected, xs, "only", 1) { e =>
         val result = containMatcher(e)
@@ -12354,7 +12288,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                              ^
      * </pre>
      */
-    def inOrderOnly(right: GenMap[K, V]) {
+    def inOrderOnly(right: (K, V)*) {
       val containMatcher = new InOrderOnlyContainMatcher(right)
       doCollected(collected, xs, "inOrderOnly", 1) { e =>
         val result = containMatcher(e)
@@ -12375,7 +12309,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                              ^
      * </pre>
      */
-    def noneOf(right: GenMap[K, V]) {
+    def noneOf(right: (K, V)*) {
       val containMatcher = new NoneOfContainMatcher(right)
       doCollected(collected, xs, "noneOf", 1) { e =>
         val result = containMatcher(e)
@@ -12920,11 +12854,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaMap) should contain theSameElementsAs Map(1 -> "one", 2 - > "two", 3 -> "three")
+     * all(colOfJavaMap) should contain theSameElementsAs List(1 -> "one", 2 - > "two", 3 -> "three")
      *                                  ^
      * </pre>
      */
-    def theSameElementsAs(right: GenMap[K, V]) {
+    def theSameElementsAs(right: GenTraversable[(K, V)]) {
       val containMatcher = new TheSameElementsAsContainMatcher(right)
       doCollected(collected, xs, "theSameElementsAs", 1) { e =>
         val result = containMatcher(new JavaMapWrapper(e))
@@ -12941,11 +12875,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaMap) should contain theSameIteratedElementsAs Map(1 -> "one", 2 - > "two", 3 -> "three")
+     * all(colOfJavaMap) should contain theSameIteratedElementsAs List(1 -> "one", 2 - > "two", 3 -> "three")
      *                                  ^
      * </pre>
      */
-    def theSameIteratedElementsAs(right: GenMap[K, V]) {
+    def theSameIteratedElementsAs(right: GenTraversable[(K, V)]) {
       val containMatcher = new TheSameIteratedElementsAsContainMatcher(right)
       doCollected(collected, xs, "theSameIteratedElementsAs", 1) { e =>
         val result = containMatcher(new JavaMapWrapper(e))
@@ -12962,11 +12896,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaMap) should contain allOf Map(1 -> "one", 2 - > "two", 3 -> "three")
+     * all(colOfJavaMap) should contain allOf (1 -> "one", 2 - > "two", 3 -> "three")
      *                                  ^
      * </pre>
      */
-    def allOf(right: GenMap[K, V]) {
+    def allOf(right: (K, V)*) {
       val containMatcher = new AllOfContainMatcher(right)
       doCollected(collected, xs, "allOf", 1) { e =>
         val result = containMatcher(new JavaMapWrapper(e))
@@ -12983,11 +12917,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaMap) should contain inOrder Map(1 -> "one", 2 - > "two", 3 -> "three")
+     * all(colOfJavaMap) should contain inOrder (1 -> "one", 2 - > "two", 3 -> "three")
      *                                  ^
      * </pre>
      */
-    def inOrder(right: GenMap[K, V]) {
+    def inOrder(right: (K, V)*) {
       val containMatcher = new InOrderContainMatcher(right)
       doCollected(collected, xs, "inOrder", 1) { e =>
         val result = containMatcher(new JavaMapWrapper(e))
@@ -13004,11 +12938,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaMap) should contain oneOf Map(1 -> "one", 2 - > "two", 3 -> "three")
+     * all(colOfJavaMap) should contain oneOf (1 -> "one", 2 - > "two", 3 -> "three")
      *                                  ^
      * </pre>
      */
-    def oneOf(right: GenMap[K, V]) {
+    def oneOf(right: (K, V)*) {
       val containMatcher = new OneOfContainMatcher(right)
       doCollected(collected, xs, "oneOf", 1) { e =>
         val result = containMatcher(new JavaMapWrapper(e))
@@ -13025,11 +12959,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaMap) should contain only Map(1 -> "one", 2 - > "two", 3 -> "three")
+     * all(colOfJavaMap) should contain only (1 -> "one", 2 - > "two", 3 -> "three")
      *                                  ^
      * </pre>
      */
-    def only(right: GenMap[K, V]) {
+    def only(right: (K, V)*) {
       val containMatcher = new OnlyContainMatcher(right)
       doCollected(collected, xs, "only", 1) { e =>
         val result = containMatcher(new JavaMapWrapper(e))
@@ -13046,11 +12980,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaMap) should contain inOrderOnly Map(1 -> "one", 2 - > "two", 3 -> "three")
+     * all(colOfJavaMap) should contain inOrderOnly (1 -> "one", 2 - > "two", 3 -> "three")
      *                                  ^
      * </pre>
      */
-    def inOrderOnly(right: GenMap[K, V]) {
+    def inOrderOnly(right: (K, V)*) {
       val containMatcher = new InOrderOnlyContainMatcher(right)
       doCollected(collected, xs, "inOrderOnly", 1) { e =>
         val result = containMatcher(new JavaMapWrapper(e))
@@ -13067,11 +13001,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * all(colOfJavaMap) should contain noneOf Map(1 -> "one", 2 - > "two", 3 -> "three")
+     * all(colOfJavaMap) should contain noneOf (1 -> "one", 2 - > "two", 3 -> "three")
      *                                  ^
      * </pre>
      */
-    def noneOf(right: GenMap[K, V]) {
+    def noneOf(right: (K, V)*) {
       val containMatcher = new NoneOfContainMatcher(right)
       doCollected(collected, xs, "noneOf", 1) { e =>
         val result = containMatcher(new JavaMapWrapper(e))
