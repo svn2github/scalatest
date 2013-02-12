@@ -77,7 +77,7 @@ import org.scalatest._
 trait ConfigMapFixture { this: fixture.Suite =>
 
   /**
-   * The type of the <code>configMap</code>, which is <code>Map[String, Any]</code>.
+   * The type of the <code>configMap</code>, which is <code>ConfigMap</code>.
    */
   type FixtureParam = ConfigMap
 
