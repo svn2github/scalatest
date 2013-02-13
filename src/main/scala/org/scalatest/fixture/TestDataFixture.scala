@@ -19,7 +19,28 @@ import org.scalatest._
 
 /**
  * Trait that when mixed into a <code>fixture.Suite</code> passes the
- * <code>TestData</code> passed to <code>withFixture</code> as a fixture into each test.
+ * <a href="../TestData.html"><code>TestData</code></a> passed to <code>withFixture</code> as a fixture into each test.
+ *
+ * <p>
+ * For example, here's how you could access the test's name in each test using <code>TestDataFixture</code>:
+ * </p>
+ *
+ * <pre class="stHighlight">
+ * package org.scalatest.examples.fixture.testdatafixture
+ *
+ * import org.scalatest._
+ *
+ * class ExampleSpec extends fixture.FlatSpec with fixture.TestDataFixture {
+ *
+ *   "Accessing the test data" should "be easy!" in { td =&gt;
+ *     assert(td.name == "Accessing the test data should be easy!")
+ *   }
+ *
+ *   it should "be fun!" in { td =&gt;
+ *     assert(td.name == "Accessing the test data should be fun!")
+ *   }
+ * }
+ * </pre>
  *
  * @author Bill Venners
  */
@@ -31,8 +52,8 @@ trait TestDataFixture { this: fixture.Suite =>
   type FixtureParam = TestData
 
   /**
-   * Invoke the test function, passing to the the test function to itself, because
-   * in addition to being the test function, it is the <code>TestData</code> for the test.
+   * Invoke the test function, passing to the the test function 
+   * the <code>TestData</code> for the test.
    *
    * <p>
    * To enable stacking of traits that define <code>withFixture(NoArgTest)</code>, this method does not
