@@ -80,7 +80,7 @@ package org.scalautils
  *
  * @tparam A the type whose equality is being customized
  */
-abstract class Equality[A] {
+trait Equality[A] {
 
   /**
    * Indicates whether the objects passed as <code>a</code> and <code>b</code> are equal.
