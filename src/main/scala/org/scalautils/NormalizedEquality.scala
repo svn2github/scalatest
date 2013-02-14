@@ -21,7 +21,7 @@ package org.scalautils
  * first on any passed object that is an array.
  * </p>
  */
-trait NormalizedEquality[A] extends Equality[A] {
+trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
 
 // TODO: May want to still do the thing on arrays, else can't normalize arrays.
   /**
