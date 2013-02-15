@@ -16,28 +16,78 @@
 package org.scalautils
 
 /**
- * A default <code>Equality</code> type class implementation (which can be used for any type) whose
- * <code>areEqual</code> method compares the passed objects with <code>==</code>, calling <code>.deep</code>
- * first on any passed object that is an array.
+ * An <code>Equality</code> implementation that determines the equality of two objects by normalizing 
+ * both objects, if possible, and then comparing the results using default equality (as defined by
+ * the <code>areEqual</code> method of <a href="DefaultEquality.html"><code>DefaultEquality</code></a>).
  * </p>
+ * <pre class="stHighlight">
+ * import org.scalautils._
+ *
+ * class StringEquality extends NormalizedEquality[String] {
+ *   def isInstanceOfA(b: Any) = b.isInstanceOf[String]
+ *   def normalized(s: String): String = s.trim.toLowerCase
+ * }
+ * </pre>
+ *
  */
 trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
 
-// TODO: May want to still do the thing on arrays, else can't normalize arrays.
+// TODO: May want to still do the thing on arrays, else can't normalize arrays. Yup. Use DefaultEquality.
   /**
-   * Indicates whether the objects passed as <code>a</code> and <code>b</code> are equal by invoking <code>==</code> on <code>a</code>
-   * passing in <code>b</code>, treating arrays specially by invoking <code>.deep</code> on <code>a</code> and/or </code>b</code> if they
-   * are arrays, and using the result or results of invoking <code>.deep</code> in the equality check.
+   * Indicates whether the objects passed as <code>a</code> and <code>b</code> are equal by
+   * first passing <code>b</code> to the <code>isInstanceOfA</code> method. If <code>isInstanceOfA</code> returns
+   * <code>true</code>, this method casts <code>b</code> to type <code>A</code> and passes that to <code>normalized</code>
+   * to obtain <code>b</code> in  normalized form. This method then passes <code>a</code> to <code>normalized</code>, to
+   * obtain <code>a</code> in normalized form. Finally, this method invokes <code>areEqual</code> on 
+   * <code>DefaultEquality</code>, passing the normalized <code>a</code> object, and either the normalized <code>b</code>
+   * object, if <code>b</code> was an instance of <code>A</code>, else just the raw, unnormalized <code>b</code>. This
+   *  method returns the result of that <code>areEqual</code> invocation.
    *
-   * @param a a left-hand-side object being compared with another (right-hand-side one) for equality (<em>e.g.</em>, <code>a == b</code>)
-   * @param b a right-hand-side object being compared with another (left-hand-side one) for equality (<em>e.g.</em>, <code>a == b</code>)
+   * @param a a left-hand-side object being compared with another (right-hand-side one) for equality
+   * @param b a right-hand-side object being compared with another (left-hand-side one) for equality
+   * @tparam A the type whose normalized equality is being defined
    */
   final def areEqual(a: A, b: Any): Boolean = {
     val nb = if (isInstanceOfA(b)) normalized(b.asInstanceOf[A]) else b
     normalized(a) == nb
   }
+
+  /**
+   * Indicates whether the passed object is an instance of type <code>A</code>.
+   *
+   * <p>
+   * This method is invoked by sibling method <code>areEqual</code> to determine whether or not
+   * <code>b</code> can be cast to </code>A</code> so that it can be safely passed to <code>normalized</code>.
+   * To implement this method, simply call <code>b.isInstanceOf[A]</code> for the actual <code>A</code> type.
+   * For example, if you are defining a <code>NormalizedEquality[String]</code>, your <code>isInstanceOf</code>
+   * method should look like:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * def isInstanceOfA(b: Any) = b.isInstanceOf[String]
+   * </pre>
+   *
+   * <p>
+   * If you are defining a <code>NormalizedEquality[xml.Node]</code> your <code>isInstanceOf</code> method
+   * should look like:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * def isInstanceOfA(b: Any) = b.isInstanceOf[xml.Node]
+   * </pre>
+   *
+   * @param b the object to inspect to determine whether it is an instance of <code>A<code>
+   * @return true if the passed object is an instance of <code>A</code>
+   */
   def isInstanceOfA(b: Any): Boolean
-  def normalized(a: A): A
+
+  /**
+   * Normalizes the passed object.
+   *
+   * @param o the object to normalize
+   * @return the normalized form of the passed object
+   */
+  def normalized(o: A): A
 /*
   def apply(b: U): PartiallyAppliedEquality[T, U] = // This can be on Equality
     new PartiallyAppliedEquality[T, U] { // The U is for EqualityConstraints only, when used with ===

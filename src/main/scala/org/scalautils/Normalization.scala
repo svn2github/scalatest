@@ -15,8 +15,19 @@
  */
 package org.scalautils
 
+/**
+ * Defines a custom way to normalize instances of a type.
+ *
+ * @tparam A the type whose normalization is being defined
+ */
 trait Normalization[A] {
 
+  /**
+   * Normalizes the passed object.
+   *
+   * @param a the object to normalize
+   * @return the normalized form of the passed object
+   */
   def normalized(a: A): A
 }
 

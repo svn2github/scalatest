@@ -16,7 +16,7 @@
 package org.scalautils
 
 /**
- * Type class defining a custom way to determine equality for a type.
+ * Defines a custom way to determine equality for a type.
  *
  * <p>
  * For example, here's how you could define equality between <code>Double</code>s such that
@@ -58,7 +58,7 @@ package org.scalautils
  *      | 
  *      |   def areEqual(a: Double, b: Any): Boolean = {
  *      |     b match {
- *      |       case bDouble: Double =&gt; (a <= bDouble + Tol) && (a &gt;= bDouble - Tol)
+ *      |       case bDouble: Double =&gt; (a &gt;= bDouble + Tol) && (a &gt;= bDouble - Tol)
  *      |       case _ =&gt; false
  *      |     }
  *      |   }
@@ -87,6 +87,7 @@ trait Equality[A] {
    *
    * @param a a left-hand-side object being compared with another (right-hand-side one) for equality (<em>e.g.</em>, <code>a == b</code>)
    * @param b a right-hand-side object being compared with another (left-hand-side one) for equality (<em>e.g.</em>, <code>a == b</code>)
+   * @return true if the passed objects are "equal," as defined by this <code>Equality</code> instance
    */
   def areEqual(a: A, b: Any): Boolean
 } 
