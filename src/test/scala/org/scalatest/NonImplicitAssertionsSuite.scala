@@ -25,9 +25,9 @@ class NonImplicitAssertionsSuite extends FunSuite with NonImplicitAssertions {
     assert(1 + 1 == 2)
     val thrown =
       intercept[TestFailedException] {
-        expectResult(2) { 1 + 1 + 1 }
+        assertResult(2) { 1 + 1 + 1 }
       }
-    expectResult("Expected 2, but got 3") { thrown.getMessage }
+    assertResult("Expected 2, but got 3") { thrown.getMessage }
   }
   test("TypeCheckedLegacyTripleEquals should work still if mixed in after NonImplicitAssertions") {
     class MySpec extends Spec with NonImplicitAssertions with TypeCheckedLegacyTripleEquals {

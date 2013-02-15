@@ -117,59 +117,59 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
   }
 
   def testStripDollars() {
-    expectResult("MySuite") {
+    assertResult("MySuite") {
      Suite.stripDollars("line8$object$$iw$$iw$$iw$$iw$$iw$MySuite")
     }
-    expectResult("MySuite") {
+    assertResult("MySuite") {
      Suite.stripDollars("MySuite")
     }
-    expectResult("nested.MySuite") {
+    assertResult("nested.MySuite") {
      Suite.stripDollars("nested.MySuite")
     }
-    expectResult("$$$") {
+    assertResult("$$$") {
      Suite.stripDollars("$$$") 
     }
-    expectResult("DollarAtEnd") {
+    assertResult("DollarAtEnd") {
      Suite.stripDollars("DollarAtEnd$") 
     }
-    expectResult("DollarAtEnd") {
+    assertResult("DollarAtEnd") {
      Suite.stripDollars("line8$object$$iw$$iw$$iw$$iw$$iw$DollarAtEnd$")
     }
-    expectResult("MySuite$1") {
+    assertResult("MySuite$1") {
      Suite.stripDollars("MySuite$1")
     }
-    expectResult("ExampleSuite") {
+    assertResult("ExampleSuite") {
       Suite.stripDollars("$read$$iw$$iw$$iw$$iw$ExampleSuite")
     }
-    expectResult("Fred") {
+    assertResult("Fred") {
       Suite.stripDollars("$line19.$read$$iw$$iw$Fred$")
     }
   }
   
   def testDiffStrings() {
-    expectResult(("[]", "[a]")) { Suite.diffStrings("", "a") }
-    expectResult(("[a]", "[]")) { Suite.diffStrings("a", "") }
-    expectResult(("a[]", "a[b]")) { Suite.diffStrings("a", "ab") }
-    expectResult(("a[b]", "a[]")) { Suite.diffStrings("ab", "a") }
-    expectResult(("[a]", "[b]")) { Suite.diffStrings("a", "b") }
-    expectResult(("[a]big", "[]big")) { Suite.diffStrings("abig", "big") }
-    expectResult(("[]big", "[a]big")) { Suite.diffStrings("big", "abig") }
-    expectResult(("big[a]", "big[]")) { Suite.diffStrings("biga", "big") }
-    expectResult(("big[]", "big[a]")) { Suite.diffStrings("big", "biga") }
-    expectResult(("small[a]big", "small[]big")) { Suite.diffStrings("smallabig", "smallbig") }
-    expectResult(("0123456789[]0123456789", "0123456789[a]0123456789")) {
+    assertResult(("[]", "[a]")) { Suite.diffStrings("", "a") }
+    assertResult(("[a]", "[]")) { Suite.diffStrings("a", "") }
+    assertResult(("a[]", "a[b]")) { Suite.diffStrings("a", "ab") }
+    assertResult(("a[b]", "a[]")) { Suite.diffStrings("ab", "a") }
+    assertResult(("[a]", "[b]")) { Suite.diffStrings("a", "b") }
+    assertResult(("[a]big", "[]big")) { Suite.diffStrings("abig", "big") }
+    assertResult(("[]big", "[a]big")) { Suite.diffStrings("big", "abig") }
+    assertResult(("big[a]", "big[]")) { Suite.diffStrings("biga", "big") }
+    assertResult(("big[]", "big[a]")) { Suite.diffStrings("big", "biga") }
+    assertResult(("small[a]big", "small[]big")) { Suite.diffStrings("smallabig", "smallbig") }
+    assertResult(("0123456789[]0123456789", "0123456789[a]0123456789")) {
       Suite.diffStrings("01234567890123456789", "0123456789a0123456789")
     }
-    expectResult(("...01234567890123456789[]0123456789", "...01234567890123456789[a]0123456789")) {
+    assertResult(("...01234567890123456789[]0123456789", "...01234567890123456789[a]0123456789")) {
       Suite.diffStrings("X012345678901234567890123456789", "X01234567890123456789a0123456789")
     }
-    expectResult(("01234567890123456789[]01234567890123456789...", "01234567890123456789[a]01234567890123456789...")) {
+    assertResult(("01234567890123456789[]01234567890123456789...", "01234567890123456789[a]01234567890123456789...")) {
         Suite.diffStrings("0123456789012345678901234567890123456789X", "01234567890123456789a01234567890123456789X")
     }
-    expectResult(("...01234567890123456789[]01234567890123456789...", "...01234567890123456789[a]01234567890123456789...")) {
+    assertResult(("...01234567890123456789[]01234567890123456789...", "...01234567890123456789[a]01234567890123456789...")) {
         Suite.diffStrings("XXXX0123456789012345678901234567890123456789XX", "XXXX01234567890123456789a01234567890123456789XX")
     }
-    expectResult(("...01234567890123456789[]01234567890123456789...", "...01234567890123456789[a]01234567890123456789...")) {
+    assertResult(("...01234567890123456789[]01234567890123456789...", "...01234567890123456789[a]01234567890123456789...")) {
         Suite.diffStrings("X0123456789012345678901234567890123456789X", "X01234567890123456789a01234567890123456789X")
     }
   }
@@ -178,40 +178,40 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
 
     val decorateToStringValue = PrivateMethod[String]('decorateToStringValue)
 
-    expectResult("1") {
+    assertResult("1") {
       FailureMessages invokePrivate decorateToStringValue(1.toByte)
     }
-    expectResult("1") {
+    assertResult("1") {
       FailureMessages invokePrivate decorateToStringValue(1.toShort)
     }
-    expectResult("1") {
+    assertResult("1") {
       FailureMessages invokePrivate decorateToStringValue(1)
     }
-    expectResult("10") {
+    assertResult("10") {
       FailureMessages invokePrivate decorateToStringValue(10L)
     }
-    expectResult("1.0") {
+    assertResult("1.0") {
       FailureMessages invokePrivate decorateToStringValue(1.0f)
     }
-    expectResult("1.0") {
+    assertResult("1.0") {
       FailureMessages invokePrivate decorateToStringValue(1.0)
     }
-    expectResult("false") {
+    assertResult("false") {
       FailureMessages invokePrivate decorateToStringValue(false)
     }
-    expectResult("true") {
+    assertResult("true") {
       FailureMessages invokePrivate decorateToStringValue(true)
     }
-    expectResult("<(), the Unit value>") {
+    assertResult("<(), the Unit value>") {
       FailureMessages invokePrivate decorateToStringValue(())
     }
-    expectResult("\"Howdy!\"") {
+    assertResult("\"Howdy!\"") {
       FailureMessages invokePrivate decorateToStringValue("Howdy!")
     }
-    expectResult("'c'") {
+    assertResult("'c'") {
       FailureMessages invokePrivate decorateToStringValue('c')
     }
-    expectResult("Hey!") {
+    assertResult("Hey!") {
       FailureMessages invokePrivate decorateToStringValue(new AnyRef { override def toString = "Hey!"})
     }
   }
@@ -714,19 +714,19 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
   }
 
   def testAnErrorThatShouldCauseAnAbort() {
-    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new AnnotationFormatError("oops")) }
-    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new AWTError("ouch")) }
-    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new CoderMalfunctionError(new Exception)) }
-    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new FactoryConfigurationError) }
-    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new LinkageError) }
-    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new ThreadDeath) }
-    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new TransformerFactoryConfigurationError) }
-    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new VirtualMachineError {}) }
-    expectResult(true) { Suite.anErrorThatShouldCauseAnAbort(new OutOfMemoryError) }
-    expectResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
-    expectResult(false) { Suite.anErrorThatShouldCauseAnAbort(new RuntimeException) }
-    expectResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
-    expectResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
+    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new AnnotationFormatError("oops")) }
+    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new AWTError("ouch")) }
+    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new CoderMalfunctionError(new Exception)) }
+    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new FactoryConfigurationError) }
+    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new LinkageError) }
+    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new ThreadDeath) }
+    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new TransformerFactoryConfigurationError) }
+    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new VirtualMachineError {}) }
+    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new OutOfMemoryError) }
+    assertResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
+    assertResult(false) { Suite.anErrorThatShouldCauseAnAbort(new RuntimeException) }
+    assertResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
+    assertResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
   }
 }
 

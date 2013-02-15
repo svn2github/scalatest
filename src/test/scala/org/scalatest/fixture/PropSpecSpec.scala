@@ -34,7 +34,7 @@ class PropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         }
       }
 
-      expectResult(List("that", "this")) {
+      assertResult(List("that", "this")) {
         a.testNames.iterator.toList
       }
 
@@ -43,7 +43,7 @@ class PropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         def withFixture(test: OneArgTest) {}
       }
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -56,7 +56,7 @@ class PropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         }
       }
 
-      expectResult(List("this", "that")) {
+      assertResult(List("this", "that")) {
         c.testNames.iterator.toList
       }
     }

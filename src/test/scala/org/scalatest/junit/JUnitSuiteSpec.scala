@@ -30,13 +30,13 @@ class JUnitSuiteSpec extends FunSpec with SharedHelpers {
         @Test def doThat() {}
       }
 
-      expectResult(List("doThat", "doThis")) {
+      assertResult(List("doThat", "doThis")) {
         a.testNames.iterator.toList
       }
 
       val b = new JUnitSuite {}
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -45,7 +45,7 @@ class JUnitSuiteSpec extends FunSpec with SharedHelpers {
         @Test def doThis() {}
       }
 
-      expectResult(List("doThat", "doThis")) {
+      assertResult(List("doThat", "doThis")) {
         c.testNames.iterator.toList
       }
     }

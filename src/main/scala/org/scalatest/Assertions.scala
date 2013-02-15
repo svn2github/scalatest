@@ -764,12 +764,11 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
   }
 */
 
-
   /**
-   * Expect that the value passed as <code>expected</code> equals the value passed as <code>actual</code>.
+   * Assert that the value passed as <code>expected</code> equals the value passed as <code>actual</code>.
    * If the <code>actual</code> equals the <code>expected</code>
-   * (as determined by <code>==</code>), <code>expectResult</code> returns
-   * normally. Else, if <code>actual</code> is not equal to <code>expected</code>, <code>expectResult</code> throws a
+   * (as determined by <code>==</code>), <code>assertResult</code> returns
+   * normally. Else, if <code>actual</code> is not equal to <code>expected</code>, <code>assertResult</code> throws a
    * <code>TestFailedException</code> whose detail message includes the expected and actual values, as well as the <code>String</code>
    * obtained by invoking <code>toString</code> on the passed <code>clue</code>.
    *
@@ -778,6 +777,24 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
    * @param actual the actual value, which should equal the passed <code>expected</code> value
    * @throws TestFailedException if the passed <code>actual</code> value does not equal the passed <code>expected</code> value.
    */
+  def assertResult(expected: Any, clue: Any)(actual: Any) {
+    if (actual != expected) {
+      val (act, exp) = Suite.getObjectsForFailureMessage(actual, expected)
+      val s = FailureMessages("expectedButGot", exp, act)
+      throw newAssertionFailedException(Some(clue + "\n" + s), None, 4)
+    }
+  }
+
+  /**
+   * This <code>expectResult</code> method has been deprecated; Please use <code>assertResult</code> instead.
+   *
+   * <p>
+   * To get rid of the deprecation warning, simply replace <code>expectResult</code> with
+   * <code>assertResult</code>. The name <code>expectResult</code> will be used for a different purposes in
+   * a future version of ScalaTest.
+   * </p>
+   */
+  @deprecated("This expectResult method has been deprecated. Please replace all invocations of expectResult with an identical invocation of assertResult instead.")
   def expectResult(expected: Any, clue: Any)(actual: Any) {
     if (actual != expected) {
       val (act, exp) = Suite.getObjectsForFailureMessage(actual, expected)
@@ -805,16 +822,34 @@ THIS DOESN'T OVERLOAD. I THINK I'LL EITHER NEED TO USE interceptWithMessage OR J
   }
 
   /** 
-   * Expect that the value passed as <code>expected</code> equals the value passed as <code>actual</code>.
+   * Assert that the value passed as <code>expected</code> equals the value passed as <code>actual</code>.
    * If the <code>actual</code> value equals the <code>expected</code> value
-   * (as determined by <code>==</code>), <code>expectResult</code> returns
-   * normally. Else, <code>expect</code> throws a
+   * (as determined by <code>==</code>), <code>assertResult</code> returns
+   * normally. Else, <code>assertResult</code> throws a
    * <code>TestFailedException</code> whose detail message includes the expected and actual values.
    *
    * @param expected the expected value
    * @param actual the actual value, which should equal the passed <code>expected</code> value
    * @throws TestFailedException if the passed <code>actual</code> value does not equal the passed <code>expected</code> value.
    */
+  def assertResult(expected: Any)(actual: Any) {
+    if (actual != expected) {
+      val (act, exp) = Suite.getObjectsForFailureMessage(actual, expected)
+      val s = FailureMessages("expectedButGot", exp, act)
+      throw newAssertionFailedException(Some(s), None, 4)
+    }
+  }
+
+  /**
+   * This <code>expectResult</code> method has been deprecated; Please use <code>assertResult</code> instead.
+   *
+   * <p>
+   * To get rid of the deprecation warning, simply replace <code>expectResult</code> with
+   * <code>assertResult</code>. The name <code>expectResult</code> will be used for a different purposes in
+   * a future version of ScalaTest.
+   * </p>
+   */
+  @deprecated("This expectResult method has been deprecated. Please replace all invocations of expectResult with an identical invocation of assertResult instead.")
   def expectResult(expected: Any)(actual: Any) {
     if (actual != expected) {
       val (act, exp) = Suite.getObjectsForFailureMessage(actual, expected)

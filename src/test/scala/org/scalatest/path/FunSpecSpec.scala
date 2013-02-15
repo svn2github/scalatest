@@ -36,13 +36,13 @@ class FunSpecSpec extends org.scalatest.FreeSpec with SharedHelpers with GivenWh
       }
       val a = new AFunSpec
 
-      expectResult(List("should test this", "should test that")) {
+      assertResult(List("should test this", "should test that")) {
         a.testNames.iterator.toList
       }
 
       val b = new PathFunSpec {}
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -53,7 +53,7 @@ class FunSpecSpec extends org.scalatest.FreeSpec with SharedHelpers with GivenWh
       }
       val c = new CFunSpec
 
-      expectResult(List("should test that", "should test this")) {
+      assertResult(List("should test that", "should test this")) {
         c.testNames.iterator.toList
       }
 
@@ -66,7 +66,7 @@ class FunSpecSpec extends org.scalatest.FreeSpec with SharedHelpers with GivenWh
       }
       val d = new DFunSpec
 
-      expectResult(List("A Tester should test that", "A Tester should test this")) {
+      assertResult(List("A Tester should test that", "A Tester should test this")) {
         d.testNames.iterator.toList
       }
 
@@ -79,7 +79,7 @@ class FunSpecSpec extends org.scalatest.FreeSpec with SharedHelpers with GivenWh
       }
       val e = new EFunSpec
 
-      expectResult(List("A Tester should test this", "A Tester should test that")) {
+      assertResult(List("A Tester should test this", "A Tester should test that")) {
         e.testNames.iterator.toList
       }
     }

@@ -42,13 +42,13 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def `test: that`() {}
       }
 
-      expectResult(List(encode("test: that"), encode("test: this"))) {
+      assertResult(List(encode("test: that"), encode("test: this"))) {
         a.testNames.iterator.toList
       }
 
       val b = new Suite {}
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -57,7 +57,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         def `test: this`() {}
       }
 
-      expectResult(List(encode("test: that"), encode("test: this"))) {
+      assertResult(List(encode("test: that"), encode("test: this"))) {
         c.testNames.iterator.toList
       }
     }

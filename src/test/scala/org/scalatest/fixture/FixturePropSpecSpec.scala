@@ -32,7 +32,7 @@ class FixturePropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         }
       }
 
-      expectResult(List("that", "this")) {
+      assertResult(List("that", "this")) {
         a.testNames.iterator.toList
       }
 
@@ -41,7 +41,7 @@ class FixturePropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         def withFixture(test: OneArgTest) {}
       }
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -54,7 +54,7 @@ class FixturePropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         }
       }
 
-      expectResult(List("this", "that")) {
+      assertResult(List("this", "that")) {
         c.testNames.iterator.toList
       }
     }
@@ -178,7 +178,7 @@ class FixturePropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         ignore("test this") { fixture => }
         property("test that") { fixture => }
       }
-      expectResult(Map("test this" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.Ignore"))) {
         a.tags
       }
 
@@ -188,7 +188,7 @@ class FixturePropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         property("test this") { fixture => }
         ignore("test that") { fixture => }
       }
-      expectResult(Map("test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test that" -> Set("org.scalatest.Ignore"))) {
         b.tags
       }
 
@@ -198,7 +198,7 @@ class FixturePropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         ignore("test this") { fixture => }
         ignore("test that") { fixture => }
       }
-      expectResult(Map("test this" -> Set("org.scalatest.Ignore"), "test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.Ignore"), "test that" -> Set("org.scalatest.Ignore"))) {
         c.tags
       }
 
@@ -208,7 +208,7 @@ class FixturePropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         property("test this", mytags.SlowAsMolasses) { fixture => }
         ignore("test that", mytags.SlowAsMolasses) { fixture => }
       }
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
         d.tags
       }
 
@@ -216,7 +216,7 @@ class FixturePropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         type FixtureParam = String
         def withFixture(test: OneArgTest) {}
       }
-      expectResult(Map()) {
+      assertResult(Map()) {
         e.tags
       }
 
@@ -226,7 +226,7 @@ class FixturePropSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester
         property("test this", mytags.SlowAsMolasses, mytags.WeakAsAKitten) { fixture => }
         property("test that", mytags.SlowAsMolasses) { fixture => }
       }
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         f.tags
       }
     }

@@ -159,7 +159,7 @@ class TestFailedExceptionWithImportSpec extends FunSpec {
 
     it("should give the proper line on expect(1, \"some message\") { 2 }") {
       try {
-        expectResult(1, "some message") { 2 }
+        assertResult(1, "some message") { 2 }
       }
       catch {
         case e: TestFailedException =>

@@ -39,7 +39,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         }
       }
 
-      expectResult(List("Something should do that", "Something should do this")) {
+      assertResult(List("Something should do that", "Something should do this")) {
         a.testNames.iterator.toList
       }
 
@@ -48,7 +48,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         def withFixture(test: OneArgTest) {}
       }
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -63,7 +63,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         }
       }
 
-      expectResult(List("Something should do this", "Something should do that")) {
+      assertResult(List("Something should do this", "Something should do that")) {
         c.testNames.iterator.toList
       }
     }
@@ -180,7 +180,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         "test this" ignore { fixture => }
         "test that" is (pending)
       }
-      expectResult(Map("test this" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.Ignore"))) {
         a.tags
       }
 
@@ -190,7 +190,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         "test this" is (pending)
         "test that" ignore { fixture => }
       }
-      expectResult(Map("test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test that" -> Set("org.scalatest.Ignore"))) {
         b.tags
       }
 
@@ -200,7 +200,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         "test this" ignore { fixture => }
         "test that" ignore { fixture => }
       }
-      expectResult(Map("test this" -> Set("org.scalatest.Ignore"), "test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.Ignore"), "test that" -> Set("org.scalatest.Ignore"))) {
         c.tags
       }
 
@@ -210,7 +210,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         "test this" taggedAs(mytags.SlowAsMolasses) is (pending)
         "test that" taggedAs(mytags.SlowAsMolasses) ignore { fixture => }
       }
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
         d.tags
       }
 
@@ -220,7 +220,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         "test this" is (pending)
         "test that" is (pending)
       }
-      expectResult(Map()) {
+      assertResult(Map()) {
         e.tags
       }
 
@@ -230,7 +230,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         "test this" taggedAs(mytags.SlowAsMolasses, mytags.WeakAsAKitten) is (pending)
         "test that" taggedAs(mytags.SlowAsMolasses) is (pending)
       }
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         f.tags
       }
 
@@ -240,7 +240,7 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         "test this" taggedAs(mytags.SlowAsMolasses, mytags.WeakAsAKitten) is (pending)
         "test that" taggedAs(mytags.SlowAsMolasses) is (pending)
       }
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         g.tags
       }
     }

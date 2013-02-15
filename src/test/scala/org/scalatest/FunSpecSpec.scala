@@ -32,13 +32,13 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         it("should test that") {}
       }
 
-      expectResult(List("should test this", "should test that")) {
+      assertResult(List("should test this", "should test that")) {
         a.testNames.iterator.toList
       }
 
       val b = new FunSpec {}
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -47,7 +47,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         it("should test this") {}
       }
 
-      expectResult(List("should test that", "should test this")) {
+      assertResult(List("should test that", "should test this")) {
         c.testNames.iterator.toList
       }
 
@@ -58,7 +58,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
 
-      expectResult(List("A Tester should test that", "A Tester should test this")) {
+      assertResult(List("A Tester should test that", "A Tester should test this")) {
         d.testNames.iterator.toList
       }
 
@@ -69,7 +69,7 @@ class FunSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
 
-      expectResult(List("A Tester should test this", "A Tester should test that")) {
+      assertResult(List("A Tester should test this", "A Tester should test that")) {
         e.testNames.iterator.toList
       }
     }

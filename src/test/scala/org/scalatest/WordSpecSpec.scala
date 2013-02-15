@@ -173,13 +173,13 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "it should test that" in {}
       }
 
-      expectResult(List("it should test this", "it should test that")) {
+      assertResult(List("it should test this", "it should test that")) {
         a.testNames.iterator.toList
       }
 
       val b = new WordSpec {}
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -188,7 +188,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "it should test this" in {}
       }
 
-      expectResult(List("it should test that", "it should test this")) {
+      assertResult(List("it should test that", "it should test this")) {
         c.testNames.iterator.toList
       }
 
@@ -199,7 +199,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
 
-      expectResult(List("A Tester should test that", "A Tester should test this")) {
+      assertResult(List("A Tester should test that", "A Tester should test this")) {
         d.testNames.iterator.toList
       }
 
@@ -210,7 +210,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         }
       }
 
-      expectResult(List("A Tester should test this", "A Tester should test that")) {
+      assertResult(List("A Tester should test this", "A Tester should test that")) {
         e.testNames.iterator.toList
       }
     }
@@ -355,7 +355,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test this" ignore {}
         "test that" is (pending)
       }
-      expectResult(Map("test this" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.Ignore"))) {
         a.tags
       }
 
@@ -363,7 +363,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test this" is (pending)
         "test that" ignore {}
       }
-      expectResult(Map("test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test that" -> Set("org.scalatest.Ignore"))) {
         b.tags
       }
 
@@ -371,7 +371,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test this" ignore {}
         "test that" ignore {}
       }
-      expectResult(Map("test this" -> Set("org.scalatest.Ignore"), "test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.Ignore"), "test that" -> Set("org.scalatest.Ignore"))) {
         c.tags
       }
 
@@ -379,7 +379,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test this" taggedAs(mytags.SlowAsMolasses) is (pending)
         "test that" taggedAs(mytags.SlowAsMolasses) ignore {}
       }
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
         d.tags
       }
 
@@ -387,7 +387,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test this" is (pending)
         "test that" is (pending)
       }
-      expectResult(Map()) {
+      assertResult(Map()) {
         e.tags
       }
 
@@ -395,7 +395,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test this" taggedAs(mytags.SlowAsMolasses, mytags.WeakAsAKitten) is (pending)
         "test that" taggedAs(mytags.SlowAsMolasses) in  {}
       }
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         f.tags
       }
 
@@ -403,7 +403,7 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
         "test this" taggedAs(mytags.SlowAsMolasses, mytags.WeakAsAKitten) is (pending)
         "test that" taggedAs(mytags.SlowAsMolasses) in  {}
       }
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         g.tags
       }
     }

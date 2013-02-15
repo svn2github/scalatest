@@ -105,13 +105,13 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         def `it should do that`(fixture: String) {}
       }
 
-      expectResult(List("it should do that", "it should do this")) {
+      assertResult(List("it should do that", "it should do this")) {
         a.testNames.iterator.toList
       }
 
       val b = new Spec with StringFixture { }
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -122,7 +122,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         def `test: this`(fixture: String) {}
       }
 
-      expectResult(List("test: that", "test: this")) {
+      assertResult(List("test: that", "test: this")) {
         c.testNames.iterator.toList
       }
     }
@@ -137,7 +137,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         }
       }
 
-      expectResult(List("A Tester should test that", "A Tester should test this")) {
+      assertResult(List("A Tester should test that", "A Tester should test this")) {
         a.testNames.iterator.toList
       }
 
@@ -156,7 +156,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
         }
       }
 
-      expectResult(List("A Tester must be able to test that", "A Tester must be able to test this", "A Tester should be able to test that", "A Tester should be able to test this")) {
+      assertResult(List("A Tester must be able to test that", "A Tester must be able to test this", "A Tester should be able to test that", "A Tester should be able to test this")) {
         b.testNames.iterator.toList
       }
     }
@@ -587,7 +587,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) { pending }
         }
       }
-      expectResult(Map("This Spec should test this" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("This Spec should test this" -> Set("org.scalatest.Ignore"))) {
         a.tags
       }
 
@@ -598,7 +598,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("This Spec should test that" -> Set("org.scalatest.Ignore"))) {
         b.tags
       }
 
@@ -610,7 +610,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test this" -> Set("org.scalatest.Ignore"), "This Spec should test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("This Spec should test this" -> Set("org.scalatest.Ignore"), "This Spec should test that" -> Set("org.scalatest.Ignore"))) {
         c.tags
       }
 
@@ -623,7 +623,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test this" -> Set("org.scalatest.SlowAsMolasses"), "This Spec should test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("This Spec should test this" -> Set("org.scalatest.SlowAsMolasses"), "This Spec should test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
         d.tags
       }
 
@@ -633,7 +633,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) { pending }
         }
       }
-      expectResult(Map()) {
+      assertResult(Map()) {
         e.tags
       }
 
@@ -646,7 +646,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "This Spec should test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("This Spec should test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "This Spec should test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         f.tags
       }
 
@@ -659,7 +659,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
           def `test that`(fixture: String) {}
         }
       }
-      expectResult(Map("This Spec should test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "This Spec should test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("This Spec should test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "This Spec should test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         g.tags
       }
     }

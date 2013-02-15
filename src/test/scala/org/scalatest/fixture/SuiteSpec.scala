@@ -51,7 +51,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
         def testThat(fixture: String) {}
       }
 
-      expectResult(List("testThat(FixtureParam)", "testThis(FixtureParam)")) {
+      assertResult(List("testThat(FixtureParam)", "testThis(FixtureParam)")) {
         a.testNames.iterator.toList
       }
 
@@ -60,7 +60,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
         def withFixture(fun: String => Unit, config: Map[String, Any]) {}
       }
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -71,7 +71,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
         def testThis(fixture: String) {}
       }
 
-      expectResult(List("testThat(FixtureParam)", "testThis(FixtureParam)")) {
+      assertResult(List("testThat(FixtureParam)", "testThis(FixtureParam)")) {
         c.testNames.iterator.toList
       }
     }
@@ -134,7 +134,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
         def testThat(fixture: String) {}
       }
 
-      expectResult(List("testThat(FixtureParam)", "testThis(FixtureParam)")) {
+      assertResult(List("testThat(FixtureParam)", "testThis(FixtureParam)")) {
         a.testNames.iterator.toList
       }
 
@@ -143,7 +143,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
         def withFixture(test: OneArgTest) {}
       }
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -154,7 +154,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
         def testThis(fixture: String) {}
       }
 
-      expectResult(List("testThat(FixtureParam)", "testThis(FixtureParam)")) {
+      assertResult(List("testThat(FixtureParam)", "testThis(FixtureParam)")) {
         c.testNames.iterator.toList
       }
     }

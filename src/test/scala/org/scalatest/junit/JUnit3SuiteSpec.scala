@@ -29,13 +29,13 @@ class JUnit3SuiteSpec extends FunSpec with SharedHelpers {
         def testThat() {}
       }
 
-      expectResult(List("testThat", "testThis")) {
+      assertResult(List("testThat", "testThis")) {
         a.testNames.iterator.toList
       }
 
       val b = new JUnit3Suite {}
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -44,7 +44,7 @@ class JUnit3SuiteSpec extends FunSpec with SharedHelpers {
         def testThis() {}
       }
 
-      expectResult(List("testThat", "testThis")) {
+      assertResult(List("testThat", "testThis")) {
         c.testNames.iterator.toList
       }
     }

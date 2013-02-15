@@ -135,14 +135,14 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val a = new AFreeSpec
 
-      expectResult(List("it should test this", "it should test that")) {
+      assertResult(List("it should test this", "it should test that")) {
         a.testNames.iterator.toList
       }
 
       class BFreeSpec extends PathFreeSpec
       val b = new BFreeSpec
 
-      expectResult(List[String]()) {
+      assertResult(List[String]()) {
         b.testNames.iterator.toList
       }
 
@@ -153,7 +153,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val c = new CFreeSpec
 
-      expectResult(List("it should test that", "it should test this")) {
+      assertResult(List("it should test that", "it should test this")) {
         c.testNames.iterator.toList
       }
 
@@ -166,7 +166,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val d = new DFreeSpec
 
-      expectResult(List("A Tester should test that", "A Tester should test this")) {
+      assertResult(List("A Tester should test that", "A Tester should test this")) {
         d.testNames.iterator.toList
       }
 
@@ -179,7 +179,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
       }
       val e = new EFreeSpec
 
-      expectResult(List("A Tester should test this", "A Tester should test that")) {
+      assertResult(List("A Tester should test this", "A Tester should test that")) {
         e.testNames.iterator.toList
       }
     }
@@ -337,7 +337,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         override def newInstance = new AFreeSpec
       }
       val a = new AFreeSpec
-      expectResult(Map("test this" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.Ignore"))) {
         a.tags
       }
 
@@ -347,7 +347,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         override def newInstance = new BFreeSpec
       }
       val b = new BFreeSpec
-      expectResult(Map("test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test that" -> Set("org.scalatest.Ignore"))) {
         b.tags
       }
 
@@ -357,7 +357,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         override def newInstance = new CFreeSpec
       }
       val c = new CFreeSpec
-      expectResult(Map("test this" -> Set("org.scalatest.Ignore"), "test that" -> Set("org.scalatest.Ignore"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.Ignore"), "test that" -> Set("org.scalatest.Ignore"))) {
         c.tags
       }
 
@@ -367,7 +367,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         override def newInstance = new DFreeSpec
       }
       val d = new DFreeSpec
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses"), "test that" -> Set("org.scalatest.Ignore", "org.scalatest.SlowAsMolasses"))) {
         d.tags
       }
 
@@ -377,7 +377,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         override def newInstance = new EFreeSpec
       }
       val e = new EFreeSpec
-      expectResult(Map()) {
+      assertResult(Map()) {
         e.tags
       }
 
@@ -387,7 +387,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         override def newInstance = new FFreeSpec
       }
       val f = new FFreeSpec
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         f.tags
       }
 
@@ -397,7 +397,7 @@ class FreeSpecSpec extends org.scalatest.FunSpec with SharedHelpers with GivenWh
         override def newInstance = new GFreeSpec
       }
       val g = new GFreeSpec
-      expectResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
+      assertResult(Map("test this" -> Set("org.scalatest.SlowAsMolasses", "org.scalatest.WeakAsAKitten"), "test that" -> Set("org.scalatest.SlowAsMolasses"))) {
         g.tags
       }
     }
