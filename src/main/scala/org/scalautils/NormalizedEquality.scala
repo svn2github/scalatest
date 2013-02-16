@@ -32,7 +32,6 @@ package org.scalautils
  */
 trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
 
-// TODO: May want to still do the thing on arrays, else can't normalize arrays. Yup. Use DefaultEquality.
   /**
    * Indicates whether the objects passed as <code>a</code> and <code>b</code> are equal by
    * first passing <code>b</code> to the <code>isInstanceOfA</code> method. If <code>isInstanceOfA</code> returns
