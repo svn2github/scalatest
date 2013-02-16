@@ -17,10 +17,10 @@ package org.scalautils
 
 import org.scalatest._
 
-class DecidedBySpec extends Spec with NonImplicitAssertions with TripleEquals with DecidedBy {
+class DecidedBySpec extends Spec with NonImplicitAssertions with TripleEquals with DecidedBy with StringNormalizations {
 
   object `The decidedBy syntax` {
-    def `should enable users to explicitly chose an Equality for a === use` { 
+    def `should enable users to explicitly choose an Equality for a === use` { 
         
       assert(3 === 3)
       assert(3 !== 4)
@@ -31,7 +31,16 @@ class DecidedBySpec extends Spec with NonImplicitAssertions with TripleEquals wi
       assert(3 === 4)
       // And now with decidedBy to go back to defaultEquality
       assert(3 === (3 decidedBy defaultEquality[Int]))
+      assert(!(3 === (4 decidedBy defaultEquality[Int])))
       assert(3 !== (4 decidedBy defaultEquality[Int]))
+      assert(!(3 !== (3 decidedBy defaultEquality[Int])))
+    }
+  }
+  object `The whenBothAre syntax` {
+    def `should enable users to explicitly choose a Normalization for a === use` { 
+      assert("hello" !== "Hello")
+      assert("hello" === ("Hello" whenBothAre lowerCased))
+      assert("hello" !== ("Helloooo" whenBothAre lowerCased))
     }
   }
 }

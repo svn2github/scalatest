@@ -15,8 +15,18 @@
  */
 package org.scalautils
 
-final class WhenBothAreResult[B](normalization: Normalization[B], b: B) {
+trait StringNormalizations {
 
-  def isEqual(a: B): Boolean = Equality(normalization).areEqual(a, b)
+  val lowerCased: Normalization[String] =
+    new Normalization[String] {
+      def isInstanceOfA(b: Any) = b.isInstanceOf[String]
+      def normalized(s: String): String = s.toLowerCase
+    }
+  val trimmed: Normalization[String] =
+    new Normalization[String] {
+      def isInstanceOfA(b: Any) = b.isInstanceOf[String]
+      def normalized(s: String): String = s.trim
+    }
 } 
 
+object StringNormalizations extends StringNormalizations

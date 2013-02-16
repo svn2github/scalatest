@@ -75,6 +75,7 @@ trait DecidedBy {
      * @return the object passed to the constructor
      */
     def decidedBy[A](equalityOfA: Equality[A]): EqualityCandidate[A, B] = new EqualityCandidate(equalityOfA, b)
+    def whenBothAre(normalization: Normalization[B]): WhenBothAreResult[B] = new WhenBothAreResult(normalization, b)
   }
 
   /**

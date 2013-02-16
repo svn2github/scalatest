@@ -78,6 +78,11 @@ package org.scalautils
  * res1: Boolean = true
  * </pre>
  *
+ * <p>
+ * <em>Note: The <code>Equality</code> type class was inspired in part by the <code>Equal</code> type class of the 
+ * <a href="http://code.google.com/p/scalaz/" target="_blank"><code>scalaz</code></a> project.</em>
+ * </p>
+ *
  * @tparam A the type whose equality is being customized
  */
 trait Equality[A] {
@@ -91,4 +96,14 @@ trait Equality[A] {
    */
   def areEqual(a: A, b: Any): Boolean
 } 
+
+object Equality {
+  def apply[A](normalization: Normalization[A]): Equality[A] = {
+    new NormalizedEquality[A] {
+      def isInstanceOfA(b: Any): Boolean = normalization.isInstanceOfA(b)
+      def normalized(a: A): A = normalization.normalized(a)
+    }
+  }
+}
+
 
