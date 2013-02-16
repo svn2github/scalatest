@@ -17,11 +17,11 @@ package org.scalautils
 
 import org.scalatest._
 
-class DecidedBySpec extends Spec with NonImplicitAssertions with TripleEquals with DecidedBy with StringNormalizations {
+class DecidersSpec extends Spec with NonImplicitAssertions with TripleEquals with Deciders with StringNormalizations {
 
   object `The decidedBy syntax` {
     def `should enable users to explicitly choose an Equality for a === use` { 
-        
+  
       assert(3 === 3)
       assert(3 !== 4)
       implicit val e = new Equality[Int] {

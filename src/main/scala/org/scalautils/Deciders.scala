@@ -57,7 +57,7 @@ package org.scalautils
  * </pre>
  * 
  */
-trait DecidedBy {
+trait Deciders {
 
   /**
    * Wrapper class with an <code>asAny</code> method that returns the passed object
@@ -67,7 +67,7 @@ trait DecidedBy {
    *
    * @author Bill Venners
    */
-  class DecidedByWrapper[B](b: B) {
+  class DecidersWrapper[B](b: B) {
 
     /**
      * Returns the object, <code>o</code>, passed to the constructor.
@@ -82,7 +82,7 @@ trait DecidedBy {
    * Implicit conversion that adds an <code>asAny</code> method to an object, which returns
    * the exact same object but as type <code>Any</code>.
    */
-  implicit def convertToDecidedByWrapper[B](b: B): DecidedByWrapper[B] = new DecidedByWrapper(b)
+  implicit def convertToDecidersWrapper[B](b: B): DecidersWrapper[B] = new DecidersWrapper(b)
 }
 
 /**
@@ -121,5 +121,5 @@ trait DecidedBy {
  * scala&gt;
  * </pre>
  */
-object DecidedBy extends DecidedBy
+object Deciders extends Deciders
 
