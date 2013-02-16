@@ -198,7 +198,7 @@ trait BeMatcher[-T] extends Function1[T, MatchResult] { thisBeMatcher =>
 /**
  * Companion object for trait <code>BeMatcher</code> that provides a
  * factory method that creates a <code>BeMatcher[T]</code> from a
- * passed function of type <code>(T => MatchResult)</code>.
+ * passed function of type <code>(T =&gt; MatchResult)</code>.
  *
  * @author Bill Venners
  */
@@ -206,7 +206,7 @@ object BeMatcher {
 
   /**
    * Factory method that creates a <code>BeMatcher[T]</code> from a
-   * passed function of type <code>(T => MatchResult)</code>.
+   * passed function of type <code>(T =&gt; MatchResult)</code>.
    *
    * @author Bill Venners
    */
