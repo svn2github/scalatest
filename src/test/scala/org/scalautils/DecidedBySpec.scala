@@ -38,9 +38,36 @@ class DecidedBySpec extends Spec with NonImplicitAssertions with TripleEquals wi
   }
   object `The whenBothAre syntax` {
     def `should enable users to explicitly choose a Normalization for a === use` { 
-      assert("hello" !== "Hello")
-      assert("hello" === ("Hello" whenBothAre lowerCased))
+
+      assert("hello" !== "HELLO")
+      assert("hello" === ("HELLo" whenBothAre lowerCased))
+
+      assert("HELLO" !== "hello")
+      assert("HELLO" === ("hello" whenBothAre lowerCased))
+
+      assert("HeLlO" !== "hElLo")
+      assert("HeLlO" === ("hElLo" whenBothAre lowerCased))
+
       assert("hello" !== ("Helloooo" whenBothAre lowerCased))
+    }
+    def `should enable users to explicitly choose a Normalization for a === use by composition, with or without parens` { 
+      assert("hello" !== "HELLO")
+      assert("hello" === (" HELLo " whenBothAre (lowerCased and trimmed)))
+
+      assert("HELLO" !== "hello")
+      assert("  HELLO " === ("hello" whenBothAre (lowerCased and trimmed)))
+
+      assert("  HeLlO" !== "HeLlO\n")
+      assert("  HeLlO" === ("HeLlO\n" whenBothAre (lowerCased and trimmed)))
+
+      assert("hello" !== "HELLO")
+      assert("hello" === (" HELLo " whenBothAre lowerCased and trimmed))
+
+      assert("HELLO" !== "hello")
+      assert("  HELLO " === ("hello" whenBothAre lowerCased and trimmed))
+
+      assert("  HeLlO" !== "HeLlO\n")
+      assert("  HeLlO" === ("HeLlO\n" whenBothAre lowerCased and trimmed))
     }
   }
 }

@@ -25,7 +25,7 @@ package org.scalautils
  * 
  * @tparam A the type whose normalization is being defined
  */
-trait Normalization[A] {
+trait Normalization[A] { thisNormalization =>
 
 // TODO: Add an example of Array[String] isInstanceOfA here and in NormalizedEquality
   /**
@@ -64,5 +64,13 @@ trait Normalization[A] {
    * @return the normalized form of the passed object
    */
   def normalized(a: A): A
+
+  final def and(other: Normalization[A]): Normalization[A] =
+    new Normalization[A] {
+      // Note in Scaladoc that we just use this one. (They should be the same).
+      def isInstanceOfA(b: Any): Boolean = thisNormalization.isInstanceOfA(b)
+      // Note in Scaladoc what order, and recommend people don't do side effects anyway.
+      def normalized(a: A): A = other.normalized(thisNormalization.normalized(a))
+    }
 }
 

@@ -89,5 +89,16 @@ class NormalizedEqualitySpec extends Spec with NonImplicitAssertions {
       assert((new NormalizedArrayOfStringEquality).areEqual(a, b))
     }
   }
+  object `Normalizations` {
+    def `should be composable with and` {
+      import StringNormalizations._
+      assert(lowerCased.normalized("HowdY") == "howdy")
+      assert(lowerCased.normalized("HowdY") != "howdy padna!")
+      assert(trimmed.normalized("\nhowdy  ") == "howdy")
+      assert(trimmed.normalized("\nHowdY  ") != "howdy")
+      assert((trimmed and lowerCased).normalized("\nHowdY  ") == "howdy")
+      assert((trimmed and lowerCased).normalized("\nHowdY  ") != "rowdy")
+    }
+  }
 }
 

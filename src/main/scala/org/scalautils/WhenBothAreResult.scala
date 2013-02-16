@@ -15,8 +15,11 @@
  */
 package org.scalautils
 
-final class EqualityCandidate[A, B](equality: Equality[A], b: B) {
+final class WhenBothAreResult[B](normalization: Normalization[B], b: B) {
 
-  def isEqual(a: A): Boolean = equality.areEqual(a, b)
+  def isEqual(a: B): Boolean = Equality(normalization).areEqual(a, b)
+
+  def and(otherNormalization: Normalization[B]): WhenBothAreResult[B] = 
+    new WhenBothAreResult(normalization and otherNormalization, b)
 } 
 
