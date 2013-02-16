@@ -49,7 +49,7 @@ trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
    */
   final def areEqual(a: A, b: Any): Boolean = {
     val nb = if (isInstanceOfA(b)) normalized(b.asInstanceOf[A]) else b
-    normalized(a) == nb
+    (new DefaultEquality[A]).areEqual(normalized(a), nb)
   }
 
   /**

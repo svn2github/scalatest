@@ -68,13 +68,25 @@ class NormalizedEqualitySpec extends Spec with NonImplicitAssertions {
       assert(b.isNormalized)
     }
 
-    @Ignore def `should call .deep first if left side, right side, or both are Arrays` {
-      val a = Array(1, 2, 3)
-      val b = Array(1, 2, 3)
-      val v = Vector(1, 2, 3)
-      assert((new DefaultEquality[Array[Int]]).areEqual(a, v))
-      assert((new DefaultEquality[Vector[Int]]).areEqual(v, a))
-      assert((new DefaultEquality[Array[Int]]).areEqual(a, b))
+    def `should call .deep first if left side, right side, or both are Arrays` {
+
+      class NormalizedArrayOfStringEquality extends NormalizedEquality[Array[String]] {
+        def isInstanceOfA(b: Any): Boolean = {
+          if (b.isInstanceOf[Array[_]]) {
+            val arr = b.asInstanceOf[Array[_]]
+            if (arr.isEmpty) true // If it is empty, it doesn't matter what its element type is
+            else arr(0).isInstanceOf[String]
+          }
+          else false
+        }
+        def normalized(arr: Array[String]): Array[String] = arr.map(_.trim.toLowerCase)
+      }
+
+      val a = Array(" hi", "ThErE    ", "DuDeS  ")
+      val b = Array("HI", "there", "  dUdEs")
+      val v = Vector("hi", "there", "dudes")
+      assert((new NormalizedArrayOfStringEquality).areEqual(a, v))
+      assert((new NormalizedArrayOfStringEquality).areEqual(a, b))
     }
   }
 }
