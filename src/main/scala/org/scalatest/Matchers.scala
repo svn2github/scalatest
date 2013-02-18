@@ -6638,7 +6638,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             MatchResult(
               equality.areEqual(left, right),
               FailureMessages("didNotEqual", leftee, rightee),
-              FailureMessages("equaled", left, right)
+              FailureMessages("equaled", leftee, rightee)
             )
           }
         }
