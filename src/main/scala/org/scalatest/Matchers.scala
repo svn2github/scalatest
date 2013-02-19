@@ -9604,13 +9604,29 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
           if (right.isEmpty) // right is empty, so the element not found
             false
           else {
-            val newRemains = right.takeWhile(_ != nextLeft)
-            checkEqual(left, right, remains ++: newRemains.toIndexedSeq)
+            val (newRemains, found) = takeUntilFound(right, nextLeft, IndexedSeq.empty)
+            if (found)
+              checkEqual(left, right, remains ++: newRemains.toIndexedSeq)
+            else // Not found in right iterator
+              false
           }
         }
       }
       else
-        right.isEmpty && remains.isEmpty
+        left.isEmpty && right.isEmpty && remains.isEmpty
+    }
+    
+    @tailrec
+    private def takeUntilFound(itr: Iterator[T], target: T, taken: IndexedSeq[T]): (IndexedSeq[T], Boolean) = {
+      if (itr.hasNext) {
+        val next = itr.next
+        if (next == target)
+          (taken, true)
+        else
+          takeUntilFound(itr, target, taken :+ next)
+      }
+      else
+        (taken, false)
     }
     
     /**

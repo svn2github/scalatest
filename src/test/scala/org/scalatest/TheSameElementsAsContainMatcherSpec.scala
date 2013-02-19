@@ -276,6 +276,26 @@ class TheSameElementsAsContainMatcherSpec extends Spec with Matchers with Shared
       checkStackDepth(e4, left4, right4, thisLineNumber - 2)
     }
     
+    def `should throw TestFailedException with correct stack depth and message when left and right List are not same size, though they contain same elements` {
+      val left1 = List(1, 2, 3, 3, 4)
+      val right1 = List(1, 2, 3, 4) 
+      val e1 = intercept[exceptions.TestFailedException] {
+        left1 should contain theSameElementsAs right1
+      }
+      checkStackDepth(e1, left1, right1, thisLineNumber - 2)
+      // Also try in reverse, with left side a smaller collection
+      intercept[exceptions.TestFailedException] {
+        right1 should contain theSameElementsAs left1
+      }
+      
+      val left2 = javaList(1, 2, 3, 3, 4)
+      val right2 = List(1, 2, 3, 4)
+      val e2 = intercept[exceptions.TestFailedException] {
+        left2 should contain theSameElementsAs right2
+      }
+      checkStackDepth(e2, left2, right2, thisLineNumber - 2)
+    }
+    
     def `should throw TestFailedException with correct stack depth and message when left List is shorter than right Set` {
       val left1 = List(1, 2, 3)
       val right1 = Set(1, 2, 3, 4)
@@ -417,6 +437,11 @@ class TheSameElementsAsContainMatcherSpec extends Spec with Matchers with Shared
       
       LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain theSameElementsAs (LinkedHashMap(1 -> "one", 2 -> "two", 8 -> "eight"))
       javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain theSameElementsAs (LinkedHashMap(1 -> "one", 2 -> "two", 8 -> "eight"))
+    }
+    
+    def `should succeed when left and right List contains same element but has different size` {
+      List(1, 2, 3, 3, 4) should not contain theSameElementsAs (List(1, 2, 3, 4))
+      javaList(1, 2, 3, 3, 4) should not contain theSameElementsAs (List(1, 2, 3, 4))
     }
     
     def `should throw TestFailedException with correct stack depth and message when used with ContainMatcher directly` {
