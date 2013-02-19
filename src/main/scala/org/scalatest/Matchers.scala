@@ -1084,8 +1084,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
   }
   
   private[scalatest] class JavaCollectionWrapper[T](underlying: java.util.Collection[T]) extends Iterable[T] {
-    import collection.JavaConversions._
-    def iterator = underlying.iterator
+    import collection.JavaConverters._
+    def iterator = underlying.iterator.asScala
     override def size = underlying.size
     override def isEmpty = underlying.isEmpty
     def newBuilder[B] = new collection.mutable.ArrayBuffer[B]
@@ -1160,7 +1160,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
    * This wrapper gives better toString (Array(x, x, x)) as compared to Scala default one (WrappedArray(x, x, x)).
    */
   private[scalatest] class ArrayWrapper[T](underlying: Array[T]) extends Iterable[T] {
-    import collection.JavaConversions._
     def iterator = underlying.iterator
     override def size = underlying.size
     override def isEmpty = underlying.isEmpty
@@ -3334,8 +3333,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
             expectedValue)
         )
     }
-    
-    import collection.JavaConversions._
     
     /**
      * This method enables the following syntax: 
