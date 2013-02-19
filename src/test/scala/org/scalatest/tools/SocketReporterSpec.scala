@@ -407,7 +407,7 @@ class SocketReporterSpec extends FunSpec with SharedHelpers with Eventually {
       val timeStamp = (new Date).getTime
       
       val rep = new SocketReporter("localhost", socket.getLocalPort)
-      rep(RunStarting(new Ordinal(0), 10, Map("key 1" -> "value 1"), None, None, None, Thread.currentThread.getName, timeStamp))
+      rep(RunStarting(new Ordinal(0), 10, ConfigMap("key 1" -> "value 1"), None, None, None, Thread.currentThread.getName, timeStamp))
       rep(RunCompleted(new Ordinal(0), Some(1000L), Some(Summary(1, 2, 3, 4, 5, 6, 7, 8)), None, None, None, Thread.currentThread.getName, timeStamp))
       rep(RunStopped(new Ordinal(0), Some(1000L), Some(Summary(8, 9, 10, 11, 12, 13, 14, 15)), None, None, None, Thread.currentThread.getName, timeStamp))
       rep(RunAborted(new Ordinal(0), "Suite aborted", Some(new Throwable("error!")), Some(1000L), Some(Summary(15, 16, 17, 18, 19, 20, 21, 22)), None,

@@ -1173,7 +1173,7 @@ final case class SuiteAborted (
  * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
  *        other events reported during the same run
  * @param testCount the number of tests expected during this run
- * @param configMap a <code>Map</code> of key-value pairs that can be used by custom <code>Reporter</code>s
+ * @param configMap a <code>ConfigMap</code> of key-value pairs that can be used by custom <code>Reporter</code>s
  * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
  *        how to present this event to the user
  * @param location An optional location that provides information indicating where in the source code an event originated.
@@ -1189,7 +1189,7 @@ final case class SuiteAborted (
 final case class RunStarting (
   ordinal: Ordinal,
   testCount: Int,
-  configMap: Map[String, Any],
+  configMap: ConfigMap,
   formatter: Option[Formatter] = None,
   location: Option[Location] = None,
   payload: Option[Any] = None,
@@ -1920,7 +1920,7 @@ final case class ScopePending (
  * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
  *        other events reported during the same run
  * @param testCount the number of tests expected during this run
- * @param configMap a <code>Map</code> of key-value pairs that can be used by custom <code>Reporter</code>s
+ * @param configMap a <code>ConfigMap</code> of key-value pairs that can be used by custom <code>Reporter</code>s
  * @param payload an optional object that can be used to pass custom information to the reporter about the <code>RunStarting</code> event
  * @param threadName a name for the <code>Thread</code> about whose activity this event was reported
  * @param timeStamp a <code>Long</code> indicating the time this event was reported, expressed in terms of the
@@ -1933,7 +1933,7 @@ final case class ScopePending (
 final case class DiscoveryStarting (
   ordinal: Ordinal,
   testCount: Int,
-  configMap: Map[String, Any],
+  configMap: ConfigMap,
   payload: Option[Any] = None,
   threadName: String = Thread.currentThread.getName,
   timeStamp: Long = (new Date).getTime
@@ -3190,7 +3190,7 @@ object DeprecatedRunStarting {
    * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
    *        other events reported during the same run
    * @param testCount the number of tests expected during this run
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by custom <code>Reporter</code>s
+   * @param configMap a <code>ConfigMap</code> of key-value pairs that can be used by custom <code>Reporter</code>s
    * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
    *        how to present this event to the user
    * @param payload an optional object that can be used to pass custom information to the reporter about the <code>RunStarting</code> event
@@ -3203,7 +3203,7 @@ object DeprecatedRunStarting {
   def apply(
     ordinal: Ordinal,
     testCount: Int,
-    configMap: Map[String, Any],
+    configMap: ConfigMap,
     formatter: Option[Formatter],
     payload: Option[Any]
   ): RunStarting = {
@@ -3218,7 +3218,7 @@ object DeprecatedRunStarting {
    * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
    *        other events reported during the same run
    * @param testCount the number of tests expected during this run
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by custom <code>Reporter</code>s
+   * @param configMap a <code>ConfigMap</code> of key-value pairs that can be used by custom <code>Reporter</code>s
    * @param formatter an optional formatter that provides extra information that can be used by reporters in determining
    *        how to present this event to the user
    *
@@ -3229,7 +3229,7 @@ object DeprecatedRunStarting {
   def apply(
     ordinal: Ordinal,
     testCount: Int,
-    configMap: Map[String, Any],
+    configMap: ConfigMap,
     formatter: Option[Formatter]
   ): RunStarting = {
     RunStarting(ordinal, testCount, configMap, formatter, None, None, Thread.currentThread.getName, (new Date).getTime)
@@ -3243,7 +3243,7 @@ object DeprecatedRunStarting {
    * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
    *        other events reported during the same run
    * @param testCount the number of tests expected during this run
-   * @param configMap a <code>Map</code> of key-value pairs that can be used by custom <code>Reporter</code>s
+   * @param configMap a <code>ConfigMap</code> of key-value pairs that can be used by custom <code>Reporter</code>s
    *
    * @throws NullPointerException if any of the passed values are <code>null</code>
    *
@@ -3252,7 +3252,7 @@ object DeprecatedRunStarting {
   def apply(
     ordinal: Ordinal,
     testCount: Int,
-    configMap: Map[String, Any]
+    configMap: ConfigMap
   ): RunStarting = {
     RunStarting(ordinal, testCount, configMap, None, None, None, Thread.currentThread.getName, (new Date).getTime)
   }

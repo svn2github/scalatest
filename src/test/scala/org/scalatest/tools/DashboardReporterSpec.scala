@@ -11,7 +11,7 @@ class DashboardReporterSpec extends Spec with SharedHelpers {
       val tempDir = createTempDirectory()
       val ordinal = new Ordinal(123)
       val rep = new DashboardReporter(tempDir.getAbsolutePath, 0)
-      rep(RunStarting(ordinal.next, 1, Map.empty))
+      rep(RunStarting(ordinal.next, 1, ConfigMap.empty))
       rep(SuiteStarting(ordinal.next, "TestSuite", "com.test.TestSuite", Some("com.test.TestSuite")))
       rep(TestStarting(ordinal.next, "TestSuite", "com.test.TestSuite", Some("com.test.TestSuite"), "test 1", "test 1"))
       rep(TestFailed(ordinal.next, "a test using <function1> failed", "TestSuite", "com.test.TestSuite", Some("com.test.TestSuite"),
