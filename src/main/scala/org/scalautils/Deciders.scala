@@ -16,63 +16,32 @@
 package org.scalautils
 
 /**
- * Trait containing an implicit conversion that adds an <code>asAny</code> method to
- * anything, which returns the same object as type <code>Any</code>.
+ * Provides <code>decidedBy</code> and <code>whenBothAre</code> syntax, which facilitates the
+ * explicit specification of <code>Equality[T]</code> and/or <code>Normalization[T]</code> where
+ * <code>Equality[T]</code> is taken implicitly.
  *
- * <p>
- * The purpose of this method is to appease the type checker when necessary. For example,
- * in ScalaTest's matchers DSL the type passed to <code>contain</code> must be consistent
- * with the element type of the collection on which <code>should</code> is invoked. So
- * this type checks:
- * </p>
- *
- * <pre>
- * Set(1, 2) should contain (2)
- * </pre>
- * 
- * <p>
- * But this does not type check:
- * </p>
- * 
- * <pre>
- * Set(1, 2) should contain ("2")
- * </pre>
- * 
- * <p>
- * That is all well and good, but it turns out that this does also not type check, because the element type of
- * the collection (<code>Any</code>) is a supertype of the type passed to contain (<code>String</code>):
- * </p>
- * 
- * <pre>
- * Set(1, "2") should contain ("2") // Does not compile
- * </pre>
- * 
- * <p>
- * You can appease the type checker by casting the type of <code>"2"</code> to <code>Any</code>, a cast that
- * will always succeed. Using <code>asAny</code> makes this prettier:
- * </p>
- * 
- * <pre>
- * Set(1, "2") should contain ("2".asAny)
- * </pre>
- * 
+ * @author Bill Venners
  */
 trait Deciders {
 
   /**
-   * Wrapper class with an <code>asAny</code> method that returns the passed object
+   * Wrapper class with <code>decidedBy</code> and <code>whenBothAre</code> methods that facilitate
+   * explicit specification of equality and normalization where an <code>Equality[T]</code> type class is required.
    * as type <code>Any</code>.
    *
-   * @param o the object to return from <code>asAny</code>
+   * @param b the object to wrap
    *
    * @author Bill Venners
    */
   class DecidersWrapper[B](b: B) {
 
     /**
-     * Returns the object, <code>o</code>, passed to the constructor.
+     * Returns an <code>EqualityCandidate</code> whose <code>isEqual</code> method will compare a passed
+     * object to the <code>B</code> passed to the <code>DecidersWrapper</code> constructor using the
+     * passed <code>Equality[A]</code>.
      *
-     * @return the object passed to the constructor
+     * @return an <code>EqualityCandidate[A, B]</code> that compares a given <code>A</code> to a
+     *     known <code>B</code> using a known <code>Equality[A]</code>.
      */
     def decidedBy[A](equalityOfA: Equality[A]): EqualityCandidate[A, B] = new EqualityCandidate(equalityOfA, b)
     def whenBothAre(normalization: Normalization[B]): WhenBothAreResult[B] = new WhenBothAreResult(normalization, b)

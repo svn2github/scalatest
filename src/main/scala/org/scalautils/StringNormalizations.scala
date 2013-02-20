@@ -64,15 +64,16 @@ trait StringNormalizations {
       def isInstanceOfA(b: Any) = b.isInstanceOf[String]
 
       /**
-       * Returns the result of invoking <code>toLowerCase</code> on the passed string.
+       * Returns the result of invoking <code>trimmed</code> on the passed string.
        *
-       * @return the passed string transformed to lower case.
+       * @return the passed string with any white space trimmed off either end.
        */
       def normalized(s: String): String = s.trim
     }
 } 
 
 /**
- *
+ * Companion object to trait <code>StringNormalizations</code> that provides an 
+ * alternative to mixing it in.
  */
 object StringNormalizations extends StringNormalizations
