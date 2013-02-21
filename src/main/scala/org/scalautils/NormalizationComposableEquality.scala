@@ -30,9 +30,7 @@ package org.scalautils
  * </pre>
  *
  */
-trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
-
-  private val defaultEquality = new DefaultEquality[A]
+final class NormalizationComposableEquality[A](normalization: Normalization[A], equality: Equality[A]) extends Equality[A] {
 
   /**
    * Indicates whether the objects passed as <code>a</code> and <code>b</code> are equal by
@@ -50,7 +48,7 @@ trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
    */
   final def areEqual(a: A, b: Any): Boolean = {
     val nb = if (isInstanceOfA(b)) normalized(b.asInstanceOf[A]) else b
-    defaultEquality.areEqual(normalized(a), nb)
+    equality.areEqual(normalized(a), nb)
   }
 
   /**
@@ -80,7 +78,7 @@ trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
    * @param b the object to inspect to determine whether it is an instance of <code>A<code>
    * @return true if the passed object is an instance of <code>A</code>
    */
-  def isInstanceOfA(b: Any): Boolean
+  def isInstanceOfA(b: Any): Boolean = normalization.isInstanceOfA(b)
 
   /**
    * Normalizes the passed object.
@@ -88,17 +86,9 @@ trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
    * @param o the object to normalize
    * @return the normalized form of the passed object
    */
-  def normalized(o: A): A
-/*
-  def apply(b: U): PartiallyAppliedEquality[T, U] = // This can be on Equality
-    new PartiallyAppliedEquality[T, U] { // The U is for EqualityConstraints only, when used with ===
-      def isEqual(a: T): Boolean = areEqual(a, b)
-    }
-  def apply(ne: NormalizedEquality[A]): NormalizedEquality[A] =
-    new NormalizedEquality[A] { inner =>
-      def isInstanceOfT(b: Any) = outer.isInstanceOfT(b)
-      def normalized(a: A): A = ne.normalized(outer.normalize(a))
-    }
-*/
+  def normalized(a: A): A = normalization.normalized(a)
+
+  final def and(other: Normalization[A]): NormalizationComposableEquality[A] =
+    new NormalizationComposableEquality[A](normalization and other, equality)
 }
 

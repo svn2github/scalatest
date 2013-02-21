@@ -19,7 +19,7 @@ import org.scalatest._
 
 class DecidersSpec extends Spec with NonImplicitAssertions with TripleEquals with Deciders with StringNormalizations {
 
-  object `The decidedBy syntax` {
+  object `The 'decided by' syntax` {
     def `should enable users to explicitly choose an Equality for a === use` { 
   
       assert(3 === 3)
@@ -29,45 +29,47 @@ class DecidersSpec extends Spec with NonImplicitAssertions with TripleEquals wit
       }
       assert(3 !== 3)
       assert(3 === 4)
-      // And now with decidedBy to go back to defaultEquality
-      assert(3 === (3 decidedBy defaultEquality[Int]))
-      assert(!(3 === (4 decidedBy defaultEquality[Int])))
-      assert(3 !== (4 decidedBy defaultEquality[Int]))
-      assert(!(3 !== (3 decidedBy defaultEquality[Int])))
+      // And now with "decided by" to go back to defaultEquality
+      assert((3 === 3) (decided by defaultEquality))
+      assert(!(3 === 4) (decided by defaultEquality))
+      assert((3 !== 4) (decided by defaultEquality))
+      assert(!(3 !== 3) (decided by defaultEquality))
     }
   }
-  object `The whenBothAre syntax` {
+
+  object `The 'after being' syntax` {
     def `should enable users to explicitly choose a Normalization for a === use` { 
 
       assert("hello" !== "HELLO")
-      assert("hello" === ("HELLo" whenBothAre lowerCased))
+      assert(("hello" === "HELLo") (after being lowerCased))
 
       assert("HELLO" !== "hello")
-      assert("HELLO" === ("hello" whenBothAre lowerCased))
+      assert(("HELLO" === "hello") (after being lowerCased))
 
       assert("HeLlO" !== "hElLo")
-      assert("HeLlO" === ("hElLo" whenBothAre lowerCased))
+      assert(("HeLlO" === "hElLo") (after being lowerCased))
 
-      assert("hello" !== ("Helloooo" whenBothAre lowerCased))
+      assert(("hello" !== "Helloooo") (after being lowerCased))
     }
-    def `should enable users to explicitly choose a Normalization for a === use by composition, with or without parens` { 
+
+    def `should enable users to explicitly build a Normalization for a === use by composing with 'and', with or without parens` { 
       assert("hello" !== "HELLO")
-      assert("hello" === (" HELLo " whenBothAre (lowerCased and trimmed)))
+      assert(("hello" === " HELLo ") (after being (lowerCased and trimmed)))
 
       assert("HELLO" !== "hello")
-      assert("  HELLO " === ("hello" whenBothAre (lowerCased and trimmed)))
+      assert(("  HELLO " === "hello") (after being (lowerCased and trimmed)))
 
       assert("  HeLlO" !== "HeLlO\n")
-      assert("  HeLlO" === ("HeLlO\n" whenBothAre (lowerCased and trimmed)))
+      assert(("  HeLlO" === "HeLlO\n") (after being (lowerCased and trimmed)))
 
       assert("hello" !== "HELLO")
-      assert("hello" === (" HELLo " whenBothAre lowerCased and trimmed))
+      assert(("hello" === " HELLo ") (after being lowerCased and trimmed))
 
       assert("HELLO" !== "hello")
-      assert("  HELLO " === ("hello" whenBothAre lowerCased and trimmed))
+      assert(("  HELLO " === "hello") (after being lowerCased and trimmed))
 
       assert("  HeLlO" !== "HeLlO\n")
-      assert("  HeLlO" === ("HeLlO\n" whenBothAre lowerCased and trimmed))
+      assert(("  HeLlO" === "HeLlO\n") (after being lowerCased and trimmed))
     }
   }
 }

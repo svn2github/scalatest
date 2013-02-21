@@ -24,34 +24,19 @@ package org.scalautils
  */
 trait Deciders {
 
-  /**
-   * Wrapper class with <code>decidedBy</code> and <code>whenBothAre</code> methods that facilitate
-   * explicit specification of equality and normalization where an <code>Equality[T]</code> type class is required.
-   * as type <code>Any</code>.
-   *
-   * @param b the object to wrap
-   *
-   * @author Bill Venners
-   */
-  class DecidersWrapper[B](b: B) {
-
-    /**
-     * Returns an <code>EqualityCandidate</code> whose <code>isEqual</code> method will compare a passed
-     * object to the <code>B</code> passed to the <code>DecidersWrapper</code> constructor using the
-     * passed <code>Equality[A]</code>.
-     *
-     * @return an <code>EqualityCandidate[A, B]</code> that compares a given <code>A</code> to a
-     *     known <code>B</code> using a known <code>Equality[A]</code>.
-     */
-    def decidedBy[A](equalityOfA: Equality[A]): EqualityCandidate[A, B] = new EqualityCandidate(equalityOfA, b)
-    def whenBothAre(normalization: Normalization[B]): WhenBothAreResult[B] = new WhenBothAreResult(normalization, b)
+  class DecidedWord {
+    def by[O](o: O): O = o
   }
 
-  /**
-   * Implicit conversion that adds an <code>asAny</code> method to an object, which returns
-   * the exact same object but as type <code>Any</code>.
-   */
-  implicit def convertToDecidersWrapper[B](b: B): DecidersWrapper[B] = new DecidersWrapper(b)
+  val decided = new DecidedWord
+
+  class TheAfterWord {
+    def being[N](normalization: Normalization[N])(implicit equality: Equality[N]): NormalizationComposableEquality[N] =
+      new NormalizationComposableEquality[N](normalization, equality)
+  }
+
+  val after = new TheAfterWord
+
 }
 
 /**
