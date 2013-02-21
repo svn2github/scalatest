@@ -336,6 +336,20 @@ import Suite.autoTagClassAnnotations
  * &nbsp;     - enabled if the clicked-on event is rerunnable
  * &nbsp;     - disabled if the clicked-on event is not rerunnable</span>
  * </pre>
+ * 
+ * <p>
+ * In case when you need to use different verb for a same subject, you can use <code>it</code> or <code>they</code> shorthand to avoid subject duplication:
+ * </p>
+ * 
+ * <pre class="stHighlight">
+ * "A Stack" when {
+ *   // ...
+ * }
+ * 
+ * it should {
+ *   // ...
+ * }
+ * </pre>
  *
  * <p>
  * A <code>WordSpec</code>'s lifecycle has two phases: the <em>registration</em> phase and the

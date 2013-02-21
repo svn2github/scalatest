@@ -116,6 +116,27 @@ trait WordSpecLike extends Suite with ShouldVerb with MustVerb with CanVerb { th
     registerNestedBranch(description, childPrefix, fun(), "describeCannotAppearInsideAnIt", sourceFileName, methodName, stackDepth, adjustment, None)
   }
 
+  private def registerShorthandBranch(childPrefix: Option[String], notAllowResourceName: String, methodName:String, stackDepth: Int, adjustment: Int, fun: () => Unit) {
+    // Shorthand syntax only allow at top level, and only after "..." when, "..." should/can/must, or it should/can/must
+    if (engine.currentBranchIsTrunk) {
+      val currentBranch = engine.atomic.get.currentBranch
+      // headOption because subNodes are in reverse order
+      currentBranch.subNodes.headOption match {
+        case Some(last) =>
+          last match {
+            case DescriptionBranch(_, descriptionText, _, _) =>
+              registerNestedBranch(descriptionText, childPrefix, fun(), "describeCannotAppearInsideAnIt", "WordSpecLike.scala", methodName, stackDepth, adjustment, None)
+            case _ =>
+              throw new exceptions.NotAllowedException(Resources(notAllowResourceName), 2)
+          }
+        case None =>
+          throw new exceptions.NotAllowedException(Resources(notAllowResourceName), 2)
+      }
+    }
+    else
+      throw new exceptions.NotAllowedException(Resources(notAllowResourceName), 2)
+  }
+
   /**
    * Class that supports the registration of tagged tests.
    *
@@ -584,6 +605,277 @@ trait WordSpecLike extends Suite with ShouldVerb with MustVerb with CanVerb { th
    * </pre>
    */
   protected def afterWord(text: String) = new AfterWord(text)
+
+  
+  /**
+   * Class that supports shorthand scope registration via the instance referenced from <code>WordSpecLike</code>'s <code>it</code> field.
+   *
+   * <p>
+   * This class enables syntax such as the following test registration:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * "A Stack" when { ... }
+   * 
+   * it should { ... }
+   * ^
+   * </pre>
+   *
+   * <p>
+   * For more information and examples of the use of the <code>it</code> field, see the main documentation 
+   * for <code>WordSpec</code>.
+   * </p>
+   */
+  protected final class ItWord {
+    
+    /**
+     * Supports the registration of scope with <code>should</code> in a <code>WordSpecLike</code>.
+     *
+     * <p>
+     * This method supports syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * "A Stack" when { ... }
+     * 
+     * it should { ... }
+     *    ^
+     * </pre>
+     *
+     * <p>
+     * For examples of scope registration, see the <a href="WordSpec.html">main documentation</a>
+     * for <code>WordSpec</code>.
+     * </p>
+     */
+    def should(right: => Unit) {
+      registerShorthandBranch(Some("should"), "itMustAppearAfterTopLevelSubject", "should", 3, -2, right _)
+    }
+    
+    /**
+     * Supports the registration of scope with <code>must</code> in a <code>WordSpecLike</code>.
+     *
+     * <p>
+     * This method supports syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * "A Stack" when { ... }
+     * 
+     * it must { ... }
+     *    ^
+     * </pre>
+     *
+     * <p>
+     * For examples of scope registration, see the <a href="WordSpec.html">main documentation</a>
+     * for <code>WordSpec</code>.
+     * </p>
+     */
+    def must(right: => Unit) {
+      registerShorthandBranch(Some("must"), "itMustAppearAfterTopLevelSubject", "must", 3, -2, right _)
+    }
+    
+    /**
+     * Supports the registration of scope with <code>can</code> in a <code>WordSpecLike</code>.
+     *
+     * <p>
+     * This method supports syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * "A Stack" when { ... }
+     * 
+     * it can { ... }
+     *    ^
+     * </pre>
+     *
+     * <p>
+     * For examples of scope registration, see the <a href="WordSpec.html">main documentation</a>
+     * for <code>WordSpec</code>.
+     * </p>
+     */
+    def can(right: => Unit) {
+      registerShorthandBranch(Some("can"), "itMustAppearAfterTopLevelSubject", "can", 3, -2, right _)
+    }
+    
+    /**
+     * Supports the registration of scope with <code>when</code> in a <code>WordSpecLike</code>.
+     *
+     * <p>
+     * This method supports syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * "A Stack" should { ... }
+     * 
+     * it when { ... }
+     *    ^
+     * </pre>
+     *
+     * <p>
+     * For examples of scope registration, see the <a href="WordSpec.html">main documentation</a>
+     * for <code>WordSpec</code>.
+     * </p>
+     */
+    def when(right: => Unit) {
+      registerShorthandBranch(Some("when"), "itMustAppearAfterTopLevelSubject", "when", 3, -2, right _)
+    }
+  }
+  
+  /**
+   * Supports shorthand scope registration in <code>WordSpecLike</code>s.
+   *
+   * <p>
+   * This field enables syntax such as the following test registration:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * "A Stack" when { ... }
+   * 
+   * it should { ... }
+   * ^
+   * </pre>
+   *
+   * <p>
+   * For more information and examples of the use of the <code>it</code> field, see the main documentation 
+   * for <code>WordSpec</code>.
+   * </p>
+   */
+  protected val it = new ItWord
+  
+  /**
+   * Class that supports shorthand scope registration via the instance referenced from <code>WordSpecLike</code>'s <code>they</code> field.
+   *
+   * <p>
+   * This class enables syntax such as the following test registration:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * "Basketball players" when { ... }
+   * 
+   * they should { ... }
+   * ^
+   * </pre>
+   *
+   * <p>
+   * For more information and examples of the use of the <code>they</code> field, see the main documentation 
+   * for <code>WordSpec</code>.
+   * </p>
+   */
+  protected final class TheyWord {
+    
+    /**
+     * Supports the registration of scope with <code>should</code> in a <code>WordSpecLike</code>.
+     *
+     * <p>
+     * This method supports syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * "Basketball players" when { ... }
+     * 
+     * they should { ... }
+     *      ^
+     * </pre>
+     *
+     * <p>
+     * For examples of scope registration, see the <a href="WordSpec.html">main documentation</a>
+     * for <code>WordSpec</code>.
+     * </p>
+     */
+    def should(right: => Unit) {
+      registerShorthandBranch(Some("should"), "theyMustAppearAfterTopLevelSubject", "should", 3, -2, right _)
+    }
+    
+    /**
+     * Supports the registration of scope with <code>must</code> in a <code>WordSpecLike</code>.
+     *
+     * <p>
+     * This method supports syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * "Basketball players" when { ... }
+     * 
+     * they must { ... }
+     *      ^
+     * </pre>
+     *
+     * <p>
+     * For examples of scope registration, see the <a href="WordSpec.html">main documentation</a>
+     * for <code>WordSpec</code>.
+     * </p>
+     */
+    def must(right: => Unit) {
+      registerShorthandBranch(Some("must"), "theyMustAppearAfterTopLevelSubject", "must", 3, -2, right _)
+    }
+    
+    /**
+     * Supports the registration of scope with <code>can</code> in a <code>WordSpecLike</code>.
+     *
+     * <p>
+     * This method supports syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * "Basketball players" when { ... }
+     * 
+     * they can { ... }
+     *      ^
+     * </pre>
+     *
+     * <p>
+     * For examples of scope registration, see the <a href="WordSpec.html">main documentation</a>
+     * for <code>WordSpec</code>.
+     * </p>
+     */
+    def can(right: => Unit) {
+      registerShorthandBranch(Some("can"), "theyMustAppearAfterTopLevelSubject", "can", 3, -2, right _)
+    }
+    
+    /**
+     * Supports the registration of scope with <code>when</code> in a <code>WordSpecLike</code>.
+     *
+     * <p>
+     * This method supports syntax such as the following:
+     * </p>
+     *
+     * <pre class="stHighlight">
+     * "Basketball players" should { ... }
+     * 
+     * they when { ... }
+     *      ^
+     * </pre>
+     *
+     * <p>
+     * For examples of scope registration, see the <a href="WordSpec.html">main documentation</a>
+     * for <code>WordSpec</code>.
+     * </p>
+     */
+    def when(right: => Unit) {
+      registerShorthandBranch(Some("when"), "theyMustAppearAfterTopLevelSubject", "when", 3, -2, right _)
+    }
+  }
+  
+  /**
+   * Supports shorthand scope registration in <code>WordSpecLike</code>s.
+   *
+   * <p>
+   * This field enables syntax such as the following test registration:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * "A Stack" when { ... }
+   * 
+   * they should { ... }
+   * ^
+   * </pre>
+   *
+   * <p>
+   * For more information and examples of the use of the <code>they</code> field, see the main documentation 
+   * for <code>WordSpec</code>.
+   * </p>
+   */
+  protected val they = new TheyWord
 
   /**
    * Implicitly converts <code>String</code>s to <code>WordSpecStringWrapper</code>, which enables

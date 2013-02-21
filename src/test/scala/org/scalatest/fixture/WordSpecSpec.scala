@@ -1121,4 +1121,1201 @@ class WordSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       assert(trce.failedCodeLineNumber.get === thisLineNumber - 25)
     }
   }
+  
+  describe("shorthand syntax") {
+    
+    describe("'it'") {
+      
+      describe("under top level") {
+        
+        it("should work with subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            } 
+
+            it should { 
+              "do something interesting 1" in { fixture => } 
+            }
+        
+            it can {
+              "do something interesting 2" in { fixture => }
+            }
+        
+            it must {
+              "do something interesting 3" in { fixture => }
+            }
+        
+            it when {
+              "do something interesting 4" in { fixture => }
+            }
+          }
+      
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+      
+          val testStartingList = rep.testStartingEventsReceived
+          assert(testStartingList.size === 5)
+          assert(testStartingList(0).testName === "A Stack when empty should be empty")
+          assert(testStartingList(1).testName === "A Stack should do something interesting 1")
+          assert(testStartingList(2).testName === "A Stack can do something interesting 2")
+          assert(testStartingList(3).testName === "A Stack must do something interesting 3")
+          assert(testStartingList(4).testName === "A Stack when do something interesting 4")
+      
+          val testSucceededList = rep.testSucceededEventsReceived
+          assert(testSucceededList.size === 5)
+          assert(testSucceededList(0).testName === "A Stack when empty should be empty")
+          assert(testSucceededList(1).testName === "A Stack should do something interesting 1")
+          assert(testSucceededList(2).testName === "A Stack can do something interesting 2")
+          assert(testSucceededList(3).testName === "A Stack must do something interesting 3")
+          assert(testSucceededList(4).testName === "A Stack when do something interesting 4")
+        }
+    
+        it("should throw NotAllowedException with correct stack depth and message when 'it should' is called without subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            it should {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it can' is called without subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            it can {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it must' is called without subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            it must {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it when' is called without subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            it when {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it should' is called after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            }
+            
+            "Other do something special" in { fixture => }
+            
+            it should {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it can' is called after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            }
+            
+            "Other do something special" in { fixture => }
+            
+            it can {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it must' is called after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            }
+            
+            "Other do something special" in { fixture => }
+            
+            it must {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it when' is called after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            }
+            
+            "Other do something special" in { fixture => }
+            
+            it when {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+      }
+      
+      describe("under inner level") {
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it should' is called with inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              it should {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it can' is called with inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              it can {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it must' is called with inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              it must {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it when' is called with inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              it when {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it should' is called without inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              it should {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it can' is called without inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              it can {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it must' is called without inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              it must {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it when' is called without inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              it when {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it should' is called with inner branch but after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              "do something" in { fixture => }
+              it should {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it can' is called with inner branch but after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              "do something" in { fixture => }
+              it can {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it must' is called with inner branch but after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              "do something" in { fixture => }
+              it must {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it when' is called with inner branch but after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              "do something" in { fixture => }
+              it when {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "An it clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+      }
+      
+      describe("under 'in' clause") {
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it should' is called") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            var notAllowedThrown = false
+            "Something special" in { fixture => 
+              it should {
+                "do something interesting" in { fixture => }
+              }
+            }
+            def withFixture(test: OneArgTest) {
+              try {
+                test("hi")
+              }
+              catch {
+                case e: exceptions.NotAllowedException => 
+                  notAllowedThrown = true
+                  throw e
+              }
+            }
+          }
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+          assert(s.notAllowedThrown == true)
+          val testFailedEvents = rep.testFailedEventsReceived
+          assert(testFailedEvents.size === 1)
+          assert(testFailedEvents(0).throwable.get.getClass() === classOf[exceptions.NotAllowedException])
+          val trce = testFailedEvents(0).throwable.get.asInstanceOf[exceptions.NotAllowedException]
+          assert("WordSpecSpec.scala" === trce.failedCodeFileName.get)
+          assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+          assert(trce.getMessage === "An it clause must only appear after a top level subject clause.")
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it can' is called") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            var notAllowedThrown = false
+            "Something special" in { fixture => 
+              it can {
+                "do something interesting" in { fixture => }
+              }
+            }
+            def withFixture(test: OneArgTest) {
+              try {
+                test("hi")
+              }
+              catch {
+                case e: exceptions.NotAllowedException => 
+                  notAllowedThrown = true
+                  throw e
+              }
+            }
+          }
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+          assert(s.notAllowedThrown == true)
+          val testFailedEvents = rep.testFailedEventsReceived
+          assert(testFailedEvents.size === 1)
+          assert(testFailedEvents(0).throwable.get.getClass() === classOf[exceptions.NotAllowedException])
+          val trce = testFailedEvents(0).throwable.get.asInstanceOf[exceptions.NotAllowedException]
+          assert("WordSpecSpec.scala" === trce.failedCodeFileName.get)
+          assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+          assert(trce.getMessage === "An it clause must only appear after a top level subject clause.")
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it must' is called") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            var notAllowedThrown = false
+            "Something special" in { fixture => 
+              it must {
+                "do something interesting" in { fixture => }
+              }
+            }
+            def withFixture(test: OneArgTest) {
+              try {
+                test("hi")
+              }
+              catch {
+                case e: exceptions.NotAllowedException => 
+                  notAllowedThrown = true
+                  throw e
+              }
+            }
+          }
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+          assert(s.notAllowedThrown == true)
+          val testFailedEvents = rep.testFailedEventsReceived
+          assert(testFailedEvents.size === 1)
+          assert(testFailedEvents(0).throwable.get.getClass() === classOf[exceptions.NotAllowedException])
+          val trce = testFailedEvents(0).throwable.get.asInstanceOf[exceptions.NotAllowedException]
+          assert("WordSpecSpec.scala" === trce.failedCodeFileName.get)
+          assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+          assert(trce.getMessage === "An it clause must only appear after a top level subject clause.")
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'it when' is called") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            var notAllowedThrown = false
+            "Something special" in { fixture => 
+              it when {
+                "do something interesting" in { fixture => }
+              }
+            }
+            def withFixture(test: OneArgTest) {
+              try {
+                test("hi")
+              }
+              catch {
+                case e: exceptions.NotAllowedException => 
+                  notAllowedThrown = true
+                  throw e
+              }
+            }
+          }
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+          assert(s.notAllowedThrown == true)
+          val testFailedEvents = rep.testFailedEventsReceived
+          assert(testFailedEvents.size === 1)
+          assert(testFailedEvents(0).throwable.get.getClass() === classOf[exceptions.NotAllowedException])
+          val trce = testFailedEvents(0).throwable.get.asInstanceOf[exceptions.NotAllowedException]
+          assert("WordSpecSpec.scala" === trce.failedCodeFileName.get)
+          assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+          assert(trce.getMessage === "An it clause must only appear after a top level subject clause.")
+        }
+        
+      }
+    }
+    
+    describe("'they'") {
+      
+      describe("under top level") {
+        
+        it("should work with subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            } 
+
+            they should { 
+              "do something interesting 1" in { fixture => } 
+            }
+        
+            they can {
+              "do something interesting 2" in { fixture => }
+            }
+        
+            they must {
+              "do something interesting 3" in { fixture => }
+            }
+        
+            they when {
+              "do something interesting 4" in { fixture => }
+            }
+          }
+      
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+      
+          val testStartingList = rep.testStartingEventsReceived
+          assert(testStartingList.size === 5)
+          assert(testStartingList(0).testName === "A Stack when empty should be empty")
+          assert(testStartingList(1).testName === "A Stack should do something interesting 1")
+          assert(testStartingList(2).testName === "A Stack can do something interesting 2")
+          assert(testStartingList(3).testName === "A Stack must do something interesting 3")
+          assert(testStartingList(4).testName === "A Stack when do something interesting 4")
+      
+          val testSucceededList = rep.testSucceededEventsReceived
+          assert(testSucceededList.size === 5)
+          assert(testSucceededList(0).testName === "A Stack when empty should be empty")
+          assert(testSucceededList(1).testName === "A Stack should do something interesting 1")
+          assert(testSucceededList(2).testName === "A Stack can do something interesting 2")
+          assert(testSucceededList(3).testName === "A Stack must do something interesting 3")
+          assert(testSucceededList(4).testName === "A Stack when do something interesting 4")
+        }
+    
+        it("should throw NotAllowedException with correct stack depth and message when 'they should' is called without subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            they should {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they can' is called without subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            they can {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they must' is called without subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            they must {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they when' is called without subject") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            they when {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they should' is called after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            }
+            
+            "Other do something special" in { fixture => }
+            
+            they should {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they can' is called after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            }
+            
+            "Other do something special" in { fixture => }
+            
+            they can {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they must' is called after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            }
+            
+            "Other do something special" in { fixture => }
+            
+            they must {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they when' is called after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              } 
+            }
+            
+            "Other do something special" in { fixture => }
+            
+            they when {
+              "do something interesting" in { fixture => }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 9))
+        }
+      }
+      
+      describe("under inner level") {
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they should' is called with inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              they should {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they can' is called with inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              they can {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they must' is called with inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              they must {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they when' is called with inner branch") {
+          class TestSpec extends WordSpec {
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              they when {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they should' is called without inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              they should {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they can' is called without inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              they can {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they must' is called without inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              they must {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they when' is called without inner branch") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              they when {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they should' is called with inner branch but after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              "do something" in { fixture => }
+              they should {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they can' is called with inner branch but after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              "do something" in { fixture => }
+              they can {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they must' is called with inner branch but after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              "do something" in { fixture => }
+              they must {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they when' is called with inner branch but after an 'in' clause") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            def withFixture(test: OneArgTest) { test("hi") }
+            "A Stack" when { 
+              "empty" should { 
+                "be empty" in { fixture => } 
+              }
+              "do something" in { fixture => }
+              they when {
+                "do something interesting" in { fixture => }
+              }
+            }
+          }
+          val e = intercept[exceptions.NotAllowedException] {
+            new TestSpec
+          }
+          assert(e.getMessage === "A they clause must only appear after a top level subject clause.")
+          assert(e.failedCodeFileName === Some("WordSpecSpec.scala"))
+          assert(e.failedCodeLineNumber === Some(thisLineNumber - 10))
+        }
+      }
+      
+      describe("under 'in' clause") {
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they should' is called") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            var notAllowedThrown = false
+            "Something special" in { fixture => 
+              they should {
+                "do something interesting" in { fixture => }
+              }
+            }
+            def withFixture(test: OneArgTest) {
+              try {
+                test("hi")
+              }
+              catch {
+                case e: exceptions.NotAllowedException => 
+                  notAllowedThrown = true
+                  throw e
+              }
+            }
+          }
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+          assert(s.notAllowedThrown == true)
+          val testFailedEvents = rep.testFailedEventsReceived
+          assert(testFailedEvents.size === 1)
+          assert(testFailedEvents(0).throwable.get.getClass() === classOf[exceptions.NotAllowedException])
+          val trce = testFailedEvents(0).throwable.get.asInstanceOf[exceptions.NotAllowedException]
+          assert("WordSpecSpec.scala" === trce.failedCodeFileName.get)
+          assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+          assert(trce.getMessage === "A they clause must only appear after a top level subject clause.")
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they can' is called") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            var notAllowedThrown = false
+            "Something special" in { fixture => 
+              they can {
+                "do something interesting" in { fixture => }
+              }
+            }
+            def withFixture(test: OneArgTest) {
+              try {
+                test("hi")
+              }
+              catch {
+                case e: exceptions.NotAllowedException => 
+                  notAllowedThrown = true
+                  throw e
+              }
+            }
+          }
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+          assert(s.notAllowedThrown == true)
+          val testFailedEvents = rep.testFailedEventsReceived
+          assert(testFailedEvents.size === 1)
+          assert(testFailedEvents(0).throwable.get.getClass() === classOf[exceptions.NotAllowedException])
+          val trce = testFailedEvents(0).throwable.get.asInstanceOf[exceptions.NotAllowedException]
+          assert("WordSpecSpec.scala" === trce.failedCodeFileName.get)
+          assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+          assert(trce.getMessage === "A they clause must only appear after a top level subject clause.")
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they must' is called") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            var notAllowedThrown = false
+            "Something special" in { fixture => 
+              they must {
+                "do something interesting" in { fixture => }
+              }
+            }
+            def withFixture(test: OneArgTest) {
+              try {
+                test("hi")
+              }
+              catch {
+                case e: exceptions.NotAllowedException => 
+                  notAllowedThrown = true
+                  throw e
+              }
+            }
+          }
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+          assert(s.notAllowedThrown == true)
+          val testFailedEvents = rep.testFailedEventsReceived
+          assert(testFailedEvents.size === 1)
+          assert(testFailedEvents(0).throwable.get.getClass() === classOf[exceptions.NotAllowedException])
+          val trce = testFailedEvents(0).throwable.get.asInstanceOf[exceptions.NotAllowedException]
+          assert("WordSpecSpec.scala" === trce.failedCodeFileName.get)
+          assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+          assert(trce.getMessage === "A they clause must only appear after a top level subject clause.")
+        }
+        
+        it("should throw NotAllowedException with correct stack depth and message when 'they when' is called") {
+          class TestSpec extends WordSpec { 
+            type FixtureParam = String
+            var notAllowedThrown = false
+            "Something special" in { fixture => 
+              they when {
+                "do something interesting" in { fixture => }
+              }
+            }
+            def withFixture(test: OneArgTest) {
+              try {
+                test("hi")
+              }
+              catch {
+                case e: exceptions.NotAllowedException => 
+                  notAllowedThrown = true
+                  throw e
+              }
+            }
+          }
+          val rep = new EventRecordingReporter
+          val s = new TestSpec
+          s.run(None, Args(rep))
+          assert(s.notAllowedThrown == true)
+          val testFailedEvents = rep.testFailedEventsReceived
+          assert(testFailedEvents.size === 1)
+          assert(testFailedEvents(0).throwable.get.getClass() === classOf[exceptions.NotAllowedException])
+          val trce = testFailedEvents(0).throwable.get.asInstanceOf[exceptions.NotAllowedException]
+          assert("WordSpecSpec.scala" === trce.failedCodeFileName.get)
+          assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+          assert(trce.getMessage === "A they clause must only appear after a top level subject clause.")
+        }
+        
+      }
+    }
+  }
 }
