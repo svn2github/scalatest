@@ -6717,6 +6717,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
 
     def matcher[T <: SUPERCLASS : TYPECLASS]: Matcher[T]
 
+    def apply[T <: SUPERCLASS](explicit: TYPECLASS[T]): Matcher[T] = matcher[T](explicit)
+
     // (equal (7) and ...)
     def and[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
       new MatcherGen1[U, TYPECLASS] {
@@ -14477,6 +14479,23 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
+     * result shouldNot equal (8.8)
+     *        ^
+     * </pre>
+     */
+/*
+    def shouldNot(rightMatcher: Matcher[T]) {
+      rightMatcher(left) match {
+        case MatchResult(true, _, negatedFailureMessage, _, _) => throw newTestFailedException(negatedFailureMessage, None, 0) // TODO: Stack depth
+        case _ => ()
+      }
+    }
+*/
+    
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
      * result should be a aMatcher
      *        ^
      * </pre>
@@ -14498,7 +14517,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
 
-    def shouldBe(beMatcher: BeMatcher[T]) {
+    def shouldBe(beMatcher: BeMatcher[T]) { // TODO: This looks like a bug to me. Investigate. - bv
       beMatcher.apply(left).matches
     }
 
@@ -14585,7 +14604,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables syntax such as the following:
      *
      * <pre class="stHighlight">
-     * map shouldEqual Map(1 -> "one", 2 -> "two")
+     * map shouldEqual Map(1 -&gt; "one", 2 -&gt; "two")
      *     ^
      * </pre>
      */
