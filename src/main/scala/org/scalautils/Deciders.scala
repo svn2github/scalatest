@@ -25,7 +25,7 @@ package org.scalautils
 trait Deciders {
 
   class DecidedWord {
-    def by[O](o: O): O = o
+    def by[T](equality: Equality[T]): Decider[T] = new Decider[T](equality)
   }
 
   val decided = new DecidedWord
