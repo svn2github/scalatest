@@ -31,12 +31,11 @@ trait Deciders {
   val decided = new DecidedWord
 
   class TheAfterWord {
-    def being[N](normalization: Normalization[N])(implicit equality: Equality[N]): NormalizationComposableEquality[N] =
-      new NormalizationComposableEquality[N](normalization, equality)
+    def being[N](normalization: Normalization[N])(implicit equality: Equality[N]): NormalizingEquality[N] =
+      new ComposedNormalizingEquality[N](equality, normalization)
   }
 
   val after = new TheAfterWord
-
 }
 
 /**

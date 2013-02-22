@@ -35,7 +35,7 @@ class NormalizedEqualitySpec extends Spec with NonImplicitAssertions {
     }
   }
 
-  class NormalizedStringWrapperEquality extends NormalizedEquality[StringWrapper] {
+  class NormalizedStringWrapperEquality extends NormalizingEquality[StringWrapper] {
     def isInstanceOfA(b: Any): Boolean = b.isInstanceOf[StringWrapper]
     def normalized(sw: StringWrapper): StringWrapper = {
       sw.value = sw.value.toLowerCase
@@ -44,7 +44,7 @@ class NormalizedEqualitySpec extends Spec with NonImplicitAssertions {
     }
   }
 
-  object `A NormalizedEquality type class` {
+  object `A NormalizingEquality type class` {
 
     def `should call .equals on the left hand object (and not on the right hand object)` {
 
@@ -70,7 +70,7 @@ class NormalizedEqualitySpec extends Spec with NonImplicitAssertions {
 
     def `should call .deep first if left side, right side, or both are Arrays` {
 
-      class NormalizedArrayOfStringEquality extends NormalizedEquality[Array[String]] {
+      class NormalizedArrayOfStringEquality extends NormalizingEquality[Array[String]] {
         def isInstanceOfA(b: Any): Boolean = {
           if (b.isInstanceOf[Array[_]]) {
             val arr = b.asInstanceOf[Array[_]]

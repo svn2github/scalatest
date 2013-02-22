@@ -30,28 +30,10 @@ package org.scalautils
  * </pre>
  *
  */
-trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
-
-  private val defaultEquality = new DefaultEquality[A]
-
-  /**
-   * Indicates whether the objects passed as <code>a</code> and <code>b</code> are equal by
-   * first passing <code>b</code> to the <code>isInstanceOfA</code> method. If <code>isInstanceOfA</code> returns
-   * <code>true</code>, this method casts <code>b</code> to type <code>A</code> and passes that to <code>normalized</code>
-   * to obtain <code>b</code> in  normalized form. This method then passes <code>a</code> to <code>normalized</code>, to
-   * obtain <code>a</code> in normalized form. Finally, this method invokes <code>areEqual</code> on 
-   * <code>DefaultEquality</code>, passing the normalized <code>a</code> object, and either the normalized <code>b</code>
-   * object, if <code>b</code> was an instance of <code>A</code>, else just the raw, unnormalized <code>b</code>. This
-   *  method returns the result of that <code>areEqual</code> invocation.
-   *
-   * @param a a left-hand-side object being compared with another (right-hand-side one) for equality
-   * @param b a right-hand-side object being compared with another (left-hand-side one) for equality
-   * @tparam A the type whose normalized equality is being defined
-   */
-  final def areEqual(a: A, b: Any): Boolean = {
-    val nb = if (isInstanceOfA(b)) normalized(b.asInstanceOf[A]) else b
-    defaultEquality.areEqual(normalized(a), nb)
-  }
+private[scalautils] final class ComposedNormalizingEquality[A](
+  equality: Equality[A],
+  normalization: Normalization[A]
+) extends NormalizingEquality[A](equality) {
 
   /**
    * Indicates whether the passed object is an instance of type <code>A</code>.
@@ -80,7 +62,7 @@ trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
    * @param b the object to inspect to determine whether it is an instance of <code>A<code>
    * @return true if the passed object is an instance of <code>A</code>
    */
-  def isInstanceOfA(b: Any): Boolean
+  def isInstanceOfA(b: Any): Boolean = normalization.isInstanceOfA(b)
 
   /**
    * Normalizes the passed object.
@@ -88,17 +70,6 @@ trait NormalizedEquality[A] extends Equality[A] with Normalization[A] {
    * @param o the object to normalize
    * @return the normalized form of the passed object
    */
-  def normalized(o: A): A
-/*
-  def apply(b: U): PartiallyAppliedEquality[T, U] = // This can be on Equality
-    new PartiallyAppliedEquality[T, U] { // The U is for EqualityConstraints only, when used with ===
-      def isEqual(a: T): Boolean = areEqual(a, b)
-    }
-  def apply(ne: NormalizedEquality[A]): NormalizedEquality[A] =
-    new NormalizedEquality[A] { inner =>
-      def isInstanceOfT(b: Any) = outer.isInstanceOfT(b)
-      def normalized(a: A): A = ne.normalized(outer.normalize(a))
-    }
-*/
+  def normalized(a: A): A = normalization.normalized(a)
 }
 

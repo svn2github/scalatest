@@ -30,7 +30,9 @@ package org.scalautils
  * </pre>
  *
  */
-final class NormalizationComposableEquality[A](normalization: Normalization[A], equality: Equality[A]) extends Equality[A] {
+trait DefaultNormalizingEquality[A] extends Equality[A] with Normalization[A] {
+
+  private val defaultEquality = new DefaultEquality[A]
 
   /**
    * Indicates whether the objects passed as <code>a</code> and <code>b</code> are equal by
@@ -48,7 +50,7 @@ final class NormalizationComposableEquality[A](normalization: Normalization[A], 
    */
   final def areEqual(a: A, b: Any): Boolean = {
     val nb = if (isInstanceOfA(b)) normalized(b.asInstanceOf[A]) else b
-    equality.areEqual(normalized(a), nb)
+    defaultEquality.areEqual(normalized(a), nb)
   }
 
   /**
@@ -78,7 +80,7 @@ final class NormalizationComposableEquality[A](normalization: Normalization[A], 
    * @param b the object to inspect to determine whether it is an instance of <code>A<code>
    * @return true if the passed object is an instance of <code>A</code>
    */
-  def isInstanceOfA(b: Any): Boolean = normalization.isInstanceOfA(b)
+  def isInstanceOfA(b: Any): Boolean
 
   /**
    * Normalizes the passed object.
@@ -86,9 +88,6 @@ final class NormalizationComposableEquality[A](normalization: Normalization[A], 
    * @param o the object to normalize
    * @return the normalized form of the passed object
    */
-  def normalized(a: A): A = normalization.normalized(a)
-
-  final def and(other: Normalization[A]): NormalizationComposableEquality[A] =
-    new NormalizationComposableEquality[A](normalization and other, equality)
+  def normalized(o: A): A
 }
 
