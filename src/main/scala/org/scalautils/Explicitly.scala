@@ -22,7 +22,7 @@ package org.scalautils
  *
  * @author Bill Venners
  */
-trait Deciders {
+trait Explicitly {
 
   class DecidedWord {
     def by[T](equality: Equality[T]): Decider[T] = new Decider[T](equality)
@@ -74,5 +74,5 @@ trait Deciders {
  * scala&gt;
  * </pre>
  */
-object Deciders extends Deciders
+object Explicitly extends Explicitly
 
