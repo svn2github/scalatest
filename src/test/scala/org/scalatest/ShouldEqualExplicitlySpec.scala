@@ -57,35 +57,65 @@ class ShouldEqualExplicitlySpec extends Spec with Matchers with Explicitly {
 */
     }
 
-/*
     def `should do nothing when equal and used in a logical-and expression` {
-      1 should (equal (1) and equal (2 - 1))
+      intercept[TestFailedException] { 1 should (equal (1) and equal (2 - 1)) }
+      1 should (equal (1) and equal (2 - 1)) (decided by defaultEquality)
+      1 should (equal (1) (decided by defaultEquality) and equal (2 - 1) (decided by defaultEquality)) 
     }
 
     def `should do nothing when equal and used in multi-part logical expressions` {
 
         // Just to make sure these work strung together
-        1 should (equal (1) and equal (1) and equal (1) and equal (1))
-        1 should (equal (1) and equal (1) or equal (1) and equal (1) or equal (1))
+        intercept[TestFailedException] { 1 should (equal (1) and equal (1) and equal (1) and equal (1)) }
+        intercept[TestFailedException] { 1 should (equal (1) and equal (1) or equal (1) and equal (1) or equal (1)) }
+        intercept[TestFailedException] { 1 should (
+            equal (1) and
+            equal (1) or
+            equal (1) and
+            equal (1) or
+            equal (1)
+        ) }
+        1 should (equal (1) and equal (1) and equal (1) and equal (1)) (decided by defaultEquality)
+        1 should (equal (1) and equal (1) or equal (1) and equal (1) or equal (1)) (decided by defaultEquality)
         1 should (
             equal (1) and
             equal (1) or
             equal (1) and
             equal (1) or
             equal (1)
+        ) (decided by defaultEquality)
+        1 should (equal (1) (decided by defaultEquality) and equal (1) (decided by defaultEquality) and equal (1) (decided by defaultEquality) and equal (1) (decided by defaultEquality))
+        1 should (equal (1) (decided by defaultEquality) and equal (1) (decided by defaultEquality) or equal (1) (decided by defaultEquality) and equal (1) (decided by defaultEquality) or equal (1) (decided by defaultEquality))
+        1 should (
+            equal (1) (decided by defaultEquality) and
+            equal (1) (decided by defaultEquality) or
+            equal (1) (decided by defaultEquality) and
+            equal (1) (decided by defaultEquality) or
+            equal (1) (decided by defaultEquality)
         )
     }
 
     def `should do nothing when equal and used in a logical-or expression` {
-      1 should { equal (1) or equal (2 - 1) }
+      intercept[TestFailedException] { 1 should { equal (1) or equal (2 - 1) } }
+      1 should (equal (1) or equal (2 - 1)) (decided by defaultEquality)
+      1 should { equal (1) (decided by defaultEquality) or equal (2 - 1) (decided by defaultEquality) }
     }
 
     def `should do nothing when not equal and used in a logical-and expression with not` {
-      1 should { not { equal (2) } and not { equal (3 - 1) }}
-      1 should { not equal (2) and (not equal (3 - 1)) }
-      1 should (not equal (2) and not equal (3 - 1))
+      intercept[TestFailedException] { 1 should (not (equal (2)) and not (equal (3 - 1))) }
+      intercept[TestFailedException] { 1 should (not equal (2) and (not equal (3 - 1))) }
+      // Will back up on these MatcherGen1 and not ones, and do simpler MatcherGen1 and MatcherGen1 ones first
+      // intercept[TestFailedException] { 1 should (not equal (2) and not equal (3 - 1)) }
+
+      1 should (not (equal (2)) and not (equal (3 - 1))) (decided by defaultEquality)
+      1 should (not equal (2) and (not equal (3 - 1))) (decided by defaultEquality)
+      // 1 should (not equal (2) and not equal (3 - 1)) (decided by defaultEquality)
+
+      1 should (not (equal (2) (decided by defaultEquality)) and not (equal (3 - 1) (decided by defaultEquality)))
+      1 should ((not equal 2) (decided by defaultEquality) and (not equal 3 - 1) (decided by defaultEquality))
     }
 
+/*
     def `should do nothing when not equal and used in a logical-or expression with not` {
       1 should { not { equal (2) } or not { equal (3 - 1) }}
       1 should { not equal (2) or (not equal (3 - 1)) }

@@ -1721,8 +1721,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                 ^
        * </pre>
        */
-      def equal(any: Any): Matcher[T] =
-        matchersWrapper.and(matchers.not.apply(matchers.legacyEqual(any)))
+      def equal(any: Any): MatcherGen1[T, Equality] =
+        matchersWrapper.and(matchers.not.apply(matchers.equal(any)))
 
       /**
        * This method enables the following syntax, for the "primitive" numeric types:
@@ -2125,7 +2125,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -> 1, "two" -> 2) should (not contain value (5) and not contain value (3))
+     * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain value (5) and not contain value (3))
      *                                                           ^
      * </pre>
      */
@@ -7469,11 +7469,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * num should (not equal (7) and be < (9))
+     * num should (not equal (7) and be &lt; (9))
      *                 ^
      * </pre>
      */
-    def equal(right: Any): Matcher[Any] = apply(matchers.legacyEqual(right))
+    def equal(right: Any): MatcherGen1[Any, Equality] = apply(matchers.equal(right))
 
     /**
      * This method enables the following syntax for the "primitive" numeric types: 
