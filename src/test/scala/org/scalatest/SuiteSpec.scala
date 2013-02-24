@@ -23,7 +23,61 @@ import org.scalatest.exceptions.TestFailedException
 import org.scalatest.exceptions.TestPendingException
 */
 
+// Named these with a MandarinOrange prefix so they wouldn't confict
+// with anything else in the test suite. These need to be top level
+// else they end up with dollar signs in the names.
+trait MandarinOrangeFixture { this: fixture.Suite =>
+  type FixtureParam = String
+  def withFixture(test: OneArgTest) { test("hi") }
+}
+
+class MandarinOrangeFixtureFunSuite extends fixture.FunSuite with MandarinOrangeFixture
+class MandarinOrangeFixtureFunSpec extends fixture.FunSpec with MandarinOrangeFixture
+class MandarinOrangeFixtureSpec extends fixture.Spec with MandarinOrangeFixture
+class MandarinOrangeFixtureWordSpec extends fixture.WordSpec with MandarinOrangeFixture
+class MandarinOrangeFixtureFlatSpec extends fixture.FlatSpec with MandarinOrangeFixture
+class MandarinOrangeFixtureFreeSpec extends fixture.FreeSpec with MandarinOrangeFixture
+class MandarinOrangeFixtureFeatureSpec extends fixture.FeatureSpec with MandarinOrangeFixture
+class MandarinOrangeFixturePropSpec extends fixture.PropSpec with MandarinOrangeFixture
+
 class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
+
+  describe("the toString method on Suites and SuiteLike traits other than TestNGSuiteLike") {
+
+    describe("when the suite contains no nested suites") {
+      it("should return the simple name of the style class (i.e., minus \"Like\") and any dollar sign infested suffix") {
+        import prop.TableDrivenPropertyChecks._
+        val examples =
+          Table(
+            ( "suite", "simple name"),
+            ( new FunSuite, "FunSuite"),
+            ( new FunSpec, "FunSpec"),
+            ( new Spec, "Spec"),
+            ( new WordSpec, "WordSpec"),
+            ( new FlatSpec, "FlatSpec"),
+            ( new FreeSpec, "FreeSpec"),
+            ( new FeatureSpec, "FeatureSpec"),
+            ( new PropSpec, "PropSpec"),
+            ( new MandarinOrangeFixtureFunSuite, "MandarinOrangeFixtureFunSuite"),
+            ( new MandarinOrangeFixtureFunSpec, "MandarinOrangeFixtureFunSpec"),
+            ( new MandarinOrangeFixtureSpec, "MandarinOrangeFixtureSpec"),
+            ( new MandarinOrangeFixtureWordSpec, "MandarinOrangeFixtureWordSpec"),
+            ( new MandarinOrangeFixtureFlatSpec, "MandarinOrangeFixtureFlatSpec"),
+            ( new MandarinOrangeFixtureFreeSpec, "MandarinOrangeFixtureFreeSpec"),
+            ( new MandarinOrangeFixtureFeatureSpec, "MandarinOrangeFixtureFeatureSpec"),
+            ( new MandarinOrangeFixturePropSpec, "MandarinOrangeFixturePropSpec"),
+            // ( new path.FunSpecLike {}, "path.FunSpec"),
+            // ( new path.FreeSpecLike {}, "path.FreeSpec"),
+            ( new Suites, "Suites"),
+            ( new Specs, "Specs") // Will deprecate this one
+            // (Suites(new FunSuite, new Spec, new WordSpec))
+          )
+        forAll (examples) { (suite, simpleName) =>
+          assert(suite.toString === simpleName)
+        }
+      }
+    }
+  }
 
   describe("The simpleNameForTest method") {
     it("should return the correct test simple name with or without Informer") {

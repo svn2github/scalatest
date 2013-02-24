@@ -67,6 +67,7 @@ import exceptions._
 import collection.mutable.ListBuffer
 import collection.GenTraversable
 import annotation.tailrec
+import collection.immutable
 
 /*
  * <h2>Using <code>info</code> and <code>markup</code></h2>
@@ -2457,6 +2458,16 @@ used for test events like succeeded/failed, etc.
        case None =>
          throw new IllegalArgumentException(Resources("testNotFound", testName))
      }
+  }
+
+  // The substitution, if defined, indicates that the _1 string should be replace
+  // by _2. This may transform "FunSpec" into "path.FunSpec", for example.
+  def suiteToString(substitution: Option[(String, String)], theSuite: Suite): String = {
+    val candidate = getSimpleNameOfAnObjectsClass(theSuite)
+    substitution match {
+      case Some((from, to)) if (candidate == from) => to
+      case None => candidate
+    }
   }
 }
 

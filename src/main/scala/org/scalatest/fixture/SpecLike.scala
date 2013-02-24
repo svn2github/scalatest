@@ -385,4 +385,3 @@ trait SpecLike extends Suite  { thisSuite =>
 
   override def testDataFor(testName: String, theConfigMap: ConfigMap = ConfigMap.empty): TestData = createTestDataFor(testName, theConfigMap, this)
 }
-

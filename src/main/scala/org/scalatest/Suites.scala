@@ -47,7 +47,7 @@ package org.scalatest
  *
  * @author Bill Venners
  */
-class Suites(suitesToNest: Suite*) extends Suite {
+class Suites(suitesToNest: Suite*) extends Suite { thisSuite => 
 
   for (s <- suitesToNest) {
     if (s == null)
@@ -59,6 +59,16 @@ class Suites(suitesToNest: Suite*) extends Suite {
    * the order they were passed.
    */
   override val nestedSuites: collection.immutable.IndexedSeq[Suite] = Vector.empty ++ suitesToNest
+
+  /**
+   * Returns a user friendly string for this suite, composed of the
+   * simple name of the class (possibly simplified further by removing dollar signs if added by the Scala interpeter) and, if this suite
+   * contains nested suites, the result of invoking <code>toString</code> on each
+   * of the nested suites, separated by commas and surrounded by parentheses.
+   *
+   * @return a user-friendly string for this suite
+   */
+  override def toString: String = Suite.suiteToString(None, thisSuite)
 }
 
 /**
