@@ -83,6 +83,8 @@ class MandarinOrangeFixturePropSpec(ns: Suite*) extends fixture.PropSpec with Ma
 
 class MandarinOrangeSuites(suites: Suite*) extends Suites(suites: _*)
 class MandarinOrangeSpecs(suites: Suite*) extends Specs(suites: _*)
+class MandarinOrangeSequential(suites: Suite*) extends Sequential(suites: _*)
+class MandarinOrangeStepwise(suites: Suite*) extends Stepwise(suites: _*)
 
 class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
 
@@ -127,9 +129,13 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
 
             ( new Suites, "Suites"),
             ( new Specs, "Specs"), // Will deprecate this one
+            ( new Sequential, "Sequential"),
+            ( new Stepwise, "Stepwise"),
 
             ( new MandarinOrangeSuites, "MandarinOrangeSuites"),
-            ( new MandarinOrangeSpecs, "MandarinOrangeSpecs") // Will deprecate this one
+            ( new MandarinOrangeSpecs, "MandarinOrangeSpecs"), // Will deprecate this one
+            ( new MandarinOrangeSequential, "MandarinOrangeSequential"),
+            ( new MandarinOrangeStepwise, "MandarinOrangeStepwise")
           )
         forAll (examples) { (suite, simpleName) =>
           assert(suite.toString === simpleName)
@@ -167,9 +173,13 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
 
             ( new Suites(new FunSuite), "Suites(FunSuite)"),
             ( new Specs(new FunSuite), "Specs(FunSuite)"), // Will deprecate this one
+            ( new Sequential(new FunSuite), "Sequential(FunSuite)"),
+            ( new Stepwise(new FunSuite), "Stepwise(FunSuite)"),
 
             ( new MandarinOrangeSuites(new FunSuite), "MandarinOrangeSuites(FunSuite)"),
-            ( new MandarinOrangeSpecs(new FunSuite), "MandarinOrangeSpecs(FunSuite)") // Will deprecate this one
+            ( new MandarinOrangeSpecs(new FunSuite), "MandarinOrangeSpecs(FunSuite)"), // Will deprecate this one
+            ( new MandarinOrangeSequential(new FunSuite), "MandarinOrangeSequential(FunSuite)"),
+            ( new MandarinOrangeStepwise(new FunSuite), "MandarinOrangeStepwise(FunSuite)")
           )
         forAll (examples) { (suite, simpleName) =>
           assert(suite.toString === simpleName)
@@ -207,9 +217,13 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
 
             ( new Suites(new PropSpec, new FeatureSpec, new FunSuite), "Suites(PropSpec, FeatureSpec, FunSuite)"),
             ( new Specs(new PropSpec, new FeatureSpec, new FunSuite), "Specs(PropSpec, FeatureSpec, FunSuite)"), // Will deprecate this one
+            ( new Sequential(new PropSpec, new FeatureSpec, new FunSuite), "Sequential(PropSpec, FeatureSpec, FunSuite)"),
+            ( new Stepwise(new PropSpec, new FeatureSpec, new FunSuite), "Stepwise(PropSpec, FeatureSpec, FunSuite)"),
 
             ( new MandarinOrangeSuites(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeSuites(PropSpec, FeatureSpec, FunSuite)"),
-            ( new MandarinOrangeSpecs(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeSpecs(PropSpec, FeatureSpec, FunSuite)") // Will deprecate this one
+            ( new MandarinOrangeSpecs(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeSpecs(PropSpec, FeatureSpec, FunSuite)"), // Will deprecate this one
+            ( new MandarinOrangeSequential(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeSequential(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeStepwise(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeStepwise(PropSpec, FeatureSpec, FunSuite)")
           )
         forAll (examples) { (suite, simpleName) =>
           assert(suite.toString === simpleName)
