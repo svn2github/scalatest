@@ -76,58 +76,6 @@ class Equalizer[L](left: L) {
   def !==(interval: Interval[L]): Boolean = if (interval != null) !interval.isWithin(left) else left != interval
 
   /**
-   * Compare two objects for equality, returning a <code>Boolean</code>, using the <code>EqualityCandidate</code> instance passed as <code>candidate</code>.
-   *
-   * <p>
-   * This method is used to enable syntax such as:
-   * </p>
-   *
-   * <pre class="stHighlight">
-   * assert(result === (17 decidedBy defaultEquality[Int]))
-   * <pre>
-   *
-   * @param candidate the <code>EqualityCandidate</code> containing the object to compare for equality with <code>left</code> as well as the <code>Equality</code>
-   *     to consult
-   * @return true if the <code>left</code> object is equal according to the passed <code>EqualityCandidate</code>
-   */
-  def ===[R](candidate: EqualityCandidate[L, R]): Boolean = candidate.isEqual(left)
-
-  /**
-   * Compare two objects for inequality, returning a <code>Boolean</code>, using the <code>EqualityCandidate</code> instance passed as <code>candidate</code>.
-   *
-   * @param candidate the <code>EqualityCandidate</code> containing the object to compare for inequality with <code>left</code> as well as the <code>Equality</code>
-   *     to consult
-   * @return true if the <code>left</code> object is unequal according to the passed <code>EqualityCandidate</code>
-   */
-  def !==[R](candidate: EqualityCandidate[L, R]): Boolean = !candidate.isEqual(left)
-
-  /**
-   * Compare two objects for equality, returning a <code>Boolean</code>, using the <code>EqualityCandidate</code> instance passed as <code>candidate</code>.
-   *
-   * <p>
-   * This method is used to enable syntax such as:
-   * </p>
-   *
-   * <pre class="stHighlight">
-   * assert(result === (17 decidedBy defaultEquality[Int]))
-   * <pre>
-   *
-   * @param candidate the <code>EqualityCandidate</code> containing the object to compare for equality with <code>left</code> as well as the <code>Equality</code>
-   *     to consult
-   * @return true if the <code>left</code> object is equal according to the passed <code>EqualityCandidate</code>
-   */
-  def ===(whenBothAreResult: WhenBothAreResult[L]): Boolean = whenBothAreResult.isEqual(left)
-
-  /**
-   * Compare two objects for inequality, returning a <code>Boolean</code>, using the <code>EqualityCandidate</code> instance passed as <code>candidate</code>.
-   *
-   * @param candidate the <code>EqualityCandidate</code> containing the object to compare for inequality with <code>left</code> as well as the <code>Equality</code>
-   *     to consult
-   * @return true if the <code>left</code> object is unequal according to the passed <code>EqualityCandidate</code>
-   */
-  def !==[R](whenBothAreResult: WhenBothAreResult[L]): Boolean = !whenBothAreResult.isEqual(left)
-
-  /**
    * Determine whether an object reference is <code>null</code>.
    *
    * @param literalNull a <code>null</code> value against which to compare the value passed to the constructor as <code>left</code> for equality

@@ -25,7 +25,7 @@ package org.scalautils
 trait Explicitly {
 
   class DecidedWord {
-    def by[T](equality: Equality[T]): Decider[T] = new Decider[T](equality)
+    def by[T](equality: Equality[T]): DecidedByEquality[T] = new DecidedByEquality[T](equality)
   }
 
   val decided = new DecidedWord

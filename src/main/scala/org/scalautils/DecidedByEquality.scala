@@ -85,7 +85,7 @@ package org.scalautils
  *
  * @tparam A the type whose equality is being customized
  */
-class Decider[A](equality: Equality[A]) extends Equality[A] {
+class DecidedByEquality[A](equality: Equality[A]) extends Equality[A] {
 
   /**
    * Indicates whether the objects passed as <code>a</code> and <code>b</code> are equal.
