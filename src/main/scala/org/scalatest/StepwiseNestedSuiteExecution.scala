@@ -99,8 +99,13 @@ trait StepwiseNestedSuiteExecution extends SuiteMixin { thisSuite: Suite =>
     val statusBuffer = new ListBuffer[Status]()
     if (!filter.excludeNestedSuites) {
       for (nestedSuite <- nestedSuites) {
-        if (!stopRequested()) 
-          statusBuffer += callExecuteOnSuite(nestedSuite)
+        if (!stopRequested()) {
+          val st = callExecuteOnSuite(nestedSuite)
+          // The distributor is being passed down with stepwise execution,
+          // so it may run in parallel. Make sure all is done before moving on.
+          st.waitUntilCompleted()
+          statusBuffer += st
+        }
       }
     }
     new CompositeStatus(Set.empty ++ statusBuffer)
