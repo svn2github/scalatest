@@ -20,7 +20,26 @@ class SequentialNestedSuiteExecutionSpec extends Spec with SharedHelpers {
     object `when mixed into a Suite` {
       def `should override runNestedSuites such that it calls super.runNestedSuites with the distributor set to None` {
         class SuperSuite extends Suite {
+          @volatile var distributorWasPropagated = false
+          @volatile var firstNestedSuiteHasBeenRun = false
+          @volatile var lastNestedSuiteWasRunAfterFirst = false
+          class FirstSuite extends Suite {
+            override def run(testName: Option[String], args: Args): Status = {
+              firstNestedSuiteHasBeenRun = true
+              if (args.distributor.isDefined)
+                distributorWasPropagated = true
+              super.run(testName, args)
+            }
+          }
+          class LastSuite extends Suite {
+            override def run(testName: Option[String], args: Args): Status = {
+              if (firstNestedSuiteHasBeenRun)
+                lastNestedSuiteWasRunAfterFirst = true
+              super.run(testName, args)
+            }
+          }
           var distributorWasDefined: Boolean = false
+          override def nestedSuites = Vector(new FirstSuite, new LastSuite)
           override protected def runNestedSuites(args: Args): Status = {
             if (args.distributor.isDefined)
               distributorWasDefined = true
@@ -33,8 +52,11 @@ class SequentialNestedSuiteExecutionSpec extends Spec with SharedHelpers {
         val seq = new SeqSubSuite
         par.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
         assert(par.distributorWasDefined)
+        assert(par.distributorWasPropagated)
         seq.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
         assert(!seq.distributorWasDefined)
+        assert(!seq.distributorWasPropagated)
+        assert(seq.lastNestedSuiteWasRunAfterFirst)
       }
     }
   }
