@@ -23,6 +23,31 @@ import org.scalatest.exceptions.TestFailedException
 import org.scalatest.exceptions.TestPendingException
 */
 
+class MandarinOrangeFunSuite(ns: Suite*) extends FunSuite {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFunSpec(ns: Suite*) extends FunSpec {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeSpec(ns: Suite*) extends Spec {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeWordSpec(ns: Suite*) extends WordSpec {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFlatSpec(ns: Suite*) extends FlatSpec {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFreeSpec(ns: Suite*) extends FreeSpec {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFeatureSpec(ns: Suite*) extends FeatureSpec {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangePropSpec(ns: Suite*) extends PropSpec {
+  override def nestedSuites = ns.toVector
+}
+
 // Named these with a MandarinOrange prefix so they wouldn't confict
 // with anything else in the test suite. These need to be top level
 // else they end up with dollar signs in the names.
@@ -31,25 +56,45 @@ trait MandarinOrangeFixture { this: fixture.Suite =>
   def withFixture(test: OneArgTest) { test("hi") }
 }
 
-class MandarinOrangeFixtureFunSuite extends fixture.FunSuite with MandarinOrangeFixture
-class MandarinOrangeFixtureFunSpec extends fixture.FunSpec with MandarinOrangeFixture
-class MandarinOrangeFixtureSpec extends fixture.Spec with MandarinOrangeFixture
-class MandarinOrangeFixtureWordSpec extends fixture.WordSpec with MandarinOrangeFixture
-class MandarinOrangeFixtureFlatSpec extends fixture.FlatSpec with MandarinOrangeFixture
-class MandarinOrangeFixtureFreeSpec extends fixture.FreeSpec with MandarinOrangeFixture
-class MandarinOrangeFixtureFeatureSpec extends fixture.FeatureSpec with MandarinOrangeFixture
-class MandarinOrangeFixturePropSpec extends fixture.PropSpec with MandarinOrangeFixture
+class MandarinOrangeFixtureFunSuite(ns: Suite*) extends fixture.FunSuite with MandarinOrangeFixture {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFixtureFunSpec(ns: Suite*) extends fixture.FunSpec with MandarinOrangeFixture {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFixtureSpec(ns: Suite*) extends fixture.Spec with MandarinOrangeFixture {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFixtureWordSpec(ns: Suite*) extends fixture.WordSpec with MandarinOrangeFixture {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFixtureFlatSpec(ns: Suite*) extends fixture.FlatSpec with MandarinOrangeFixture {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFixtureFreeSpec(ns: Suite*) extends fixture.FreeSpec with MandarinOrangeFixture {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFixtureFeatureSpec(ns: Suite*) extends fixture.FeatureSpec with MandarinOrangeFixture {
+  override def nestedSuites = ns.toVector
+}
+class MandarinOrangeFixturePropSpec(ns: Suite*) extends fixture.PropSpec with MandarinOrangeFixture {
+  override def nestedSuites = ns.toVector
+}
+
+class MandarinOrangeSuites(suites: Suite*) extends Suites(suites: _*)
+class MandarinOrangeSpecs(suites: Suite*) extends Specs(suites: _*)
 
 class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
 
   describe("the toString method on Suites and SuiteLike traits other than TestNGSuiteLike") {
-
     describe("when the suite contains no nested suites") {
-      it("should return the simple name of the style class (i.e., minus \"Like\") and any dollar sign infested suffix") {
+      it("should return the simple name of the class (and no parens)") {
         import prop.TableDrivenPropertyChecks._
         val examples =
           Table(
+
             ( "suite", "simple name"),
+
             ( new FunSuite, "FunSuite"),
             ( new FunSpec, "FunSpec"),
             ( new Spec, "Spec"),
@@ -58,6 +103,16 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
             ( new FreeSpec, "FreeSpec"),
             ( new FeatureSpec, "FeatureSpec"),
             ( new PropSpec, "PropSpec"),
+
+            ( new MandarinOrangeFunSuite, "MandarinOrangeFunSuite"),
+            ( new MandarinOrangeFunSpec, "MandarinOrangeFunSpec"),
+            ( new MandarinOrangeSpec, "MandarinOrangeSpec"),
+            ( new MandarinOrangeWordSpec, "MandarinOrangeWordSpec"),
+            ( new MandarinOrangeFlatSpec, "MandarinOrangeFlatSpec"),
+            ( new MandarinOrangeFreeSpec, "MandarinOrangeFreeSpec"),
+            ( new MandarinOrangeFeatureSpec, "MandarinOrangeFeatureSpec"),
+            ( new MandarinOrangePropSpec, "MandarinOrangePropSpec"),
+
             ( new MandarinOrangeFixtureFunSuite, "MandarinOrangeFixtureFunSuite"),
             ( new MandarinOrangeFixtureFunSpec, "MandarinOrangeFixtureFunSpec"),
             ( new MandarinOrangeFixtureSpec, "MandarinOrangeFixtureSpec"),
@@ -66,11 +121,95 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
             ( new MandarinOrangeFixtureFreeSpec, "MandarinOrangeFixtureFreeSpec"),
             ( new MandarinOrangeFixtureFeatureSpec, "MandarinOrangeFixtureFeatureSpec"),
             ( new MandarinOrangeFixturePropSpec, "MandarinOrangeFixturePropSpec"),
-            // ( new path.FunSpecLike {}, "path.FunSpec"),
-            // ( new path.FreeSpecLike {}, "path.FreeSpec"),
+
+            // ( new path.FunSpec, "path.FunSpec"),
+            // ( new path.FreeSpec, "path.FreeSpec"),
+
             ( new Suites, "Suites"),
-            ( new Specs, "Specs") // Will deprecate this one
-            // (Suites(new FunSuite, new Spec, new WordSpec))
+            ( new Specs, "Specs"), // Will deprecate this one
+
+            ( new MandarinOrangeSuites, "MandarinOrangeSuites"),
+            ( new MandarinOrangeSpecs, "MandarinOrangeSpecs") // Will deprecate this one
+          )
+        forAll (examples) { (suite, simpleName) =>
+          assert(suite.toString === simpleName)
+        }
+      }
+    }
+    describe("when the suite contains one nested suite") {
+      it("should return the simple name of the class and the nested suite toString wrapped in parens") {
+        import prop.TableDrivenPropertyChecks._
+        val examples =
+          Table(
+
+            ( "suite", "simple name"),
+
+            ( new MandarinOrangeFunSuite(new FunSuite), "MandarinOrangeFunSuite(FunSuite)"),
+            ( new MandarinOrangeFunSpec(new FunSuite), "MandarinOrangeFunSpec(FunSuite)"),
+            ( new MandarinOrangeSpec(new FunSuite), "MandarinOrangeSpec(FunSuite)"),
+            ( new MandarinOrangeWordSpec(new FunSuite), "MandarinOrangeWordSpec(FunSuite)"),
+            ( new MandarinOrangeFlatSpec(new FunSuite), "MandarinOrangeFlatSpec(FunSuite)"),
+            ( new MandarinOrangeFreeSpec(new FunSuite), "MandarinOrangeFreeSpec(FunSuite)"),
+            ( new MandarinOrangeFeatureSpec(new FunSuite), "MandarinOrangeFeatureSpec(FunSuite)"),
+            ( new MandarinOrangePropSpec(new FunSuite), "MandarinOrangePropSpec(FunSuite)"),
+
+            ( new MandarinOrangeFixtureFunSuite(new FunSuite), "MandarinOrangeFixtureFunSuite(FunSuite)"),
+            ( new MandarinOrangeFixtureFunSpec(new FunSuite), "MandarinOrangeFixtureFunSpec(FunSuite)"),
+            ( new MandarinOrangeFixtureSpec(new FunSuite), "MandarinOrangeFixtureSpec(FunSuite)"),
+            ( new MandarinOrangeFixtureWordSpec(new FunSuite), "MandarinOrangeFixtureWordSpec(FunSuite)"),
+            ( new MandarinOrangeFixtureFlatSpec(new FunSuite), "MandarinOrangeFixtureFlatSpec(FunSuite)"),
+            ( new MandarinOrangeFixtureFreeSpec(new FunSuite), "MandarinOrangeFixtureFreeSpec(FunSuite)"),
+            ( new MandarinOrangeFixtureFeatureSpec(new FunSuite), "MandarinOrangeFixtureFeatureSpec(FunSuite)"),
+            ( new MandarinOrangeFixturePropSpec(new FunSuite), "MandarinOrangeFixturePropSpec(FunSuite)"),
+
+            // ( new path.FunSpec(new FunSuite), "path.FunSpec(FunSuite)"),
+            // ( new path.FreeSpec(new FunSuite), "path.FreeSpec(FunSuite)"),
+
+            ( new Suites(new FunSuite), "Suites(FunSuite)"),
+            ( new Specs(new FunSuite), "Specs(FunSuite)"), // Will deprecate this one
+
+            ( new MandarinOrangeSuites(new FunSuite), "MandarinOrangeSuites(FunSuite)"),
+            ( new MandarinOrangeSpecs(new FunSuite), "MandarinOrangeSpecs(FunSuite)") // Will deprecate this one
+          )
+        forAll (examples) { (suite, simpleName) =>
+          assert(suite.toString === simpleName)
+        }
+      }
+    }
+    describe("when the suite contains more than one nested suite") {
+      it("should return the simple name of the class and the nested suite toStrings wrapped in parens and separated by commas") {
+        import prop.TableDrivenPropertyChecks._
+        val examples =
+          Table(
+
+            ( "suite", "simple name"),
+
+            ( new MandarinOrangeFunSuite(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFunSuite(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFunSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFunSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeWordSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeWordSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFlatSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFlatSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFreeSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFreeSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFeatureSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFeatureSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangePropSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangePropSpec(PropSpec, FeatureSpec, FunSuite)"),
+
+            ( new MandarinOrangeFixtureFunSuite(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFixtureFunSuite(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFixtureFunSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFixtureFunSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFixtureSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFixtureSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFixtureWordSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFixtureWordSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFixtureFlatSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFixtureFlatSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFixtureFreeSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFixtureFreeSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFixtureFeatureSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFixtureFeatureSpec(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeFixturePropSpec(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeFixturePropSpec(PropSpec, FeatureSpec, FunSuite)"),
+
+            // ( new path.FunSpec(new PropSpec, new FeatureSpec, new FunSuite), "path.FunSpec(PropSpec, FeatureSpec, FunSuite)"),
+            // ( new path.FreeSpec(new PropSpec, new FeatureSpec, new FunSuite), "path.FreeSpec(PropSpec, FeatureSpec, FunSuite)"),
+
+            ( new Suites(new PropSpec, new FeatureSpec, new FunSuite), "Suites(PropSpec, FeatureSpec, FunSuite)"),
+            ( new Specs(new PropSpec, new FeatureSpec, new FunSuite), "Specs(PropSpec, FeatureSpec, FunSuite)"), // Will deprecate this one
+
+            ( new MandarinOrangeSuites(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeSuites(PropSpec, FeatureSpec, FunSuite)"),
+            ( new MandarinOrangeSpecs(new PropSpec, new FeatureSpec, new FunSuite), "MandarinOrangeSpecs(PropSpec, FeatureSpec, FunSuite)") // Will deprecate this one
           )
         forAll (examples) { (suite, simpleName) =>
           assert(suite.toString === simpleName)

@@ -2464,10 +2464,13 @@ used for test events like succeeded/failed, etc.
   // by _2. This may transform "FunSpec" into "path.FunSpec", for example.
   def suiteToString(substitution: Option[(String, String)], theSuite: Suite): String = {
     val candidate = getSimpleNameOfAnObjectsClass(theSuite)
-    substitution match {
-      case Some((from, to)) if (candidate == from) => to
-      case None => candidate
-    }
+    val simpleName =
+      substitution match {
+        case Some((from, to)) if (candidate == from) => to
+        case None => candidate
+      }
+   if (theSuite.nestedSuites.isEmpty) simpleName
+   else simpleName + theSuite.nestedSuites.mkString("(", ", ", ")")
   }
 }
 
