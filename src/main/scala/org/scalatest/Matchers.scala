@@ -45,6 +45,8 @@ import org.scalatest.matchers.BePropertyMatchResult
 import org.scalatest.matchers.BeMatcher
 import org.scalatest.matchers.Matcher
 import org.scalatest.matchers.MatchResult
+import Matchers.andMatchersAndApply
+import Matchers.orMatchersAndApply
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -6669,132 +6671,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
 
-  private def andMatchersAndApply[T](left: T, leftMatcher: Matcher[T], rightMatcher: Matcher[T]): MatchResult = {
-    val leftMatchResult = leftMatcher(left)
-    val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-    if (!leftMatchResult.matches)
-      MatchResult(
-        false,
-        leftMatchResult.failureMessage,
-        leftMatchResult.negatedFailureMessage,
-        leftMatchResult.midSentenceFailureMessage,
-        leftMatchResult.midSentenceNegatedFailureMessage
-      )
-    else {
-      MatchResult(
-        rightMatchResult.matches,
-        Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-        Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-        Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-        Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-      )
-    }
-  }
-
-  private def orMatchersAndApply[T](left: T, leftMatcher: Matcher[T], rightMatcher: Matcher[T]): MatchResult = {
-    val leftMatchResult = leftMatcher(left)
-    val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-    if (leftMatchResult.matches)
-      MatchResult(
-        true,
-        leftMatchResult.negatedFailureMessage,
-        leftMatchResult.failureMessage,
-        leftMatchResult.midSentenceNegatedFailureMessage,
-        leftMatchResult.midSentenceFailureMessage
-      )
-    else {
-      MatchResult(
-        rightMatchResult.matches,
-        Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceFailureMessage),
-        Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-        Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
-        Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-      )
-    }
-  }
-
-  abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { thisMatcherGen1 =>
-
-    def matcher[T <: SUPERCLASS : TYPECLASS]: Matcher[T]
-
-    def apply[T <: SUPERCLASS](explicit: TYPECLASS[T]): Matcher[T] = matcher[T](explicit)
-
-    // (equal (7) and ...)
-    def and[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val leftMatcher = thisMatcherGen1.matcher
-              andMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
-              val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-              if (!leftMatchResult.matches)
-                MatchResult(
-                  false,
-                  leftMatchResult.failureMessage,
-                  leftMatchResult.negatedFailureMessage,
-                  leftMatchResult.midSentenceFailureMessage,
-                  leftMatchResult.midSentenceNegatedFailureMessage
-                )
-              else {
-                MatchResult(
-                  rightMatchResult.matches,
-                  Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-                  Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-                )
-              }
-*/
-            }
-          }
-        }
-      }
-
-    // (equal (7) or ...)
-    def or[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val leftMatcher = thisMatcherGen1.matcher
-              orMatchersAndApply(left, leftMatcher, rightMatcher)
-            }
-          }
-        }
-      }
-
-// Need one for the same typeclass and one for a different typeclass, yes, and can overload because
-// one returns a MatcherGen1 the other a MatcherGen2.
-     // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
-    def or[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val leftMatcher = thisMatcherGen1.matcher
-              val rightMatcher = rightMatcherGen1.matcher
-              orMatchersAndApply(left, leftMatcher, rightMatcher)
-            }
-          }
-        }
-      }
-
-    // "hi" should (equal ("ho") and {mockClown.hasBigRedNose; equal ("ho")})
-    def and[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-      new MatcherGen1[U, TYPECLASS] {
-        def matcher[V <: U : TYPECLASS]: Matcher[V] = {
-          new Matcher[V] {
-            def apply(left: V): MatchResult = {
-              val leftMatcher = thisMatcherGen1.matcher
-              val rightMatcher = rightMatcherGen1.matcher
-              andMatchersAndApply(left, leftMatcher, rightMatcher)
-            }
-          }
-        }
-      }
-  }
 
   /**
    * This method enables syntax such as the following:
@@ -15693,4 +15569,48 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
  *
  * @author Bill Venners
  */
-object Matchers extends Matchers
+object Matchers extends Matchers {
+  private[scalatest] def andMatchersAndApply[T](left: T, leftMatcher: Matcher[T], rightMatcher: Matcher[T]): MatchResult = {
+    val leftMatchResult = leftMatcher(left)
+    val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
+    if (!leftMatchResult.matches)
+      MatchResult(
+        false,
+        leftMatchResult.failureMessage,
+        leftMatchResult.negatedFailureMessage,
+        leftMatchResult.midSentenceFailureMessage,
+        leftMatchResult.midSentenceNegatedFailureMessage
+      )
+    else {
+      MatchResult(
+        rightMatchResult.matches,
+        Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
+        Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
+        Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
+        Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
+      )
+    }
+  }
+
+  private[scalatest] def orMatchersAndApply[T](left: T, leftMatcher: Matcher[T], rightMatcher: Matcher[T]): MatchResult = {
+    val leftMatchResult = leftMatcher(left)
+    val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
+    if (leftMatchResult.matches)
+      MatchResult(
+        true,
+        leftMatchResult.negatedFailureMessage,
+        leftMatchResult.failureMessage,
+        leftMatchResult.midSentenceNegatedFailureMessage,
+        leftMatchResult.midSentenceFailureMessage
+      )
+    else {
+      MatchResult(
+        rightMatchResult.matches,
+        Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceFailureMessage),
+        Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
+        Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
+        Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
+      )
+    }
+  }
+}
