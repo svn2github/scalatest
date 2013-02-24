@@ -2091,7 +2091,6 @@ class WordSpecSpec extends FunSpec with SharedHelpers with GivenWhenThen {
           assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
           assert(trce.getMessage === "A they clause must only appear after a top level subject clause.")
         }
-        
       }
     }
   }

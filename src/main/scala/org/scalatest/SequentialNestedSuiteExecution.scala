@@ -38,6 +38,6 @@ trait SequentialNestedSuiteExecution extends SuiteMixin { this: Suite =>
     if (args == null)
       throw new NullPointerException("args was null")
 
-    super.runNestedSuites(args)
+    super.runNestedSuites(args.copy(distributor = None))
   }
 }
