@@ -47,6 +47,7 @@ package org.scalatest
  *
  * @author Bill Venners
  */
+@deprecated("Specs has been deprecated and will be removed in a future version of ScalaTest. Please use Suites instead.")
 class Specs(specsToNest: Suite*) extends Suite { thisSuite => 
 
   for (s <- specsToNest) {
@@ -83,6 +84,7 @@ class Specs(specsToNest: Suite*) extends Suite { thisSuite =>
  * scala> Specs(new MyFirstSpec, new MyNextSpec).execute()
  * </pre>
  */
+@deprecated("Specs has been deprecated and will be removed in a future version of ScalaTest. Please use Suites instead.")
 object Specs {
 
   /**
