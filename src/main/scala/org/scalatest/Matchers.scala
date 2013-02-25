@@ -17,7 +17,7 @@ package org.scalatest
 
 // TODO: Use this Helper in the matchers/ClassicMatchers.scala
 
-import org.scalatest._
+import org.scalatest.matchers._
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import scala.util.matching.Regex

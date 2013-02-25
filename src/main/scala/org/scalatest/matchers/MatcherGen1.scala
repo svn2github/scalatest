@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest
+package org.scalatest.matchers
 
-import Matchers.andMatchersAndApply
-import Matchers.orMatchersAndApply
+import org.scalatest.Matchers.andMatchersAndApply
+import org.scalatest.Matchers.orMatchersAndApply
 
 abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { thisMatcherGen1 =>
 
