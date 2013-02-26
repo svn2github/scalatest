@@ -52,7 +52,7 @@ package org.scalatest
  * import org.scalatest._
  * import java.io._
  * 
- * trait TempFileExistsSpec extends fixture.FlatSpec {
+ * trait TempFileExistsSpec extends fixture.FlatSpecLike {
  * 
  *   private val tempFileName = "tmp.txt"
  * 
@@ -72,7 +72,7 @@ package org.scalatest
  * class RedSpec extends TempFileExistsSpec
  * class BlueSpec extends TempFileExistsSpec
  * 
- * class ExampleSpec extends Specs(
+ * class ExampleSpec extends Suites(
  *   new OneSpec,
  *   new TwoSpec,
  *   new RedSpec,
