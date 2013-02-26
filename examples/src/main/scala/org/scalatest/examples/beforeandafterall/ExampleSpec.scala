@@ -2,7 +2,7 @@
 import org.scalatest._
 import java.io._
 
-trait TempFileExistsSpec extends fixture.FlatSpec {
+trait TempFileExistsSpec extends fixture.FlatSpecLike {
 
   type FixtureParam = File
   override def withFixture(test: OneArgTest) {
@@ -21,7 +21,7 @@ class TwoSpec extends TempFileExistsSpec
 class RedSpec extends TempFileExistsSpec
 class BlueSpec extends TempFileExistsSpec
 
-class ExampleSpec extends Specs(
+class ExampleSpec extends Suites(
   new OneSpec,
   new TwoSpec,
   new RedSpec,
