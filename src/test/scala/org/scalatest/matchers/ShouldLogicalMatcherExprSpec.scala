@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2008 Artima, Inc.
+ * Copyright 2001-2013 Artima, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,8 +154,15 @@ class ShouldLogicalMatcherExprSpec extends Spec with ShouldMatchers with Checker
 
       val mockClown = mock[Clown]
 
+/* TODO: Uncomment once this is supported under MatcherGen1
       intercept[TestFailedException] {
         "hi" should (equal ("ho") and not equal {mockClown.hasBigRedNose; "ho"})
+      }
+*/
+
+      // Eventually replace this clause with commented out one above
+      intercept[TestFailedException] {
+        "hi" should (equal ("ho") and (not equal {mockClown.hasBigRedNose; "ho"}))
       }
 
       verify(mockClown, times(1)).hasBigRedNose
