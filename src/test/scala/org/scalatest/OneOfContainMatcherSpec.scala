@@ -22,13 +22,15 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
   object `oneOf ` {
     
     def checkStackDepth(e: exceptions.StackDepthException, left: Any, right: GenTraversable[Any], lineNumber: Int) {
-      e.message should be (Some(left + " did not contain one of (" + right.mkString(", ") + ")"))
+      val leftText = FailureMessages.prettifyArrays(left)
+      e.message should be (Some(leftText + " did not contain one of (" + right.mkString(", ") + ")"))
       e.failedCodeFileName should be (Some("OneOfContainMatcherSpec.scala"))
       e.failedCodeLineNumber should be (Some(lineNumber))
     }
     
     def `should succeeded when left List contains same elements in same order as right List` {
       List(1, 3, 5, 8) should contain oneOf (7, 8, 9)
+      Array(1, 3, 5, 8) should contain oneOf (7, 8, 9)
       javaList(1, 3, 5, 8) should contain oneOf (7, 8, 9)
       
       Set(1, 3, 5, 8) should contain oneOf (7, 8, 9)
@@ -46,12 +48,14 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       List(1, 2, 3) should contain (matcher)
       Set(1, 2, 3) should contain (matcher)
+      Array(1, 2, 3) should contain (matcher)
       
       javaList(1, 2, 3) should contain (matcher)
       javaSet(1, 2, 3) should contain (matcher)
       
       List(1, 2, 3) should contain (oneOf(5, 3, 8))
       Set(1, 2, 3) should contain (oneOf(5, 3, 8))
+      Array(1, 2, 3) should contain (oneOf(5, 3, 8))
       
       javaList(1, 2, 3) should contain (oneOf(5, 3, 8))
       javaSet(1, 2, 3) should contain (oneOf(5, 3, 8))
@@ -65,6 +69,7 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
     
     def `should succeeded when right List contains at least one element in right List` {
       List(1, 2, 3) should contain oneOf (5, 3, 8)
+      Array(1, 2, 3) should contain oneOf (5, 3, 8)
       javaList(1, 2, 3) should contain oneOf (5, 3, 8)
       
       Set(1, 2, 3) should contain oneOf (5, 3, 8)
@@ -76,6 +81,7 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
     
     def `should succeeded when right List contains more than one element in right List` {
       List(1, 2, 3) should contain oneOf (5, 3, 2)
+      Array(1, 2, 3) should contain oneOf (5, 3, 2)
       javaList(1, 2, 3) should contain oneOf (5, 3, 2)
       
       Set(1, 2, 3) should contain oneOf (5, 3, 2)
@@ -87,6 +93,7 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
     
     def `should succeeded when right List contains all elements in left List in different order` {
       List(1, 2, 3) should contain oneOf (1, 3, 2)
+      Array(1, 2, 3) should contain oneOf (1, 3, 2)
       javaList(1, 2, 3) should contain oneOf (1, 3, 2)
       
       Set(1, 2, 3) should contain oneOf (1, 3, 2)
@@ -98,6 +105,7 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
     
     def `should succeeded when right List contains all elements in left List in same order` {
       List(1, 2, 3) should contain oneOf (1, 2, 3)
+      Array(1, 2, 3) should contain oneOf (1, 2, 3)
       javaList(1, 2, 3) should contain oneOf (1, 2, 3)
       
       Set(1, 2, 3) should contain oneOf (1, 2, 3)
@@ -117,6 +125,11 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         Set(1, 2, 3) should contain oneOf(6, 7, 6)
       }
       e2.getMessage() should be ("oneOf must not contained duplicated value, but 6 is duplicated")
+      
+      val e3 = intercept[IllegalArgumentException] {
+        Array(1, 2, 3) should contain oneOf(6, 7, 6)
+      }
+      e3.getMessage() should be ("oneOf must not contained duplicated value, but 6 is duplicated")
     }
     
     def `should throw TestFailedException with correct stack depth and message when used with ContainMatcher directly` {
@@ -126,6 +139,7 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       val left4 = javaList(1, 6, 9)
       val left5 = javaSet(1, 6, 9)
       val left6 = javaMap(1 -> "one", 6 -> "six", 9 -> "nine")
+      val left7 = Array(1, 6, 9)
       val e1 = intercept[exceptions.TestFailedException] {
         left1 should contain (matcher)
       }
@@ -185,6 +199,16 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         left6 should contain oneOf (5 -> "five", 3 -> "three", 8 -> "eight")
       }
       checkStackDepth(e12, left6, Array(5 -> "five", 3 -> "three", 8 -> "eight"), thisLineNumber - 2)
+      
+      val e13 = intercept[exceptions.TestFailedException] {
+        left7 should contain (matcher)
+      }
+      checkStackDepth(e13, left7, Array(5, 3, 8).deep, thisLineNumber - 2)
+      
+      val e14 = intercept[exceptions.TestFailedException] {
+        left7 should contain (oneOf(5, 3, 8))
+      }
+      checkStackDepth(e14, left7, Array(5, 3, 8).deep, thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left and right List are same size but does not contain any same element` {
@@ -211,6 +235,12 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         left4 should contain oneOf (7 -> "seven", 8 -> "eight", 9 -> "nine")
       }
       checkStackDepth(e4, left4, Array(7 -> "seven", 8 -> "eight", 9 -> "nine"), thisLineNumber - 2)
+      
+      val left5 = Array(1, 2, 3)
+      val e5 = intercept[exceptions.TestFailedException] {
+        left5 should contain oneOf (7, 8, 9)
+      }
+      checkStackDepth(e5, left5, Array(7, 8, 9).deep, thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List is shorter than right List and does not contain any same element` {
@@ -237,6 +267,12 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         left4 should contain oneOf (6 -> "six", 7 -> "seven", 8 -> "eight", 9 -> "nine")
       }
       checkStackDepth(e4, left4, Array(6 -> "six", 7 -> "seven", 8 -> "eight", 9 -> "nine"), thisLineNumber - 2)
+      
+      val left5 = Array(1, 2, 3)
+      val e5 = intercept[exceptions.TestFailedException] {
+        left5 should contain oneOf (6, 7, 8, 9)
+      }
+      checkStackDepth(e5, left5, Array(6, 7, 8, 9).deep, thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left List is longer than right List and does not contain any same element` {
@@ -263,19 +299,27 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         left4 should contain oneOf (8 -> "eight", 5 -> "five")
       }
       checkStackDepth(e4, left4, Array(8 -> "eight", 5 -> "five"), thisLineNumber - 2)
+      
+      val left5 = Array(1, 2, 3)
+      val e5 = intercept[exceptions.TestFailedException] {
+        left5 should contain oneOf (8, 5)
+      }
+      checkStackDepth(e5, left5, Array(8, 5).deep, thisLineNumber - 2)
     }
   }
   
   object `not oneOf ` {
     
     def checkStackDepth(e: exceptions.StackDepthException, left: Any, right: GenTraversable[Any], lineNumber: Int) {
-      e.message should be (Some(left + " contained one of (" + right.mkString(", ") + ")"))
+      val leftText = FailureMessages.prettifyArrays(left)
+      e.message should be (Some(leftText + " contained one of (" + right.mkString(", ") + ")"))
       e.failedCodeFileName should be (Some("OneOfContainMatcherSpec.scala"))
       e.failedCodeLineNumber should be (Some(lineNumber))
     }
     
     def `should succeed when left List contains different elements as right List` {
       List(1, 2, 3) should not contain oneOf (7, 8, 9)
+      Array(1, 2, 3) should not contain oneOf (7, 8, 9)
       javaList(1, 2, 3) should not contain oneOf (7, 8, 9)
       
       Set(1, 2, 3) should not contain oneOf (7, 8, 9)
@@ -293,12 +337,14 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       
       List(1, 2, 8) should not contain matcher
       Set(1, 2, 8) should not contain matcher
+      Array(1, 2, 8) should not contain matcher
       
       javaList(1, 2, 8) should not contain matcher
       javaSet(1, 2, 8) should not contain matcher
       
       List(1, 2, 8) should not contain oneOf (5, 7, 9)
       Set(1, 2, 8) should not contain oneOf (5, 7, 9)
+      Array(1, 2, 8) should not contain oneOf (5, 7, 9)
       
       javaList(1, 2, 8) should not contain oneOf (5, 7, 9)
       javaSet(1, 2, 8) should not contain oneOf (5, 7, 9)
@@ -317,6 +363,7 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       val left4 = javaList(1, 7, 3)
       val left5 = javaSet(1, 7, 3)
       val left6 = javaMap(1 -> "one", 7 -> "seven", 3 -> "three")
+      val left7 = Array(1, 7, 3)
       val e1 = intercept[exceptions.TestFailedException] {
         left1 should not contain matcher
       }
@@ -376,6 +423,16 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         left6 should not contain oneOf (5 -> "five", 7 -> "seven", 9 -> "nine")
       }
       checkStackDepth(e12, left6, Array(5 -> "five", 7 -> "seven", 9 -> "nine"), thisLineNumber - 2)
+      
+      val e13 = intercept[exceptions.TestFailedException] {
+        left7 should not contain matcher
+      }
+      checkStackDepth(e13, left7, Array(5, 7, 9).deep, thisLineNumber - 2)
+      
+      val e14 = intercept[exceptions.TestFailedException] {
+        left7 should not contain oneOf (5, 7, 9)
+      }
+      checkStackDepth(e14, left7, Array(5, 7, 9).deep, thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left and right List contain at least one same element` {
@@ -402,6 +459,12 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         left4 should not contain oneOf (5 -> "five", 1 -> "one", 7 -> "seven")
       }
       checkStackDepth(e4, left4, Array(5 -> "five", 1 -> "one", 7 -> "seven"), thisLineNumber - 2)
+      
+      val left5 = Array(1, 2, 3)
+      val e5 = intercept[exceptions.TestFailedException] {
+        left5 should not contain oneOf (5, 1, 7)
+      }
+      checkStackDepth(e5, left5, Array(5, 1, 7).deep, thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left and right List contain more than one same element` {
@@ -428,6 +491,12 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         left4 should not contain oneOf (5 -> "five", 1 -> "one", 2 -> "two")
       }
       checkStackDepth(e4, left4, Array(5 -> "five", 1 -> "one", 2 -> "two"), thisLineNumber - 2)
+      
+      val left5 = Array(1, 2, 3)
+      val e5 = intercept[exceptions.TestFailedException] {
+        left5 should not contain oneOf (5, 1, 2)
+      }
+      checkStackDepth(e5, left5, Array(5, 1, 2).deep, thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left and right List contain all same element in different order` {
@@ -454,6 +523,12 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         left4 should not contain oneOf (3 -> "three", 2 -> "two", 1 -> "one")
       }
       checkStackDepth(e4, left4, Array(3 -> "three", 2 -> "two", 1 -> "one"), thisLineNumber - 2)
+      
+      val left5 = Array(1, 2, 3)
+      val e5 = intercept[exceptions.TestFailedException] {
+        left5 should not contain oneOf (3, 2, 1)
+      }
+      checkStackDepth(e5, left5, Array(3, 2, 1).deep, thisLineNumber - 2)
     }
     
     def `should throw TestFailedException with correct stack depth and message when left and right List contain all same element in same order` {
@@ -480,6 +555,12 @@ class OneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
         left4 should not contain oneOf (1 -> "one", 2 -> "two", 3 -> "three")
       }
       checkStackDepth(e4, left4, Array(1 -> "one", 2 -> "two", 3 -> "three"), thisLineNumber - 2)
+      
+      val left5 = Array(1, 2, 3)
+      val e5 = intercept[exceptions.TestFailedException] {
+        left5 should not contain oneOf (1, 2, 3)
+      }
+      checkStackDepth(e5, left5, Array(1, 2, 3).deep, thisLineNumber - 2)
     }
   }
 }
