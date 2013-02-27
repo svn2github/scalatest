@@ -37,6 +37,8 @@ import org.scalautils.TripleEqualsInvocationOnInterval
 import org.scalautils.EqualityConstraint
 import Matchers.andMatchersAndApply
 import Matchers.orMatchersAndApply
+import words.MatcherWords
+import words.FullyMatchWord
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -903,7 +905,7 @@ import Helper.accessProperty
  * forget a set of needed parentheses.
  * </p>
  */
-trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElement { matchers =>
+trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElement with MatcherWords { matchers =>
 
   private[scalatest] def newTestFailedException(message: String, optionalCause: Option[Throwable] = None, stackDepthAdjustment: Int = 0): Throwable = {
     val temp = new RuntimeException
@@ -3898,53 +3900,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
             FailureMessages("endedWithRegex", left, rightRegex)
           )
         }
-      }
-  }
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="ShouldMatchers.html"><code>ShouldMatchers</code></a> or <a href="MustMatchers.html"><code>MustMatchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class FullyMatchWord {
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * val decimal = """(-)?(\d+)(\.\d*)?"""
-     * "1.7" should (fullyMatch regex (decimal) and fullyMatch regex (decimal))
-     *                          ^
-     * </pre>
-     */
-    def regex(rightRegexString: String): Matcher[String] =
-      new Matcher[String] {
-        def apply(left: String): MatchResult =
-          MatchResult(
-            java.util.regex.Pattern.matches(rightRegexString, left),
-            FailureMessages("didNotFullyMatchRegex", left, UnquotedString(rightRegexString)),
-            FailureMessages("fullyMatchedRegex", left, UnquotedString(rightRegexString))
-          )
-      }
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * val decimalRegex = """(-)?(\d+)(\.\d*)?""".r
-     * "1.7" should (fullyMatch regex (decimalRegex) and fullyMatch regex (decimalRegex))
-     *                          ^
-     * </pre>
-     */
-    def regex(rightRegex: Regex): Matcher[String] =
-      new Matcher[String] {
-        def apply(left: String): MatchResult =
-          MatchResult(
-            rightRegex.pattern.matcher(left).matches,
-            FailureMessages("didNotFullyMatchRegex", left, rightRegex),
-            FailureMessages("fullyMatchedRegex", left, rightRegex)
-          )
       }
   }
 
@@ -8043,16 +7998,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </pre>
    */
   val include = new IncludeWord
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * string should (fullyMatch regex ("Hel*o, wor.d") and not have length (99))
-   *                ^
-   * </pre>
-   */
-  val fullyMatch = new FullyMatchWord
 
   /**
    * This method enables syntax such as the following:
