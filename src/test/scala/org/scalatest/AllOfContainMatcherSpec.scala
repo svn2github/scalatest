@@ -16,6 +16,7 @@
 package org.scalatest
 
 import collection.GenTraversable
+import words.AllOfContainMatcher
 
 class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
 

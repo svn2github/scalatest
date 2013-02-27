@@ -28,15 +28,14 @@ import scala.annotation.tailrec
  *
  * @author Bill Venners
  */
-
-class NoneOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
+class OnlyContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
   
   @tailrec
   private def findNext(value: T, rightItr: Iterator[T], processedSet: Set[T], equality: Equality[T]): Set[T] = 
     if (rightItr.hasNext) {
       val nextRight = rightItr.next
       if (processedSet.find(equality.areEqual(_, nextRight)).isDefined)
-          throw new IllegalArgumentException(FailureMessages("noneOfDuplicate", nextRight))
+          throw new IllegalArgumentException(FailureMessages("onlyDuplicate", nextRight))
       if (equality.areEqual(nextRight, value))
         processedSet + nextRight
       else
@@ -44,20 +43,19 @@ class NoneOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T
     }
     else
       processedSet
-  
+   
   @tailrec
   private def checkEqual(leftItr: Iterator[T], rightItr: Iterator[T], processedSet: Set[T], equality: Equality[T]): Boolean = {
-    
     if (leftItr.hasNext) {
       val nextLeft = leftItr.next
-      if (processedSet.find(equality.areEqual(_, nextLeft)).isDefined) // nextLeft is found in right, let's fail early
-        false
+      if (processedSet.find(equality.areEqual(_, nextLeft)).isDefined) // The nextLeft is contained in right, let's continue next
+        checkEqual(leftItr, rightItr, processedSet, equality)
       else {
         val newProcessedSet = findNext(nextLeft, rightItr, processedSet, equality)
-        if (newProcessedSet.contains(nextLeft)) // nextLeft is found in right, let's fail early
-          false
-        else // nextLeft not found in right, let's continue to next element in left
+        if (newProcessedSet.find(equality.areEqual(_, nextLeft)).isDefined) // The nextLeft is contained in right, let's continue next
           checkEqual(leftItr, rightItr, newProcessedSet, equality)
+        else // The nextLeft is not in right, let's fail early
+          false
       }
     }
     else // No more element in left, left contains only elements of right.
@@ -65,14 +63,13 @@ class NoneOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T
   }
   
   /**
-   * This method contains the matching code for noneOf.
+   * This method contains the matching code for only.
    */
-  def apply(left: GenTraversable[T], equality: Equality[T]): MatchResult = {
+  def apply(left: GenTraversable[T], equality: Equality[T]): MatchResult = 
     MatchResult(
       checkEqual(left.toIterator, right.toIterator, Set.empty, equality), 
-      FailureMessages("containedOneOfElements", left, UnquotedString(right.mkString(", "))),
-      FailureMessages("didNotContainOneOfElements", left, UnquotedString(right.mkString(", ")))
+      FailureMessages("didNotContainOnlyElements", left, UnquotedString(right.mkString(", "))),
+      FailureMessages("containedOnlyElements", left, UnquotedString(right.mkString(", ")))
     )
-  }
 }
 

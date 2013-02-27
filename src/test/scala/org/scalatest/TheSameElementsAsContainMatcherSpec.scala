@@ -18,6 +18,7 @@ package org.scalatest
 import collection.mutable.LinkedHashMap
 import org.scalautils.Equality
 import org.scalautils.Explicitly
+import words.TheSameElementsAsContainMatcher
 
 class TheSameElementsAsContainMatcherSpec extends Spec with Matchers with SharedHelpers with Explicitly {
 
