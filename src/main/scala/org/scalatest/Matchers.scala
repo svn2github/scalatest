@@ -1086,27 +1086,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
       new Matcher[U] {
         def apply(left: U): MatchResult = {
           andMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
-          val leftMatchResult = leftMatcher(left)
-          val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-          if (!leftMatchResult.matches)
-            MatchResult(
-              false,
-              leftMatchResult.failureMessage,
-              leftMatchResult.negatedFailureMessage,
-              leftMatchResult.midSentenceFailureMessage,
-              leftMatchResult.midSentenceNegatedFailureMessage
-            )
-          else {
-            MatchResult(
-              rightMatchResult.matches,
-              Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-              Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-              Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-              Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-            )
-          }
-*/
         }
       }
 
@@ -1117,27 +1096,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
             def apply(left: V): MatchResult = {
               val rightMatcher = rightMatcherGen1.matcher
               andMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
-              val leftMatchResult = leftMatcher(left)
-              val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-              if (!leftMatchResult.matches)
-                MatchResult(
-                  false,
-                  leftMatchResult.failureMessage,
-                  leftMatchResult.negatedFailureMessage,
-                  leftMatchResult.midSentenceFailureMessage,
-                  leftMatchResult.midSentenceNegatedFailureMessage
-                )
-              else {
-                MatchResult(
-                  rightMatchResult.matches,
-                  Resources("commaBut", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.negatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-                  Resources("commaBut", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.midSentenceNegatedFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-                )
-              }
-*/
             }
           }
         }
@@ -1205,7 +1163,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * Map("one" -> 1, "two" -> 2) should (contain key ("two") and contain key ("one"))
+       * Map("one" -&gt; 1, "two" -&gt; 2) should (contain key ("two") and contain key ("one"))
        *                                                                     ^
        * </pre>
        */
@@ -1215,7 +1173,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * Map("one" -> 1, "two" -> 2) should (contain value (2) and contain value (1))
+       * Map("one" -&gt; 1, "two" -&gt; 2) should (contain value (2) and contain value (1))
        *                                                                   ^
        * </pre>
        */
@@ -1337,7 +1295,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -> 1, "two" -> 2) should (contain key ("two") and contain key ("one"))
+     * Map("one" -&gt; 1, "two" -&gt; 2) should (contain key ("two") and contain key ("one"))
      *                                                         ^ 
      * </pre>
      */
@@ -1689,7 +1647,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * 5 should (not be < (2) and not be < (6))
+       * 5 should (not be &lt; (2) and not be &lt; (6))
        *                                ^
        * </pre>
        */
@@ -1710,7 +1668,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * 7 should (not be > (8) and not be > (6))
+       * 7 should (not be &gt; (8) and not be &gt; (6))
        *                                ^
        * </pre>
        */
@@ -1721,7 +1679,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * 2 should (not be <= (1) and not be <= (2))
+       * 2 should (not be &lt;= (1) and not be &lt;= (2))
        *                                 ^
        * </pre>
        */
@@ -1732,7 +1690,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * 7 should (not be >= (8) and not be >= (6))
+       * 7 should (not be &gt;= (8) and not be &gt;= (6))
        *                                 ^
        * </pre>
        */
@@ -1952,7 +1910,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * Map("one" -> 1, "two" -> 2) should (not contain key ("five") and not contain key ("three"))
+       * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain key ("five") and not contain key ("three"))
        *                                                                      ^
        * </pre>
        */
@@ -1963,7 +1921,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * Map("one" -> 1, "two" -> 2) should (not contain value (5) and not contain value (3))
+       * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain value (5) and not contain value (3))
        *                                                                   ^
        * </pre>
        */
@@ -2042,27 +2000,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
       new Matcher[U] {
         def apply(left: U): MatchResult = {
           orMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
-          val leftMatchResult = leftMatcher(left)
-          val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-          if (leftMatchResult.matches)
-            MatchResult(
-              true,
-              leftMatchResult.negatedFailureMessage,
-              leftMatchResult.failureMessage,
-              leftMatchResult.midSentenceNegatedFailureMessage,
-              leftMatchResult.midSentenceFailureMessage
-            )
-          else {
-            MatchResult(
-              rightMatchResult.matches,
-              Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceFailureMessage),
-              Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-              Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
-              Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-            )
-          }
-*/
         }
       }
 
@@ -2073,27 +2010,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
             def apply(left: V): MatchResult = {
               val rightMatcher = rightMatcherGen1.matcher
               orMatchersAndApply(left, leftMatcher, rightMatcher)
-/*
-              val leftMatchResult = leftMatcher(left)
-              val rightMatchResult = rightMatcher(left) // Not short circuiting anymore
-              if (leftMatchResult.matches)
-                MatchResult(
-                  true,
-                  leftMatchResult.negatedFailureMessage,
-                  leftMatchResult.failureMessage,
-                  leftMatchResult.midSentenceNegatedFailureMessage,
-                  leftMatchResult.midSentenceFailureMessage
-                )
-              else {
-                MatchResult(
-                  rightMatchResult.matches,
-                  Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.failureMessage, rightMatchResult.midSentenceNegatedFailureMessage),
-                  Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceFailureMessage),
-                  Resources("commaAnd", leftMatchResult.midSentenceFailureMessage, rightMatchResult.midSentenceNegatedFailureMessage)
-                )
-              }
-*/
             }
           }
         }
@@ -2161,7 +2077,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * Map("one" -> 1, "two" -> 2) should (contain key ("cat") or contain key ("one"))
+       * Map("one" -&gt; 1, "two" -&gt; 2) should (contain key ("cat") or contain key ("one"))
        *                                                                    ^
        * </pre>
        */
@@ -2171,7 +2087,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * Map("one" -> 1, "two" -> 2) should (contain value (7) or contain value (1))
+       * Map("one" -&gt; 1, "two" -&gt; 2) should (contain value (7) or contain value (1))
        *                                                                  ^
        * </pre>
        */
@@ -2293,7 +2209,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -> 1, "two" -> 2) should (contain value (7) or contain value (1))
+     * Map("one" -&gt; 1, "two" -&gt; 2) should (contain value (7) or contain value (1))
      *                                                       ^
      * </pre>
      */
@@ -2655,7 +2571,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * 5 should (not be < (7) or not be < (8))
+       * 5 should (not be &lt; (7) or not be &lt; (8))
        *                               ^
        * </pre>
        */
@@ -2666,7 +2582,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * 7 should (not be > (5) or not be > (6))
+       * 7 should (not be &gt; (5) or not be &gt; (6))
        *                               ^
        * </pre>
        */
@@ -2677,7 +2593,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * 2 should (not be <= (3) or not be <= (2))
+       * 2 should (not be &lt;= (3) or not be &lt;= (2))
        *                                ^
        * </pre>
        */
@@ -2688,7 +2604,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * 8 should (not be >= (7) or not be >= (6))
+       * 8 should (not be &gt;= (7) or not be &gt;= (6))
        *                                ^
        * </pre>
        */
@@ -2908,7 +2824,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * Map("one" -> 1, "two" -> 2) should (not contain key ("two") or not contain key ("three"))
+       * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain key ("two") or not contain key ("three"))
        *                                                                    ^
        * </pre>
        */
@@ -2919,7 +2835,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * This method enables the following syntax:
        *
        * <pre class="stHighlight">
-       * Map("one" -> 1, "two" -> 2) should (not contain value (2) or not contain value (3))
+       * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain value (2) or not contain value (3))
        *                                                                  ^
        * </pre>
        */
@@ -2964,12 +2880,13 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -> 1, "two" -> 2) should (not contain value (2) or not contain value (3))
+     * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain value (2) or not contain value (3))
      *                                                           ^
      * </pre>
      */
     def or(notWord: NotWord): OrNotWord = new OrNotWord
   }
+// ZZZ end of MatcherWrapper
 
   /**
    * This implicit conversion method enables ScalaTest matchers expressions that involve <code>and</code> and <code>or</code>.
