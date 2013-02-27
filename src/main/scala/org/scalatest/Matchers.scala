@@ -39,6 +39,7 @@ import Matchers.andMatchersAndApply
 import Matchers.orMatchersAndApply
 import words.MatcherWords
 import words.FullyMatchWord
+import words.StartWithWord
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -3783,63 +3784,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
             expectedRegex.findFirstIn(left).isDefined,
             FailureMessages("didNotIncludeRegex", left, expectedRegex),
             FailureMessages("includedRegex", left, expectedRegex)
-          )
-      }
-  }
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class StartWithWord {
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * "1.7b" should (startWith ("1.7") and startWith ("1.7b"))
-     *                          ^
-     * </pre>
-     */
-    def apply(right: String): Matcher[String] =
-      new Matcher[String] {
-        def apply(left: String): MatchResult =
-          MatchResult(
-            left startsWith right,
-            FailureMessages("didNotStartWith", left, right),
-            FailureMessages("startedWith", left, right)
-          )
-      }
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * val decimal = """(-)?(\d+)(\.\d*)?"""
-     * "1.7b" should (startWith regex (decimal) and startWith regex (decimal))
-     *                          ^
-     * </pre>
-     */
-    def regex[T <: String](right: T): Matcher[T] = regex(right.r)
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * val decimalRegex = """(-)?(\d+)(\.\d*)?""".r
-     * "1.7" should (startWith regex (decimalRegex) and startWith regex (decimalRegex))
-     *                         ^
-     * </pre>
-     */
-    def regex(rightRegex: Regex): Matcher[String] =
-      new Matcher[String] {
-        def apply(left: String): MatchResult =
-          MatchResult(
-            rightRegex.pattern.matcher(left).lookingAt,
-            FailureMessages("didNotStartWithRegex", left, rightRegex),
-            FailureMessages("startedWithRegex", left, rightRegex)
           )
       }
   }
@@ -7996,16 +7940,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </pre>
    */
   val include = new IncludeWord
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * string should (startWith ("Four") and include ("year"))
-   *                ^
-   * </pre>
-   */
-  val startWith = new StartWithWord
 
   /**
    * This method enables syntax such as the following:

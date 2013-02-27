@@ -17,6 +17,26 @@ package org.scalatest.words
 
 trait MatcherWords {
 
+  /**
+   * This method enables syntax such as the following:
+   *
+   * <pre class="stHighlight">
+   * string should (fullyMatch regex ("Hel*o, wor.d") and not have length (99))
+   *                ^
+   * </pre>
+   */
+  val fullyMatch = new FullyMatchWord
+
+  /**
+   * This method enables syntax such as the following:
+   *
+   * <pre class="stHighlight">
+   * string should (startWith ("Four") and include ("year"))
+   *                ^
+   * </pre>
+   */
+  val startWith = new StartWithWord
+
 /*
   /**
    * This field enables syntax like the following: 
@@ -87,27 +107,6 @@ trait MatcherWords {
    * </pre>
    */
   val include = new IncludeWord
-*/
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * string should (fullyMatch regex ("Hel*o, wor.d") and not have length (99))
-   *                ^
-   * </pre>
-   */
-  val fullyMatch = new FullyMatchWord
-
-/*
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * string should (startWith ("Four") and include ("year"))
-   *                ^
-   * </pre>
-   */
-  val startWith = new StartWithWord
 
   /**
    * This method enables syntax such as the following:
