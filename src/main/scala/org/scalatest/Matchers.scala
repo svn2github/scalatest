@@ -43,6 +43,7 @@ import words.StartWithWord
 import words.EndWithWord
 import words.IncludeWord
 import words.HaveWord
+import words.NoneOfContainMatcher
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -9317,59 +9318,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    */
   def inOrderOnly[T](xs: T*) = 
     new InOrderOnlyContainMatcher(xs)
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  class NoneOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
-    
-    @tailrec
-    private def findNext(value: T, rightItr: Iterator[T], processedSet: Set[T], equality: Equality[T]): Set[T] = 
-      if (rightItr.hasNext) {
-        val nextRight = rightItr.next
-        if (processedSet.find(equality.areEqual(_, nextRight)).isDefined)
-            throw new IllegalArgumentException(FailureMessages("noneOfDuplicate", nextRight))
-        if (equality.areEqual(nextRight, value))
-          processedSet + nextRight
-        else
-          findNext(value, rightItr, processedSet + nextRight, equality)
-      }
-      else
-        processedSet
-    
-    @tailrec
-    private def checkEqual(leftItr: Iterator[T], rightItr: Iterator[T], processedSet: Set[T], equality: Equality[T]): Boolean = {
-      
-      if (leftItr.hasNext) {
-        val nextLeft = leftItr.next
-        if (processedSet.find(equality.areEqual(_, nextLeft)).isDefined) // nextLeft is found in right, let's fail early
-          false
-        else {
-          val newProcessedSet = findNext(nextLeft, rightItr, processedSet, equality)
-          if (newProcessedSet.contains(nextLeft)) // nextLeft is found in right, let's fail early
-            false
-          else // nextLeft not found in right, let's continue to next element in left
-            checkEqual(leftItr, rightItr, newProcessedSet, equality)
-        }
-      }
-      else // No more element in left, left contains only elements of right.
-        true
-    }
-    
-    /**
-     * This method contains the matching code for noneOf.
-     */
-    def apply(left: GenTraversable[T], equality: Equality[T]): MatchResult = {
-      MatchResult(
-        checkEqual(left.toIterator, right.toIterator, Set.empty, equality), 
-        FailureMessages("containedOneOfElements", left, UnquotedString(right.mkString(", "))),
-        FailureMessages("didNotContainOneOfElements", left, UnquotedString(right.mkString(", ")))
-      )
-    }
-  }
   
   /**
    * This method enables the following syntax: 
