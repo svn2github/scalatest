@@ -58,27 +58,6 @@ trait MatcherWords {
   val include = new IncludeWord
 
 /*
-  /**
-   * This field enables syntax like the following: 
-   *
-   * <pre class="stHighlight">
-   * myFile should (not be an (directory) and not have ('name ("foo.bar")))
-   *                ^
-   * </pre>
-   */
-  val not = new NotWord
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * obj should (be theSameInstanceAs (string) and be theSameInstanceAs (string))
-   *             ^
-   * </pre>
-   */
-  val be = new BeWord
-
-/*
     In HaveWord's methods key, value, length, and size, I can give type parameters.
     The type HaveWord can contain a key method that takes a S or what not, and returns a matcher, which
     stores the key value in a val and whose apply method checks the passed map for the remembered key. This one would be used in things like:
@@ -107,6 +86,26 @@ trait MatcherWords {
    * </pre>
    */
   val have = new HaveWord
+/*
+  /**
+   * This field enables syntax like the following: 
+   *
+   * <pre class="stHighlight">
+   * myFile should (not be an (directory) and not have ('name ("foo.bar")))
+   *                ^
+   * </pre>
+   */
+  val not = new NotWord
+
+  /**
+   * This method enables syntax such as the following:
+   *
+   * <pre class="stHighlight">
+   * obj should (be theSameInstanceAs (string) and be theSameInstanceAs (string))
+   *             ^
+   * </pre>
+   */
+  val be = new BeWord
 
   /**
    * This method enables syntax such as the following:
