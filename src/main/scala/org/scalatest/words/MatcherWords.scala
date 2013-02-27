@@ -37,6 +37,26 @@ trait MatcherWords {
    */
   val startWith = new StartWithWord
 
+  /**
+   * This method enables syntax such as the following:
+   *
+   * <pre class="stHighlight">
+   * string should (endWith ("ago") and include ("score"))
+   *                ^
+   * </pre>
+   */
+  val endWith = new EndWithWord
+
+  /**
+   * This method enables syntax such as the following:
+   *
+   * <pre class="stHighlight">
+   * string should (include ("hope") and not startWith ("no"))
+   *                ^
+   * </pre>
+   */
+  val include = new IncludeWord
+
 /*
   /**
    * This field enables syntax like the following: 
@@ -97,26 +117,6 @@ trait MatcherWords {
    * </pre>
    */
   val contain = new ContainWord
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * string should (include ("hope") and not startWith ("no"))
-   *                ^
-   * </pre>
-   */
-  val include = new IncludeWord
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * string should (endWith ("ago") and include ("score"))
-   *                ^
-   * </pre>
-   */
-  val endWith = new EndWithWord
 */
 }
 

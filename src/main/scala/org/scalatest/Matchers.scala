@@ -40,6 +40,8 @@ import Matchers.orMatchersAndApply
 import words.MatcherWords
 import words.FullyMatchWord
 import words.StartWithWord
+import words.EndWithWord
+import words.IncludeWord
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -3726,122 +3728,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
             matched.isDefined, 
             FailureMessages("didNotContainAn", left, UnquotedString(anMatcher.nounName)),
             FailureMessages("containedAn", left, UnquotedString(anMatcher.nounName), UnquotedString(if (matched.isDefined) anMatcher(matched.get).negatedFailureMessage else "-"))
-          )
-        }
-      }
-  }
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class IncludeWord {
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * "1.7" should (include ("1.7") and include ("1.8"))
-     *                       ^
-     * </pre>
-     */
-    def apply(expectedSubstring: String): Matcher[String] =
-      new Matcher[String] {
-        def apply(left: String): MatchResult =
-          MatchResult(
-            left.indexOf(expectedSubstring) >= 0, 
-            FailureMessages("didNotIncludeSubstring", left, expectedSubstring),
-            FailureMessages("includedSubstring", left, expectedSubstring)
-          )
-      }
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * val decimal = """(-)?(\d+)(\.\d*)?"""
-     * "a1.7b" should (include regex (decimal) and include regex (decimal))
-     *                         ^
-     * </pre>
-     */
-    def regex[T <: String](right: T): Matcher[T] = regex(right.r)
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * val decimalRegex = """(-)?(\d+)(\.\d*)?""".r
-     * "a1.7" should (include regex (decimalRegex) and include regex (decimalRegex))
-     *                        ^
-     * </pre>
-     */
-    def regex(expectedRegex: Regex): Matcher[String] =
-      new Matcher[String] {
-        def apply(left: String): MatchResult =
-          MatchResult(
-            expectedRegex.findFirstIn(left).isDefined,
-            FailureMessages("didNotIncludeRegex", left, expectedRegex),
-            FailureMessages("includedRegex", left, expectedRegex)
-          )
-      }
-  }
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class EndWithWord {
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * "1.7b" should (endWith ("1.7b") and endWith ("7b"))
-     *                        ^
-     * </pre>
-     */
-    def apply(right: String): Matcher[String] =
-      new Matcher[String] {
-        def apply(left: String): MatchResult =
-          MatchResult(
-            left endsWith right,
-            FailureMessages("didNotEndWith", left, right),
-            FailureMessages("endedWith", left, right)
-          )
-      }
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * val decimal = """(-)?(\d+)(\.\d*)?"""
-     * "b1.7" should (endWith regex (decimal) and endWith regex (decimal))
-     *                        ^
-     * </pre>
-     */
-    def regex[T <: String](right: T): Matcher[T] = regex(right.r)
-
-    /**
-     * This method enables the following syntax:
-     *
-     * <pre class="stHighlight">
-     * val decimalRegex = """(-)?(\d+)(\.\d*)?""".r
-     * "b1.7" should (endWith regex (decimalRegex) and endWith regex (decimalRegex))
-     *                        ^
-     * </pre>
-     */
-    def regex(rightRegex: Regex): Matcher[String] =
-      new Matcher[String] {
-        def apply(left: String): MatchResult = {
-          val allMatches = rightRegex.findAllIn(left)
-          MatchResult(
-            allMatches.hasNext && (allMatches.end == left.length),
-            FailureMessages("didNotEndWithRegex", left, rightRegex),
-            FailureMessages("endedWithRegex", left, rightRegex)
           )
         }
       }
@@ -7930,26 +7816,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </pre>
    */
   val contain = new ContainWord
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * string should (include ("hope") and not startWith ("no"))
-   *                ^
-   * </pre>
-   */
-  val include = new IncludeWord
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * string should (endWith ("ago") and include ("score"))
-   *                ^
-   * </pre>
-   */
-  val endWith = new EndWithWord
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
