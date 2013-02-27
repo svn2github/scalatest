@@ -7,10 +7,10 @@ import org.scalatest._
 import org.scalatest.Suite.autoTagClassAnnotations
 
 /**
- * Implementation trait for class <code>path.FunSpec</code>, which 
- * facilitates a &#8220;behavior-driven&#8221; style of development (BDD),
- * in which tests are combined with text that specifies the behavior the tests
- * verify.
+ * Implementation trait for class <code>path.FunSpec</code>, which is
+ * a sister class to <code>org.scalatest.FunSpec</code> that isolates
+ * tests by running each test in its own instance of the test class,
+ * and for each test, only executing the <em>path</em> leading to that test.
  * 
  * <p>
  * <a href="FunSpec.html"><code>path.FunSpec</code></a> is a class, not a trait,
