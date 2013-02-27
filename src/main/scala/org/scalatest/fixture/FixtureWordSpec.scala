@@ -15,7 +15,7 @@
  */
 package org.scalatest.fixture
 
-import org.scalatest.verb.{CanVerb, MustVerb, ShouldVerb}
+import org.scalatest.words.{CanVerb, MustVerb, ShouldVerb}
 
 /**
  * <strong>FixtureWordSpec has been deprecated and will be removed in a future

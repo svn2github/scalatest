@@ -1,6 +1,6 @@
 package org.scalatest.path
 
-import org.scalatest.verb.BehaveWord
+import org.scalatest.words.BehaveWord
 import scala.collection.immutable.ListSet
 import org.scalatest.PathEngine.isInTargetPath
 import org.scalatest._

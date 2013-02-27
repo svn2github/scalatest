@@ -16,7 +16,7 @@
 package org.scalatest
 
 import scala.collection.immutable.ListSet
-import verb.BehaveWord
+import words.BehaveWord
 import Suite.autoTagClassAnnotations
 
 /**

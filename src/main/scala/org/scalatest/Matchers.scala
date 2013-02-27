@@ -32,7 +32,7 @@ import org.scalautils.Interval
 import org.scalautils.TripleEqualsInvocation
 import scala.annotation.tailrec
 import org.scalautils.Equality
-import org.scalatest.verb.ShouldVerb
+import org.scalatest.words.ShouldVerb
 import org.scalautils.TripleEqualsInvocationOnInterval
 import org.scalautils.EqualityConstraint
 import Matchers.andMatchersAndApply

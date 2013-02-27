@@ -17,7 +17,7 @@ package org.scalatest.fixture
 
 import org.scalatest._
 import FixtureNodeFamily._
-import verb.{CanVerb, ResultOfAfterWordApplication, ShouldVerb, BehaveWord, MustVerb,
+import words.{CanVerb, ResultOfAfterWordApplication, ShouldVerb, BehaveWord, MustVerb,
   StringVerbBlockRegistration}
 import scala.collection.immutable.ListSet
 import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepth

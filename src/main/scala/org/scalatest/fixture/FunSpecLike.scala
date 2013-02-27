@@ -24,7 +24,7 @@ import java.util.ConcurrentModificationException
 import org.scalatest.events._
 import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
 import org.scalatest.Suite.autoTagClassAnnotations
-import verb.BehaveWord
+import words.BehaveWord
 import FunSuite.IgnoreTagName 
 import org.scalatest.exceptions.TestRegistrationClosedException
 
