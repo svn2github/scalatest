@@ -15,6 +15,11 @@
  */
 package org.scalatest.words
 
+import org.scalatest.matchers._
+import org.scalautils.Equality
+import org.scalatest.FailureMessages
+import org.scalatest.Suite
+
 trait MatcherWords {
 
   /**
@@ -107,7 +112,6 @@ trait MatcherWords {
    */
   val contain = new ContainWord
 
-/*
   /**
    * This field enables syntax like the following: 
    *
@@ -117,7 +121,58 @@ trait MatcherWords {
    * </pre>
    */
   val not = new NotWord
-*/
+
+  /**
+   * This method enables the following syntax: 
+   *
+   * <pre class="stHighlight">
+   * result should equal (7)
+   *               ^
+   * </pre>
+   *
+   * <p>
+   * The <code>left should equal (right)</code> syntax works by calling <code>==</code> on the <code>left</code>
+   * value, passing in the <code>right</code> value, on every type except arrays. If both <code>left</code> and right are arrays, <code>deep</code>
+   * will be invoked on both <code>left</code> and <code>right</code> before comparing them with <em>==</em>. Thus, even though this expression
+   * will yield false, because <code>Array</code>'s <code>equals</code> method compares object identity:
+   * </p>
+   * 
+   * <pre class="stHighlight">
+   * Array(1, 2) == Array(1, 2) // yields false
+   * </pre>
+   *
+   * <p>
+   * The following expression will <em>not</em> result in a <code>TestFailedException</code>, because ScalaTest will compare
+   * the two arrays structurally, taking into consideration the equality of the array's contents:
+   * </p>
+   *
+   * <pre class="stHighlight">
+   * Array(1, 2) should equal (Array(1, 2)) // succeeds (i.e., does not throw TestFailedException)
+   * </pre>
+   *
+   * <p>
+   * If you ever do want to verify that two arrays are actually the same object (have the same identity), you can use the
+   * <code>be theSameInstanceAs</code> syntax.
+   * </p>
+   *
+   */
+  def equal(right: Any): MatcherGen1[Any, Equality] =
+    new MatcherGen1[Any, Equality] {
+      def matcher[T <: Any : Equality]: Matcher[T] = {
+        val equality = implicitly[Equality[T]]
+        new Matcher[T] {
+          def apply(left: T): MatchResult = {
+            val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+            MatchResult(
+              equality.areEqual(left, right),
+              FailureMessages("didNotEqual", leftee, rightee),
+              FailureMessages("equaled", leftee, rightee)
+            )
+          }
+        }
+      }
+    }
+
 }
 
 object MatcherWords extends MatcherWords
