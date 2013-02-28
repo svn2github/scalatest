@@ -52,11 +52,13 @@ class StepwiseNestedSuiteExecutionSpec extends Spec with SharedHelpers {
         class SeqSubSuite extends SuperSuite with StepwiseNestedSuiteExecution
         val par = new ParSubSuite
         val stp = new SeqSubSuite
-        par.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
+        val parStatus = par.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
+        parStatus.waitUntilCompleted()
         assert(par.superRunNestedSuitesWasInvoked )
         assert(par.distributorWasDefined)
         assert(par.distributorWasPropagated)
-        stp.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
+        val stpStatus = stp.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
+        assert(stpStatus.isCompleted) // When a stepwise execution returns, the whole thing should be completed already, even though some of it may have run in parallel
         assert(!stp.superRunNestedSuitesWasInvoked )
         assert(!stp.distributorWasDefined)
         assert(stp.distributorWasPropagated)
