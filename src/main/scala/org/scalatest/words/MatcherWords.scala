@@ -19,6 +19,7 @@ import org.scalatest.matchers._
 import org.scalautils.Equality
 import org.scalatest.FailureMessages
 import org.scalatest.Suite
+import org.scalatest.Assertions.areEqualComparingArraysStructurally
 
 trait MatcherWords {
 
@@ -173,6 +174,17 @@ trait MatcherWords {
       }
     }
 
+  def legacyEqual(right: Any): Matcher[Any] =
+    new Matcher[Any] {
+      def apply(left: Any): MatchResult = {
+        val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
+        MatchResult(
+          areEqualComparingArraysStructurally(left, right),
+          FailureMessages("didNotEqual", leftee, rightee),
+          FailureMessages("equaled", left, right)
+        )
+      }
+    }
 }
 
 object MatcherWords extends MatcherWords

@@ -1143,8 +1143,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                     ^
        * </pre>
        */
-      def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = matchersWrapper.and(matchers.contain(expectedElement))
-      // def element[T](expectedElement: T) = matchersWrapper.and(matchers.contain.apply(expectedElement))
+      def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = matchersWrapper.and(MatcherWords.contain(expectedElement))
+      // def element[T](expectedElement: T) = matchersWrapper.and(MatcherWords.contain.apply(expectedElement))
 
       /**
        * This method enables the following syntax:
@@ -1154,7 +1154,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                     ^
        * </pre>
        */
-      def key[U](expectedElement: U): Matcher[T with scala.collection.GenMap[U, Any]] = matchersWrapper.and(matchers.contain.key(expectedElement))
+      def key[U](expectedElement: U): Matcher[T with scala.collection.GenMap[U, Any]] = matchersWrapper.and(MatcherWords.contain.key(expectedElement))
 
       /**
        * This method enables the following syntax:
@@ -1164,7 +1164,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                   ^
        * </pre>
        */
-      def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = matchersWrapper.and(matchers.contain.value(expectedValue))
+      def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = matchersWrapper.and(MatcherWords.contain.value(expectedValue))
       
       /**
        * This method enables the following syntax:
@@ -1175,7 +1175,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.and(matchers.contain.theSameElementsAs(right)(equality))
+        matchersWrapper.and(MatcherWords.contain.theSameElementsAs(right)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1186,7 +1186,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.and(matchers.contain.theSameIteratedElementsAs(right)(equality))
+        matchersWrapper.and(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1197,7 +1197,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def allOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.and(matchers.contain.allOf(right.toList: _*)(equality))
+        matchersWrapper.and(MatcherWords.contain.allOf(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1208,7 +1208,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def inOrder[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.and(matchers.contain.inOrder(right.toList: _*)(equality))
+        matchersWrapper.and(MatcherWords.contain.inOrder(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1219,7 +1219,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def oneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.and(matchers.contain.oneOf(right.toList: _*)(equality))
+        matchersWrapper.and(MatcherWords.contain.oneOf(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1230,7 +1230,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def only[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.and(matchers.contain.only(right.toList: _*)(equality))
+        matchersWrapper.and(MatcherWords.contain.only(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1241,7 +1241,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.and(matchers.contain.inOrderOnly(right.toList: _*)(equality))
+        matchersWrapper.and(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1252,7 +1252,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def noneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.and(matchers.contain.noneOf(right.toList: _*)(equality))
+        matchersWrapper.and(MatcherWords.contain.noneOf(right.toList: _*)(equality))
         
       /**
        * This method enables the following syntax:
@@ -1263,7 +1263,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def a[E](aMatcher: AMatcher[E]): Matcher[T with GenTraversable[E]] = 
-        and(matchers.contain.a(aMatcher))
+        and(MatcherWords.contain.a(aMatcher))
       
       /**
        * This method enables the following syntax:
@@ -1274,7 +1274,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def an[E](anMatcher: AnMatcher[E]): Matcher[T with GenTraversable[E]] = 
-        and(matchers.contain.an(anMatcher))
+        and(MatcherWords.contain.an(anMatcher))
     }
 
     /**
@@ -1549,7 +1549,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def equal(any: Any): MatcherGen1[T, Equality] =
-        matchersWrapper.and(matchers.not.apply(matchers.equal(any)))
+        matchersWrapper.and(MatcherWords.not.apply(MatcherWords.equal(any)))
 
       /**
        * This method enables the following syntax, for the "primitive" numeric types:
@@ -1559,7 +1559,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                         ^
        * </pre>
        */
-      def equal[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.and(matchers.not.equal(interval))
+      def equal[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.and(MatcherWords.not.equal(interval))
 
       /**
        * This method enables the following syntax:
@@ -1594,7 +1594,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be(any: Any): Matcher[T] =
-        matchersWrapper.and(matchers.not.apply(matchers.be(any)))
+        matchersWrapper.and(MatcherWords.not.apply(MatcherWords.be(any)))
 
       /**
        * This method enables the following syntax:
@@ -1605,7 +1605,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): Matcher[T with AnyRef] =
-        matchersWrapper.and(matchers.not.apply(matchers.have.length(resultOfLengthWordApplication.expectedLength)))
+        matchersWrapper.and(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
       /**
        * This method enables the following syntax:
@@ -1616,7 +1616,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): Matcher[T with AnyRef] =
-        matchersWrapper.and(matchers.not.apply(matchers.have.size(resultOfSizeWordApplication.expectedSize)))
+        matchersWrapper.and(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
       /**
        * This method enables the following syntax:
@@ -1627,7 +1627,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): Matcher[T with U] =
-        matchersWrapper.and(matchers.not.apply(matchers.have(firstPropertyMatcher, propertyMatchers: _*)))
+        matchersWrapper.and(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
       /**
        * This method enables the following syntax:
@@ -1638,7 +1638,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): Matcher[T with U] =
-        matchersWrapper.and(matchers.not.be(resultOfLessThanComparison))
+        matchersWrapper.and(MatcherWords.not.be(resultOfLessThanComparison))
 
       /**
        * This method enables the following syntax:
@@ -1648,7 +1648,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                     ^
        * </pre>
        */
-      def be(o: Null): Matcher[T with AnyRef] = matchersWrapper.and(matchers.not.be(o))
+      def be(o: Null): Matcher[T with AnyRef] = matchersWrapper.and(MatcherWords.not.be(o))
 
       /**
        * This method enables the following syntax:
@@ -1659,7 +1659,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): Matcher[T with U] =
-        matchersWrapper.and(matchers.not.be(resultOfGreaterThanComparison))
+        matchersWrapper.and(MatcherWords.not.be(resultOfGreaterThanComparison))
 
       /**
        * This method enables the following syntax:
@@ -1670,7 +1670,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): Matcher[T with U] =
-        matchersWrapper.and(matchers.not.be(resultOfLessThanOrEqualToComparison))
+        matchersWrapper.and(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
       /**
        * This method enables the following syntax:
@@ -1681,7 +1681,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): Matcher[T with U] =
-        matchersWrapper.and(matchers.not.be(resultOfGreaterThanOrEqualToComparison))
+        matchersWrapper.and(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
       /**
        * This method enables the following syntax:
@@ -1692,7 +1692,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[T] =
-        matchersWrapper.and(matchers.not.be(tripleEqualsInvocation))
+        matchersWrapper.and(MatcherWords.not.be(tripleEqualsInvocation))
 
       /**
        * This method enables the following syntax:
@@ -1702,7 +1702,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                              ^
        * </pre>
        */
-      def be(symbol: Symbol): Matcher[T with AnyRef] = matchersWrapper.and(matchers.not.be(symbol))
+      def be(symbol: Symbol): Matcher[T with AnyRef] = matchersWrapper.and(MatcherWords.not.be(symbol))
 
       /**
        * This method enables the following syntax:
@@ -1712,7 +1712,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                ^
        * </pre>
        */
-      def be[U](beMatcher: BeMatcher[U]): Matcher[T with U] = matchersWrapper.and(matchers.not.be(beMatcher))
+      def be[U](beMatcher: BeMatcher[U]): Matcher[T with U] = matchersWrapper.and(MatcherWords.not.be(beMatcher))
 
       /**
        * This method enables the following syntax:
@@ -1722,7 +1722,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                              ^
        * </pre>
        */
-      def be[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = matchersWrapper.and(matchers.not.be(bePropertyMatcher))
+      def be[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = matchersWrapper.and(MatcherWords.not.be(bePropertyMatcher))
 
       /**
        * This method enables the following syntax:
@@ -1732,7 +1732,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                ^
        * </pre>
        */
-      def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): Matcher[T with AnyRef] = matchersWrapper.and(matchers.not.be(resultOfAWordApplication))
+      def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): Matcher[T with AnyRef] = matchersWrapper.and(MatcherWords.not.be(resultOfAWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -1742,7 +1742,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                               ^
        * </pre>
        */
-      def be(resultOfAWordApplication: ResultOfAWordToAMatcherApplication[T]): Matcher[T] = matchersWrapper.and(matchers.not.be(resultOfAWordApplication))
+      def be(resultOfAWordApplication: ResultOfAWordToAMatcherApplication[T]): Matcher[T] = matchersWrapper.and(MatcherWords.not.be(resultOfAWordApplication))
       
       /**
        * This method enables the following syntax:
@@ -1752,7 +1752,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                             ^
        * </pre>
        */
-      def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): Matcher[T with U] = matchersWrapper.and(matchers.not.be(resultOfAWordApplication))
+      def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): Matcher[T with U] = matchersWrapper.and(MatcherWords.not.be(resultOfAWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -1762,7 +1762,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                ^
        * </pre>
        */
-      def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): Matcher[T with AnyRef] = matchersWrapper.and(matchers.not.be(resultOfAnWordApplication))
+      def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): Matcher[T with AnyRef] = matchersWrapper.and(MatcherWords.not.be(resultOfAnWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -1772,7 +1772,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                              ^
        * </pre>
        */
-      def be[T <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[T]) = matchersWrapper.and(matchers.not.be(resultOfAnWordApplication))
+      def be[T <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[T]) = matchersWrapper.and(MatcherWords.not.be(resultOfAnWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -1782,7 +1782,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                ^
        * </pre>
        */
-      def be(resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[T]): Matcher[T] = matchersWrapper.and(matchers.not.be(resultOfAnWordApplication))
+      def be(resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[T]): Matcher[T] = matchersWrapper.and(MatcherWords.not.be(resultOfAnWordApplication))
       
       /**
        * This method enables the following syntax:
@@ -1792,7 +1792,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                            ^
        * </pre>
        */
-      def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = matchersWrapper.and(matchers.not.be(resultOfTheSameInstanceAsApplication))
+      def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = matchersWrapper.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
       /**
        * This method enables the following syntax, for the "primitive" numeric types:
@@ -1802,7 +1802,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                          ^
        * </pre>
        */
-      def be[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.and(matchers.not.be(interval))
+      def be[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.and(MatcherWords.not.be(interval))
 
       /**
        * This method enables the following syntax:
@@ -1813,7 +1813,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-        matchersWrapper.and(matchers.not.fullyMatch(resultOfRegexWordApplication))
+        matchersWrapper.and(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -1824,7 +1824,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-        matchersWrapper.and(matchers.not.include(resultOfRegexWordApplication))
+        matchersWrapper.and(MatcherWords.not.include(resultOfRegexWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -1835,7 +1835,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def include(expectedSubstring: String): Matcher[T with String] =
-        matchersWrapper.and(matchers.not.include(expectedSubstring))
+        matchersWrapper.and(MatcherWords.not.include(expectedSubstring))
 
       /**
        * This method enables the following syntax:
@@ -1846,7 +1846,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-        matchersWrapper.and(matchers.not.startWith(resultOfRegexWordApplication))
+        matchersWrapper.and(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -1857,7 +1857,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def startWith(expectedSubstring: String): Matcher[T with String] =
-        matchersWrapper.and(matchers.not.startWith(expectedSubstring))
+        matchersWrapper.and(MatcherWords.not.startWith(expectedSubstring))
 
       /**
        * This method enables the following syntax:
@@ -1868,7 +1868,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-        matchersWrapper.and(matchers.not.endWith(resultOfRegexWordApplication))
+        matchersWrapper.and(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -1879,7 +1879,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def endWith(expectedSubstring: String): Matcher[T with String] =
-        matchersWrapper.and(matchers.not.endWith(expectedSubstring))
+        matchersWrapper.and(MatcherWords.not.endWith(expectedSubstring))
 
       /**
        * This method enables the following syntax:
@@ -1890,7 +1890,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](expectedElement: U): Matcher[T with GenTraversable[U]] =
-        matchersWrapper.and(matchers.not.contain(expectedElement))
+        matchersWrapper.and(MatcherWords.not.contain(expectedElement))
 
       /**
        * This method enables the following syntax:
@@ -1901,7 +1901,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): Matcher[T with scala.collection.GenMap[U, Any]] =
-        matchersWrapper.and(matchers.not.contain(resultOfKeyWordApplication))
+        matchersWrapper.and(MatcherWords.not.contain(resultOfKeyWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -1912,7 +1912,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] =
-        matchersWrapper.and(matchers.not.contain(resultOfValueWordApplication))
+        matchersWrapper.and(MatcherWords.not.contain(resultOfValueWordApplication))
         
       /**
        * This method enables the following syntax:
@@ -1923,7 +1923,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](right: ContainMatcher[U]): Matcher[T with GenTraversable[U]] =
-        matchersWrapper.and(matchers.not.contain(right))
+        matchersWrapper.and(MatcherWords.not.contain(right))
         
       /**
        * This method enables the following syntax:
@@ -1934,7 +1934,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): Matcher[T with GenTraversable[U]] = 
-        matchersWrapper.and(matchers.not.contain(resultOfAWordApplication))
+        matchersWrapper.and(MatcherWords.not.contain(resultOfAWordApplication))
         
       /**
        * This method enables the following syntax:
@@ -1945,7 +1945,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): Matcher[T with GenTraversable[U]] = 
-        matchersWrapper.and(matchers.not.contain(resultOfAnWordApplication))
+        matchersWrapper.and(MatcherWords.not.contain(resultOfAnWordApplication))
     }
 
     /**
@@ -2055,8 +2055,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                            ^
        * </pre>
        */
-      def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = matchersWrapper.or(matchers.contain(expectedElement))
-      // def element[T](expectedElement: T) = matchersWrapper.or(matchers.contain.apply(expectedElement))
+      def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = matchersWrapper.or(MatcherWords.contain(expectedElement))
+      // def element[T](expectedElement: T) = matchersWrapper.or(MatcherWords.contain.apply(expectedElement))
 
       /**
        * This method enables the following syntax:
@@ -2066,7 +2066,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                    ^
        * </pre>
        */
-      def key[U](expectedKey: U): Matcher[T with scala.collection.GenMap[U, Any]] = matchersWrapper.or(matchers.contain.key(expectedKey))
+      def key[U](expectedKey: U): Matcher[T with scala.collection.GenMap[U, Any]] = matchersWrapper.or(MatcherWords.contain.key(expectedKey))
 
       /**
        * This method enables the following syntax:
@@ -2076,7 +2076,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                  ^
        * </pre>
        */
-      def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = matchersWrapper.or(matchers.contain.value(expectedValue))
+      def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = matchersWrapper.or(MatcherWords.contain.value(expectedValue))
       
       /**
        * This method enables the following syntax:
@@ -2087,7 +2087,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.or(matchers.contain.theSameElementsAs(right)(equality))
+        matchersWrapper.or(MatcherWords.contain.theSameElementsAs(right)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2098,7 +2098,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.or(matchers.contain.theSameIteratedElementsAs(right)(equality))
+        matchersWrapper.or(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2109,7 +2109,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def allOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.or(matchers.contain.allOf(right.toList: _*)(equality))
+        matchersWrapper.or(MatcherWords.contain.allOf(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2120,7 +2120,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def inOrder[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.or(matchers.contain.inOrder(right.toList: _*)(equality))
+        matchersWrapper.or(MatcherWords.contain.inOrder(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2131,7 +2131,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def oneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.or(matchers.contain.oneOf(right.toList: _*)(equality))
+        matchersWrapper.or(MatcherWords.contain.oneOf(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2142,7 +2142,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def only[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.or(matchers.contain.only(right.toList: _*)(equality))
+        matchersWrapper.or(MatcherWords.contain.only(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2153,7 +2153,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.or(matchers.contain.inOrderOnly(right.toList: _*)(equality))
+        matchersWrapper.or(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2164,7 +2164,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def noneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-        matchersWrapper.or(matchers.contain.noneOf(right.toList: _*)(equality))
+        matchersWrapper.or(MatcherWords.contain.noneOf(right.toList: _*)(equality))
         
       /**
        * This method enables the following syntax:
@@ -2175,7 +2175,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def a[E](aMatcher: AMatcher[E]): Matcher[T with GenTraversable[E]] = 
-        or(matchers.contain.a(aMatcher))
+        or(MatcherWords.contain.a(aMatcher))
       
       /**
        * This method enables the following syntax:
@@ -2186,7 +2186,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def an[E](anMatcher: AnMatcher[E]): Matcher[T with GenTraversable[E]] = 
-        or(matchers.contain.an(anMatcher))
+        or(MatcherWords.contain.an(anMatcher))
     }
 
     /**
@@ -2461,7 +2461,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def equal(any: Any): Matcher[T] =
-        matchersWrapper.or(matchers.not.apply(matchers.legacyEqual(any)))
+        matchersWrapper.or(MatcherWords.not.apply(MatcherWords.legacyEqual(any)))
 
       /**
        * This method enables the following syntax for the "primitive" numeric types:
@@ -2471,7 +2471,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                        ^
        * </pre>
        */
-      def equal[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.equal(interval))
+      def equal[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.or(MatcherWords.not.equal(interval))
 
       /**
        * This method enables the following syntax:
@@ -2506,7 +2506,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be(any: Any): Matcher[T] =
-        matchersWrapper.or(matchers.not.apply(matchers.be(any)))
+        matchersWrapper.or(MatcherWords.not.apply(MatcherWords.be(any)))
 
       /**
        * This method enables the following syntax:
@@ -2517,7 +2517,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): Matcher[T with AnyRef] =
-        matchersWrapper.or(matchers.not.apply(matchers.have.length(resultOfLengthWordApplication.expectedLength)))
+        matchersWrapper.or(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
       /**
        * This method enables the following syntax:
@@ -2528,7 +2528,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): Matcher[T with AnyRef] =
-        matchersWrapper.or(matchers.not.apply(matchers.have.size(resultOfSizeWordApplication.expectedSize)))
+        matchersWrapper.or(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
       /**
        * This method enables the following syntax:
@@ -2539,7 +2539,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): Matcher[T with U] =
-        matchersWrapper.or(matchers.not.apply(matchers.have(firstPropertyMatcher, propertyMatchers: _*)))
+        matchersWrapper.or(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
       /**
        * This method enables the following syntax:
@@ -2549,7 +2549,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                    ^
        * </pre>
        */
-      def be(o: Null): Matcher[T with AnyRef] = matchersWrapper.or(matchers.not.be(o))
+      def be(o: Null): Matcher[T with AnyRef] = matchersWrapper.or(MatcherWords.not.be(o))
 
       /**
        * This method enables the following syntax:
@@ -2560,7 +2560,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): Matcher[T with U] =
-        matchersWrapper.or(matchers.not.be(resultOfLessThanComparison))
+        matchersWrapper.or(MatcherWords.not.be(resultOfLessThanComparison))
 
       /**
        * This method enables the following syntax:
@@ -2571,7 +2571,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): Matcher[T with U] =
-        matchersWrapper.or(matchers.not.be(resultOfGreaterThanComparison))
+        matchersWrapper.or(MatcherWords.not.be(resultOfGreaterThanComparison))
 
       /**
        * This method enables the following syntax:
@@ -2582,7 +2582,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): Matcher[T with U] =
-        matchersWrapper.or(matchers.not.be(resultOfLessThanOrEqualToComparison))
+        matchersWrapper.or(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
       /**
        * This method enables the following syntax:
@@ -2593,7 +2593,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): Matcher[T with U] =
-        matchersWrapper.or(matchers.not.be(resultOfGreaterThanOrEqualToComparison))
+        matchersWrapper.or(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
       /**
        * This method enables the following syntax:
@@ -2604,7 +2604,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[T] =
-        matchersWrapper.or(matchers.not.be(tripleEqualsInvocation))
+        matchersWrapper.or(MatcherWords.not.be(tripleEqualsInvocation))
 
       /**
        * This method enables the following syntax:
@@ -2614,7 +2614,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                            ^
        * </pre>
        */
-      def be(symbol: Symbol): Matcher[T with AnyRef] = matchersWrapper.or(matchers.not.be(symbol))
+      def be(symbol: Symbol): Matcher[T with AnyRef] = matchersWrapper.or(MatcherWords.not.be(symbol))
 
       /**
        * This method enables the following syntax:
@@ -2624,7 +2624,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                ^
        * </pre>
        */
-      def be[U](beMatcher: BeMatcher[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.be(beMatcher))
+      def be[U](beMatcher: BeMatcher[U]): Matcher[T with U] = matchersWrapper.or(MatcherWords.not.be(beMatcher))
 
       /**
        * This method enables the following syntax:
@@ -2634,7 +2634,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                          ^
        * </pre>
        */
-      def be[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = matchersWrapper.or(matchers.not.be(bePropertyMatcher))
+      def be[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = matchersWrapper.or(MatcherWords.not.be(bePropertyMatcher))
 
       /**
        * This method enables the following syntax:
@@ -2644,7 +2644,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                    ^
        * </pre>
        */
-      def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): Matcher[T with AnyRef] = matchersWrapper.or(matchers.not.be(resultOfAWordApplication))
+      def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): Matcher[T with AnyRef] = matchersWrapper.or(MatcherWords.not.be(resultOfAWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -2654,7 +2654,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                 ^
        * </pre>
        */
-      def be(resultOfAWordApplication: ResultOfAWordToAMatcherApplication[T]): Matcher[T] = matchersWrapper.or(matchers.not.be(resultOfAWordApplication))
+      def be(resultOfAWordApplication: ResultOfAWordToAMatcherApplication[T]): Matcher[T] = matchersWrapper.or(MatcherWords.not.be(resultOfAWordApplication))
       
       /**
        * This method enables the following syntax:
@@ -2664,7 +2664,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                            ^
        * </pre>
        */
-      def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.be(resultOfAWordApplication))
+      def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): Matcher[T with U] = matchersWrapper.or(MatcherWords.not.be(resultOfAWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -2674,7 +2674,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                ^
        * </pre>
        */
-      def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): Matcher[T with AnyRef] = matchersWrapper.or(matchers.not.be(resultOfAnWordApplication))
+      def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): Matcher[T with AnyRef] = matchersWrapper.or(MatcherWords.not.be(resultOfAnWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -2684,7 +2684,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                             ^
        * </pre>
        */
-      def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.be(resultOfAnWordApplication))
+      def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): Matcher[T with U] = matchersWrapper.or(MatcherWords.not.be(resultOfAnWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -2694,7 +2694,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                ^
        * </pre>
        */
-      def be(resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[T]): Matcher[T] = matchersWrapper.or(matchers.not.be(resultOfAnWordApplication))
+      def be(resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[T]): Matcher[T] = matchersWrapper.or(MatcherWords.not.be(resultOfAnWordApplication))
       
       /**
        * This method enables the following syntax:
@@ -2704,7 +2704,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                           ^
        * </pre>
        */
-      def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = matchersWrapper.or(matchers.not.be(resultOfTheSameInstanceAsApplication))
+      def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = matchersWrapper.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
       /**
        * This method enables the following syntax for the "primitive" numeric types:
@@ -2714,7 +2714,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                         ^
        * </pre>
        */
-      def be[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.or(matchers.not.be(interval))
+      def be[U](interval: Interval[U]): Matcher[T with U] = matchersWrapper.or(MatcherWords.not.be(interval))
 
       /**
        * This method enables the following syntax:
@@ -2725,7 +2725,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-        matchersWrapper.or(matchers.not.fullyMatch(resultOfRegexWordApplication))
+        matchersWrapper.or(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -2736,7 +2736,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-        matchersWrapper.or(matchers.not.include(resultOfRegexWordApplication))
+        matchersWrapper.or(MatcherWords.not.include(resultOfRegexWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -2747,7 +2747,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def include(expectedSubstring: String): Matcher[T with String] =
-        matchersWrapper.or(matchers.not.include(expectedSubstring))
+        matchersWrapper.or(MatcherWords.not.include(expectedSubstring))
 
       /**
        * This method enables the following syntax:
@@ -2758,7 +2758,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-        matchersWrapper.or(matchers.not.startWith(resultOfRegexWordApplication))
+        matchersWrapper.or(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -2769,7 +2769,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def startWith(expectedSubstring: String): Matcher[T with String] =
-        matchersWrapper.or(matchers.not.startWith(expectedSubstring))
+        matchersWrapper.or(MatcherWords.not.startWith(expectedSubstring))
 
       /**
        * This method enables the following syntax:
@@ -2780,7 +2780,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-        matchersWrapper.or(matchers.not.endWith(resultOfRegexWordApplication))
+        matchersWrapper.or(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -2791,7 +2791,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def endWith(expectedSubstring: String): Matcher[T with String] =
-        matchersWrapper.or(matchers.not.endWith(expectedSubstring))
+        matchersWrapper.or(MatcherWords.not.endWith(expectedSubstring))
 
       /**
        * This method enables the following syntax:
@@ -2802,7 +2802,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](expectedElement: U): Matcher[T with GenTraversable[U]] =
-        matchersWrapper.or(matchers.not.contain(expectedElement))
+        matchersWrapper.or(MatcherWords.not.contain(expectedElement))
 
       /**
        * This method enables the following syntax:
@@ -2813,7 +2813,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): Matcher[T with scala.collection.GenMap[U, Any]] =
-        matchersWrapper.or(matchers.not.contain(resultOfKeyWordApplication))
+        matchersWrapper.or(MatcherWords.not.contain(resultOfKeyWordApplication))
 
       /**
        * This method enables the following syntax:
@@ -2824,7 +2824,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] =
-        matchersWrapper.or(matchers.not.contain(resultOfValueWordApplication))
+        matchersWrapper.or(MatcherWords.not.contain(resultOfValueWordApplication))
         
       /**
        * This method enables the following syntax:
@@ -2835,7 +2835,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](right: ContainMatcher[U]): Matcher[T with GenTraversable[U]] =
-        matchersWrapper.or(matchers.not.contain(right))
+        matchersWrapper.or(MatcherWords.not.contain(right))
         
       /**
        * This method enables the following syntax:
@@ -2846,7 +2846,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): Matcher[T with GenTraversable[U]] = 
-        matchersWrapper.or(matchers.not.contain(resultOfAWordApplication))
+        matchersWrapper.or(MatcherWords.not.contain(resultOfAWordApplication))
         
       /**
        * This method enables the following syntax:
@@ -2857,7 +2857,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        * </pre>
        */
       def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): Matcher[T with GenTraversable[U]] = 
-        matchersWrapper.or(matchers.not.contain(resultOfAnWordApplication))
+        matchersWrapper.or(MatcherWords.not.contain(resultOfAnWordApplication))
     }
 
     /**
@@ -5627,19 +5627,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
         }
       }
 */
-
-  def legacyEqual(right: Any): Matcher[Any] =
-      new Matcher[Any] {
-        def apply(left: Any): MatchResult = {
-          val (leftee, rightee) = Suite.getObjectsForFailureMessage(left, right)
-          MatchResult(
-            areEqualComparingArraysStructurally(left, right),
-            FailureMessages("didNotEqual", leftee, rightee),
-            FailureMessages("equaled", left, right)
-          )
-        }
-      }
-
 
   /**
    * This method enables syntax such as the following:
