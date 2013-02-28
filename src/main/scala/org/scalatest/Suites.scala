@@ -16,7 +16,7 @@
 package org.scalatest
 
 /**
- * A <code>Suite</code> class that takes zero to many <code>Suite</code>s,
+ * A <code>Suite</code> class that takes zero to many <code>Suite</code>s in its constructor,
  *  which will be returned from its <code>nestedSuites</code> method.
  *
  * <p>
@@ -35,9 +35,11 @@ package org.scalatest
  * </pre>
  *
  * <p>
- * When <code>StepsSuite</code> is executed, it will execute its
+ * If <code>StepsSuite</code> is executed sequentially, it will execute its
  * nested suites in the passed order: <code>Step1Suite</code>, <code>Step2Suite</code>,
  * <code>Step3Suite</code>, <code>Step4Suite</code>, and <code>Step5Suite</code>.
+ * If <code>StepsSuite</code> is executed in parallel, the nested suites will
+ * be executed concurrently.
  * </p>
  *
  * @param suitesToNest a sequence of <code>Suite</code>s to nest.
@@ -80,7 +82,7 @@ class Suites(suitesToNest: Suite*) extends Suite { thisSuite =>
  * </p>
  *
  * <pre class="stREPL">
- * scala> Suites(new MyFirstSuite, new MyNextSuite).execute()
+ * scala&gt; Suites(new MyFirstSuite, new MyNextSuite).execute()
  * </pre>
  */
 object Suites {

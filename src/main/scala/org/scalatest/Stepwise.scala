@@ -17,7 +17,8 @@ package org.scalatest
 
 /**
  * A <code>Suite</code> class that takes zero to many <code>Suite</code>s,
- *  which will be returned from its <code>nestedSuites</code> method.
+ * which will be returned from its <code>nestedSuites</code> method and
+ * executed in &ldquo;stepwise&rdquo; fashion by its <code>runNestedSuites</code> method.
  *
  * <p>
  * For example, you can define a suite that always executes a list of
@@ -25,7 +26,7 @@ package org.scalatest
  * </p>
  *
  * <pre class="stHighlight">
- * class StepsSuite extends Suites(
+ * class StepsSuite extends Stepwise(
  *   new Step1Suite,
  *   new Step2Suite,
  *   new Step3Suite,
@@ -35,11 +36,21 @@ package org.scalatest
  * </pre>
  *
  * <p>
- * When <code>StepsSuite</code> is executed, it will execute its
- * nested suites in the passed order: <code>Step1Suite</code>, <code>Step2Suite</code>,
+ * When <code>StepsSuite</code> is executed, regardless of whether a <code>Distributor</code>
+ * is passed, it will execute its
+ * nested suites sequentially in the passed order: <code>Step1Suite</code>, <code>Step2Suite</code>,
  * <code>Step3Suite</code>, <code>Step4Suite</code>, and <code>Step5Suite</code>.
  * </p>
  *
+ * <p>
+ * The difference between <code>Stepwise</code> and <a href="Sequential.html"><code>Sequential</code></a>
+ * is that although <code>Stepwise</code> executes its own nested suites sequentially, it passes
+ * whatever distributor was passed to it to those nested suites. Thus the nested suites could run their own nested
+ * suites and tests in parallel if that distributor is defined. By contrast, <code>Sequential</code> always
+ * passes <code>None</code> for the distributor to the nested suites, so any and every test and nested suite 
+ * contained within the nested suites passed to the <code>Sequential</code> construtor will be executed sequentially.
+ * </p>
+ * 
  * @param suitesToNest a sequence of <code>Suite</code>s to nest.
  *
  * @throws NullPointerException if <code>suitesToNest</code>, or any suite
@@ -72,21 +83,21 @@ class Stepwise(suitesToNest: Suite*) extends Suite with StepwiseNestedSuiteExecu
 }
 
 /**
- * Companion object to class <code>Suites</code> that offers an <code>apply</code> factory method
- * for creating a <code>Suites</code> instance.
+ * Companion object to class <code>Stepwise</code> that offers an <code>apply</code> factory method
+ * for creating a <code>Stepwise</code> instance.
  *
  * <p>
  * One use case for this object is to run multiple specification-style suites in the Scala interpreter, like this:
  * </p>
  *
  * <pre class="stREPL">
- * scala> Suites(new MyFirstSuite, new MyNextSuite).execute()
+ * scala&gt; Stepwise(new MyFirstSuite, new MyNextSuite).execute()
  * </pre>
  */
 object Stepwise {
 
   /**
-   * Factory method for creating a <code>Suites</code> instance.
+   * Factory method for creating a <code>Stepwise</code> instance.
    */
   def apply(suitesToNest: Suite*): Stepwise = new Stepwise(suitesToNest: _*)
 }
