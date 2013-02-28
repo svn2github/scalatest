@@ -17,7 +17,7 @@ package org.scalatest.matchers
 
 import org.scalatest._
 
-trait AMatcher[T] extends Function1[T, MatchResult] { 
+trait AMatcher[-T] extends Function1[T, MatchResult] { 
   val nounName: String
   def apply(left: T): MatchResult
 }

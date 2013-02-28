@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2008 Artima, Inc.
+ * Copyright 2001-2013 Artima, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 package org.scalatest.matchers
+
+import org.scalatest.Matchers.orMatchersAndApply
+import org.scalatest.Matchers.andMatchersAndApply
 
 /**
  * Trait extended by objects that can match a value of the specified type. The value to match is
@@ -362,7 +365,7 @@ package org.scalatest.matchers
  *
  * @author Bill Venners
  */
-trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
+trait Matcher[-T] extends Function1[T, MatchResult] with LogicalOperations[T] { thisMatcher =>
 
   /**
    * Check to see if the specified object, <code>left</code>, matches, and report the result in
@@ -441,6 +444,92 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
   override def compose[U](g: U => T): Matcher[U] =
     new Matcher[U] {
       def apply(u: U) = thisMatcher.apply(g(u))
+    }
+
+// TODO: mention not short circuited, and the precendence is even between and and or
+
+  /**
+   * Returns a matcher whose <code>apply</code> method returns a <code>MatchResult</code>
+   * that represents the logical-and of the results of the wrapped and the passed matcher applied to
+   * the same value.
+   *
+   * <p>
+   * The reason <code>and</code> has an upper bound on its type parameter is so that the <code>Matcher</code>
+   * resulting from an invocation of <code>and</code> will have the correct type parameter. If you call
+   * <code>and</code> on a <code>Matcher[Orange]</code>, passing in a <code>Matcher[Valencia]</code>,
+   * the result will have type <code>Matcher[Valencia]</code>. This is correct because both a
+   * <code>Matcher[Orange]</code> and a <code>Matcher[Valencia]</code> know how to match a
+   * <code>Valencia</code> (but a <code>Matcher[Valencia]</code> doesn't know how to
+   * match any old <code>Orange</code>).  If you call
+   * <code>and</code> on a <code>Matcher[Orange]</code>, passing in a <code>Matcher[Fruit]</code>,
+   * the result will have type <code>Matcher[Orange]</code>. This is also correct because both a
+   * <code>Matcher[Orange]</code> and a <code>Matcher[Fruit]</code> know how to match an
+   * <code>Orange</code> (but a <code>Matcher[Orange]</code> doesn't know how to
+   * match any old <code>Fruit</code>).
+   * </p>
+   *
+   * @param the matcher to logical-and with this matcher
+   * @return a matcher that performs the logical-and of this and the passed matcher
+   */
+  def and[U <: T](rightMatcher: Matcher[U]): Matcher[U] =
+    new Matcher[U] {
+      def apply(left: U): MatchResult = {
+        andMatchersAndApply(left, thisMatcher, rightMatcher)
+      }
+    }
+
+  def and[U <: T, TYPECLASS[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
+    new MatcherGen1[U, TYPECLASS] {
+      def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+        new Matcher[V] {
+          def apply(left: V): MatchResult = {
+            val rightMatcher = rightMatcherGen1.matcher
+            andMatchersAndApply(left, thisMatcher, rightMatcher)
+          }
+        }
+      }
+    }
+
+  /**
+   * Returns a matcher whose <code>apply</code> method returns a <code>MatchResult</code>
+   * that represents the logical-or of the results of this and the passed matcher applied to
+   * the same value.
+   *
+   * <p>
+   * The reason <code>or</code> has an upper bound on its type parameter is so that the <code>Matcher</code>
+   * resulting from an invocation of <code>or</code> will have the correct type parameter. If you call
+   * <code>or</code> on a <code>Matcher[Orange]</code>, passing in a <code>Matcher[Valencia]</code>,
+   * the result will have type <code>Matcher[Valencia]</code>. This is correct because both a
+   * <code>Matcher[Orange]</code> and a <code>Matcher[Valencia]</code> know how to match a
+   * <code>Valencia</code> (but a <code>Matcher[Valencia]</code> doesn't know how to
+   * match any old <code>Orange</code>).  If you call
+   * <code>or</code> on a <code>Matcher[Orange]</code>, passing in a <code>Matcher[Fruit]</code>,
+   * the result will have type <code>Matcher[Orange]</code>. This is also correct because both a
+   * <code>Matcher[Orange]</code> and a <code>Matcher[Fruit]</code> know how to match an
+   * <code>Orange</code> (but a <code>Matcher[Orange]</code> doesn't know how to
+   * match any old <code>Fruit</code>).
+   * </p>
+   *
+   * @param the matcher to logical-or with this matcher
+   * @return a matcher that performs the logical-or of this and the passed matcher
+   */
+  def or[U <: T](rightMatcher: Matcher[U]): Matcher[U] =
+    new Matcher[U] {
+      def apply(left: U): MatchResult = {
+        orMatchersAndApply(left, thisMatcher, rightMatcher)
+      }
+    }
+
+  def or[U <: T, TYPECLASS[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
+    new MatcherGen1[U, TYPECLASS] {
+      def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+        new Matcher[V] {
+          def apply(left: V): MatchResult = {
+            val rightMatcher = rightMatcherGen1.matcher
+            orMatchersAndApply(left, thisMatcher, rightMatcher)
+          }
+        }
+      }
     }
 }
 
