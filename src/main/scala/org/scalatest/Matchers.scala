@@ -59,6 +59,17 @@ import words.ResultOfLessThanComparison
 import words.ResultOfGreaterThanComparison
 import words.ResultOfLessThanOrEqualToComparison
 import words.ResultOfGreaterThanOrEqualToComparison
+import words.ResultOfAWordToSymbolApplication
+import words.ResultOfAWordToBePropertyMatcherApplication
+import words.ResultOfAWordToAMatcherApplication
+import words.ResultOfAnWordToSymbolApplication
+import words.ResultOfAnWordToBePropertyMatcherApplication
+import words.ResultOfAnWordToAnMatcherApplication
+import words.ResultOfTheSameInstanceAsApplication
+import words.ResultOfRegexWordApplication
+import words.ResultOfKeyWordApplication
+import words.ResultOfValueWordApplication
+
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -5824,34 +5835,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
-   * <p>
-   * The primary constructor enables the following syntax (with a passed <code>scala.util.matching.Regex</code>): 
-   * </p>
-   *
-   * <pre class="stHighlight">
-   * "eight" should not fullyMatch regex ("""(-)?(\d+)(\.\d*)?""".r)
-   *                               ^
-   * </pre>
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfRegexWordApplication(val regex: Regex) {
-
-    /**
-     * This auxiliary constructor enables the following syntax (with a passed <code>java.lang.String</code>): 
-     *
-     * <pre class="stHighlight">
-     * "eight" should not fullyMatch regex ("""(-)?(\d+)(\.\d*)?""")
-     *                               ^
-     * </pre>
-     */
-    def this(regexString: String) = this(new Regex(regexString))
-  }
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
    * @author Bill Venners
    */
   final class ResultOfHaveWordForString(left: String, shouldBeTrue: Boolean) {
@@ -7113,14 +7096,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfKeyWordApplication[T](val expectedKey: T)
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
   final class KeyWord {
 
     /**
@@ -7150,14 +7125,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfValueWordApplication[T](val expectedValue: T)
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
   final class ValueWord {
 
     /**
@@ -7180,30 +7147,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </pre>
    */
   val value = new ValueWord
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfAWordToSymbolApplication(val symbol: Symbol)
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfAWordToBePropertyMatcherApplication[T](val bePropertyMatcher: BePropertyMatcher[T])
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfAWordToAMatcherApplication[T](val aMatcher: AMatcher[T])
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
@@ -7261,30 +7204,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfAnWordToSymbolApplication(val symbol: Symbol)
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfAnWordToBePropertyMatcherApplication[T](val bePropertyMatcher: BePropertyMatcher[T])
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfAnWordToAnMatcherApplication[T](val anMatcher: AnMatcher[T])
-  
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
   final class AnWord {
 
     /**
@@ -7328,14 +7247,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * </pre>
    */
   val an = new AnWord
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfTheSameInstanceAsApplication(val right: AnyRef)
 
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
