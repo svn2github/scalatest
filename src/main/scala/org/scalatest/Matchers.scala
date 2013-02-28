@@ -54,7 +54,11 @@ import words.OneOfContainMatcher
 import words.TheSameElementsAsContainMatcher
 import Matchers.matchSymbolToPredicateMethod
 import words.ResultOfLengthWordApplication
-
+import words.ResultOfSizeWordApplication
+import words.ResultOfLessThanComparison
+import words.ResultOfGreaterThanComparison
+import words.ResultOfLessThanOrEqualToComparison
+import words.ResultOfGreaterThanOrEqualToComparison
 
 // TODO: drop generic support for be as an equality comparison, in favor of specific ones.
 // TODO: mention on JUnit and TestNG docs that you can now mix in ShouldMatchers or MustMatchers
@@ -7072,59 +7076,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *
    * @author Bill Venners
    */
-  final class ResultOfSizeWordApplication(val expectedSize: Long) extends HavePropertyMatcher[AnyRef, Long] {
-
-    /**
-     * This method enables the following syntax: 
-     *
-     * <pre class="stHighlight">
-     * set should not have (size (3))
-     *                     ^
-     * </pre>
-     *
-     * <p>
-     * This reason <code>ResultOfSizeWordApplication</code> is a <code>HavePropertyMatcher[AnyRef, Long]</code> is
-     * so that you don't have to remember whether <code>size</code> needs to be surrounded by parentheses when following
-     * <code>have</code>. Only <code>length</code> and <code>size</code> can be used without parentheses: everything else
-     * needs the parentheses. So this approach means that if you use the unneeded parentheses with <code>length</code> and
-     * <code>size</code>, it will still work. This <code>apply</code> method uses reflection to find and access the <code>size</code>
-     * property on the passed <code>objectWithProperty</code>. Therefore if the object does not have the appropriate structure, the expression
-     * will compile, but at will produce a <code>TestFailedException</code> at runtime.
-     * </p>
-     */
-    def apply(objectWithProperty: AnyRef): HavePropertyMatchResult[Long] = {
-
-      accessProperty(objectWithProperty, 'size, false) match {
-
-        case None =>
-
-          throw newTestFailedException(Resources("propertyNotFound", "size", expectedSize.toString, "getSize"))
-
-        case Some(result) =>
-
-          new HavePropertyMatchResult[Long](
-            result == expectedSize,
-            "size",
-            expectedSize,
-            result match {
-              case value: Byte => value.toLong
-              case value: Short => value.toLong
-              case value: Int => value.toLong
-              case value: Long => value
-              case _ => throw newTestFailedException(Resources("sizePropertyNotAnInteger"))
-            }
-          )
-      }
-    }
-  }
-
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
   final class SizeWord {
 
     /**
@@ -7725,153 +7676,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             expectedSize)
         )
     }
-  }
-*/
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfLessThanComparison[T <% Ordered[T]](val right: T) {
-
-    /**
-     * This method is invoked by <code>be</code> methods to which instances of this class are passed, which
-     * enables syntax such as:
-     *
-     * <pre class="stHighlight">
-     * result should not be < (7)
-     *                   ^  ... invoked by this be method
-     * </pre>
-     *
-     * <p>
-     * or
-     * </p>
-     *
-     * <pre class="stHighlight">
-     * num should (not be < (10) and not be > (17))
-     *                 ^  ... invoked by this be method
-     * </pre>
-     */
-    def apply(left: T): Boolean = left < right
-  }
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfGreaterThanComparison[T <% Ordered[T]](val right: T) {
-
-    /**
-     * This method is invoked by <code>be</code> methods to which instances of this class are passed, which
-     * enables syntax such as:
-     *
-     * <pre class="stHighlight">
-     * result should not be > (7)
-     *                   ^  ... invoked by this be method
-     * </pre>
-     *
-     * <p>
-     * or
-     * </p>
-     *
-     * <pre class="stHighlight">
-     * num should (not be > (10) and not be < (7))
-     *                 ^  ... invoked by this be method
-     * </pre>
-     */
-    def apply(left: T): Boolean = left > right
-  }
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfLessThanOrEqualToComparison[T <% Ordered[T]](val right: T) {
-
-    /**
-     * This method is invoked by <code>be</code> methods to which instances of this class are passed, which
-     * enables syntax such as:
-     *
-     * <pre class="stHighlight">
-     * result should not be <= (7)
-     *                   ^  ... invoked by this be method
-     * </pre>
-     *
-     * <p>
-     * or
-     * </p>
-     *
-     * <pre class="stHighlight">
-     * num should (not be <= (10) and not be > (17))
-     *                 ^  ... invoked by this be method
-     * </pre>
-     */
-    def apply(left: T): Boolean = left <= right
-  }
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-  final class ResultOfGreaterThanOrEqualToComparison[T <% Ordered[T]](val right: T) {
-
-    /**
-     * This method is invoked by <code>be</code> methods to which instances of this class are passed, which
-     * enables syntax such as:
-     *
-     * <pre class="stHighlight">
-     * result should not be >= (7)
-     *                   ^  ... invoked by this be method
-     * </pre>
-     *
-     * <p>
-     * or
-     * </p>
-     *
-     * <pre class="stHighlight">
-     * num should (not be >= (10) and not be < (7))
-     *                 ^  ... invoked by this be method
-     * </pre>
-     */
-    def apply(left: T): Boolean = left >= right
-  }
-
-  /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
-   * the matchers DSL.
-   *
-   * @author Bill Venners
-   */
-/* TODEL
-  final class ResultOfTripleEqualsApplication(val right: Any) {
-
-    /**
-     * This method is invoked by <code>be</code> methods to which instances of this class are passed, which
-     * enables syntax such as:
-     *
-     * <pre class="stHighlight">
-     * result should not be === (7)
-     *                   ^  ... invoked by this be method
-     * </pre>
-     *
-     * <p>
-     * or
-     * </p>
-     *
-     * <pre class="stHighlight">
-     * num should (not be === (10) and not be > (17))
-     *                 ^  ... invoked by this be method
-     * </pre>
-     */
-    def apply(left: Any): Boolean = left == right
   }
 */
 
