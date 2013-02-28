@@ -951,8 +951,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
     }
   }
 
-  private[scalatest] def matchContainMatcher[T](left: GenTraversable[T], containMatcher: ContainMatcher[T], shouldBeTrue: Boolean, equality: Equality[T]) {
-    val result = containMatcher(left, equality)
+  private[scalatest] def matchContainMatcher[T](left: GenTraversable[T], containMatcher: ContainMatcher[T], shouldBeTrue: Boolean) {
+    val result = containMatcher(left)
     if (result.matches != shouldBeTrue)
       throw newTestFailedException(
         if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage, 
@@ -970,8 +970,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
     override def toString: String = if (underlying == null) "null" else underlying.toString
   }
   
-  private[scalatest] def matchContainMatcher[T](left: java.util.Collection[T], containMatcher: ContainMatcher[T], shouldBeTrue: Boolean, equality: Equality[T]) {
-    val result = containMatcher(new JavaCollectionWrapper(left), equality)
+  private[scalatest] def matchContainMatcher[T](left: java.util.Collection[T], containMatcher: ContainMatcher[T], shouldBeTrue: Boolean) {
+    val result = containMatcher(new JavaCollectionWrapper(left))
     if (result.matches != shouldBeTrue)
       throw newTestFailedException(
         if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage, 
@@ -1009,8 +1009,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
     override def toString: String = if (underlying == null) "null" else underlying.toString
   }
   
-  private[scalatest] def matchContainMatcher[K, V](left: java.util.Map[K, V], containMatcher: ContainMatcher[(K, V)], shouldBeTrue: Boolean, equality: Equality[(K, V)]) {
-    val result = containMatcher(new JavaMapWrapper(left), equality)
+  private[scalatest] def matchContainMatcher[K, V](left: java.util.Map[K, V], containMatcher: ContainMatcher[(K, V)], shouldBeTrue: Boolean) {
+    val result = containMatcher(new JavaMapWrapper(left))
     if (result.matches != shouldBeTrue)
       throw newTestFailedException(
         if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage, 
@@ -1165,7 +1165,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        */
       def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = matchersWrapper.and(matchers.contain.value(expectedValue))
       
-      // TODO: All of the following contain matcher methods are no longer in used, we should remove them once we support the desired syntax using MatcherGen2, MatcherGen3 etc.
       /**
        * This method enables the following syntax:
        *
@@ -1174,8 +1173,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                           ^
        * </pre>
        */
-      //def theSameElementsAs[E](right: GenTraversable[E]): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.and(matchers.contain.theSameElementsAs(right))
+      def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.and(matchers.contain.theSameElementsAs(right)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1185,8 +1184,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                           ^
        * </pre>
        */
-      //def theSameIteratedElementsAs[E](right: GenTraversable[E]): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.and(matchers.contain.theSameIteratedElementsAs(right))
+      def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.and(matchers.contain.theSameIteratedElementsAs(right)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1196,8 +1195,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                           ^
        * </pre>
        */
-      //def allOf[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.and(matchers.contain.allOf(right.toList: _*))
+      def allOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.and(matchers.contain.allOf(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1207,8 +1206,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                           ^
        * </pre>
        */
-      //def inOrder[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.and(matchers.contain.inOrder(right.toList: _*))
+      def inOrder[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.and(matchers.contain.inOrder(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1218,8 +1217,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                           ^
        * </pre>
        */
-      //def oneOf[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.and(matchers.contain.oneOf(right.toList: _*))
+      def oneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.and(matchers.contain.oneOf(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1229,8 +1228,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                           ^
        * </pre>
        */
-      //def only[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.and(matchers.contain.only(right.toList: _*))
+      def only[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.and(matchers.contain.only(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1240,8 +1239,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                           ^
        * </pre>
        */
-      //def inOrderOnly[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.and(matchers.contain.inOrderOnly(right.toList: _*))
+      def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.and(matchers.contain.inOrderOnly(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -1251,8 +1250,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                           ^
        * </pre>
        */
-      //def noneOf[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.and(matchers.contain.noneOf(right.toList: _*))
+      def noneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.and(matchers.contain.noneOf(right.toList: _*)(equality))
         
       /**
        * This method enables the following syntax:
@@ -1914,7 +1913,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
       def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] =
         matchersWrapper.and(matchers.not.contain(resultOfValueWordApplication))
         
-      // TODO: The following contain matcher methods is no longer in used, we should remove them once we support the desired syntax using MatcherGen2, MatcherGen3 etc.
       /**
        * This method enables the following syntax:
        *
@@ -1923,8 +1921,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                      ^
        * </pre>
        */
-      //def contain[U](right: ContainMatcher[U]): Matcher[T with GenTraversable[U]] =
-        //matchersWrapper.and(matchers.not.contain(right))
+      def contain[U](right: ContainMatcher[U]): Matcher[T with GenTraversable[U]] =
+        matchersWrapper.and(matchers.not.contain(right))
         
       /**
        * This method enables the following syntax:
@@ -2079,7 +2077,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        */
       def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = matchersWrapper.or(matchers.contain.value(expectedValue))
       
-      // TODO: All of the following contain matcher methods are no longer in used, we should remove them once we support the desired syntax using MatcherGen2, MatcherGen3 etc.
       /**
        * This method enables the following syntax:
        *
@@ -2088,8 +2085,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                          ^
        * </pre>
        */
-      //def theSameElementsAs[E](right: GenTraversable[E]): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.or(matchers.contain.theSameElementsAs(right))
+      def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.or(matchers.contain.theSameElementsAs(right)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2099,8 +2096,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                          ^
        * </pre>
        */
-      //def theSameIteratedElementsAs[E](right: GenTraversable[E]): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.or(matchers.contain.theSameIteratedElementsAs(right))
+      def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.or(matchers.contain.theSameIteratedElementsAs(right)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2110,8 +2107,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                          ^
        * </pre>
        */
-      //def allOf[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.or(matchers.contain.allOf(right.toList: _*))
+      def allOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.or(matchers.contain.allOf(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2121,8 +2118,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                          ^
        * </pre>
        */
-      //def inOrder[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.or(matchers.contain.inOrder(right.toList: _*))
+      def inOrder[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.or(matchers.contain.inOrder(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2132,8 +2129,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                          ^
        * </pre>
        */
-      //def oneOf[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.or(matchers.contain.oneOf(right.toList: _*))
+      def oneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.or(matchers.contain.oneOf(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2143,8 +2140,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                          ^
        * </pre>
        */
-      //def only[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.or(matchers.contain.only(right.toList: _*))
+      def only[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.or(matchers.contain.only(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2154,8 +2151,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                          ^
        * </pre>
        */
-      //def inOrderOnly[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.or(matchers.contain.inOrderOnly(right.toList: _*))
+      def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.or(matchers.contain.inOrderOnly(right.toList: _*)(equality))
       
       /**
        * This method enables the following syntax:
@@ -2165,8 +2162,8 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
        *                                                                          ^
        * </pre>
        */
-      //def noneOf[E](right: E*): MatcherGen1[T with GenTraversable[E], Equality] = 
-        //matchersWrapper.or(matchers.contain.noneOf(right.toList: _*))
+      def noneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
+        matchersWrapper.or(matchers.contain.noneOf(right.toList: _*)(equality))
         
       /**
        * This method enables the following syntax:
@@ -2948,7 +2945,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def theSameElementsAs(right: GenTraversable[(K, V)])(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new TheSameElementsAsContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new TheSameElementsAsContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -2960,7 +2957,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def theSameIteratedElementsAs(right: GenTraversable[(K, V)])(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -2972,7 +2969,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def allOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new AllOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new AllOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -2984,7 +2981,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def inOrder(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new InOrderContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new InOrderContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -2996,7 +2993,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def oneOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new OneOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new OneOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3008,7 +3005,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def only(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new OnlyContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new OnlyContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3020,7 +3017,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def inOrderOnly(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new InOrderOnlyContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new InOrderOnlyContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3032,7 +3029,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def noneOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new NoneOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new NoneOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3131,7 +3128,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def theSameElementsAs(right: GenTraversable[(K, V)])(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new TheSameElementsAsContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new TheSameElementsAsContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3143,7 +3140,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def theSameIteratedElementsAs(right: GenTraversable[(K, V)])(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3155,7 +3152,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def allOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new AllOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new AllOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3167,7 +3164,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def inOrder(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new InOrderContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new InOrderContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3179,7 +3176,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def oneOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new OneOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new OneOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3191,7 +3188,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def only(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new OnlyContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new OnlyContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3203,7 +3200,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def inOrderOnly(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new InOrderOnlyContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new InOrderOnlyContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3215,7 +3212,7 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      * </pre>
      */
     def noneOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      matchContainMatcher(left, new NoneOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new NoneOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -3278,27 +3275,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
       def apply(left: java.util.Collection[T]): MatchResult = 
         traversableMatcher.apply(new JavaCollectionWrapper(left))
     }
-  
-  /** 
-   * This implicit conversion method enables the following syntax (<code>javaColl</code> is a <code>java.util.Collection</code>, <code>containMatcher</code> is a <code>ContainMatcher</code>):
-   *
-   * <pre class="stHighlight">
-   * javaColl should contain (containMatcher)
-   * </pre>
-   *
-   * The <code>(contain (containMatcher))</code> expression will result in a <code>MatcherGen1[GenTraversable[String]]</code>. This
-   * implicit conversion method will convert that matcher to a <code>MatcherGen1[java.util.Collection[String]]</code>.
-   */
-  implicit def convertTraversableMatcherGen1ToJavaCollectionMatcherGen1[T](traversableMatcher: MatcherGen1[GenTraversable[T], Equality]): MatcherGen1[java.util.Collection[T], Equality] =
-    new MatcherGen1[java.util.Collection[T], Equality] {
-      def matcher[L <: java.util.Collection[T] : Equality]: Matcher[L] = {
-        val equality = implicitly[Equality[GenTraversable[T]]]
-        new Matcher[java.util.Collection[T]] {
-          def apply(left: java.util.Collection[T]): MatchResult = 
-            traversableMatcher.matcher(equality).apply(new JavaCollectionWrapper(left))
-        }
-      }
-    }
 
   /**
    * This implicit conversion method enables the following syntax:
@@ -3315,27 +3291,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
       def apply(left: Array[T]): MatchResult = 
         traversableMatcher.apply(new ArrayWrapper(left))
     }
-  
-  /** 
-   * This implicit conversion method enables the following syntax (<code>containMatcher</code> is a <code>ContainMatcher</code>):
-   *
-   * <pre class="stHighlight">
-   * Array(1, 2, 3) should contain (containMatcher)
-   * </pre>
-   *
-   * The <code>(contain (containMatcher))</code> expression will result in a <code>MatcherGen1[GenTraversable[String]]</code>. This
-   * implicit conversion method will convert that matcher to a <code>MatcherGen1[Array[String]]</code>.
-   */
-  implicit def convertTraversableMatcherGen1ToArrayMatcherGen1[T](traversableMatcher: MatcherGen1[GenTraversable[T], Equality]): MatcherGen1[Array[T], Equality] =
-    new MatcherGen1[Array[T], Equality] {
-      def matcher[L <: Array[T] : Equality]: Matcher[L] = {
-        val equality = implicitly[Equality[GenTraversable[T]]]
-        new Matcher[Array[T]] {
-          def apply(left: Array[T]): MatchResult = 
-            traversableMatcher.matcher(equality).apply(new ArrayWrapper(left))
-        }
-      }
-    }
 
   /**
    * This implicit conversion method enables the following syntax (<code>javaMap</code> is a <code>java.util.Map</code>):
@@ -3351,27 +3306,6 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
     new Matcher[java.util.Map[K, V]] {
       def apply(left: java.util.Map[K, V]): MatchResult = 
         mapMatcher.apply(new JavaMapWrapper(left))
-    }
-  
-  /**
-   * This implicit conversion method enables the following syntax (<code>javaMap</code> is a <code>java.util.Map</code>, <code>containMatcher</code> is a <code>ContainMatcher</code>):
-   *
-   * <pre class="stHighlight">
-   * javaMap should contain (containMatcher)
-   * </pre>
-   *
-   * The <code>contain (containMatcher)</code> expression will result in a <code>MatcherGen1[scala.collection.GenMap[String, Any]]</code>. This
-   * implicit conversion method will convert that matcher to a <code>MatcherGen1[java.util.Map[String, Any]]</code>.
-   */
-  implicit def convertMapMatcherGen1ToJavaMapMatcherGen1[K, V](traversableMatcher: MatcherGen1[GenMap[K, V], Equality]): MatcherGen1[java.util.Map[K, V], Equality] =
-    new MatcherGen1[java.util.Map[K, V], Equality] {
-      def matcher[L <: java.util.Map[K, V] : Equality]: Matcher[L] = {
-        val equality = implicitly[Equality[GenMap[K, V]]]
-        new Matcher[java.util.Map[K, V]] {
-          def apply(left: java.util.Map[K, V]): MatchResult = 
-            traversableMatcher.matcher(equality).apply(new JavaMapWrapper(left))
-        }
-      }
     }
 
   // Ack. The above conversion doesn't apply to java.util.Maps, because java.util.Map is not a subinterface
@@ -3415,16 +3349,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      *            ^
      * </pre>
      */
-    def apply[T](right: ContainMatcher[T]): MatcherGen1[GenTraversable[T], Equality] = 
-      new MatcherGen1[GenTraversable[T], Equality] {
-        def matcher[L <: GenTraversable[T] : Equality]: Matcher[L] = {
-          val equality = implicitly[Equality[T]]
-          new Matcher[GenTraversable[T]] {
-            def apply(left: GenTraversable[T]): MatchResult = {
-              val result = right(left, equality)
-              MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
-            }
-          }
+    def apply[T](right: ContainMatcher[T]): Matcher[GenTraversable[T]] = 
+      new Matcher[GenTraversable[T]] {
+        def apply(left: GenTraversable[T]): MatchResult = {
+          val result = right(left)
+          MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
         }
       }
     
@@ -3512,16 +3441,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      *                                ^
      * </pre>
      */
-    def theSameElementsAs[E](right: GenTraversable[E]): MatcherGen1[GenTraversable[E], Equality] = 
-      new MatcherGen1[GenTraversable[E], Equality] {
-        def matcher[L <: GenTraversable[E] : Equality]: Matcher[GenTraversable[E]] = { 
-          val equality = implicitly[Equality[E]]
-          new Matcher[GenTraversable[E]] {
-            def apply(left: GenTraversable[E]): MatchResult = {
-              val result = new TheSameElementsAsContainMatcher(right).apply(left, equality)
-              MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
-            }
-          }
+    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[GenTraversable[E]] = 
+      new Matcher[GenTraversable[E]] {
+        def apply(left: GenTraversable[E]): MatchResult = {
+          val result = new TheSameElementsAsContainMatcher(right, equality).apply(left)
+          MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
         }
       }
       
@@ -3534,16 +3458,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      *                                ^
      * </pre>
      */
-    def theSameIteratedElementsAs[E](right: GenTraversable[E]): MatcherGen1[GenTraversable[E], Equality] = 
-      new MatcherGen1[GenTraversable[E], Equality] {
-        def matcher[L <: GenTraversable[E] : Equality]: Matcher[GenTraversable[E]] = { 
-          val equality = implicitly[Equality[E]]
-          new Matcher[GenTraversable[E]] {
-            def apply(left: GenTraversable[E]): MatchResult = {
-              val result = new TheSameIteratedElementsAsContainMatcher(right).apply(left, equality)
-              MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
-            }
-          }
+    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[GenTraversable[E]] = 
+      new Matcher[GenTraversable[E]] {
+        def apply(left: GenTraversable[E]): MatchResult = {
+          val result = new TheSameIteratedElementsAsContainMatcher(right, equality).apply(left)
+          MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
         }
       }
     
@@ -3555,16 +3474,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      *                                ^
      * </pre>
      */
-    def allOf[E](right: E*): MatcherGen1[GenTraversable[E], Equality] = 
-      new MatcherGen1[GenTraversable[E], Equality] {
-        def matcher[L <: GenTraversable[E] : Equality]: Matcher[GenTraversable[E]] = { 
-          val equality = implicitly[Equality[E]]
-          new Matcher[GenTraversable[E]] {
-            def apply(left: GenTraversable[E]): MatchResult = {
-              val result = new AllOfContainMatcher(right).apply(left, equality)
-              MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
-            }
-          }
+    def allOf[E](right: E*)(implicit equality: Equality[E]): Matcher[GenTraversable[E]] = 
+      new Matcher[GenTraversable[E]] {
+        def apply(left: GenTraversable[E]): MatchResult = {
+          val result = new AllOfContainMatcher(right, equality).apply(left)
+          MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
         }
       }
     
@@ -3576,16 +3490,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      *                                ^
      * </pre>
      */
-    def inOrder[E](right: E*): MatcherGen1[GenTraversable[E], Equality] = 
-      new MatcherGen1[GenTraversable[E], Equality] {
-        def matcher[L <: GenTraversable[E] : Equality]: Matcher[GenTraversable[E]] = { 
-          val equality = implicitly[Equality[E]]
-          new Matcher[GenTraversable[E]] {
-            def apply(left: GenTraversable[E]): MatchResult = {
-              val result = new InOrderContainMatcher(right).apply(left, equality)
-              MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
-            }
-          }
+    def inOrder[E](right: E*)(implicit equality: Equality[E]): Matcher[GenTraversable[E]] = 
+      new Matcher[GenTraversable[E]] {
+        def apply(left: GenTraversable[E]): MatchResult = {
+          val result = new InOrderContainMatcher(right, equality).apply(left)
+          MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
         }
       }
     
@@ -3597,16 +3506,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      *                                ^
      * </pre>
      */
-    def oneOf[E](right: E*): MatcherGen1[GenTraversable[E], Equality] = 
-      new MatcherGen1[GenTraversable[E], Equality] {
-        def matcher[L <: GenTraversable[E] : Equality]: Matcher[GenTraversable[E]] = { 
-          val equality = implicitly[Equality[E]]
-          new Matcher[GenTraversable[E]] {
-            def apply(left: GenTraversable[E]): MatchResult = {
-              val result = new OneOfContainMatcher(right).apply(left, equality)
-              MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
-            }
-          }
+    def oneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[GenTraversable[E]] = 
+      new Matcher[GenTraversable[E]] {
+        def apply(left: GenTraversable[E]): MatchResult = {
+          val result = new OneOfContainMatcher(right, equality).apply(left)
+          MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
         }
       }
     
@@ -3618,16 +3522,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      *                                ^
      * </pre>
      */
-    def only[E](right: E*): MatcherGen1[GenTraversable[E], Equality] = 
-      new MatcherGen1[GenTraversable[E], Equality] {
-        def matcher[L <: GenTraversable[E] : Equality]: Matcher[GenTraversable[E]] = { 
-          val equality = implicitly[Equality[E]]
-          new Matcher[GenTraversable[E]] {
-            def apply(left: GenTraversable[E]): MatchResult = {
-              val result = new OnlyContainMatcher(right).apply(left, equality)
-              MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
-            }
-          }
+    def only[E](right: E*)(implicit equality: Equality[E]): Matcher[GenTraversable[E]] = 
+      new Matcher[GenTraversable[E]] {
+        def apply(left: GenTraversable[E]): MatchResult = {
+          val result = new OnlyContainMatcher(right, equality).apply(left)
+          MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
         }
       }
     
@@ -3639,16 +3538,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      *                                ^
      * </pre>
      */
-    def inOrderOnly[E](right: E*): MatcherGen1[GenTraversable[E], Equality] = 
-      new MatcherGen1[GenTraversable[E], Equality] {
-        def matcher[L <: GenTraversable[E] : Equality]: Matcher[GenTraversable[E]] = { 
-          val equality = implicitly[Equality[E]]
-          new Matcher[GenTraversable[E]] {
-            def apply(left: GenTraversable[E]): MatchResult = {
-              val result = new InOrderOnlyContainMatcher(right).apply(left, equality)
-              MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
-            }
-          }
+    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): Matcher[GenTraversable[E]] = 
+      new Matcher[GenTraversable[E]] {
+        def apply(left: GenTraversable[E]): MatchResult = {
+          val result = new InOrderOnlyContainMatcher(right, equality).apply(left)
+          MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
         }
       }
     
@@ -3660,16 +3554,11 @@ trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElemen
      *                                ^
      * </pre>
      */
-    def noneOf[E](right: E*): MatcherGen1[GenTraversable[E], Equality] = 
-      new MatcherGen1[GenTraversable[E], Equality] {
-        def matcher[L <: GenTraversable[E] : Equality]: Matcher[GenTraversable[E]] = { 
-          val equality = implicitly[Equality[E]]
-          new Matcher[GenTraversable[E]] {
-            def apply(left: GenTraversable[E]): MatchResult = {
-              val result = new NoneOfContainMatcher(right).apply(left, equality)
-              MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
-            }
-          }
+    def noneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[GenTraversable[E]] = 
+      new Matcher[GenTraversable[E]] {
+        def apply(left: GenTraversable[E]): MatchResult = {
+          val result = new NoneOfContainMatcher(right, equality).apply(left)
+          MatchResult(result.matches, result.failureMessage, result.negatedFailureMessage)
         }
       }
     
@@ -4207,8 +4096,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                       ^
      * </pre>
      */
-    def contain(right: ContainMatcher[E])(implicit equality: Equality[E]) {
-      val result = right(left.asInstanceOf[GenTraversable[E]], equality)
+    def contain(right: ContainMatcher[E]) {
+      val result = right(left.asInstanceOf[GenTraversable[E]])
       if (result.matches != shouldBeTrue) {
         throw newTestFailedException(
           if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
@@ -4343,8 +4232,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                           ^
      * </pre>
      */
-    def contain(right: ContainMatcher[E])(implicit equality: Equality[E]) {
-      val result = right(new JavaCollectionWrapper(left.asInstanceOf[java.util.Collection[E]]), equality)
+    def contain(right: ContainMatcher[E]) {
+      val result = right(new JavaCollectionWrapper(left.asInstanceOf[java.util.Collection[E]]))
       if (result.matches != shouldBeTrue) {
         throw newTestFailedException(
           if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
@@ -4486,8 +4375,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                ^
      * </pre>
      */
-    def contain(right: ContainMatcher[(K, V)])(implicit equality: Equality[(K, V)]) {
-      val result = right(left.asInstanceOf[scala.collection.GenTraversable[(K, V)]], equality)
+    def contain(right: ContainMatcher[(K, V)]) {
+      val result = right(left.asInstanceOf[scala.collection.GenTraversable[(K, V)]])
       if (result.matches != shouldBeTrue) {
         throw newTestFailedException(
           if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
@@ -4622,8 +4511,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                    ^
      * </pre>
      */
-    def contain(right: ContainMatcher[(K, V)])(implicit equality: Equality[(K, V)]) {
-      val result = right(new JavaMapWrapper(left.asInstanceOf[java.util.Map[K, V]]), equality)
+    def contain(right: ContainMatcher[(K, V)]) {
+      val result = right(new JavaMapWrapper(left.asInstanceOf[java.util.Map[K, V]]))
       if (result.matches != shouldBeTrue) {
         throw newTestFailedException(
           if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
@@ -4750,8 +4639,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                           ^
      * </pre>
      */
-    def contain(right: ContainMatcher[E])(implicit equality: Equality[E]) {
-      val result = right(new ArrayWrapper(left), equality)
+    def contain(right: ContainMatcher[E]) {
+      val result = right(new ArrayWrapper(left))
       if (result.matches != shouldBeTrue) {
         throw newTestFailedException(
           if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage
@@ -6946,16 +6835,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                        ^
      * </pre>
      */
-    def contain[E](right: ContainMatcher[E]): MatcherGen1[GenTraversable[E], Equality] = 
-      new MatcherGen1[GenTraversable[E], Equality] {
-        def matcher[T <: GenTraversable[E] : Equality]: Matcher[GenTraversable[E]] = { 
-          val equality = implicitly[Equality[E]]
-          new Matcher[GenTraversable[E]] {
-            def apply(left: GenTraversable[E]): MatchResult = {
-              val result = right(left, equality)
-              MatchResult(!result.matches, result.negatedFailureMessage, result.failureMessage)
-            }
-          }
+    def contain[E](right: ContainMatcher[E]): Matcher[GenTraversable[E]] = 
+      new Matcher[GenTraversable[E]] {
+        def apply(left: GenTraversable[E]): MatchResult = {
+          val result = right(left)
+          MatchResult(!result.matches, result.negatedFailureMessage, result.failureMessage)
         }
       }
     
@@ -7702,7 +7586,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameElementsAs(right: GenTraversable[T])(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new TheSameElementsAsContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new TheSameElementsAsContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7714,7 +7598,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameElementsAs(right: Array[T])(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new TheSameElementsAsContainMatcher(new ArrayWrapper(right)), shouldBeTrue, equality)
+      matchContainMatcher(left, new TheSameElementsAsContainMatcher(new ArrayWrapper(right), equality), shouldBeTrue)
     }
     
     /**
@@ -7726,7 +7610,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameIteratedElementsAs(right: GenTraversable[T])(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7738,7 +7622,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameIteratedElementsAs(right: Array[T])(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(new ArrayWrapper(right)), shouldBeTrue, equality)
+      matchContainMatcher(left, new TheSameIteratedElementsAsContainMatcher(new ArrayWrapper(right), equality), shouldBeTrue)
     }
     
     /**
@@ -7750,7 +7634,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def allOf(right: T*)(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new AllOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new AllOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7762,7 +7646,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrder(right: T*)(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new InOrderContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new InOrderContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7774,7 +7658,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def oneOf(right: T*)(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new OneOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new OneOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7786,7 +7670,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def only(right: T*)(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new OnlyContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new OnlyContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7798,7 +7682,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrderOnly(right: T*)(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new InOrderOnlyContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new InOrderOnlyContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7810,7 +7694,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def noneOf(right: T*)(implicit equality: Equality[T]) {
-      matchContainMatcher(left, new NoneOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left, new NoneOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7873,7 +7757,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameElementsAs(right: GenTraversable[E])(implicit equality: Equality[E]) {
-      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new TheSameElementsAsContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new TheSameElementsAsContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7885,7 +7769,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameIteratedElementsAs(right: GenTraversable[E])(implicit equality: Equality[E]) {
-      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new TheSameIteratedElementsAsContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new TheSameIteratedElementsAsContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7897,7 +7781,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def allOf(right: E*)(implicit equality: Equality[E]) {
-      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new AllOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new AllOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7909,7 +7793,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrder(right: E*)(implicit equality: Equality[E]) {
-      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new InOrderContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new InOrderContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7921,7 +7805,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def oneOf(right: E*)(implicit equality: Equality[E]) {
-      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new OneOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new OneOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7933,7 +7817,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def only(right: E*)(implicit equality: Equality[E]) {
-      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new OnlyContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new OnlyContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7945,7 +7829,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrderOnly(right: E*)(implicit equality: Equality[E]) {
-      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new InOrderOnlyContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new InOrderOnlyContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -7957,7 +7841,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def noneOf(right: E*)(implicit equality: Equality[E]) {
-      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new NoneOfContainMatcher(right), shouldBeTrue, equality)
+      matchContainMatcher(left.asInstanceOf[java.util.Collection[E]], new NoneOfContainMatcher(right, equality), shouldBeTrue)
     }
     
     /**
@@ -8013,8 +7897,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                             ^
    * </pre>
    */
-  def theSameElementsAs[T](xs: GenTraversable[T]) = 
-    new TheSameElementsAsContainMatcher(xs)
+  def theSameElementsAs[T](xs: GenTraversable[T])(implicit equality: Equality[T]) = 
+    new TheSameElementsAsContainMatcher(xs, equality)
   
   /**
    * This method enables the following syntax: 
@@ -8024,8 +7908,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                             ^
    * </pre>
    */
-  def theSameElementsAs[T](xs: Array[T]) = 
-    new TheSameElementsAsContainMatcher(new ArrayWrapper(xs))
+  def theSameElementsAs[T](xs: Array[T])(implicit equality: Equality[T]) = 
+    new TheSameElementsAsContainMatcher(new ArrayWrapper(xs), equality)
   
   /**
    * This method enables the following syntax: 
@@ -8035,8 +7919,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                             ^
    * </pre>
    */
-  def theSameIteratedElementsAs[T](xs: GenTraversable[T]) = 
-    new TheSameIteratedElementsAsContainMatcher(xs)
+  def theSameIteratedElementsAs[T](xs: GenTraversable[T])(implicit equality: Equality[T]) = 
+    new TheSameIteratedElementsAsContainMatcher(xs, equality)
   
   /**
    * This method enables the following syntax: 
@@ -8046,8 +7930,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                             ^
    * </pre>
    */
-  def theSameIteratedElementsAs[T](xs: Array[T]) = 
-    new TheSameIteratedElementsAsContainMatcher(new ArrayWrapper(xs))
+  def theSameIteratedElementsAs[T](xs: Array[T])(implicit equality: Equality[T]) = 
+    new TheSameIteratedElementsAsContainMatcher(new ArrayWrapper(xs), equality)
   
   /**
    * This method enables the following syntax: 
@@ -8057,8 +7941,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                               ^
    * </pre>
    */
-  def allOf[T](xs: T*) = 
-    new AllOfContainMatcher(xs)
+  def allOf[T](xs: T*)(implicit equality: Equality[T]) = 
+    new AllOfContainMatcher(xs, equality)
   
   /**
    * This method enables the following syntax: 
@@ -8068,8 +7952,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                               ^
    * </pre>
    */
-  def inOrder[T](xs: T*) = 
-    new InOrderContainMatcher(xs)
+  def inOrder[T](xs: T*)(implicit equality: Equality[T]) = 
+    new InOrderContainMatcher(xs, equality)
   
   /**
    * This method enables the following syntax: 
@@ -8079,8 +7963,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                               ^
    * </pre>
    */
-  def oneOf[T](xs: T*) = 
-    new OneOfContainMatcher(xs)
+  def oneOf[T](xs: T*)(implicit equality: Equality[T]) = 
+    new OneOfContainMatcher(xs, equality)
   
   /**
    * This method enables the following syntax: 
@@ -8090,8 +7974,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                               ^
    * </pre>
    */
-  def only[T](xs: T*) = 
-    new OnlyContainMatcher(xs)
+  def only[T](xs: T*)(implicit equality: Equality[T]) = 
+    new OnlyContainMatcher(xs, equality)
   
   /**
    * This method enables the following syntax: 
@@ -8101,8 +7985,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                               ^
    * </pre>
    */
-  def inOrderOnly[T](xs: T*) = 
-    new InOrderOnlyContainMatcher(xs)
+  def inOrderOnly[T](xs: T*)(implicit equality: Equality[T]) = 
+    new InOrderOnlyContainMatcher(xs, equality)
   
   /**
    * This method enables the following syntax: 
@@ -8112,8 +7996,8 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    *                               ^
    * </pre>
    */
-  def noneOf[T](xs: T*) = 
-    new NoneOfContainMatcher(xs)
+  def noneOf[T](xs: T*)(implicit equality: Equality[T]) = 
+    new NoneOfContainMatcher(xs, equality)
   
   // For safe keeping
   private implicit def nodeToCanonical(node: scala.xml.Node) = new Canonicalizer(node)
@@ -8996,9 +8880,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                                          ^
      * </pre>
      */
-    def contain(right: ContainMatcher[E])(implicit equality: Equality[E]) {
+    def contain(right: ContainMatcher[E]) {
       doCollected(collected, xs, "contain", 1) { e =>
-        val result = right(e, equality)
+        val result = right(e)
         if (result.matches != shouldBeTrue) {
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage, 
@@ -9178,9 +9062,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                                    ^
      * </pre>
      */
-    def contain(right: ContainMatcher[E])(implicit equality: Equality[E]) {
+    def contain(right: ContainMatcher[E]) {
       doCollected(collected, xs, "contain", 1) { e =>
-        val result = right(e, equality)
+        val result = right(e)
         if (result.matches != shouldBeTrue) {
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage, 
@@ -9378,9 +9262,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                                     ^
      * </pre>
      */
-    def contain(right: ContainMatcher[E])(implicit equality: Equality[E]) {
+    def contain(right: ContainMatcher[E]) {
       doCollected(collected, xs, "contain", 1) { e =>
-        val result = right(new JavaCollectionWrapper(e), equality)
+        val result = right(new JavaCollectionWrapper(e))
         if (result.matches != shouldBeTrue) {
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -9516,9 +9400,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                              ^
      * </pre>
      */
-    def contain(right: ContainMatcher[(K, V)])(implicit equality: Equality[(K, V)]) {
+    def contain(right: ContainMatcher[(K, V)]) {
       doCollected(collected, xs, "contain", 1) { e =>
-        val result = right(new JavaMapWrapper(e), equality)
+        val result = right(new JavaMapWrapper(e))
         if (result.matches != shouldBeTrue) {
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -9729,9 +9613,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameElementsAs(right: GenTraversable[T])(implicit equality: Equality[T]) {
-      val containMatcher = new TheSameElementsAsContainMatcher(right)
+      val containMatcher = new TheSameElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameElementsAs", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -9750,9 +9634,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameIteratedElementsAs(right: GenTraversable[T])(implicit equality: Equality[T]) {
-      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right)
+      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameIteratedElementsAs", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -9771,9 +9655,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def allOf(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new AllOfContainMatcher(right)
+      val containMatcher = new AllOfContainMatcher(right, equality)
       doCollected(collected, xs, "allOf", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -9792,9 +9676,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrder(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new InOrderContainMatcher(right)
+      val containMatcher = new InOrderContainMatcher(right, equality)
       doCollected(collected, xs, "inOrder", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -9813,9 +9697,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def oneOf(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new OneOfContainMatcher(right)
+      val containMatcher = new OneOfContainMatcher(right, equality)
       doCollected(collected, xs, "oneOf", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -9834,9 +9718,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def only(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new OnlyContainMatcher(right)
+      val containMatcher = new OnlyContainMatcher(right, equality)
       doCollected(collected, xs, "only", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -9855,9 +9739,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrderOnly(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new InOrderOnlyContainMatcher(right)
+      val containMatcher = new InOrderOnlyContainMatcher(right, equality)
       doCollected(collected, xs, "inOrderOnly", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -9876,9 +9760,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def noneOf(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new NoneOfContainMatcher(right)
+      val containMatcher = new NoneOfContainMatcher(right, equality)
       doCollected(collected, xs, "noneOf", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -10700,9 +10584,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameElementsAs(right: GenTraversable[T])(implicit equality: Equality[T]) {
-      val containMatcher = new TheSameElementsAsContainMatcher(right)
+      val containMatcher = new TheSameElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameElementsAs", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -10721,9 +10605,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameIteratedElementsAs(right: GenTraversable[T])(implicit equality: Equality[T]) {
-      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right)
+      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameIteratedElementsAs", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -10742,9 +10626,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def allOf(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new AllOfContainMatcher(right)
+      val containMatcher = new AllOfContainMatcher(right, equality)
       doCollected(collected, xs, "allOf", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -10763,9 +10647,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrder(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new InOrderContainMatcher(right)
+      val containMatcher = new InOrderContainMatcher(right, equality)
       doCollected(collected, xs, "inOrder", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -10784,9 +10668,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def oneOf(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new OneOfContainMatcher(right)
+      val containMatcher = new OneOfContainMatcher(right, equality)
       doCollected(collected, xs, "oneOf", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -10805,9 +10689,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def only(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new OnlyContainMatcher(right)
+      val containMatcher = new OnlyContainMatcher(right, equality)
       doCollected(collected, xs, "only", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -10826,9 +10710,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrderOnly(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new InOrderOnlyContainMatcher(right)
+      val containMatcher = new InOrderOnlyContainMatcher(right, equality)
       doCollected(collected, xs, "inOrderOnly", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -10847,9 +10731,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def noneOf(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new NoneOfContainMatcher(right)
+      val containMatcher = new NoneOfContainMatcher(right, equality)
       doCollected(collected, xs, "noneOf", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11150,9 +11034,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameElementsAs(right: GenTraversable[(K, V)])(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new TheSameElementsAsContainMatcher(right)
+      val containMatcher = new TheSameElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameElementsAs", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11171,9 +11055,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameIteratedElementsAs(right: GenTraversable[(K, V)])(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right)
+      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameIteratedElementsAs", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11192,9 +11076,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def allOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new AllOfContainMatcher(right)
+      val containMatcher = new AllOfContainMatcher(right, equality)
       doCollected(collected, xs, "allOf", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11213,9 +11097,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrder(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new InOrderContainMatcher(right)
+      val containMatcher = new InOrderContainMatcher(right, equality)
       doCollected(collected, xs, "inOrder", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11234,9 +11118,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def oneOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new OneOfContainMatcher(right)
+      val containMatcher = new OneOfContainMatcher(right, equality)
       doCollected(collected, xs, "oneOf", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11255,9 +11139,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def only(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new OnlyContainMatcher(right)
+      val containMatcher = new OnlyContainMatcher(right, equality)
       doCollected(collected, xs, "only", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11276,9 +11160,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrderOnly(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new InOrderOnlyContainMatcher(right)
+      val containMatcher = new InOrderOnlyContainMatcher(right, equality)
       doCollected(collected, xs, "inOrderOnly", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11297,9 +11181,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def noneOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new NoneOfContainMatcher(right)
+      val containMatcher = new NoneOfContainMatcher(right, equality)
       doCollected(collected, xs, "noneOf", 1) { e =>
-        val result = containMatcher(e, equality)
+        val result = containMatcher(e)
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11478,9 +11362,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameElementsAs(right: GenTraversable[T])(implicit equality: Equality[T]) {
-      val containMatcher = new TheSameElementsAsContainMatcher(right)
+      val containMatcher = new TheSameElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameElementsAs", 1) { e =>
-        val result = containMatcher(new JavaCollectionWrapper(e), equality)
+        val result = containMatcher(new JavaCollectionWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11499,9 +11383,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameIteratedElementsAs(right: GenTraversable[T])(implicit equality: Equality[T]) {
-      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right)
+      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameIteratedElementsAs", 1) { e =>
-        val result = containMatcher(new JavaCollectionWrapper(e), equality)
+        val result = containMatcher(new JavaCollectionWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11520,9 +11404,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def allOf(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new AllOfContainMatcher(right)
+      val containMatcher = new AllOfContainMatcher(right, equality)
       doCollected(collected, xs, "allOf", 1) { e =>
-        val result = containMatcher(new JavaCollectionWrapper(e), equality)
+        val result = containMatcher(new JavaCollectionWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11541,9 +11425,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrder(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new InOrderContainMatcher(right)
+      val containMatcher = new InOrderContainMatcher(right, equality)
       doCollected(collected, xs, "inOrder", 1) { e =>
-        val result = containMatcher(new JavaCollectionWrapper(e), equality)
+        val result = containMatcher(new JavaCollectionWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11562,9 +11446,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def oneOf(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new OneOfContainMatcher(right)
+      val containMatcher = new OneOfContainMatcher(right, equality)
       doCollected(collected, xs, "oneOf", 1) { e =>
-        val result = containMatcher(new JavaCollectionWrapper(e), equality)
+        val result = containMatcher(new JavaCollectionWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11583,9 +11467,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def only(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new OnlyContainMatcher(right)
+      val containMatcher = new OnlyContainMatcher(right, equality)
       doCollected(collected, xs, "only", 1) { e =>
-        val result = containMatcher(new JavaCollectionWrapper(e), equality)
+        val result = containMatcher(new JavaCollectionWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11604,9 +11488,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrderOnly(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new InOrderOnlyContainMatcher(right)
+      val containMatcher = new InOrderOnlyContainMatcher(right, equality)
       doCollected(collected, xs, "inOrderOnly", 1) { e =>
-        val result = containMatcher(new JavaCollectionWrapper(e), equality)
+        val result = containMatcher(new JavaCollectionWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11625,9 +11509,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def noneOf(right: T*)(implicit equality: Equality[T]) {
-      val containMatcher = new NoneOfContainMatcher(right)
+      val containMatcher = new NoneOfContainMatcher(right, equality)
       doCollected(collected, xs, "noneOf", 1) { e =>
-        val result = containMatcher(new JavaCollectionWrapper(e), equality)
+        val result = containMatcher(new JavaCollectionWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11846,9 +11730,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameElementsAs(right: GenTraversable[(K, V)])(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new TheSameElementsAsContainMatcher(right)
+      val containMatcher = new TheSameElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameElementsAs", 1) { e =>
-        val result = containMatcher(new JavaMapWrapper(e), equality)
+        val result = containMatcher(new JavaMapWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,  
@@ -11867,9 +11751,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def theSameIteratedElementsAs(right: GenTraversable[(K, V)])(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right)
+      val containMatcher = new TheSameIteratedElementsAsContainMatcher(right, equality)
       doCollected(collected, xs, "theSameIteratedElementsAs", 1) { e =>
-        val result = containMatcher(new JavaMapWrapper(e), equality)
+        val result = containMatcher(new JavaMapWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11888,9 +11772,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def allOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new AllOfContainMatcher(right)
+      val containMatcher = new AllOfContainMatcher(right, equality)
       doCollected(collected, xs, "allOf", 1) { e =>
-        val result = containMatcher(new JavaMapWrapper(e), equality)
+        val result = containMatcher(new JavaMapWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11909,9 +11793,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrder(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new InOrderContainMatcher(right)
+      val containMatcher = new InOrderContainMatcher(right, equality)
       doCollected(collected, xs, "inOrder", 1) { e =>
-        val result = containMatcher(new JavaMapWrapper(e), equality)
+        val result = containMatcher(new JavaMapWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11930,9 +11814,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def oneOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new OneOfContainMatcher(right)
+      val containMatcher = new OneOfContainMatcher(right, equality)
       doCollected(collected, xs, "oneOf", 1) { e =>
-        val result = containMatcher(new JavaMapWrapper(e), equality)
+        val result = containMatcher(new JavaMapWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11951,9 +11835,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def only(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new OnlyContainMatcher(right)
+      val containMatcher = new OnlyContainMatcher(right, equality)
       doCollected(collected, xs, "only", 1) { e =>
-        val result = containMatcher(new JavaMapWrapper(e), equality)
+        val result = containMatcher(new JavaMapWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11972,9 +11856,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def inOrderOnly(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new InOrderOnlyContainMatcher(right)
+      val containMatcher = new InOrderOnlyContainMatcher(right, equality)
       doCollected(collected, xs, "inOrderOnly", 1) { e =>
-        val result = containMatcher(new JavaMapWrapper(e), equality)
+        val result = containMatcher(new JavaMapWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,
@@ -11993,9 +11877,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      * </pre>
      */
     def noneOf(right: (K, V)*)(implicit equality: Equality[(K, V)]) {
-      val containMatcher = new NoneOfContainMatcher(right)
+      val containMatcher = new NoneOfContainMatcher(right, equality)
       doCollected(collected, xs, "noneOf", 1) { e =>
-        val result = containMatcher(new JavaMapWrapper(e), equality)
+        val result = containMatcher(new JavaMapWrapper(e))
         if (result.matches != shouldBeTrue)
           throw newTestFailedException(
             if (shouldBeTrue) result.failureMessage else result.negatedFailureMessage,

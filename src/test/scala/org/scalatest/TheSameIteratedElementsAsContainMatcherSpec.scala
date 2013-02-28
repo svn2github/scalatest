@@ -41,9 +41,9 @@ class TheSameIteratedElementsAsContainMatcherSpec extends Spec with Matchers wit
     }
     
     val matcherRight = List(1, 2, 3)
-    val matcher = new TheSameIteratedElementsAsContainMatcher(matcherRight)
+    val matcher = new TheSameIteratedElementsAsContainMatcher(matcherRight, defaultEquality)
     val mapMatcherRight = LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
-    val mapMatcher = new TheSameIteratedElementsAsContainMatcher(mapMatcherRight)
+    val mapMatcher = new TheSameIteratedElementsAsContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       
@@ -321,9 +321,9 @@ class TheSameIteratedElementsAsContainMatcherSpec extends Spec with Matchers wit
     }
     
     val matcherRight = List(1, 3, 2)
-    val matcher = new TheSameIteratedElementsAsContainMatcher(matcherRight)
+    val matcher = new TheSameIteratedElementsAsContainMatcher(matcherRight, defaultEquality)
     val mapMatcherRight = LinkedHashMap(1 -> "one", 3 -> "three", 2 -> "two")
-    val mapMatcher = new TheSameIteratedElementsAsContainMatcher(mapMatcherRight)
+    val mapMatcher = new TheSameIteratedElementsAsContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       List(1, 2, 3) should not contain matcher

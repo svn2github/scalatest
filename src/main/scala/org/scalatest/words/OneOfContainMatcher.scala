@@ -28,10 +28,10 @@ import scala.annotation.tailrec
  *
  * @author Bill Venners
  */
-class OneOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
+class OneOfContainMatcher[T](right: GenTraversable[T], equality: Equality[T]) extends ContainMatcher[T] {
   
   @tailrec
-  private def checkEqual(left: GenTraversable[T], rightItr: Iterator[T], processedSet: Set[T], equality: Equality[T]): Boolean = {
+  private def checkEqual(left: GenTraversable[T], rightItr: Iterator[T], processedSet: Set[T]): Boolean = {
     
     if (rightItr.hasNext) {
       val nextRight = rightItr.next
@@ -40,7 +40,7 @@ class OneOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T]
       if (left.exists(t => equality.areEqual(t, nextRight))) // Found one of right in left, can succeed early
         true
       else
-        checkEqual(left, rightItr, processedSet + nextRight, equality)
+        checkEqual(left, rightItr, processedSet + nextRight)
     }
     else // No more element in right, left does not contain one of right.
       false
@@ -49,9 +49,9 @@ class OneOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T]
   /**
    * This method contains the matching code for oneOf.
    */
-  def apply(left: GenTraversable[T], equality: Equality[T]): MatchResult = 
+  def apply(left: GenTraversable[T]): MatchResult = 
     MatchResult(
-      checkEqual(left, right.toIterator, Set.empty, equality), 
+      checkEqual(left, right.toIterator, Set.empty), 
       FailureMessages("didNotContainOneOfElements", left, UnquotedString(right.mkString(", "))),
       FailureMessages("containedOneOfElements", left, UnquotedString(right.mkString(", ")))
     )

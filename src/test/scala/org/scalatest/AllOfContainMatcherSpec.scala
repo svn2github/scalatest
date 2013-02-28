@@ -38,9 +38,9 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaMap(5 -> "five", 4 -> "four", 3 -> "three", 2 -> "two", 1 -> "one") should contain allOf (1 -> "one", 3 -> "three", 5 -> "five")
     }
     
-    val matcher = new AllOfContainMatcher(List(1, 2))
+    val matcher = new AllOfContainMatcher(List(1, 2), defaultEquality)
     val mapMatcherRight = Array(1 -> "one", 2 -> "two")
-    val mapMatcher = new AllOfContainMatcher(mapMatcherRight)
+    val mapMatcher = new AllOfContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       
@@ -294,9 +294,9 @@ class AllOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain allOf (1 -> "one", 2 -> "two", 8 -> "eight")
     }
     
-    val matcher = new AllOfContainMatcher(List(1, 2, 3))
+    val matcher = new AllOfContainMatcher(List(1, 2, 3), defaultEquality)
     val mapMatcherRight = Map(1 -> "one", 2 -> "two", 3 -> "three")
-    val mapMatcher = new AllOfContainMatcher(mapMatcherRight)
+    val mapMatcher = new AllOfContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       

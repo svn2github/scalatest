@@ -39,9 +39,9 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       javaMap(4 -> "four", 5 -> "five", 6 -> "six") should contain inOrderOnly (4 -> "four", 5 -> "five", 6 -> "six")
     }
     
-    val matcher = new InOrderOnlyContainMatcher(List(1, 2, 3))
+    val matcher = new InOrderOnlyContainMatcher(List(1, 2, 3), defaultEquality)
     val mapMatcherRight = LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
-    val mapMatcher = new InOrderOnlyContainMatcher(mapMatcherRight)
+    val mapMatcher = new InOrderOnlyContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       
@@ -229,9 +229,9 @@ class InOrderOnlyContainMatcherSpec extends Spec with Matchers with SharedHelper
       javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain inOrderOnly (3 -> "three", 2 -> "two", 1 -> "one")
     }
     
-    val matcher = new InOrderOnlyContainMatcher(List(1, 2, 3))
+    val matcher = new InOrderOnlyContainMatcher(List(1, 2, 3), defaultEquality)
     val mapMatcherRight = LinkedHashMap(1 -> "one", 2 -> "two", 3 -> "three")
-    val mapMatcher = new InOrderOnlyContainMatcher(mapMatcherRight)
+    val mapMatcher = new InOrderOnlyContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       

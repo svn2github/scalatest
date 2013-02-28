@@ -42,9 +42,9 @@ class NoneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaMap(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five") should contain noneOf (6 -> "six", 7 -> "seven", 8 -> "eight")
     }
     
-    val matcher = new NoneOfContainMatcher(List(6, 7, 8))
+    val matcher = new NoneOfContainMatcher(List(6, 7, 8), defaultEquality)
     val mapMatcherRight = Array(6 -> "six", 7 -> "seven", 8 -> "eight")
-    val mapMatcher = new NoneOfContainMatcher(mapMatcherRight)
+    val mapMatcher = new NoneOfContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       
@@ -231,9 +231,9 @@ class NoneOfContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain noneOf (0 -> "zero", 2 -> "two", 8 -> "eight")
     }
     
-    val matcher = new NoneOfContainMatcher(List(0, 2, 8))
+    val matcher = new NoneOfContainMatcher(List(0, 2, 8), defaultEquality)
     val mapMatcherRight = Array(0 -> "zero", 2 -> "two", 8 -> "eight")
-    val mapMatcher = new NoneOfContainMatcher(mapMatcherRight)
+    val mapMatcher = new NoneOfContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       

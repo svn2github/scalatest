@@ -42,9 +42,9 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaMap(1 -> "one", 2 -> "two", 3 -> "three") should contain only (1 -> "one", 2 -> "two", 3 -> "three")
     }
     
-    val matcher = new OnlyContainMatcher(List(1, 2, 3))
+    val matcher = new OnlyContainMatcher(List(1, 2, 3), defaultEquality)
     val mapMatcherRight = Array(1 -> "one", 2 -> "two", 3 -> "three")
-    val mapMatcher = new OnlyContainMatcher(mapMatcherRight)
+    val mapMatcher = new OnlyContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       
@@ -231,9 +231,9 @@ class OnlyContainMatcherSpec extends Spec with Matchers with SharedHelpers {
       javaMap(1 -> "one", 2 -> "two", 3 -> "three") should not contain only (1 -> "one", 2 -> "two")
     }
     
-    val matcher = new OnlyContainMatcher(List(1, 2, 3))
+    val matcher = new OnlyContainMatcher(List(1, 2, 3), defaultEquality)
     val mapMatcherRight = Map(1 -> "one", 2 -> "two", 3 -> "three")
-    val mapMatcher = new OnlyContainMatcher(mapMatcherRight)
+    val mapMatcher = new OnlyContainMatcher(mapMatcherRight, defaultEquality)
     
     def `should work with ContainMatcher directly` {
       

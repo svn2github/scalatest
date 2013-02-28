@@ -28,10 +28,10 @@ import scala.annotation.tailrec
  *
  * @author Bill Venners
  */
-class InOrderOnlyContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
+class InOrderOnlyContainMatcher[T](right: GenTraversable[T], equality: Equality[T]) extends ContainMatcher[T] {
   
   @tailrec
-  private def findNext(value: T, rightItr: Iterator[T], processedList: IndexedSeq[T], equality: Equality[T]): IndexedSeq[T] = 
+  private def findNext(value: T, rightItr: Iterator[T], processedList: IndexedSeq[T]): IndexedSeq[T] = 
     if (rightItr.hasNext) {
       val nextRight = rightItr.next
       if (processedList.find(equality.areEqual(_, nextRight)).isDefined)
@@ -39,22 +39,22 @@ class InOrderOnlyContainMatcher[T](right: GenTraversable[T]) extends ContainMatc
       if (nextRight == value)
         processedList :+ nextRight
       else
-        findNext(value, rightItr, processedList :+ nextRight, equality)
+        findNext(value, rightItr, processedList :+ nextRight)
     }
     else
       processedList
   
   @tailrec
-  private def checkEqual(leftItr: Iterator[T], rightItr: Iterator[T], currentRight: T, processedList: IndexedSeq[T], equality: Equality[T]): Boolean = {
+  private def checkEqual(leftItr: Iterator[T], rightItr: Iterator[T], currentRight: T, processedList: IndexedSeq[T]): Boolean = {
     
     if (leftItr.hasNext) {
       val nextLeft = leftItr.next
       if (equality.areEqual(nextLeft, currentRight)) // The nextLeft is contained in right, let's continue next
-        checkEqual(leftItr, rightItr, currentRight, processedList, equality)
+        checkEqual(leftItr, rightItr, currentRight, processedList)
       else {
-        val newProcessedList = findNext(nextLeft, rightItr, processedList, equality)
+        val newProcessedList = findNext(nextLeft, rightItr, processedList)
         if (equality.areEqual(newProcessedList.last, nextLeft)) // The nextLeft is contained in right, let's continue next
-          checkEqual(leftItr, rightItr, nextLeft, newProcessedList, equality) // nextLeft will be the new currentRight
+          checkEqual(leftItr, rightItr, nextLeft, newProcessedList) // nextLeft will be the new currentRight
         else // The nextLeft is not in right, let's fail early
           false
       }
@@ -66,11 +66,11 @@ class InOrderOnlyContainMatcher[T](right: GenTraversable[T]) extends ContainMatc
   /**
    * This method contains the matching code for inOrderOnly.
    */
-  def apply(left: GenTraversable[T], equality: Equality[T]): MatchResult = {
+  def apply(left: GenTraversable[T]): MatchResult = {
     val rightItr = right.toIterator
     val rightFirst = rightItr.next
     MatchResult(
-      if (rightItr.hasNext) checkEqual(left.toIterator, rightItr, rightFirst, IndexedSeq(rightFirst), equality) else left.isEmpty, 
+      if (rightItr.hasNext) checkEqual(left.toIterator, rightItr, rightFirst, IndexedSeq(rightFirst)) else left.isEmpty, 
       FailureMessages("didNotContainInOrderOnlyElements", left, UnquotedString(right.mkString(", "))),
       FailureMessages("containedInOrderOnlyElements", left, UnquotedString(right.mkString(", ")))
     )

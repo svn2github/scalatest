@@ -28,15 +28,15 @@ import scala.annotation.tailrec
  *
  * @author Bill Venners
  */
-class AllOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
+class AllOfContainMatcher[T](right: GenTraversable[T], equality: Equality[T]) extends ContainMatcher[T] {
   @tailrec
-  private def checkEqual(left: GenTraversable[T], rightItr: Iterator[T], processedSet: Set[T], equality: Equality[T]): Boolean = {
+  private def checkEqual(left: GenTraversable[T], rightItr: Iterator[T], processedSet: Set[T]): Boolean = {
     if (rightItr.hasNext) {
       val nextRight = rightItr.next
       if (processedSet.contains(nextRight))
         throw new IllegalArgumentException(FailureMessages("allOfDuplicate", nextRight))
       if (left.exists(t => equality.areEqual(t, nextRight))) 
-        checkEqual(left, rightItr, processedSet + nextRight, equality)
+        checkEqual(left, rightItr, processedSet + nextRight)
       else
         false // Element not found, let's fail early
     }
@@ -47,9 +47,9 @@ class AllOfContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T]
   /**
    * This method contains the matching code for allOf.
    */
-  def apply(left: GenTraversable[T], equality: Equality[T]): MatchResult = 
+  def apply(left: GenTraversable[T]): MatchResult = 
     MatchResult(
-      checkEqual(left, right.toIterator, Set.empty, equality), 
+      checkEqual(left, right.toIterator, Set.empty), 
       FailureMessages("didNotContainAllOfElements", left, UnquotedString(right.mkString(", "))),
       FailureMessages("containedAllOfElements", left, UnquotedString(right.mkString(", ")))
     )

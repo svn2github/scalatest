@@ -28,9 +28,9 @@ import scala.annotation.tailrec
  *
  * @author Bill Venners
  */
-class TheSameElementsAsContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
+class TheSameElementsAsContainMatcher[T](right: GenTraversable[T], equality: Equality[T]) extends ContainMatcher[T] {
   @tailrec
-  private def checkEqual(left: Iterator[T], right: Iterator[T], remains: IndexedSeq[T], equality: Equality[T]): Boolean = {
+  private def checkEqual(left: Iterator[T], right: Iterator[T], remains: IndexedSeq[T]): Boolean = {
     if (left.hasNext) {
       val nextLeft = left.next
       // Let's look from the remains first
@@ -38,16 +38,16 @@ class TheSameElementsAsContainMatcher[T](right: GenTraversable[T]) extends Conta
       if (idx >= 0) {
         // Found in remains, let's remove it from remains and continue
         val (first, second) = remains.splitAt(idx)
-        checkEqual(left, right, first ++: second.tail, equality)
+        checkEqual(left, right, first ++: second.tail)
       }
       else {
         // Not found in remains, let's try right iterator
         if (right.isEmpty) // right is empty, so the element not found
           false
         else {
-          val (newRemains, found) = takeUntilFound(right, nextLeft, IndexedSeq.empty, equality)
+          val (newRemains, found) = takeUntilFound(right, nextLeft, IndexedSeq.empty)
           if (found)
-            checkEqual(left, right, remains ++: newRemains.toIndexedSeq, equality)
+            checkEqual(left, right, remains ++: newRemains.toIndexedSeq)
           else // Not found in right iterator
             false
         }
@@ -58,13 +58,13 @@ class TheSameElementsAsContainMatcher[T](right: GenTraversable[T]) extends Conta
   }
   
   @tailrec
-  private def takeUntilFound(itr: Iterator[T], target: T, taken: IndexedSeq[T], equality: Equality[T]): (IndexedSeq[T], Boolean) = {
+  private def takeUntilFound(itr: Iterator[T], target: T, taken: IndexedSeq[T]): (IndexedSeq[T], Boolean) = {
     if (itr.hasNext) {
       val next = itr.next
       if (equality.areEqual(next, target))
         (taken, true)
       else
-        takeUntilFound(itr, target, taken :+ next, equality)
+        takeUntilFound(itr, target, taken :+ next)
     }
     else
       (taken, false)
@@ -73,9 +73,9 @@ class TheSameElementsAsContainMatcher[T](right: GenTraversable[T]) extends Conta
   /**
    * This method contains the matching code for theSameElementsAs.
    */
-  def apply(left: GenTraversable[T], equality: Equality[T]): MatchResult = 
+  def apply(left: GenTraversable[T]): MatchResult = 
     MatchResult(
-      checkEqual(left.toIterator, right.toIterator, IndexedSeq.empty, equality), 
+      checkEqual(left.toIterator, right.toIterator, IndexedSeq.empty), 
       FailureMessages("didNotContainSameElements", left, right), 
       FailureMessages("containedSameElements", left, right)
     )

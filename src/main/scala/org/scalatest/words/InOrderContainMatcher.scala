@@ -28,31 +28,31 @@ import scala.annotation.tailrec
  *
  * @author Bill Venners
  */
-class InOrderContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
+class InOrderContainMatcher[T](right: GenTraversable[T], equality: Equality[T]) extends ContainMatcher[T] {
   
   @tailrec
-  private def lastIndexOf(itr: Iterator[T], element: T, idx: Option[Int], i: Int, equality: Equality[T]): Option[Int] = {
+  private def lastIndexOf(itr: Iterator[T], element: T, idx: Option[Int], i: Int): Option[Int] = {
     if (itr.hasNext) {
       val next = itr.next
       if (equality.areEqual(next, element))
-        lastIndexOf(itr, element, Some(i), i + 1, equality)
+        lastIndexOf(itr, element, Some(i), i + 1)
       else
-        lastIndexOf(itr, element, idx, i + 1, equality)
+        lastIndexOf(itr, element, idx, i + 1)
     }
     else
       idx
   }
   
   @tailrec
-  private def checkEqual(left: GenTraversable[T], rightItr: Iterator[T], processedSet: Set[T], equality: Equality[T]): Boolean = {
+  private def checkEqual(left: GenTraversable[T], rightItr: Iterator[T], processedSet: Set[T]): Boolean = {
     
     if (rightItr.hasNext) {
       val nextRight = rightItr.next
       if (processedSet.find(equality.areEqual(_, nextRight)).isDefined)
           throw new IllegalArgumentException(FailureMessages("inOrderDuplicate", nextRight))
-      lastIndexOf(left.toIterator, nextRight, None, 0, equality) match {
+      lastIndexOf(left.toIterator, nextRight, None, 0) match {
         case Some(idx) => 
-          checkEqual(left.drop(idx).tail, rightItr, processedSet + nextRight, equality)
+          checkEqual(left.drop(idx).tail, rightItr, processedSet + nextRight)
         case None => 
           false // Element not found, let's fail early
       }
@@ -64,9 +64,9 @@ class InOrderContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[
   /**
    * This method contains the matching code for inOrder.
    */
-  def apply(left: GenTraversable[T], equality: Equality[T]): MatchResult = 
+  def apply(left: GenTraversable[T]): MatchResult = 
     MatchResult(
-      checkEqual(left, right.toIterator, Set.empty, equality), 
+      checkEqual(left, right.toIterator, Set.empty), 
       FailureMessages("didNotContainAllOfElementsInOrder", left, UnquotedString(right.mkString(", "))),
       FailureMessages("containedAllOfElementsInOrder", left, UnquotedString(right.mkString(", ")))
     )

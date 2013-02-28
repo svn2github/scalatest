@@ -28,16 +28,16 @@ import scala.annotation.tailrec
  *
  * @author Bill Venners
  */
-class TheSameIteratedElementsAsContainMatcher[T](right: GenTraversable[T]) extends ContainMatcher[T] {
+class TheSameIteratedElementsAsContainMatcher[T](right: GenTraversable[T], equality: Equality[T]) extends ContainMatcher[T] {
   @tailrec
-  private def checkEqual(left: Iterator[T], right: Iterator[T], equality: Equality[T]): Boolean = {
+  private def checkEqual(left: Iterator[T], right: Iterator[T]): Boolean = {
     if (left.hasNext && right.hasNext) {
       val nextLeft = left.next
       val nextRight = right.next
       if (!equality.areEqual(nextLeft, nextRight))
         false
       else
-        checkEqual(left, right, equality)
+        checkEqual(left, right)
     }
     else
       left.isEmpty && right.isEmpty
@@ -46,9 +46,9 @@ class TheSameIteratedElementsAsContainMatcher[T](right: GenTraversable[T]) exten
   /**
    * This method contains the matching code for theSameIteratedElementsAs.
    */
-  def apply(left: GenTraversable[T], equality: Equality[T]): MatchResult = 
+  def apply(left: GenTraversable[T]): MatchResult = 
     MatchResult(
-      checkEqual(left.toIterator, right.toIterator, equality), 
+      checkEqual(left.toIterator, right.toIterator), 
       FailureMessages("didNotContainSameIteratedElements", left, right), 
       FailureMessages("containedSameIteratedElements", left, right)
     )
