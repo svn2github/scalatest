@@ -97,6 +97,16 @@ trait MatcherWords {
    */
   val be = new BeWord
 
+  /**
+   * This method enables syntax such as the following:
+   *
+   * <pre class="stHighlight">
+   * list should (contain ('a') and have length (7))
+   *              ^
+   * </pre>
+   */
+  val contain = new ContainWord
+
 /*
   /**
    * This field enables syntax like the following: 
@@ -107,16 +117,6 @@ trait MatcherWords {
    * </pre>
    */
   val not = new NotWord
-
-  /**
-   * This method enables syntax such as the following:
-   *
-   * <pre class="stHighlight">
-   * list should (contain ('a') and have length (7))
-   *              ^
-   * </pre>
-   */
-  val contain = new ContainWord
 */
 }
 
