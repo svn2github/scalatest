@@ -86,16 +86,6 @@ trait MatcherWords {
    * </pre>
    */
   val have = new HaveWord
-/*
-  /**
-   * This field enables syntax like the following: 
-   *
-   * <pre class="stHighlight">
-   * myFile should (not be an (directory) and not have ('name ("foo.bar")))
-   *                ^
-   * </pre>
-   */
-  val not = new NotWord
 
   /**
    * This method enables syntax such as the following:
@@ -106,6 +96,17 @@ trait MatcherWords {
    * </pre>
    */
   val be = new BeWord
+
+/*
+  /**
+   * This field enables syntax like the following: 
+   *
+   * <pre class="stHighlight">
+   * myFile should (not be an (directory) and not have ('name ("foo.bar")))
+   *                ^
+   * </pre>
+   */
+  val not = new NotWord
 
   /**
    * This method enables syntax such as the following:
