@@ -21,6 +21,7 @@ import Arbitrary._
 import Prop._
 import Integer.MIN_VALUE
 import org.scalatest.exceptions.TestFailedException
+import org.scalatest.matchers.Size
 
 class ShouldSizeSpec extends Spec with Matchers with Checkers with ReturnsNormallyThrowsAssertion {
 
