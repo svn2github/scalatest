@@ -36,7 +36,7 @@ class InOrderOnlyContainMatcher[T](right: GenTraversable[T], equality: Equality[
       val nextRight = rightItr.next
       if (processedList.find(equality.areEqual(_, nextRight)).isDefined)
           throw new IllegalArgumentException(FailureMessages("inOrderOnlyDuplicate", nextRight))
-      if (nextRight == value)
+      if (equality.areEqual(value, nextRight))
         processedList :+ nextRight
       else
         findNext(value, rightItr, processedList :+ nextRight)
@@ -53,7 +53,7 @@ class InOrderOnlyContainMatcher[T](right: GenTraversable[T], equality: Equality[
         checkEqual(leftItr, rightItr, currentRight, processedList)
       else {
         val newProcessedList = findNext(nextLeft, rightItr, processedList)
-        if (equality.areEqual(newProcessedList.last, nextLeft)) // The nextLeft is contained in right, let's continue next
+        if (equality.areEqual(nextLeft, newProcessedList.last)) // The nextLeft is contained in right, let's continue next
           checkEqual(leftItr, rightItr, nextLeft, newProcessedList) // nextLeft will be the new currentRight
         else // The nextLeft is not in right, let's fail early
           false

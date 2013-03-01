@@ -54,7 +54,7 @@ class NoneOfContainMatcher[T](right: GenTraversable[T], equality: Equality[T]) e
         false
       else {
         val newProcessedSet = findNext(nextLeft, rightItr, processedSet)
-        if (newProcessedSet.contains(nextLeft)) // nextLeft is found in right, let's fail early
+        if (newProcessedSet.find(equality.areEqual(nextLeft, _)).isDefined) // nextLeft is found in right, let's fail early
           false
         else // nextLeft not found in right, let's continue to next element in left
           checkEqual(leftItr, rightItr, newProcessedSet)
