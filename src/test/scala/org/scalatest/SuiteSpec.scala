@@ -24,28 +24,28 @@ import org.scalatest.exceptions.TestPendingException
 */
 
 class MandarinOrangeFunSuite(ns: Suite*) extends FunSuite {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFunSpec(ns: Suite*) extends FunSpec {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeSpec(ns: Suite*) extends Spec {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeWordSpec(ns: Suite*) extends WordSpec {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFlatSpec(ns: Suite*) extends FlatSpec {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFreeSpec(ns: Suite*) extends FreeSpec {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFeatureSpec(ns: Suite*) extends FeatureSpec {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangePropSpec(ns: Suite*) extends PropSpec {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 
 // Named these with a MandarinOrange prefix so they wouldn't confict
@@ -57,28 +57,28 @@ trait MandarinOrangeFixture { this: fixture.Suite =>
 }
 
 class MandarinOrangeFixtureFunSuite(ns: Suite*) extends fixture.FunSuite with MandarinOrangeFixture {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFixtureFunSpec(ns: Suite*) extends fixture.FunSpec with MandarinOrangeFixture {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFixtureSpec(ns: Suite*) extends fixture.Spec with MandarinOrangeFixture {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFixtureWordSpec(ns: Suite*) extends fixture.WordSpec with MandarinOrangeFixture {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFixtureFlatSpec(ns: Suite*) extends fixture.FlatSpec with MandarinOrangeFixture {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFixtureFreeSpec(ns: Suite*) extends fixture.FreeSpec with MandarinOrangeFixture {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFixtureFeatureSpec(ns: Suite*) extends fixture.FeatureSpec with MandarinOrangeFixture {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 class MandarinOrangeFixturePropSpec(ns: Suite*) extends fixture.PropSpec with MandarinOrangeFixture {
-  override def nestedSuites = ns.toVector
+  override def nestedSuites = Vector.empty ++ ns // ns.toVector
 }
 
 class MandarinOrangeSuites(suites: Suite*) extends Suites(suites: _*)
