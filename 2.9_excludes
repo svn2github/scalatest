@@ -2,3 +2,4 @@ org/scalautils/TripleEqualsSpec.scala
 org/scalautils/CopiedForLegacyTripleEqualsSpec.scala
 org/scalatest/ShouldTripleEqualsSpec.scala
 org/scalatest/TryValuesSpec.scala
+org/scalatest/TryValues.scala

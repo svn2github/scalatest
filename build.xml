@@ -263,7 +263,7 @@
     <target name="compile" depends="compile-main, compile-tests"/>
 
     <!--<target name="compile-main" depends="init">-->
-    <target name="compile-main" depends="init, gentables, genmatchers, gengen, geninspectors">
+    <target name="compile-main" depends="init, gentables, genmatchers, gengen, geninspectors, write-excludes-file">
         <!--<fail message="Wrong JVM [${ant.java.version}]. Include 'java6' target to use java 6."
               unless="jvm.ok"/>-->
 
@@ -272,7 +272,12 @@
 
         <!-- Compile the Scala code from ${scalasrc} into ${classes}. Scalac will parse the referenced .java files. -->
         <!-- Compile the Scala code from ${build.generated.src} into ${classes}. Scalac will parse any referenced .java files. -->
-        <scalac srcdir="${scalasrc}:${build.generated.src}:${javasrc}" destdir="${classes}" target="jvm-1.5" deprecation="no" classpathref="build.class.path" addparams="-no-specialization" fork="true" jvmargs="${jvmargs}" />
+        <scalac destdir="${classes}" target="jvm-1.5" deprecation="no"
+                classpathref="build.class.path" addparams="-no-specialization"
+                fork="true" jvmargs="${jvmargs}" >
+          <src path="${scalasrc}:${build.generated.src}:${javasrc}"/>
+          <excludesfile name="${build}/scalac_excludes"/>
+        </scalac>
 
     	<!-- Compile the Java code from ${javasrc} into ${classes} -->
     	<javac srcdir="${javasrc}" destdir="${classes}" compiler="javac1.5" memoryMaximumSize="1500M" fork="true" classpathref="build.class.path" debug="yes">
@@ -334,7 +339,7 @@
     <!-- -->
     <target name="write-2.9-excludes-file" if="is.2.9">
       <echo message="Excluding files listed in 2.9_excludes file."/>
-      <copy file="src/test/scala/2.9_excludes"
+      <copy file="2.9_excludes"
             tofile="${build}/scalac_excludes"/>
     </target>
     <!-- -->
