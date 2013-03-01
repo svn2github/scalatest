@@ -50,10 +50,12 @@ class SequentialNestedSuiteExecutionSpec extends Spec with SharedHelpers {
         class SeqSubSuite extends SuperSuite with SequentialNestedSuiteExecution
         val par = new ParSubSuite
         val seq = new SeqSubSuite
-        par.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
+        val parStatus = par.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
+        parStatus.waitUntilCompleted()
         assert(par.distributorWasDefined)
         assert(par.distributorWasPropagated)
-        seq.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
+        val seqStatus = seq.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
+        assert(seqStatus.isCompleted) // When a seqential execution returns, the whole thing should be completed already
         assert(!seq.distributorWasDefined)
         assert(!seq.distributorWasPropagated)
         assert(seq.lastNestedSuiteWasRunAfterFirst)
