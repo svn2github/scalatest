@@ -6575,7 +6575,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
-    // TODO: To implement it correctly using Equality
     /**
      * This method enables syntax such as the following:
      *
@@ -6584,7 +6583,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *         ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[T, Equality])(implicit equality: Equality[T]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[T, TYPECLASS1])(implicit typeClass1: TYPECLASS1[T]) {
       val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
@@ -6644,7 +6643,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
-    // TODO: To implement it correctly using Equality
     /**
      * This method enables syntax such as the following:
      *
@@ -6653,7 +6651,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *         ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[T, Equality])(implicit equality: Equality[T]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[T, TYPECLASS1])(implicit typeClass1: TYPECLASS1[T]) {
       val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
@@ -6713,7 +6711,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
-    // TODO: To implement it correctly using Equality
     /**
      * This method enables syntax such as the following:
      *
@@ -6722,7 +6719,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *         ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[String, Equality])(implicit equality: Equality[String]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[String, TYPECLASS1])(implicit typeClass1: TYPECLASS1[String]) {
       val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
@@ -7085,7 +7082,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
-    // TODO: To implement it correctly using Equality
     /**
      * This method enables syntax such as the following:
      *
@@ -7094,7 +7090,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                       ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[GenTraversable[T], Equality])(implicit equality: Equality[GenTraversable[T]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[GenTraversable[T], TYPECLASS1])(implicit typeClass1: TYPECLASS1[GenTraversable[T]]) {
       val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
@@ -7232,7 +7228,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
-    // TODO: To implement it correctly using Equality
     /**
      * This method enables syntax such as the following:
      *
@@ -7241,7 +7236,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *         ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[GenSeq[T], Equality])(implicit equality: Equality[GenSeq[T]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[GenSeq[T], TYPECLASS1])(implicit typeClass1: TYPECLASS1[GenSeq[T]]) {
       val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
@@ -7557,7 +7552,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
-    // TODO: To implement it correctly using Equality
     /**
      * This method enables syntax such as the following:
      *
@@ -7566,7 +7560,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                       ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[GenTraversable[T], Equality])(implicit equality: Equality[GenTraversable[T]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[GenTraversable[T], TYPECLASS1])(implicit typeClass1: TYPECLASS1[GenTraversable[T]]) {
       val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e.deep.asInstanceOf[IndexedSeq[T]]) match {
@@ -7704,7 +7698,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
-    // TODO: To implement it correctly using Equality
     /**
      * This method enables syntax such as the following:
      *
@@ -7713,7 +7706,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *               ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[GenMap[K, V], Equality])(implicit equality: Equality[GenMap[K, V]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[GenMap[K, V], TYPECLASS1])(implicit typeClass1: TYPECLASS1[GenMap[K, V]]) {
       val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
@@ -8018,7 +8011,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
-    // TODO: To implement it correctly using Equality
     /**
      * This method enables syntax such as the following:
      *
@@ -8027,7 +8019,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                   ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[java.util.Collection[T], Equality])(implicit equality: Equality[java.util.Collection[T]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[java.util.Collection[T], TYPECLASS1])(implicit typeClass1: TYPECLASS1[java.util.Collection[T]]) {
       val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
@@ -8346,7 +8338,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
-    // TODO: To implement it correctly using Equality
     /**
      * This method enables syntax such as the following:
      *
@@ -8355,7 +8346,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                   ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[java.util.Map[K, V], Equality])(implicit equality: Equality[java.util.Map[K, V]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[java.util.Map[K, V], TYPECLASS1])(implicit typeClass1: TYPECLASS1[java.util.Map[K, V]]) {
       val rightMatcher = rightMatcherGen1.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
@@ -8901,7 +8892,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *        ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[T, Equality])(implicit equality: Equality[T]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[T, TYPECLASS1])(implicit typeClass1: TYPECLASS1[T]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -9011,7 +9002,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *        ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[String, Equality])(implicit equality: Equality[String]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[String, TYPECLASS1])(implicit typeClass1: TYPECLASS1[String]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -9166,7 +9157,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *         ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[T, Equality])(implicit equality: Equality[T]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[T, TYPECLASS1])(implicit typeClass1: TYPECLASS1[T]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -9332,7 +9323,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *     ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[L[K, V], Equality])(implicit equality: Equality[L[K, V]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[L[K, V], TYPECLASS1])(implicit typeClass1: TYPECLASS1[L[K, V]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -9451,7 +9442,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *        ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[T, Equality])(implicit equality: Equality[T]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[T, TYPECLASS1])(implicit typeClass1: TYPECLASS1[T]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -9629,7 +9620,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *             ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[L[E], Equality])(implicit equality: Equality[L[E]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[L[E], TYPECLASS1])(implicit typeClass1: TYPECLASS1[L[E]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -9751,7 +9742,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[L[E], Equality])(implicit equality: Equality[L[E]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[L[E], TYPECLASS1])(implicit typeClass1: TYPECLASS1[L[E]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -9851,7 +9842,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *         ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[L[K, V], Equality])(implicit equality: Equality[L[K, V]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[L[K, V], TYPECLASS1])(implicit typeClass1: TYPECLASS1[L[K, V]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -9954,7 +9945,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *     ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[L[E], Equality])(implicit equality: Equality[L[E]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[L[E], TYPECLASS1])(implicit typeClass1: TYPECLASS1[L[E]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -10056,7 +10047,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *       ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[Array[T], Equality])(implicit equality: Equality[Array[T]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[Array[T], TYPECLASS1])(implicit typeClass1: TYPECLASS1[Array[T]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
@@ -10166,7 +10157,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *          ^
      * </pre>
      */
-    def should(rightMatcherGen1: MatcherGen1[L[E], Equality])(implicit equality: Equality[L[E]]) {
+    def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[L[E], TYPECLASS1])(implicit typeClass1: TYPECLASS1[L[E]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
