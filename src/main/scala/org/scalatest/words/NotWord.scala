@@ -193,7 +193,7 @@ final class NotWord {
    *                         ^
    * </pre>
    */
-  def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): Matcher[AnyRef] =
+  def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen1[Any, Size] =
     apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize))
 
   /**

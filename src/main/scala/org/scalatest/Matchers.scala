@@ -10527,7 +10527,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    */
   override def convertToTraversableLoneElementWrapper[T](xs: GenTraversable[T]): LoneElementTraversableWrapper[T] = new LoneElementTraversableWrapper[T](xs)
 
-  implicit def lengthOfJavaCollection[E, LIST[_] <: java.util.List[_]]: Length[LIST[E]] = 
+  implicit def lengthOfJavaList[E, LIST[_] <: java.util.List[_]]: Length[LIST[E]] = 
     new Length[LIST[E]] {
       def extentOf(javaList: LIST[E]): Long = javaList.size
     }
@@ -10544,6 +10544,36 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
 
   implicit val lengthOfString: Length[String] = 
     new Length[String] {
+      def extentOf(str: String): Long = str.length
+    }
+
+  implicit def sizeOfJavaCollection[E, COLL[_] <: java.util.Collection[_]]: Size[COLL[E]] = 
+    new Size[COLL[E]] {
+      def extentOf(javaColl: COLL[E]): Long = javaColl.size
+    }
+
+  implicit def sizeOfJavaMap[K, V, MAP[_, _] <: java.util.Map[_, _]]: Size[MAP[K, V]] = 
+    new Size[MAP[K, V]] {
+      def extentOf(javaMap: MAP[K, V]): Long = javaMap.size
+    }
+
+  implicit def sizeOfTraversable[E, TRAV[_] <: scala.collection.GenTraversable[_]]: Size[TRAV[E]] = 
+    new Size[TRAV[E]] {
+      def extentOf(trav: TRAV[E]): Long = trav.size
+    }
+
+  implicit def sizeOfMap[K, V, MAP[_, _] <: scala.collection.GenMap[_, _]]: Size[MAP[K, V]] = 
+    new Size[MAP[K, V]] {
+      def extentOf(trav: MAP[K, V]): Long = trav.size
+    }
+
+  implicit def sizeOfArray[E]: Size[Array[E]] = 
+    new Size[Array[E]] {
+      def extentOf(arr: Array[E]): Long = arr.length
+    }
+
+  implicit val sizeOfString: Size[String] = 
+    new Size[String] {
       def extentOf(str: String): Long = str.length
     }
 }

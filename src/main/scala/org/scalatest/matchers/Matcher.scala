@@ -589,7 +589,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                            ^ 
      * </pre>
      */
-    def size(expectedSize: Long): Matcher[T with AnyRef] = and(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherGen1[T, Size] = and(MatcherWords.have.size(expectedSize))
   }
 
   /**
@@ -1090,7 +1090,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                               ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): Matcher[T with AnyRef] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen1[T, Size] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
@@ -1459,7 +1459,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                       ^
      * </pre>
      */
-    def size(expectedSize: Long): Matcher[T with AnyRef] = or(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherGen1[T, Size] = or(MatcherWords.have.size(expectedSize))
   }
 
   /**
@@ -1960,7 +1960,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): Matcher[T with AnyRef] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen1[T, Size] =
       outerInstance.or(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**

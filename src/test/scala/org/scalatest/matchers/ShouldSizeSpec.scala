@@ -3750,41 +3750,5 @@ class ShouldSizeSpec extends Spec with ShouldMatchers with Checkers with Returns
         assert(caught3.getMessage === "sizey had size 2, and sizey had size 2")
       }
     }
-
-    def `should give an TestFailedException with an arbitrary object that has no size member in an and expression` {
-      class HasNoSize {
-        val sizeiness: Int = 2
-      }
-      val hasNoSize = new HasNoSize
-      val caught1 = intercept[TestFailedException] {
-        hasNoSize should { have size (2) and equal (hasNoSize) }
-      }
-      val expectedMessage = "have size (2) used with an object that had no public field or method named size or getSize"
-      assert(caught1.getMessage === expectedMessage)
-      val caught2 = intercept[TestFailedException] {
-        hasNoSize should not { have size (2) and equal (hasNoSize) }
-      }
-      assert(caught2.getMessage === expectedMessage)
-    }
-
-    def `should the Scala-style method on an arbitrary object that has multiple members with a valid sizes structure` {
-      class Sizey(len: Int) {
-        def getSize: Int = len + 1
-        def size: Int = len
-        override def toString = "sizey"
-      }
-      val obj = new Sizey(2)
-      val sizeMatcher = have size (2)
-      sizeMatcher.apply(obj)
-
-      class IntAndLong(intLen: Int, longLen: Long) {
-        def getSize: Int = intLen
-        def size: Long = longLen
-        override def toString = "sizey"
-      }
-      val obj2 = new IntAndLong(3, 2)
-      val sizeMatcher2 = have size (2)
-      sizeMatcher2.apply(obj)
-    }
   }
 }

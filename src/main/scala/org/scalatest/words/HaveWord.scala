@@ -33,12 +33,6 @@ import org.scalatest.Helper.accessProperty
  */
 final class HaveWord {
 
-  // TODO: How about returning a Matcher[Gazornimplatz] and then providing implicit conversion
-  // methods from Matcher[Gazornimplatz] to Matcher[Seq], Matcher[String], Matcher[java.util.List], and
-  // Matcher[the structural length methods]. This is similar to the technique I used with "contain (7)"
-  // to get it to work with java.util.Collection.
-  // I couldn't figure out how to combine view bounds with existential types. May or may not
-  // be possible, but going dynamic for now at least.
   /**
    * This method enables the following syntax:
    *
@@ -46,14 +40,6 @@ final class HaveWord {
    * book should have length (9)
    *                  ^
    * </pre>
-   *
-   * <p>
-   * Currently (as of ScalaTest 0.9.5), this method will produce a <code>Matcher[AnyRef]</code>, and if the
-   * <code>AnyRef</code> passed to that matcher's <code>apply</code> method does not have the appropriate <code>length</code> property
-   * structure, all will compile but a <code>TestFailedException</code> will result at runtime explaining the problem. The one exception is that it will work on
-   * <code>java.util.List</code>, even though that type has no <code>length</code> structure (its <code>size</code> property
-   * will be used instead.) In a future ScalaTest release, this may be tightened so that all is statically checked at compile time.
-   * </p>
    */
   def length(expectedLength: Long): MatcherGen1[Any, Length] =
     new MatcherGen1[Any, Length] {
@@ -72,54 +58,6 @@ final class HaveWord {
         }
       }
     }
-/*
-  def length(expectedLength: Long): Matcher[AnyRef] =
-    new Matcher[AnyRef] {
-      def apply(left: AnyRef): MatchResult =
-        left match {
-          case leftArray: Array[_] =>
-            MatchResult(
-              leftArray.length == expectedLength, 
-              FailureMessages("didNotHaveExpectedLength", left, expectedLength),
-              FailureMessages("hadExpectedLength", left, expectedLength)
-            )
-          case leftSeq: GenSeq[_] =>
-            MatchResult(
-              leftSeq.length == expectedLength, 
-              FailureMessages("didNotHaveExpectedLength", left, expectedLength),
-              FailureMessages("hadExpectedLength", left, expectedLength)
-            )
-          case leftString: String =>
-            MatchResult(
-              leftString.length == expectedLength, 
-              FailureMessages("didNotHaveExpectedLength", left, expectedLength),
-              FailureMessages("hadExpectedLength", left, expectedLength)
-            )
-          case leftJavaList: java.util.List[_] =>
-            MatchResult(
-              leftJavaList.size == expectedLength,
-              FailureMessages("didNotHaveExpectedLength", left, expectedLength),
-              FailureMessages("hadExpectedLength", left, expectedLength)
-            )
-          case _ =>
-
-            accessProperty(left, 'length, false) match {
-
-              case None =>
-
-                throw newTestFailedException(Resources("noLengthStructure", expectedLength.toString))
-
-              case Some(result) =>
-
-                MatchResult(
-                  result == expectedLength,
-                  FailureMessages("didNotHaveExpectedLength", left, expectedLength),
-                  FailureMessages("hadExpectedLength", left, expectedLength)
-                )
-            }
-        }
-    }
-*/
 
   /**
    * This method enables the following syntax:
@@ -136,7 +74,25 @@ final class HaveWord {
    * In a future ScalaTest release, this may be tightened so that all is statically checked at compile time.
    * </p>
    */
-  def size(expectedSize: Long): Matcher[AnyRef] =
+  def size(expectedSize: Long): MatcherGen1[Any, Size] =
+    new MatcherGen1[Any, Size] {
+      def matcher[T <: Any : Size]: Matcher[T] = {
+        val length = implicitly[Size[T]]
+        new Matcher[T] {
+          def apply(left: T): MatchResult = {
+            val lengthOfLeft = length.extentOf(left)
+            MatchResult(
+              lengthOfLeft == expectedSize,
+              // FailureMessages("hadSizeInsteadOfExpectedSize", left, lengthOfLeft, expectedSize),
+              FailureMessages("didNotHaveExpectedSize", left, expectedSize),
+              FailureMessages("hadExpectedSize", left, expectedSize)
+            )
+          }
+        }
+      }
+    }
+
+/*
     new Matcher[AnyRef] {
       def apply(left: AnyRef): MatchResult =
         left match {
@@ -176,6 +132,7 @@ final class HaveWord {
             }
         }
     }
+*/
 
   /**
    * This method enables the following syntax:

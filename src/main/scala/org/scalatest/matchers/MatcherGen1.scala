@@ -165,7 +165,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^ 
      * </pre>
      */
-    def size(expectedSize: Long): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = and(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherGen2[SUPERCLASS, TYPECLASS, Size] = and(MatcherWords.have.size(expectedSize))
   }
 
   /**
@@ -666,7 +666,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                               ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen2[SUPERCLASS, TYPECLASS, Size] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
@@ -1035,7 +1035,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                       ^
      * </pre>
      */
-    def size(expectedSize: Long): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = or(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherGen2[SUPERCLASS, TYPECLASS, Size] = or(MatcherWords.have.size(expectedSize))
   }
 
   /**
@@ -1536,7 +1536,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen2[SUPERCLASS, TYPECLASS, Size] =
       outerInstance.or(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
