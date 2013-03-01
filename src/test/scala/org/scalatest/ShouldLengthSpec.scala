@@ -153,6 +153,7 @@ class ShouldLengthSpec extends Spec with Matchers with Checkers with ReturnsNorm
         assert(caught3.getMessage === "\"hi\" had length 2, and \"hi\" had length 2")
       }
 
+/* TODO: Uncomment this once we have MatcherGen3 going.
       def `should give good error messages when more than two clauses are used with logical connectors` {
 
         val caught1 = intercept[TestFailedException] {
@@ -165,6 +166,7 @@ class ShouldLengthSpec extends Spec with Matchers with Checkers with ReturnsNorm
         }
         assert(caught2.getMessage === "\"hi\" had length 2, and \"hi\" equaled \"hi\", and \"[hi]\" did not equal \"[frog]\"")
       }
+*/
     }
 
     object `on Array` {
@@ -2399,42 +2401,6 @@ class ShouldLengthSpec extends Spec with Matchers with Checkers with ReturnsNorm
         }
         assert(caught3b.getMessage === "lengthy had size 2, and lengthy had size 2")
       }
-    }
-
-    def `should give an TestFailedException with an arbitrary object that has no length member in an and expression` {
-      class HasNoLength {
-        val lengthiness: Int = 2
-      }
-      val hasNoLength = new HasNoLength
-      val caught1 = intercept[TestFailedException] {
-        hasNoLength should { have length (2) and equal (hasNoLength) }
-      }
-      val expectedMessage = "have length (2) used with an object that had no public field or method named length or getLength"
-      assert(caught1.getMessage === expectedMessage)
-      val caught2 = intercept[TestFailedException] {
-        hasNoLength should not { have length (2) and equal (hasNoLength) }
-      }
-      assert(caught2.getMessage === expectedMessage)
-    }
-
-    def `should call the Scala-style method on an arbitrary object that has multiple members with a valid lengths structure` {
-      class Lengthy(len: Int) {
-        def getLength: Int = len + 1
-        def length: Int = len
-        override def toString = "lengthy"
-      }
-      val obj = new Lengthy(2)
-      val lengthMatcher = have length (2)
-      lengthMatcher.apply(obj)
-
-      class IntAndLong(intLen: Int, longLen: Long) {
-        def getLength: Int = intLen
-        def length: Long = longLen
-        override def toString = "lengthy"
-      }
-      val obj2 = new IntAndLong(3, 2)
-      val lengthMatcher2 = have length (2)
-      lengthMatcher2.apply(obj)
     }
 
     def `should allow multiple implicits of the same type class (such as Length) to be resolve so long as the type param is not ambiguous` {

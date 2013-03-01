@@ -72,6 +72,21 @@ final class NotWord {
     }
   }
 
+  def apply[S <: Any, TYPECLASS1[_], TYPECLASS2[_]](matcherGen2: MatcherGen2[S, TYPECLASS1, TYPECLASS2]): MatcherGen2[S, TYPECLASS1, TYPECLASS2] = {
+    new MatcherGen2[S, TYPECLASS1, TYPECLASS2] {
+      def matcher[V <: S : TYPECLASS1 : TYPECLASS2]: Matcher[V] = {
+        val innerMatcher: Matcher[V] = matcherGen2.matcher
+        new Matcher[V] {
+          def apply(left: V): MatchResult = {
+            innerMatcher(left) match {
+              case MatchResult(bool, s1, s2, s3, s4) => MatchResult(!bool, s2, s1, s4, s3)
+            }
+          }
+        }
+      }
+    }
+  }
+
   /**
    * This method enables any <code>BeMatcher</code> to be negated by passing it to <code>not</code>. 
    * For example, if you have a <code>BeMatcher[Int]</code> called <code>odd</code>, which matches
@@ -166,7 +181,7 @@ final class NotWord {
    *                         ^
    * </pre>
    */
-  def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): Matcher[AnyRef] =
+  def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherGen1[Any, Length] =
     apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength))
 
   // This looks similar to the AndNotWord one, but not quite the same because no and

@@ -55,6 +55,24 @@ final class HaveWord {
    * will be used instead.) In a future ScalaTest release, this may be tightened so that all is statically checked at compile time.
    * </p>
    */
+  def length(expectedLength: Long): MatcherGen1[Any, Length] =
+    new MatcherGen1[Any, Length] {
+      def matcher[T <: Any : Length]: Matcher[T] = {
+        val length = implicitly[Length[T]]
+        new Matcher[T] {
+          def apply(left: T): MatchResult = {
+            val lengthOfLeft = length.extentOf(left)
+            MatchResult(
+              lengthOfLeft == expectedLength,
+              // FailureMessages("hadLengthInsteadOfExpectedLength", left, lengthOfLeft, expectedLength),
+              FailureMessages("didNotHaveExpectedLength", left, expectedLength),
+              FailureMessages("hadExpectedLength", left, expectedLength)
+            )
+          }
+        }
+      }
+    }
+/*
   def length(expectedLength: Long): Matcher[AnyRef] =
     new Matcher[AnyRef] {
       def apply(left: AnyRef): MatchResult =
@@ -101,6 +119,7 @@ final class HaveWord {
             }
         }
     }
+*/
 
   /**
    * This method enables the following syntax:

@@ -6594,6 +6594,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[T, TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[T], typeClass2: TYPECLASS2[T]) {
+      val rightMatcher = rightMatcherGen2.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 6)
+          case _ => ()
+        }
+      }
+    }
+    
     /**
      * This method enables syntax such as the following:
      *
@@ -6662,6 +6673,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[T, TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[T], typeClass2: TYPECLASS2[T]) {
+      val rightMatcher = rightMatcherGen2.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 10)
+          case _ => ()
+        }
+      }
+    }
+    
     /**
      * This method enables syntax such as the following:
      *
@@ -6721,6 +6743,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[String, TYPECLASS1])(implicit typeClass1: TYPECLASS1[String]) {
       val rightMatcher = rightMatcherGen1.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 10)
+          case _ => ()
+        }
+      }
+    }
+    
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[String, TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[String], typeClass2: TYPECLASS2[String]) {
+      val rightMatcher = rightMatcherGen2.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -7101,6 +7134,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[GenTraversable[T], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[GenTraversable[T]], typeClass2: TYPECLASS2[GenTraversable[T]]) {
+      val rightMatcher = rightMatcherGen2.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 10)
+          case _ => ()
+        }
+      }
+    }
+    
     /**
      * This method enables syntax such as the following:
      *
@@ -7238,6 +7282,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[GenSeq[T], TYPECLASS1])(implicit typeClass1: TYPECLASS1[GenSeq[T]]) {
       val rightMatcher = rightMatcherGen1.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 10)
+          case _ => ()
+        }
+      }
+    }
+    
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[GenSeq[T], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[GenSeq[T]], typeClass2: TYPECLASS2[GenSeq[T]]) {
+      val rightMatcher = rightMatcherGen2.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -7571,6 +7626,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[GenTraversable[T], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[GenTraversable[T]], typeClass2: TYPECLASS2[GenTraversable[T]]) {
+      val rightMatcher = rightMatcherGen2.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e.deep.asInstanceOf[IndexedSeq[T]]) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 10)
+          case _ => ()
+        }
+      }
+    }
+    
     /**
      * This method enables syntax such as the following:
      *
@@ -7708,6 +7774,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[GenMap[K, V], TYPECLASS1])(implicit typeClass1: TYPECLASS1[GenMap[K, V]]) {
       val rightMatcher = rightMatcherGen1.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 10)
+          case _ => ()
+        }
+      }
+    }
+    
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[GenMap[K, V], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[GenMap[K, V]], typeClass2: TYPECLASS2[GenMap[K, V]]) {
+      val rightMatcher = rightMatcherGen2.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -8021,6 +8098,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[java.util.Collection[T], TYPECLASS1])(implicit typeClass1: TYPECLASS1[java.util.Collection[T]]) {
       val rightMatcher = rightMatcherGen1.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 10)
+          case _ => ()
+        }
+      }
+    }
+    
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[java.util.Collection[T], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[java.util.Collection[T]], typeClass2: TYPECLASS2[java.util.Collection[T]]) {
+      val rightMatcher = rightMatcherGen2.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -8348,6 +8436,17 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[java.util.Map[K, V], TYPECLASS1])(implicit typeClass1: TYPECLASS1[java.util.Map[K, V]]) {
       val rightMatcher = rightMatcherGen1.matcher
+      doCollected(collected, xs, "should", 1) { e =>
+        rightMatcher(e) match {
+          case MatchResult(false, failureMessage, _, _, _) => 
+            throw newTestFailedException(failureMessage, None, 10)
+          case _ => ()
+        }
+      }
+    }
+    
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[java.util.Map[K, V], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[java.util.Map[K, V]], typeClass2: TYPECLASS2[java.util.Map[K, V]]) {
+      val rightMatcher = rightMatcherGen2.matcher
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
@@ -8896,6 +8995,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[T, TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[T], typeClass2: TYPECLASS2[T]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
+    }
+
     /**
      * This method enables syntax such as the following:
      *
@@ -9004,6 +9107,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[String, TYPECLASS1])(implicit typeClass1: TYPECLASS1[String]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[String, TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[String], typeClass2: TYPECLASS2[String]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
     }
 
     /**
@@ -9159,6 +9266,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[T, TYPECLASS1])(implicit typeClass1: TYPECLASS1[T]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[T, TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[T], typeClass2: TYPECLASS2[T]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
     }
 
     /**
@@ -9327,6 +9438,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[L[K, V], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[L[K, V]], typeClass2: TYPECLASS2[L[K, V]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
+    }
+
     /**
      * This method enables syntax such as the following:
      *
@@ -9444,6 +9559,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[T, TYPECLASS1])(implicit typeClass1: TYPECLASS1[T]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[T, TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[T], typeClass2: TYPECLASS2[T]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
     }
 
     /**
@@ -9624,6 +9743,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[L[E], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[L[E]], typeClass2: TYPECLASS2[L[E]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
+    }
+
     /**
      * This method enables syntax such as the following:
      *
@@ -9746,6 +9869,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[L[E], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[L[E]], typeClass2: TYPECLASS2[L[E]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
+    }
+
     /**
      * This method enables syntax such as the following:
      *
@@ -9844,6 +9971,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[L[K, V], TYPECLASS1])(implicit typeClass1: TYPECLASS1[L[K, V]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[L[K, V], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[L[K, V]], typeClass2: TYPECLASS2[L[K, V]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
     }
 
     /**
@@ -9949,6 +10080,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
     }
 
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[L[E], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[L[E]], typeClass2: TYPECLASS2[L[E]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
+    }
+
     /**
      * This method enables syntax such as the following:
      *
@@ -10049,6 +10184,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[Array[T], TYPECLASS1])(implicit typeClass1: TYPECLASS1[Array[T]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[Array[T], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[Array[T]], typeClass2: TYPECLASS2[Array[T]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
     }
 
     /**
@@ -10159,6 +10298,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      */
     def should[TYPECLASS1[_]](rightMatcherGen1: MatcherGen1[L[E], TYPECLASS1])(implicit typeClass1: TYPECLASS1[L[E]]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherGen1.matcher)
+    }
+
+    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherGen2: MatcherGen2[L[E], TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[L[E]], typeClass2: TYPECLASS2[L[E]]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherGen2.matcher)
     }
 
     /**
@@ -10383,6 +10526,26 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    * Turn off implicit conversion of LoneElement, so that if user accidentally mixin LoneElement it does conflict with convertToTraversableShouldWrapper
    */
   override def convertToTraversableLoneElementWrapper[T](xs: GenTraversable[T]): LoneElementTraversableWrapper[T] = new LoneElementTraversableWrapper[T](xs)
+
+  implicit def lengthOfJavaCollection[E, LIST[_] <: java.util.List[_]]: Length[LIST[E]] = 
+    new Length[LIST[E]] {
+      def extentOf(javaList: LIST[E]): Long = javaList.size
+    }
+
+  implicit def lengthOfSeq[E, SEQ[_] <: scala.collection.GenSeq[_]]: Length[SEQ[E]] = 
+    new Length[SEQ[E]] {
+      def extentOf(seq: SEQ[E]): Long = seq.length
+    }
+
+  implicit def lengthOfArray[E]: Length[Array[E]] = 
+    new Length[Array[E]] {
+      def extentOf(arr: Array[E]): Long = arr.length
+    }
+
+  implicit val lengthOfString: Length[String] = 
+    new Length[String] {
+      def extentOf(str: String): Long = str.length
+    }
 }
 
 /**

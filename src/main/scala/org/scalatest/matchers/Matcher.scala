@@ -396,7 +396,7 @@ import org.scalatest.words.ResultOfValueWordApplication
  *
  * @author Bill Venners
  */
-trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
+trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
 
   /**
    * Check to see if the specified object, <code>left</code>, matches, and report the result in
@@ -474,7 +474,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
    */
   override def compose[U](g: U => T): Matcher[U] =
     new Matcher[U] {
-      def apply(u: U) = thisMatcher.apply(g(u))
+      def apply(u: U) = outerInstance.apply(g(u))
     }
 
 // TODO: mention not short circuited, and the precendence is even between and and or
@@ -505,7 +505,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
   def and[U <: T](rightMatcher: Matcher[U]): Matcher[U] =
     new Matcher[U] {
       def apply(left: U): MatchResult = {
-        andMatchersAndApply(left, thisMatcher, rightMatcher)
+        andMatchersAndApply(left, outerInstance, rightMatcher)
       }
     }
 
@@ -515,7 +515,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val rightMatcher = rightMatcherGen1.matcher
-            andMatchersAndApply(left, thisMatcher, rightMatcher)
+            andMatchersAndApply(left, outerInstance, rightMatcher)
           }
         }
       }
@@ -547,7 +547,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
   def or[U <: T](rightMatcher: Matcher[U]): Matcher[U] =
     new Matcher[U] {
       def apply(left: U): MatchResult = {
-        orMatchersAndApply(left, thisMatcher, rightMatcher)
+        orMatchersAndApply(left, outerInstance, rightMatcher)
       }
     }
 
@@ -557,7 +557,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val rightMatcher = rightMatcherGen1.matcher
-            orMatchersAndApply(left, thisMatcher, rightMatcher)
+            orMatchersAndApply(left, outerInstance, rightMatcher)
           }
         }
       }
@@ -579,7 +579,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                              ^
      * </pre>
      */
-    def length(expectedLength: Long): Matcher[T with AnyRef] = and(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherGen1[T, Length] = and(MatcherWords.have.length(expectedLength))
 
     /**
      * This method enables the following syntax:
@@ -618,8 +618,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                     ^
      * </pre>
      */
-    def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = thisMatcher.and(MatcherWords.contain(expectedElement))
-    // def element[T](expectedElement: T) = thisMatcher.and(MatcherWords.contain.apply(expectedElement))
+    def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = outerInstance.and(MatcherWords.contain(expectedElement))
+    // def element[T](expectedElement: T) = outerInstance.and(MatcherWords.contain.apply(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -629,7 +629,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                                     ^
      * </pre>
      */
-    def key[U](expectedElement: U): Matcher[T with scala.collection.GenMap[U, Any]] = thisMatcher.and(MatcherWords.contain.key(expectedElement))
+    def key[U](expectedElement: U): Matcher[T with scala.collection.GenMap[U, Any]] = outerInstance.and(MatcherWords.contain.key(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -639,7 +639,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                                   ^
      * </pre>
      */
-    def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = thisMatcher.and(MatcherWords.contain.value(expectedValue))
+    def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = outerInstance.and(MatcherWords.contain.value(expectedValue))
     
     /**
      * This method enables the following syntax:
@@ -650,7 +650,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.and(MatcherWords.contain.theSameElementsAs(right)(equality))
+      outerInstance.and(MatcherWords.contain.theSameElementsAs(right)(equality))
     
     /**
      * This method enables the following syntax:
@@ -661,7 +661,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.and(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
+      outerInstance.and(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
     
     /**
      * This method enables the following syntax:
@@ -672,7 +672,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def allOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.and(MatcherWords.contain.allOf(right.toList: _*)(equality))
+      outerInstance.and(MatcherWords.contain.allOf(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -683,7 +683,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def inOrder[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.and(MatcherWords.contain.inOrder(right.toList: _*)(equality))
+      outerInstance.and(MatcherWords.contain.inOrder(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -694,7 +694,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def oneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.and(MatcherWords.contain.oneOf(right.toList: _*)(equality))
+      outerInstance.and(MatcherWords.contain.oneOf(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -705,7 +705,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def only[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.and(MatcherWords.contain.only(right.toList: _*)(equality))
+      outerInstance.and(MatcherWords.contain.only(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -716,7 +716,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.and(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
+      outerInstance.and(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -727,7 +727,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def noneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.and(MatcherWords.contain.noneOf(right.toList: _*)(equality))
+      outerInstance.and(MatcherWords.contain.noneOf(right.toList: _*)(equality))
       
     /**
      * This method enables the following syntax:
@@ -1024,7 +1024,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def equal(any: Any): MatcherGen1[T, Equality] =
-      thisMatcher.and(MatcherWords.not.apply(MatcherWords.equal(any)))
+      outerInstance.and(MatcherWords.not.apply(MatcherWords.equal(any)))
 
     /**
      * This method enables the following syntax, for the "primitive" numeric types:
@@ -1034,7 +1034,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                         ^
      * </pre>
      */
-    def equal[U](interval: Interval[U]): Matcher[T with U] = thisMatcher.and(MatcherWords.not.equal(interval))
+    def equal[U](interval: Interval[U]): Matcher[T with U] = outerInstance.and(MatcherWords.not.equal(interval))
 
     /**
      * This method enables the following syntax:
@@ -1045,7 +1045,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def equal(o: Null): Matcher[T] = {
-      thisMatcher and {
+      outerInstance and {
         new Matcher[T] {
           def apply(left: T): MatchResult = {
             MatchResult(
@@ -1069,7 +1069,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be(any: Any): Matcher[T] =
-      thisMatcher.and(MatcherWords.not.apply(MatcherWords.be(any)))
+      outerInstance.and(MatcherWords.not.apply(MatcherWords.be(any)))
 
     /**
      * This method enables the following syntax:
@@ -1079,8 +1079,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                               ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): Matcher[T with AnyRef] =
-      thisMatcher.and(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherGen1[T, Length] =
+      outerInstance.and(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
      * This method enables the following syntax:
@@ -1091,7 +1091,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): Matcher[T with AnyRef] =
-      thisMatcher.and(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
+      outerInstance.and(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
      * This method enables the following syntax:
@@ -1102,7 +1102,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): Matcher[T with U] =
-      thisMatcher.and(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
+      outerInstance.and(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
     /**
      * This method enables the following syntax:
@@ -1113,7 +1113,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): Matcher[T with U] =
-      thisMatcher.and(MatcherWords.not.be(resultOfLessThanComparison))
+      outerInstance.and(MatcherWords.not.be(resultOfLessThanComparison))
 
     /**
      * This method enables the following syntax:
@@ -1123,7 +1123,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                     ^
      * </pre>
      */
-    def be(o: Null): Matcher[T with AnyRef] = thisMatcher.and(MatcherWords.not.be(o))
+    def be(o: Null): Matcher[T with AnyRef] = outerInstance.and(MatcherWords.not.be(o))
 
     /**
      * This method enables the following syntax:
@@ -1134,7 +1134,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): Matcher[T with U] =
-      thisMatcher.and(MatcherWords.not.be(resultOfGreaterThanComparison))
+      outerInstance.and(MatcherWords.not.be(resultOfGreaterThanComparison))
 
     /**
      * This method enables the following syntax:
@@ -1145,7 +1145,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): Matcher[T with U] =
-      thisMatcher.and(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
+      outerInstance.and(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
     /**
      * This method enables the following syntax:
@@ -1156,7 +1156,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): Matcher[T with U] =
-      thisMatcher.and(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
+      outerInstance.and(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
     /**
      * This method enables the following syntax:
@@ -1167,7 +1167,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[T] =
-      thisMatcher.and(MatcherWords.not.be(tripleEqualsInvocation))
+      outerInstance.and(MatcherWords.not.be(tripleEqualsInvocation))
 
     /**
      * This method enables the following syntax:
@@ -1177,7 +1177,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                              ^
      * </pre>
      */
-    def be(symbol: Symbol): Matcher[T with AnyRef] = thisMatcher.and(MatcherWords.not.be(symbol))
+    def be(symbol: Symbol): Matcher[T with AnyRef] = outerInstance.and(MatcherWords.not.be(symbol))
 
     /**
      * This method enables the following syntax:
@@ -1187,7 +1187,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                ^
      * </pre>
      */
-    def be[U](beMatcher: BeMatcher[U]): Matcher[T with U] = thisMatcher.and(MatcherWords.not.be(beMatcher))
+    def be[U](beMatcher: BeMatcher[U]): Matcher[T with U] = outerInstance.and(MatcherWords.not.be(beMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1197,7 +1197,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                              ^
      * </pre>
      */
-    def be[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = thisMatcher.and(MatcherWords.not.be(bePropertyMatcher))
+    def be[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = outerInstance.and(MatcherWords.not.be(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1207,7 +1207,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                ^
      * </pre>
      */
-    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): Matcher[T with AnyRef] = thisMatcher.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): Matcher[T with AnyRef] = outerInstance.and(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1217,7 +1217,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                               ^
      * </pre>
      */
-    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): Matcher[T with U] = thisMatcher.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): Matcher[T with U] = outerInstance.and(MatcherWords.not.be(resultOfAWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -1227,7 +1227,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                             ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): Matcher[T with U] = thisMatcher.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): Matcher[T with U] = outerInstance.and(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1237,7 +1237,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                ^
      * </pre>
      */
-    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): Matcher[T with AnyRef] = thisMatcher.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): Matcher[T with AnyRef] = outerInstance.and(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1247,7 +1247,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                              ^
      * </pre>
      */
-    def be[T <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[T]) = thisMatcher.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[T <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[T]) = outerInstance.and(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1257,7 +1257,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                ^
      * </pre>
      */
-    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): Matcher[T with U] = thisMatcher.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): Matcher[T with U] = outerInstance.and(MatcherWords.not.be(resultOfAnWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -1267,7 +1267,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                            ^
      * </pre>
      */
-    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = thisMatcher.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
+    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = outerInstance.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
     /**
      * This method enables the following syntax, for the "primitive" numeric types:
@@ -1277,7 +1277,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                          ^
      * </pre>
      */
-    def be[U](interval: Interval[U]): Matcher[T with U] = thisMatcher.and(MatcherWords.not.be(interval))
+    def be[U](interval: Interval[U]): Matcher[T with U] = outerInstance.and(MatcherWords.not.be(interval))
 
     /**
      * This method enables the following syntax:
@@ -1288,7 +1288,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-      thisMatcher.and(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
+      outerInstance.and(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1299,7 +1299,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-      thisMatcher.and(MatcherWords.not.include(resultOfRegexWordApplication))
+      outerInstance.and(MatcherWords.not.include(resultOfRegexWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1310,7 +1310,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def include(expectedSubstring: String): Matcher[T with String] =
-      thisMatcher.and(MatcherWords.not.include(expectedSubstring))
+      outerInstance.and(MatcherWords.not.include(expectedSubstring))
 
     /**
      * This method enables the following syntax:
@@ -1321,7 +1321,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-      thisMatcher.and(MatcherWords.not.startWith(resultOfRegexWordApplication))
+      outerInstance.and(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1332,7 +1332,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def startWith(expectedSubstring: String): Matcher[T with String] =
-      thisMatcher.and(MatcherWords.not.startWith(expectedSubstring))
+      outerInstance.and(MatcherWords.not.startWith(expectedSubstring))
 
     /**
      * This method enables the following syntax:
@@ -1343,7 +1343,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-      thisMatcher.and(MatcherWords.not.endWith(resultOfRegexWordApplication))
+      outerInstance.and(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1354,7 +1354,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def endWith(expectedSubstring: String): Matcher[T with String] =
-      thisMatcher.and(MatcherWords.not.endWith(expectedSubstring))
+      outerInstance.and(MatcherWords.not.endWith(expectedSubstring))
 
     /**
      * This method enables the following syntax:
@@ -1365,7 +1365,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](expectedElement: U): Matcher[T with GenTraversable[U]] =
-      thisMatcher.and(MatcherWords.not.contain(expectedElement))
+      outerInstance.and(MatcherWords.not.contain(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -1376,7 +1376,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): Matcher[T with scala.collection.GenMap[U, Any]] =
-      thisMatcher.and(MatcherWords.not.contain(resultOfKeyWordApplication))
+      outerInstance.and(MatcherWords.not.contain(resultOfKeyWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1387,7 +1387,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] =
-      thisMatcher.and(MatcherWords.not.contain(resultOfValueWordApplication))
+      outerInstance.and(MatcherWords.not.contain(resultOfValueWordApplication))
       
     /**
      * This method enables the following syntax:
@@ -1398,7 +1398,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](right: ContainMatcher[U]): Matcher[T with GenTraversable[U]] =
-      thisMatcher.and(MatcherWords.not.contain(right))
+      outerInstance.and(MatcherWords.not.contain(right))
       
     /**
      * This method enables the following syntax:
@@ -1409,7 +1409,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): Matcher[T with GenTraversable[U]] = 
-      thisMatcher.and(MatcherWords.not.contain(resultOfAWordApplication))
+      outerInstance.and(MatcherWords.not.contain(resultOfAWordApplication))
       
     /**
      * This method enables the following syntax:
@@ -1420,7 +1420,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): Matcher[T with GenTraversable[U]] = 
-      thisMatcher.and(MatcherWords.not.contain(resultOfAnWordApplication))
+      outerInstance.and(MatcherWords.not.contain(resultOfAnWordApplication))
   }
 
   /**
@@ -1449,7 +1449,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                              ^
      * </pre>
      */
-    def length(expectedLength: Long): Matcher[T with AnyRef] = or(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherGen1[T, Length] = or(MatcherWords.have.length(expectedLength))
 
     /**
      * This method enables the following syntax:
@@ -1488,8 +1488,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                            ^
      * </pre>
      */
-    def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = thisMatcher.or(MatcherWords.contain(expectedElement))
-    // def element[T](expectedElement: T) = thisMatcher.or(MatcherWords.contain.apply(expectedElement))
+    def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = outerInstance.or(MatcherWords.contain(expectedElement))
+    // def element[T](expectedElement: T) = outerInstance.or(MatcherWords.contain.apply(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -1499,7 +1499,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                                    ^
      * </pre>
      */
-    def key[U](expectedKey: U): Matcher[T with scala.collection.GenMap[U, Any]] = thisMatcher.or(MatcherWords.contain.key(expectedKey))
+    def key[U](expectedKey: U): Matcher[T with scala.collection.GenMap[U, Any]] = outerInstance.or(MatcherWords.contain.key(expectedKey))
 
     /**
      * This method enables the following syntax:
@@ -1509,7 +1509,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                                  ^
      * </pre>
      */
-    def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = thisMatcher.or(MatcherWords.contain.value(expectedValue))
+    def value[U](expectedValue: U): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] = outerInstance.or(MatcherWords.contain.value(expectedValue))
     
     /**
      * This method enables the following syntax:
@@ -1520,7 +1520,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.or(MatcherWords.contain.theSameElementsAs(right)(equality))
+      outerInstance.or(MatcherWords.contain.theSameElementsAs(right)(equality))
     
     /**
      * This method enables the following syntax:
@@ -1531,7 +1531,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.or(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
+      outerInstance.or(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
     
     /**
      * This method enables the following syntax:
@@ -1542,7 +1542,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def allOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.or(MatcherWords.contain.allOf(right.toList: _*)(equality))
+      outerInstance.or(MatcherWords.contain.allOf(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -1553,7 +1553,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def inOrder[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.or(MatcherWords.contain.inOrder(right.toList: _*)(equality))
+      outerInstance.or(MatcherWords.contain.inOrder(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -1564,7 +1564,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def oneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.or(MatcherWords.contain.oneOf(right.toList: _*)(equality))
+      outerInstance.or(MatcherWords.contain.oneOf(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -1575,7 +1575,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def only[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.or(MatcherWords.contain.only(right.toList: _*)(equality))
+      outerInstance.or(MatcherWords.contain.only(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -1586,7 +1586,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.or(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
+      outerInstance.or(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
@@ -1597,7 +1597,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def noneOf[E](right: E*)(implicit equality: Equality[E]): Matcher[T with GenTraversable[E]] = 
-      thisMatcher.or(MatcherWords.contain.noneOf(right.toList: _*)(equality))
+      outerInstance.or(MatcherWords.contain.noneOf(right.toList: _*)(equality))
       
     /**
      * This method enables the following syntax:
@@ -1894,7 +1894,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def equal(any: Any): Matcher[T] =
-      thisMatcher.or(MatcherWords.not.apply(MatcherWords.legacyEqual(any)))
+      outerInstance.or(MatcherWords.not.apply(MatcherWords.legacyEqual(any)))
 
     /**
      * This method enables the following syntax for the "primitive" numeric types:
@@ -1904,7 +1904,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                        ^
      * </pre>
      */
-    def equal[U](interval: Interval[U]): Matcher[T with U] = thisMatcher.or(MatcherWords.not.equal(interval))
+    def equal[U](interval: Interval[U]): Matcher[T with U] = outerInstance.or(MatcherWords.not.equal(interval))
 
     /**
      * This method enables the following syntax:
@@ -1915,7 +1915,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def equal(o: Null): Matcher[T] = {
-      thisMatcher or {
+      outerInstance or {
         new Matcher[T] {
           def apply(left: T): MatchResult = {
             MatchResult(
@@ -1939,7 +1939,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be(any: Any): Matcher[T] =
-      thisMatcher.or(MatcherWords.not.apply(MatcherWords.be(any)))
+      outerInstance.or(MatcherWords.not.apply(MatcherWords.be(any)))
 
     /**
      * This method enables the following syntax:
@@ -1949,8 +1949,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): Matcher[T with AnyRef] =
-      thisMatcher.or(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherGen1[T, Length] =
+      outerInstance.or(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
      * This method enables the following syntax:
@@ -1961,7 +1961,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): Matcher[T with AnyRef] =
-      thisMatcher.or(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
+      outerInstance.or(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
      * This method enables the following syntax:
@@ -1972,7 +1972,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): Matcher[T with U] =
-      thisMatcher.or(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
+      outerInstance.or(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
     /**
      * This method enables the following syntax:
@@ -1982,7 +1982,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                    ^
      * </pre>
      */
-    def be(o: Null): Matcher[T with AnyRef] = thisMatcher.or(MatcherWords.not.be(o))
+    def be(o: Null): Matcher[T with AnyRef] = outerInstance.or(MatcherWords.not.be(o))
 
     /**
      * This method enables the following syntax:
@@ -1993,7 +1993,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): Matcher[T with U] =
-      thisMatcher.or(MatcherWords.not.be(resultOfLessThanComparison))
+      outerInstance.or(MatcherWords.not.be(resultOfLessThanComparison))
 
     /**
      * This method enables the following syntax:
@@ -2004,7 +2004,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): Matcher[T with U] =
-      thisMatcher.or(MatcherWords.not.be(resultOfGreaterThanComparison))
+      outerInstance.or(MatcherWords.not.be(resultOfGreaterThanComparison))
 
     /**
      * This method enables the following syntax:
@@ -2015,7 +2015,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): Matcher[T with U] =
-      thisMatcher.or(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
+      outerInstance.or(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
     /**
      * This method enables the following syntax:
@@ -2026,7 +2026,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): Matcher[T with U] =
-      thisMatcher.or(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
+      outerInstance.or(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
     /**
      * This method enables the following syntax:
@@ -2037,7 +2037,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): Matcher[T] =
-      thisMatcher.or(MatcherWords.not.be(tripleEqualsInvocation))
+      outerInstance.or(MatcherWords.not.be(tripleEqualsInvocation))
 
     /**
      * This method enables the following syntax:
@@ -2047,7 +2047,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                            ^
      * </pre>
      */
-    def be(symbol: Symbol): Matcher[T with AnyRef] = thisMatcher.or(MatcherWords.not.be(symbol))
+    def be(symbol: Symbol): Matcher[T with AnyRef] = outerInstance.or(MatcherWords.not.be(symbol))
 
     /**
      * This method enables the following syntax:
@@ -2057,7 +2057,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                ^
      * </pre>
      */
-    def be[U](beMatcher: BeMatcher[U]): Matcher[T with U] = thisMatcher.or(MatcherWords.not.be(beMatcher))
+    def be[U](beMatcher: BeMatcher[U]): Matcher[T with U] = outerInstance.or(MatcherWords.not.be(beMatcher))
 
     /**
      * This method enables the following syntax:
@@ -2067,7 +2067,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                          ^
      * </pre>
      */
-    def be[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = thisMatcher.or(MatcherWords.not.be(bePropertyMatcher))
+    def be[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = outerInstance.or(MatcherWords.not.be(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -2077,7 +2077,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                    ^
      * </pre>
      */
-    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): Matcher[T with AnyRef] = thisMatcher.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): Matcher[T with AnyRef] = outerInstance.or(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -2087,7 +2087,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                 ^
      * </pre>
      */
-    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): Matcher[T with U] = thisMatcher.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): Matcher[T with U] = outerInstance.or(MatcherWords.not.be(resultOfAWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -2097,7 +2097,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                            ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): Matcher[T with U] = thisMatcher.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): Matcher[T with U] = outerInstance.or(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -2107,7 +2107,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                ^
      * </pre>
      */
-    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): Matcher[T with AnyRef] = thisMatcher.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): Matcher[T with AnyRef] = outerInstance.or(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -2117,7 +2117,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                             ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): Matcher[T with U] = thisMatcher.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): Matcher[T with U] = outerInstance.or(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -2127,7 +2127,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                ^
      * </pre>
      */
-    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): Matcher[T with U] = thisMatcher.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): Matcher[T with U] = outerInstance.or(MatcherWords.not.be(resultOfAnWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -2137,7 +2137,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                           ^
      * </pre>
      */
-    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = thisMatcher.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
+    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): Matcher[T with AnyRef] = outerInstance.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
     /**
      * This method enables the following syntax for the "primitive" numeric types:
@@ -2147,7 +2147,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      *                                                         ^
      * </pre>
      */
-    def be[U](interval: Interval[U]): Matcher[T with U] = thisMatcher.or(MatcherWords.not.be(interval))
+    def be[U](interval: Interval[U]): Matcher[T with U] = outerInstance.or(MatcherWords.not.be(interval))
 
     /**
      * This method enables the following syntax:
@@ -2158,7 +2158,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-      thisMatcher.or(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
+      outerInstance.or(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -2169,7 +2169,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-      thisMatcher.or(MatcherWords.not.include(resultOfRegexWordApplication))
+      outerInstance.or(MatcherWords.not.include(resultOfRegexWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -2180,7 +2180,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def include(expectedSubstring: String): Matcher[T with String] =
-      thisMatcher.or(MatcherWords.not.include(expectedSubstring))
+      outerInstance.or(MatcherWords.not.include(expectedSubstring))
 
     /**
      * This method enables the following syntax:
@@ -2191,7 +2191,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-      thisMatcher.or(MatcherWords.not.startWith(resultOfRegexWordApplication))
+      outerInstance.or(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -2202,7 +2202,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def startWith(expectedSubstring: String): Matcher[T with String] =
-      thisMatcher.or(MatcherWords.not.startWith(expectedSubstring))
+      outerInstance.or(MatcherWords.not.startWith(expectedSubstring))
 
     /**
      * This method enables the following syntax:
@@ -2213,7 +2213,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): Matcher[T with String] =
-      thisMatcher.or(MatcherWords.not.endWith(resultOfRegexWordApplication))
+      outerInstance.or(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -2224,7 +2224,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def endWith(expectedSubstring: String): Matcher[T with String] =
-      thisMatcher.or(MatcherWords.not.endWith(expectedSubstring))
+      outerInstance.or(MatcherWords.not.endWith(expectedSubstring))
 
     /**
      * This method enables the following syntax:
@@ -2235,7 +2235,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](expectedElement: U): Matcher[T with GenTraversable[U]] =
-      thisMatcher.or(MatcherWords.not.contain(expectedElement))
+      outerInstance.or(MatcherWords.not.contain(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -2246,7 +2246,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): Matcher[T with scala.collection.GenMap[U, Any]] =
-      thisMatcher.or(MatcherWords.not.contain(resultOfKeyWordApplication))
+      outerInstance.or(MatcherWords.not.contain(resultOfKeyWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -2257,7 +2257,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): Matcher[T with scala.collection.GenMap[K, U] forSome { type K }] =
-      thisMatcher.or(MatcherWords.not.contain(resultOfValueWordApplication))
+      outerInstance.or(MatcherWords.not.contain(resultOfValueWordApplication))
       
     /**
      * This method enables the following syntax:
@@ -2268,7 +2268,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](right: ContainMatcher[U]): Matcher[T with GenTraversable[U]] =
-      thisMatcher.or(MatcherWords.not.contain(right))
+      outerInstance.or(MatcherWords.not.contain(right))
       
     /**
      * This method enables the following syntax:
@@ -2279,7 +2279,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): Matcher[T with GenTraversable[U]] = 
-      thisMatcher.or(MatcherWords.not.contain(resultOfAWordApplication))
+      outerInstance.or(MatcherWords.not.contain(resultOfAWordApplication))
       
     /**
      * This method enables the following syntax:
@@ -2290,7 +2290,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { thisMatcher =>
      * </pre>
      */
     def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): Matcher[T with GenTraversable[U]] = 
-      thisMatcher.or(MatcherWords.not.contain(resultOfAnWordApplication))
+      outerInstance.or(MatcherWords.not.contain(resultOfAnWordApplication))
   }
 
   /**
