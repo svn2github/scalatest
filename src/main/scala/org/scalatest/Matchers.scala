@@ -10537,16 +10537,6 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       def extentOf(seq: SEQ[E]): Long = seq.length
     }
 
-  implicit def lengthOfArray[E]: Length[Array[E]] = 
-    new Length[Array[E]] {
-      def extentOf(arr: Array[E]): Long = arr.length
-    }
-
-  implicit val lengthOfString: Length[String] = 
-    new Length[String] {
-      def extentOf(str: String): Long = str.length
-    }
-
   implicit def sizeOfJavaCollection[E, COLL[_] <: java.util.Collection[_]]: Size[COLL[E]] = 
     new Size[COLL[E]] {
       def extentOf(javaColl: COLL[E]): Long = javaColl.size
@@ -10567,13 +10557,13 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       def extentOf(trav: MAP[K, V]): Long = trav.size
     }
 
-  implicit def sizeOfArray[E]: Size[Array[E]] = 
-    new Size[Array[E]] {
+  implicit def lengthAndSizeOfArray[E]: Length[Array[E]] with Size[Array[E]] = 
+    new Length[Array[E]] with Size[Array[E]] {
       def extentOf(arr: Array[E]): Long = arr.length
     }
 
-  implicit val sizeOfString: Size[String] = 
-    new Size[String] {
+  implicit val lengthAndSizeOfString: Length[String] with Size[String] = 
+    new Length[String] with Size[String] {
       def extentOf(str: String): Long = str.length
     }
 }
