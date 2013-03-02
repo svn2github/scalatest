@@ -22,6 +22,8 @@ import Arbitrary._
 import Prop._
 import Integer.MIN_VALUE
 import org.scalatest.exceptions.TestFailedException
+import org.scalatest.enablers.Length
+import org.scalatest.enablers.Size
 
 class ShouldLengthSpec extends Spec with ShouldMatchers with Checkers with ReturnsNormallyThrowsAssertion {
 

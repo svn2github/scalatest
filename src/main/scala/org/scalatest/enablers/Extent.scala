@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalatest.matchers
-
+package org.scalatest.enablers
 
 /**
  * Sealed supertrait for <code>Length</code> and <code>Size</code> type classes.

@@ -15,6 +15,7 @@
  */
 package org.scalatest.matchers
 
+import org.scalatest.enablers._
 import org.scalatest.Matchers.andMatchersAndApply
 import org.scalatest.Matchers.orMatchersAndApply
 import org.scalatest.words.MatcherWords

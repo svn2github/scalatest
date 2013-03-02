@@ -16,6 +16,7 @@
 package org.scalatest.words
 
 import org.scalatest.matchers._
+import org.scalatest.enablers._
 import scala.collection.GenTraversable
 import org.scalautils._
 import org.scalatest.FailureMessages
