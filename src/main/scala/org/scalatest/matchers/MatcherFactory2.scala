@@ -18,7 +18,7 @@ package org.scalatest.matchers
 import org.scalatest.Matchers.andMatchersAndApply
 import org.scalatest.Matchers.orMatchersAndApply
 
-abstract class MatcherGen2[-SUPERCLASS, TYPECLASS1[_], TYPECLASS2[_]] { thisMatcherGen2 =>
+abstract class MatcherFactory2[-SUPERCLASS, TYPECLASS1[_], TYPECLASS2[_]] { thisMatcherFactory2 =>
 
   def matcher[T <: SUPERCLASS : TYPECLASS1 : TYPECLASS2]: Matcher[T]
 
@@ -26,12 +26,12 @@ abstract class MatcherGen2[-SUPERCLASS, TYPECLASS1[_], TYPECLASS2[_]] { thisMatc
 
 /*
   // (equal (7) and ...)
-  def and[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def and[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
-            val leftMatcher = thisMatcherGen1.matcher
+            val leftMatcher = thisMatcherFactory1.matcher
             andMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
@@ -39,12 +39,12 @@ abstract class MatcherGen2[-SUPERCLASS, TYPECLASS1[_], TYPECLASS2[_]] { thisMatc
     }
 
   // (equal (7) or ...)
-  def or[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def or[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
-            val leftMatcher = thisMatcherGen1.matcher
+            val leftMatcher = thisMatcherFactory1.matcher
             orMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
@@ -52,28 +52,28 @@ abstract class MatcherGen2[-SUPERCLASS, TYPECLASS1[_], TYPECLASS2[_]] { thisMatc
     }
 
 // Need one for the same typeclass and one for a different typeclass, yes, and can overload because
-// one returns a MatcherGen1 the other a MatcherGen2.
+// one returns a MatcherFactory1 the other a MatcherFactory2.
    // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
-  def or[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def or[U <: SUPERCLASS](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
-            val leftMatcher = thisMatcherGen1.matcher
-            val rightMatcher = rightMatcherGen1.matcher
+            val leftMatcher = thisMatcherFactory1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             orMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
       }
     }
 
-  def or[U <: SUPERCLASS, TYPECLASS2](rightMatcherGen1: MatcherGen1[U, TYPECLASS2]): MatcherGen2[U, TYPECLASS, TYPECLASS2] =
-    new MatcherGen2[U, TYPECLASS, TYPECLASS2] {
+  def or[U <: SUPERCLASS, TYPECLASS2](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS2]): MatcherFactory2[U, TYPECLASS, TYPECLASS2] =
+    new MatcherFactory2[U, TYPECLASS, TYPECLASS2] {
       def matcher[V <: U : TYPECLASS : TYPECLASS2]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
-            val leftMatcher = thisMatcherGen1.matcher
-            val rightMatcher = rightMatcherGen1.matcher
+            val leftMatcher = thisMatcherFactory1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             orMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
@@ -81,26 +81,26 @@ abstract class MatcherGen2[-SUPERCLASS, TYPECLASS1[_], TYPECLASS2[_]] { thisMatc
     }
 
   // "hi" should (equal ("ho") and {mockClown.hasBigRedNose; equal ("ho")})
-  def and[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def and[U <: SUPERCLASS](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
-            val leftMatcher = thisMatcherGen1.matcher
-            val rightMatcher = rightMatcherGen1.matcher
+            val leftMatcher = thisMatcherFactory1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             andMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
       }
     }
 
-  def and[U <: SUPERCLASS, TYPECLASS2](rightMatcherGen1: MatcherGen1[U, TYPECLASS2]): MatcherGen1[U, TYPECLASS, TYPECLASS2] =
-    new MatcherGen2[U, TYPECLASS, TYPECLASS2] {
+  def and[U <: SUPERCLASS, TYPECLASS2](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS2]): MatcherFactory1[U, TYPECLASS, TYPECLASS2] =
+    new MatcherFactory2[U, TYPECLASS, TYPECLASS2] {
       def matcher[V <: U : TYPECLASS : TYPECLASS2]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
-            val leftMatcher = thisMatcherGen1.matcher
-            val rightMatcher = rightMatcherGen1.matcher
+            val leftMatcher = thisMatcherFactory1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             andMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }

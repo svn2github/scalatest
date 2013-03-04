@@ -75,7 +75,7 @@ class ShouldEqualSpec extends Spec with ShouldMatchers with Checkers with Return
     def `should do nothing when not equal and used in a logical-and expression with not` {
       1 should { not { equal (2) } and not { equal (3 - 1) }}
       1 should { not equal (2) and (not equal (3 - 1)) }
-/* TODO: uncomment after supported in MatcherGen1
+/* TODO: uncomment after supported in MatcherFactory1
       1 should (not equal (2) and not equal (3 - 1))
 */
     }
@@ -83,7 +83,7 @@ class ShouldEqualSpec extends Spec with ShouldMatchers with Checkers with Return
     def `should do nothing when not equal and used in a logical-or expression with not` {
       1 should { not { equal (2) } or not { equal (3 - 1) }}
       1 should { not equal (2) or (not equal (3 - 1)) }
-/* TODO: uncomment after supported in MatcherGen1
+/* TODO: uncomment after supported in MatcherFactory1
       1 should (not equal (2) or not equal (3 - 1))
 */
     }
@@ -156,7 +156,7 @@ class ShouldEqualSpec extends Spec with ShouldMatchers with Checkers with Return
       }
       assert(caught2.getMessage === "1 equaled 1")
 
-/* TODO: uncomment after supported in MatcherGen1
+/* TODO: uncomment after supported in MatcherFactory1
       val caught3 = intercept[TestFailedException] {
         1 should (not equal (1) and not equal (3 - 1))
       }
@@ -173,7 +173,7 @@ class ShouldEqualSpec extends Spec with ShouldMatchers with Checkers with Return
       }
       assert(caught5.getMessage === "1 did not equal 2, but 1 equaled 1")
 
-/* TODO: uncomment after supported in MatcherGen1
+/* TODO: uncomment after supported in MatcherFactory1
       val caught6 = intercept[TestFailedException] {
         1 should (not equal (2) and not equal (1))
       }
@@ -193,7 +193,7 @@ class ShouldEqualSpec extends Spec with ShouldMatchers with Checkers with Return
       }
       assert(caught2.getMessage === "1 equaled 1, and 1 equaled 1")
 
-/* TODO: uncomment after supported in MatcherGen1
+/* TODO: uncomment after supported in MatcherFactory1
       val caught3 = intercept[TestFailedException] {
         1 should (not equal (1) or not equal (2 - 1))
       }

@@ -15,7 +15,7 @@
  */
 package org.scalatest.enablers
 
-trait Aggregation[A] {
-  def containsElement(aggregation: A, element: Any): Boolean
-  def containsTheSameElementsAs(aggregation: A, it: Iterator[Any]): Boolean
+trait Orderable[A] {
+  def containsTheSameElementsInOrderAs(aggregation: A, it: Iterator[Any]): Boolean
 }
+

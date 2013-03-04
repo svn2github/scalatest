@@ -50,15 +50,15 @@ import org.scalatest.words.ResultOfRegexWordApplication
 import org.scalatest.words.ResultOfKeyWordApplication
 import org.scalatest.words.ResultOfValueWordApplication
 
-abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
+abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
 
   def matcher[T <: SUPERCLASS : TYPECLASS]: Matcher[T]
 
   def apply[T <: SUPERCLASS](explicit: TYPECLASS[T]): Matcher[T] = matcher[T](explicit)
 
   // (equal (7) and ...)
-  def and[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def and[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
@@ -70,8 +70,8 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
     }
 
   // (equal (7) or ...)
-  def or[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def or[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
@@ -83,28 +83,28 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
     }
 
 // Need one for the same typeclass and one for a different typeclass, yes, and can overload because
-// one returns a MatcherGen1 the other a MatcherGen2.
+// one returns a MatcherFactory1 the other a MatcherFactory2.
    // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
-  def or[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def or[U <: SUPERCLASS](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = outerInstance.matcher
-            val rightMatcher = rightMatcherGen1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             orMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
       }
     }
 
-  def or[U <: SUPERCLASS, TYPECLASS2[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS2]): MatcherGen2[U, TYPECLASS, TYPECLASS2] =
-    new MatcherGen2[U, TYPECLASS, TYPECLASS2] {
+  def or[U <: SUPERCLASS, TYPECLASS2[_]](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS2]): MatcherFactory2[U, TYPECLASS, TYPECLASS2] =
+    new MatcherFactory2[U, TYPECLASS, TYPECLASS2] {
       def matcher[V <: U : TYPECLASS : TYPECLASS2]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = outerInstance.matcher
-            val rightMatcher = rightMatcherGen1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             orMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
@@ -112,26 +112,26 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
     }
 
   // "hi" should (equal ("ho") and {mockClown.hasBigRedNose; equal ("ho")})
-  def and[U <: SUPERCLASS](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def and[U <: SUPERCLASS](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = outerInstance.matcher
-            val rightMatcher = rightMatcherGen1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             andMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
       }
     }
 
-  def and[U <: SUPERCLASS, TYPECLASS2[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS2]): MatcherGen2[U, TYPECLASS, TYPECLASS2] =
-    new MatcherGen2[U, TYPECLASS, TYPECLASS2] {
+  def and[U <: SUPERCLASS, TYPECLASS2[_]](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS2]): MatcherFactory2[U, TYPECLASS, TYPECLASS2] =
+    new MatcherFactory2[U, TYPECLASS, TYPECLASS2] {
       def matcher[V <: U : TYPECLASS : TYPECLASS2]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = outerInstance.matcher
-            val rightMatcher = rightMatcherGen1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             andMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
@@ -156,7 +156,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def length(expectedLength: Long): MatcherGen2[SUPERCLASS, TYPECLASS, Length] = and(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherFactory2[SUPERCLASS, TYPECLASS, Length] = and(MatcherWords.have.length(expectedLength))
 
     /**
      * This method enables the following syntax:
@@ -166,7 +166,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^ 
      * </pre>
      */
-    def size(expectedSize: Long): MatcherGen2[SUPERCLASS, TYPECLASS, Size] = and(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherFactory2[SUPERCLASS, TYPECLASS, Size] = and(MatcherWords.have.size(expectedSize))
   }
 
   /**
@@ -195,7 +195,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                     ^
      * </pre>
      */
-    def apply[U](expectedElement: U): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] = outerInstance.and(MatcherWords.contain(expectedElement))
+    def apply[U](expectedElement: U): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] = outerInstance.and(MatcherWords.contain(expectedElement))
     // def element[SUPERCLASS](expectedElement: SUPERCLASS) = outerInstance.and(MatcherWords.contain.apply(expectedElement))
 
     /**
@@ -206,7 +206,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                     ^
      * </pre>
      */
-    def key[U](expectedElement: U): MatcherGen1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS] = outerInstance.and(MatcherWords.contain.key(expectedElement))
+    def key[U](expectedElement: U): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS] = outerInstance.and(MatcherWords.contain.key(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -216,7 +216,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                   ^
      * </pre>
      */
-    def value[U](expectedValue: U): MatcherGen1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS] = outerInstance.and(MatcherWords.contain.value(expectedValue))
+    def value[U](expectedValue: U): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS] = outerInstance.and(MatcherWords.contain.value(expectedValue))
     
     /**
      * This method enables the following syntax:
@@ -226,7 +226,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                           ^
      * </pre>
      */
-    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.and(MatcherWords.contain.theSameElementsAs(right)(equality))
     
     /**
@@ -237,7 +237,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                           ^
      * </pre>
      */
-    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.and(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
     
     /**
@@ -248,7 +248,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                           ^
      * </pre>
      */
-    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.and(MatcherWords.contain.allOf(right.toList: _*)(equality))
     
     /**
@@ -259,7 +259,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                           ^
      * </pre>
      */
-    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.and(MatcherWords.contain.inOrder(right.toList: _*)(equality))
     
     /**
@@ -270,7 +270,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                           ^
      * </pre>
      */
-    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.and(MatcherWords.contain.oneOf(right.toList: _*)(equality))
     
     /**
@@ -281,7 +281,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                           ^
      * </pre>
      */
-    def only[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.and(MatcherWords.contain.only(right.toList: _*)(equality))
     
     /**
@@ -292,7 +292,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                           ^
      * </pre>
      */
-    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.and(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
     
     /**
@@ -303,7 +303,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                           ^
      * </pre>
      */
-    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.and(MatcherWords.contain.noneOf(right.toList: _*)(equality))
       
     /**
@@ -314,7 +314,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                       ^
      * </pre>
      */
-    def a[E](aMatcher: AMatcher[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       and(MatcherWords.contain.a(aMatcher))
     
     /**
@@ -325,7 +325,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                        ^
      * </pre>
      */
-    def an[E](anMatcher: AnMatcher[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       and(MatcherWords.contain.an(anMatcher))
   }
 
@@ -355,7 +355,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                        ^
      * </pre>
      */
-    def a(symbol: Symbol): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = and(MatcherWords.be.a(symbol))
+    def a(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = and(MatcherWords.be.a(symbol))
 
     /**
      * This method enables the following syntax:
@@ -365,7 +365,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                        ^
      * </pre>
      */
-    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherGen1[SUPERCLASS with AnyRef with U, TYPECLASS] = and(MatcherWords.be.a(bePropertyMatcher))
+    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS] = and(MatcherWords.be.a(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -375,7 +375,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                             ^
      * </pre>
      */
-    def a[U](aMatcher: AMatcher[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = and(MatcherWords.be.a(aMatcher))
+    def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = and(MatcherWords.be.a(aMatcher))
     
     /**
      * This method enables the following syntax:
@@ -385,7 +385,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                           ^
      * </pre>
      */
-    def an(symbol: Symbol): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = and(MatcherWords.be.an(symbol))
+    def an(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = and(MatcherWords.be.an(symbol))
 
     /**
      * This method enables the following syntax:
@@ -395,7 +395,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                           ^
      * </pre>
      */
-    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherGen1[SUPERCLASS with AnyRef with U, TYPECLASS] = and(MatcherWords.be.an(bePropertyMatcher))
+    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS] = and(MatcherWords.be.an(bePropertyMatcher))
     
     /**
      * This method enables the following syntax:
@@ -405,7 +405,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                         ^
      * </pre>
      */
-    def an[U](anMatcher: AnMatcher[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = and(MatcherWords.be.an(anMatcher))
+    def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = and(MatcherWords.be.an(anMatcher))
 
     /**
      * This method enables the following syntax:
@@ -415,7 +415,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                  ^
      * </pre>
      */
-    def theSameInstanceAs(anyRef: AnyRef): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = and(MatcherWords.be.theSameInstanceAs(anyRef))
+    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = and(MatcherWords.be.theSameInstanceAs(anyRef))
   }
 
   /**
@@ -444,7 +444,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                         ^
      * </pre>
      */
-    def regex(regexString: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.fullyMatch.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.fullyMatch.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -454,7 +454,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                              ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherGen1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.fullyMatch.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.fullyMatch.regex(regex))
   }
 
   /**
@@ -483,7 +483,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                   ^
      * </pre>
      */
-    def regex(regexString: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.include.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.include.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -493,7 +493,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                        ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherGen1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.include.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.include.regex(regex))
   }
 
   /**
@@ -522,7 +522,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                       ^
      * </pre>
      */
-    def regex(regexString: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.startWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.startWith.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -532,7 +532,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                            ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherGen1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.startWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.startWith.regex(regex))
   }
 
   /**
@@ -561,7 +561,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                   ^
      * </pre>
      */
-    def regex(regexString: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.endWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.endWith.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -571,7 +571,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                        ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherGen1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.endWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = and(MatcherWords.endWith.regex(regex))
   }
 
   /**
@@ -600,7 +600,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                 ^
      * </pre>
      */
-    def equal(any: Any): MatcherGen2[SUPERCLASS, TYPECLASS, Equality] =
+    def equal(any: Any): MatcherFactory2[SUPERCLASS, TYPECLASS, Equality] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.equal(any)))
 
     /**
@@ -611,7 +611,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                         ^
      * </pre>
      */
-    def equal[U](interval: Interval[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.equal(interval))
+    def equal[U](interval: Interval[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.equal(interval))
 
     /**
      * This method enables the following syntax:
@@ -621,7 +621,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                   ^
      * </pre>
      */
-    def equal(o: Null): MatcherGen1[SUPERCLASS, TYPECLASS] = {
+    def equal(o: Null): MatcherFactory1[SUPERCLASS, TYPECLASS] = {
       outerInstance and {
         new Matcher[SUPERCLASS] {
           def apply(left: SUPERCLASS): MatchResult = {
@@ -645,7 +645,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                              ^
      * </pre>
      */
-    def be(any: Any): MatcherGen1[SUPERCLASS, TYPECLASS] =
+    def be(any: Any): MatcherFactory1[SUPERCLASS, TYPECLASS] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.be(any)))
 
     /**
@@ -656,7 +656,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                               ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherGen2[SUPERCLASS, TYPECLASS, Length] =
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SUPERCLASS, TYPECLASS, Length] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
@@ -667,7 +667,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                               ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen2[SUPERCLASS, TYPECLASS, Size] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SUPERCLASS, TYPECLASS, Size] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
@@ -678,7 +678,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                     ^
      * </pre>
      */
-    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
     /**
@@ -689,7 +689,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                ^
      * </pre>
      */
-    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.and(MatcherWords.not.be(resultOfLessThanComparison))
 
     /**
@@ -700,7 +700,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                     ^
      * </pre>
      */
-    def be(o: Null): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(o))
+    def be(o: Null): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(o))
 
     /**
      * This method enables the following syntax:
@@ -710,7 +710,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.and(MatcherWords.not.be(resultOfGreaterThanComparison))
 
     /**
@@ -721,7 +721,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                 ^
      * </pre>
      */
-    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.and(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
     /**
@@ -732,7 +732,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                 ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.and(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
     /**
@@ -743,7 +743,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                  ^
      * </pre>
      */
-    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherGen1[SUPERCLASS, TYPECLASS] =
+    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SUPERCLASS, TYPECLASS] =
       outerInstance.and(MatcherWords.not.be(tripleEqualsInvocation))
 
     /**
@@ -754,7 +754,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def be(symbol: Symbol): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(symbol))
+    def be(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(symbol))
 
     /**
      * This method enables the following syntax:
@@ -764,7 +764,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                ^
      * </pre>
      */
-    def be[U](beMatcher: BeMatcher[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(beMatcher))
+    def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(beMatcher))
 
     /**
      * This method enables the following syntax:
@@ -774,7 +774,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherGen1[SUPERCLASS with AnyRef with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(bePropertyMatcher))
+    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -784,7 +784,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                ^
      * </pre>
      */
-    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -794,7 +794,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                               ^
      * </pre>
      */
-    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -804,7 +804,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                             ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -814,7 +814,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                ^
      * </pre>
      */
-    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -834,7 +834,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                ^
      * </pre>
      */
-    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfAnWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -844,7 +844,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                            ^
      * </pre>
      */
-    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
+    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
     /**
      * This method enables the following syntax, for the "primitive" numeric types:
@@ -854,7 +854,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                          ^
      * </pre>
      */
-    def be[U](interval: Interval[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(interval))
+    def be[U](interval: Interval[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.and(MatcherWords.not.be(interval))
 
     /**
      * This method enables the following syntax:
@@ -864,7 +864,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                     ^
      * </pre>
      */
-    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.and(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
     /**
@@ -875,7 +875,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                     ^
      * </pre>
      */
-    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.and(MatcherWords.not.include(resultOfRegexWordApplication))
 
     /**
@@ -886,7 +886,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^
      * </pre>
      */
-    def include(expectedSubstring: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def include(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.and(MatcherWords.not.include(expectedSubstring))
 
     /**
@@ -897,7 +897,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                    ^
      * </pre>
      */
-    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.and(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
     /**
@@ -908,7 +908,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def startWith(expectedSubstring: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def startWith(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.and(MatcherWords.not.startWith(expectedSubstring))
 
     /**
@@ -919,7 +919,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                  ^
      * </pre>
      */
-    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.and(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
     /**
@@ -930,7 +930,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^
      * </pre>
      */
-    def endWith(expectedSubstring: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def endWith(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.and(MatcherWords.not.endWith(expectedSubstring))
 
     /**
@@ -941,7 +941,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                     ^
      * </pre>
      */
-    def contain[U](expectedElement: U): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] =
+    def contain[U](expectedElement: U): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] =
       outerInstance.and(MatcherWords.not.contain(expectedElement))
 
     /**
@@ -952,7 +952,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                      ^
      * </pre>
      */
-    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherGen1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS] =
+    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS] =
       outerInstance.and(MatcherWords.not.contain(resultOfKeyWordApplication))
 
     /**
@@ -963,7 +963,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                   ^
      * </pre>
      */
-    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherGen1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS] =
+    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS] =
       outerInstance.and(MatcherWords.not.contain(resultOfValueWordApplication))
       
     /**
@@ -974,7 +974,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                      ^
      * </pre>
      */
-    def contain[U](right: ContainMatcher[U]): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] =
+    def contain[U](right: ContainMatcher[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] =
       outerInstance.and(MatcherWords.not.contain(right))
       
     /**
@@ -985,7 +985,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                     ^
      * </pre>
      */
-    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] = 
+    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] = 
       outerInstance.and(MatcherWords.not.contain(resultOfAWordApplication))
       
     /**
@@ -996,7 +996,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                 ^
      * </pre>
      */
-    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] = 
+    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] = 
       outerInstance.and(MatcherWords.not.contain(resultOfAnWordApplication))
   }
 
@@ -1026,7 +1026,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def length(expectedLength: Long): MatcherGen2[SUPERCLASS, TYPECLASS, Length] = or(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherFactory2[SUPERCLASS, TYPECLASS, Length] = or(MatcherWords.have.length(expectedLength))
 
     /**
      * This method enables the following syntax:
@@ -1036,7 +1036,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                       ^
      * </pre>
      */
-    def size(expectedSize: Long): MatcherGen2[SUPERCLASS, TYPECLASS, Size] = or(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherFactory2[SUPERCLASS, TYPECLASS, Size] = or(MatcherWords.have.size(expectedSize))
   }
 
   /**
@@ -1065,7 +1065,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^
      * </pre>
      */
-    def apply[U](expectedElement: U): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] = outerInstance.or(MatcherWords.contain(expectedElement))
+    def apply[U](expectedElement: U): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] = outerInstance.or(MatcherWords.contain(expectedElement))
     // def element[SUPERCLASS](expectedElement: SUPERCLASS) = outerInstance.or(MatcherWords.contain.apply(expectedElement))
 
     /**
@@ -1076,7 +1076,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                    ^
      * </pre>
      */
-    def key[U](expectedKey: U): MatcherGen1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS] = outerInstance.or(MatcherWords.contain.key(expectedKey))
+    def key[U](expectedKey: U): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS] = outerInstance.or(MatcherWords.contain.key(expectedKey))
 
     /**
      * This method enables the following syntax:
@@ -1086,7 +1086,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                  ^
      * </pre>
      */
-    def value[U](expectedValue: U): MatcherGen1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS] = outerInstance.or(MatcherWords.contain.value(expectedValue))
+    def value[U](expectedValue: U): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS] = outerInstance.or(MatcherWords.contain.value(expectedValue))
     
     /**
      * This method enables the following syntax:
@@ -1096,7 +1096,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                          ^
      * </pre>
      */
-    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.or(MatcherWords.contain.theSameElementsAs(right)(equality))
     
     /**
@@ -1107,7 +1107,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                          ^
      * </pre>
      */
-    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.or(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
     
     /**
@@ -1118,7 +1118,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                          ^
      * </pre>
      */
-    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.or(MatcherWords.contain.allOf(right.toList: _*)(equality))
     
     /**
@@ -1129,7 +1129,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                          ^
      * </pre>
      */
-    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.or(MatcherWords.contain.inOrder(right.toList: _*)(equality))
     
     /**
@@ -1140,7 +1140,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                          ^
      * </pre>
      */
-    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.or(MatcherWords.contain.oneOf(right.toList: _*)(equality))
     
     /**
@@ -1151,7 +1151,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                          ^
      * </pre>
      */
-    def only[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.or(MatcherWords.contain.only(right.toList: _*)(equality))
     
     /**
@@ -1162,7 +1162,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                          ^
      * </pre>
      */
-    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.or(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
     
     /**
@@ -1173,7 +1173,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                          ^
      * </pre>
      */
-    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       outerInstance.or(MatcherWords.contain.noneOf(right.toList: _*)(equality))
       
     /**
@@ -1184,7 +1184,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                      ^
      * </pre>
      */
-    def a[E](aMatcher: AMatcher[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       or(MatcherWords.contain.a(aMatcher))
     
     /**
@@ -1195,7 +1195,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                       ^
      * </pre>
      */
-    def an[E](anMatcher: AnMatcher[E]): MatcherGen1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
+    def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS] = 
       or(MatcherWords.contain.an(anMatcher))
   }
 
@@ -1225,7 +1225,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                       ^
      * </pre>
      */
-    def a(symbol: Symbol): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = or(MatcherWords.be.a(symbol))
+    def a(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = or(MatcherWords.be.a(symbol))
 
     /**
      * This method enables the following syntax:
@@ -1235,7 +1235,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                      ^
      * </pre>
      */
-    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherGen1[SUPERCLASS with AnyRef with U, TYPECLASS] = or(MatcherWords.be.a(bePropertyMatcher))
+    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS] = or(MatcherWords.be.a(bePropertyMatcher))
     
     /**
      * This method enables the following syntax:
@@ -1245,7 +1245,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^
      * </pre>
      */
-    def a[U](aMatcher: AMatcher[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = or(MatcherWords.be.a(aMatcher))
+    def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = or(MatcherWords.be.a(aMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1255,7 +1255,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                         ^
      * </pre>
      */
-    def an(symbol: Symbol): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = or(MatcherWords.be.an(symbol))
+    def an(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = or(MatcherWords.be.an(symbol))
 
     /**
      * This method enables the following syntax:
@@ -1265,7 +1265,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                        ^
      * </pre>
      */
-    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherGen1[SUPERCLASS with AnyRef with U, TYPECLASS] = or(MatcherWords.be.an(bePropertyMatcher))
+    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS] = or(MatcherWords.be.an(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1275,7 +1275,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                        ^
      * </pre>
      */
-    def an[U](anMatcher: AnMatcher[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = or(MatcherWords.be.an(anMatcher))
+    def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = or(MatcherWords.be.an(anMatcher))
     
     /**
      * This method enables the following syntax:
@@ -1285,7 +1285,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                 ^
      * </pre>
      */
-    def theSameInstanceAs(anyRef: AnyRef): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = or(MatcherWords.be.theSameInstanceAs(anyRef))
+    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = or(MatcherWords.be.theSameInstanceAs(anyRef))
   }
 
   /**
@@ -1314,7 +1314,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                        ^
      * </pre>
      */
-    def regex(regexString: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.fullyMatch.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.fullyMatch.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -1324,7 +1324,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                        ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherGen1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.fullyMatch.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.fullyMatch.regex(regex))
   }
 
   /**
@@ -1353,7 +1353,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                  ^
      * </pre>
      */
-    def regex(regexString: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.include.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.include.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -1363,7 +1363,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                  ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherGen1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.include.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.include.regex(regex))
   }
 
   /**
@@ -1392,7 +1392,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                      ^
      * </pre>
      */
-    def regex(regexString: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.startWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.startWith.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -1402,7 +1402,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                      ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherGen1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.startWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.startWith.regex(regex))
   }
 
   /**
@@ -1431,7 +1431,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                  ^
      * </pre>
      */
-    def regex(regexString: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.endWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.endWith.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -1441,7 +1441,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                  ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherGen1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.endWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS] = or(MatcherWords.endWith.regex(regex))
   }
 
   /**
@@ -1470,7 +1470,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                ^
      * </pre>
      */
-    def equal(any: Any): MatcherGen1[SUPERCLASS, TYPECLASS] =
+    def equal(any: Any): MatcherFactory1[SUPERCLASS, TYPECLASS] =
       outerInstance.or(MatcherWords.not.apply(MatcherWords.legacyEqual(any)))
 
     /**
@@ -1481,7 +1481,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                        ^
      * </pre>
      */
-    def equal[U](interval: Interval[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.equal(interval))
+    def equal[U](interval: Interval[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.equal(interval))
 
     /**
      * This method enables the following syntax:
@@ -1491,7 +1491,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                   ^
      * </pre>
      */
-    def equal(o: Null): MatcherGen1[SUPERCLASS, TYPECLASS] = {
+    def equal(o: Null): MatcherFactory1[SUPERCLASS, TYPECLASS] = {
       outerInstance or {
         new Matcher[SUPERCLASS] {
           def apply(left: SUPERCLASS): MatchResult = {
@@ -1515,7 +1515,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                             ^
      * </pre>
      */
-    def be(any: Any): MatcherGen1[SUPERCLASS, TYPECLASS] =
+    def be(any: Any): MatcherFactory1[SUPERCLASS, TYPECLASS] =
       outerInstance.or(MatcherWords.not.apply(MatcherWords.be(any)))
 
     /**
@@ -1526,7 +1526,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherGen2[SUPERCLASS, TYPECLASS, Length] =
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SUPERCLASS, TYPECLASS, Length] =
       outerInstance.or(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
@@ -1537,7 +1537,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen2[SUPERCLASS, TYPECLASS, Size] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SUPERCLASS, TYPECLASS, Size] =
       outerInstance.or(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
@@ -1548,7 +1548,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                    ^
      * </pre>
      */
-    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.or(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
     /**
@@ -1559,7 +1559,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                    ^
      * </pre>
      */
-    def be(o: Null): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(o))
+    def be(o: Null): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(o))
 
     /**
      * This method enables the following syntax:
@@ -1569,7 +1569,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                               ^
      * </pre>
      */
-    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.or(MatcherWords.not.be(resultOfLessThanComparison))
 
     /**
@@ -1580,7 +1580,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                               ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.or(MatcherWords.not.be(resultOfGreaterThanComparison))
 
     /**
@@ -1591,7 +1591,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                ^
      * </pre>
      */
-    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.or(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
     /**
@@ -1602,7 +1602,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] =
+    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] =
       outerInstance.or(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
     /**
@@ -1613,7 +1613,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                 ^
      * </pre>
      */
-    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherGen1[SUPERCLASS, TYPECLASS] =
+    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SUPERCLASS, TYPECLASS] =
       outerInstance.or(MatcherWords.not.be(tripleEqualsInvocation))
 
     /**
@@ -1624,7 +1624,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^
      * </pre>
      */
-    def be(symbol: Symbol): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(symbol))
+    def be(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(symbol))
 
     /**
      * This method enables the following syntax:
@@ -1634,7 +1634,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                ^
      * </pre>
      */
-    def be[U](beMatcher: BeMatcher[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(beMatcher))
+    def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(beMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1644,7 +1644,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                          ^
      * </pre>
      */
-    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherGen1[SUPERCLASS with AnyRef with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(bePropertyMatcher))
+    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1654,7 +1654,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                    ^
      * </pre>
      */
-    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1664,7 +1664,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                 ^
      * </pre>
      */
-    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -1674,7 +1674,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1684,7 +1684,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                ^
      * </pre>
      */
-    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1694,7 +1694,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                             ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1704,7 +1704,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                ^
      * </pre>
      */
-    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfAnWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -1714,7 +1714,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                           ^
      * </pre>
      */
-    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherGen1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
+    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS] = outerInstance.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
     /**
      * This method enables the following syntax for the "primitive" numeric types:
@@ -1724,7 +1724,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                         ^
      * </pre>
      */
-    def be[U](interval: Interval[U]): MatcherGen1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(interval))
+    def be[U](interval: Interval[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS] = outerInstance.or(MatcherWords.not.be(interval))
 
     /**
      * This method enables the following syntax:
@@ -1734,7 +1734,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                     ^
      * </pre>
      */
-    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.or(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
     /**
@@ -1745,7 +1745,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                  ^
      * </pre>
      */
-    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.or(MatcherWords.not.include(resultOfRegexWordApplication))
 
     /**
@@ -1756,7 +1756,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                           ^
      * </pre>
      */
-    def include(expectedSubstring: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def include(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.or(MatcherWords.not.include(expectedSubstring))
 
     /**
@@ -1767,7 +1767,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                   ^
      * </pre>
      */
-    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.or(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
     /**
@@ -1778,7 +1778,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def startWith(expectedSubstring: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def startWith(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.or(MatcherWords.not.startWith(expectedSubstring))
 
     /**
@@ -1789,7 +1789,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                 ^
      * </pre>
      */
-    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.or(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
     /**
@@ -1800,7 +1800,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^
      * </pre>
      */
-    def endWith(expectedSubstring: String): MatcherGen1[SUPERCLASS with String, TYPECLASS] =
+    def endWith(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS] =
       outerInstance.or(MatcherWords.not.endWith(expectedSubstring))
 
     /**
@@ -1811,7 +1811,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                            ^
      * </pre>
      */
-    def contain[U](expectedElement: U): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] =
+    def contain[U](expectedElement: U): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] =
       outerInstance.or(MatcherWords.not.contain(expectedElement))
 
     /**
@@ -1822,7 +1822,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                    ^
      * </pre>
      */
-    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherGen1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS] =
+    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS] =
       outerInstance.or(MatcherWords.not.contain(resultOfKeyWordApplication))
 
     /**
@@ -1833,7 +1833,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                  ^
      * </pre>
      */
-    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherGen1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS] =
+    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS] =
       outerInstance.or(MatcherWords.not.contain(resultOfValueWordApplication))
       
     /**
@@ -1844,7 +1844,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                                     ^
      * </pre>
      */
-    def contain[U](right: ContainMatcher[U]): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] =
+    def contain[U](right: ContainMatcher[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] =
       outerInstance.or(MatcherWords.not.contain(right))
       
     /**
@@ -1855,7 +1855,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                    ^
      * </pre>
      */
-    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] = 
+    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] = 
       outerInstance.or(MatcherWords.not.contain(resultOfAWordApplication))
       
     /**
@@ -1866,7 +1866,7 @@ abstract class MatcherGen1[-SUPERCLASS, TYPECLASS[_]] { outerInstance =>
      *                                                ^
      * </pre>
      */
-    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherGen1[SUPERCLASS with GenTraversable[U], TYPECLASS] = 
+    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS] = 
       outerInstance.or(MatcherWords.not.contain(resultOfAnWordApplication))
   }
 

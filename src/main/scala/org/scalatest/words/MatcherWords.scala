@@ -157,8 +157,8 @@ trait MatcherWords {
    * </p>
    *
    */
-  def equal(right: Any): MatcherGen1[Any, Equality] =
-    new MatcherGen1[Any, Equality] {
+  def equal(right: Any): MatcherFactory1[Any, Equality] =
+    new MatcherFactory1[Any, Equality] {
       def matcher[T <: Any : Equality]: Matcher[T] = {
         val equality = implicitly[Equality[T]]
         new Matcher[T] {

@@ -510,12 +510,12 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
       }
     }
 
-  def and[U <: T, TYPECLASS[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def and[U <: T, TYPECLASS[_]](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
-            val rightMatcher = rightMatcherGen1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             andMatchersAndApply(left, outerInstance, rightMatcher)
           }
         }
@@ -552,12 +552,12 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
       }
     }
 
-  def or[U <: T, TYPECLASS[_]](rightMatcherGen1: MatcherGen1[U, TYPECLASS]): MatcherGen1[U, TYPECLASS] =
-    new MatcherGen1[U, TYPECLASS] {
+  def or[U <: T, TYPECLASS[_]](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS]): MatcherFactory1[U, TYPECLASS] =
+    new MatcherFactory1[U, TYPECLASS] {
       def matcher[V <: U : TYPECLASS]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
-            val rightMatcher = rightMatcherGen1.matcher
+            val rightMatcher = rightMatcherFactory1.matcher
             orMatchersAndApply(left, outerInstance, rightMatcher)
           }
         }
@@ -580,7 +580,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def length(expectedLength: Long): MatcherGen1[T, Length] = and(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherFactory1[T, Length] = and(MatcherWords.have.length(expectedLength))
 
     /**
      * This method enables the following syntax:
@@ -590,7 +590,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                            ^ 
      * </pre>
      */
-    def size(expectedSize: Long): MatcherGen1[T, Size] = and(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherFactory1[T, Size] = and(MatcherWords.have.size(expectedSize))
   }
 
   /**
@@ -1024,7 +1024,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                 ^
      * </pre>
      */
-    def equal(any: Any): MatcherGen1[T, Equality] =
+    def equal(any: Any): MatcherFactory1[T, Equality] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.equal(any)))
 
     /**
@@ -1080,7 +1080,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                               ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherGen1[T, Length] =
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory1[T, Length] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
@@ -1091,7 +1091,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                               ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen1[T, Size] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory1[T, Size] =
       outerInstance.and(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
@@ -1450,7 +1450,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def length(expectedLength: Long): MatcherGen1[T, Length] = or(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherFactory1[T, Length] = or(MatcherWords.have.length(expectedLength))
 
     /**
      * This method enables the following syntax:
@@ -1460,7 +1460,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                       ^
      * </pre>
      */
-    def size(expectedSize: Long): MatcherGen1[T, Size] = or(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherFactory1[T, Size] = or(MatcherWords.have.size(expectedSize))
   }
 
   /**
@@ -1950,7 +1950,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                                ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherGen1[T, Length] =
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory1[T, Length] =
       outerInstance.or(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
@@ -1961,7 +1961,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                              ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen1[T, Size] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory1[T, Size] =
       outerInstance.or(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**

@@ -58,8 +58,8 @@ final class NotWord {
    *                      ^
    * </pre>
    */
-  def apply[S <: Any, TYPECLASS[_]](matcherGen1: MatcherGen1[S, TYPECLASS]): MatcherGen1[S, TYPECLASS] = {
-    new MatcherGen1[S, TYPECLASS] {
+  def apply[S <: Any, TYPECLASS[_]](matcherGen1: MatcherFactory1[S, TYPECLASS]): MatcherFactory1[S, TYPECLASS] = {
+    new MatcherFactory1[S, TYPECLASS] {
       def matcher[V <: S : TYPECLASS]: Matcher[V] = {
         val innerMatcher: Matcher[V] = matcherGen1.matcher
         new Matcher[V] {
@@ -73,8 +73,8 @@ final class NotWord {
     }
   }
 
-  def apply[S <: Any, TYPECLASS1[_], TYPECLASS2[_]](matcherGen2: MatcherGen2[S, TYPECLASS1, TYPECLASS2]): MatcherGen2[S, TYPECLASS1, TYPECLASS2] = {
-    new MatcherGen2[S, TYPECLASS1, TYPECLASS2] {
+  def apply[S <: Any, TYPECLASS1[_], TYPECLASS2[_]](matcherGen2: MatcherFactory2[S, TYPECLASS1, TYPECLASS2]): MatcherFactory2[S, TYPECLASS1, TYPECLASS2] = {
+    new MatcherFactory2[S, TYPECLASS1, TYPECLASS2] {
       def matcher[V <: S : TYPECLASS1 : TYPECLASS2]: Matcher[V] = {
         val innerMatcher: Matcher[V] = matcherGen2.matcher
         new Matcher[V] {
@@ -131,7 +131,7 @@ final class NotWord {
    *                 ^
    * </pre>
    */
-  def equal(right: Any): MatcherGen1[Any, Equality] = apply(MatcherWords.equal(right))
+  def equal(right: Any): MatcherFactory1[Any, Equality] = apply(MatcherWords.equal(right))
 
   /**
    * This method enables the following syntax for the "primitive" numeric types: 
@@ -182,7 +182,7 @@ final class NotWord {
    *                         ^
    * </pre>
    */
-  def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherGen1[Any, Length] =
+  def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory1[Any, Length] =
     apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength))
 
   // This looks similar to the AndNotWord one, but not quite the same because no and
@@ -194,7 +194,7 @@ final class NotWord {
    *                         ^
    * </pre>
    */
-  def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherGen1[Any, Size] =
+  def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory1[Any, Size] =
     apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize))
 
   /**

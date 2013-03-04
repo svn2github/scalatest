@@ -15,8 +15,6 @@
  */
 package org.scalatest.enablers
 
-trait AggregationSimilarity[A] {
-  def containsTheSameElementsAs(aggregation: A, it: Iterator[Any]): Boolean
-  def containsTheSameIteratedElementsAs(aggregation: A, it: Iterator[Any]): Boolean
+trait Holder[A] {
+  def containsElement(aggregation: A, element: Any): Boolean
 }
-

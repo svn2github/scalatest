@@ -42,8 +42,8 @@ final class HaveWord {
    *                  ^
    * </pre>
    */
-  def length(expectedLength: Long): MatcherGen1[Any, Length] =
-    new MatcherGen1[Any, Length] {
+  def length(expectedLength: Long): MatcherFactory1[Any, Length] =
+    new MatcherFactory1[Any, Length] {
       def matcher[T <: Any : Length]: Matcher[T] = {
         val length = implicitly[Length[T]]
         new Matcher[T] {
@@ -75,8 +75,8 @@ final class HaveWord {
    * In a future ScalaTest release, this may be tightened so that all is statically checked at compile time.
    * </p>
    */
-  def size(expectedSize: Long): MatcherGen1[Any, Size] =
-    new MatcherGen1[Any, Size] {
+  def size(expectedSize: Long): MatcherFactory1[Any, Size] =
+    new MatcherFactory1[Any, Size] {
       def matcher[T <: Any : Size]: Matcher[T] = {
         val length = implicitly[Size[T]]
         new Matcher[T] {
