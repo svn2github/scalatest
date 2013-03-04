@@ -165,7 +165,6 @@ class ContainMatcherAndOrSpec extends Spec with Matchers with SharedHelpers {
         val right1 = List(8, 1, 2)
         val right2 = List(1, 2, 3)
         
-        val a = (contain theSameElementsAs (right2) and not contain theSameElementsAs (right1))
         left should (contain theSameElementsAs (right2) and not contain theSameElementsAs (right1))
         left should ((contain theSameElementsAs (right2)) and (not contain theSameElementsAs (right1)))
         left should (contain theSameElementsAs (right2) and not { contain theSameElementsAs (right1) })
