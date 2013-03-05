@@ -50,16 +50,21 @@ import org.scalatest.words.ResultOfRegexWordApplication
 import org.scalatest.words.ResultOfKeyWordApplication
 import org.scalatest.words.ResultOfValueWordApplication
 
-abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory =>
+// Add a TYPECLASSN for each N
+abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
 
-  def matcher[T <: SUPERCLASS : TYPECLASS1]: Matcher[T]
+  // Add a TYPECLASSN for each N
+  def matcher[T <: SC : TC1]: Matcher[T]
 
-  def apply[T <: SUPERCLASS](explicit: TYPECLASS1[T]): Matcher[T] = matcher[T](explicit)
+  // Enables the following syntax:
+  // result should equal (1) (decided by defaultEquality)
+  def apply[T <: SC](explicit: TC1[T]): Matcher[T] = matcher[T](explicit)
 
+  // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
   // (equal (7) and ...)
-  def and[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherFactory1[U, TYPECLASS1] =
-    new MatcherFactory1[U, TYPECLASS1] {
-      def matcher[V <: U : TYPECLASS1]: Matcher[V] = {
+  def and[U <: SC](rightMatcher: Matcher[U]): MatcherFactory1[U, TC1] =
+    new MatcherFactory1[U, TC1] {
+      def matcher[V <: U : TC1]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -70,9 +75,10 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
     }
 
   // (equal (7) or ...)
-  def or[U <: SUPERCLASS](rightMatcher: Matcher[U]): MatcherFactory1[U, TYPECLASS1] =
-    new MatcherFactory1[U, TYPECLASS1] {
-      def matcher[V <: U : TYPECLASS1]: Matcher[V] = {
+  // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
+  def or[U <: SC](rightMatcher: Matcher[U]): MatcherFactory1[U, TC1] =
+    new MatcherFactory1[U, TC1] {
+      def matcher[V <: U : TC1]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -85,9 +91,11 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
 // Need one for the same typeclass and one for a different typeclass, yes, and can overload because
 // one returns a MatcherFactory1 the other a MatcherFactory2.
    // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
-  def or[U <: SUPERCLASS](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS1]): MatcherFactory1[U, TYPECLASS1] =
-    new MatcherFactory1[U, TYPECLASS1] {
-      def matcher[V <: U : TYPECLASS1]: Matcher[V] = {
+  // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
+  // And what I'd do is use the rightmost TC. I may call these TC's. If it is the same, then I return the same one.
+  def or[U <: SC](rightMatcherFactory1: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
+    new MatcherFactory1[U, TC1] {
+      def matcher[V <: U : TC1]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -98,9 +106,11 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
       }
     }
 
-  def or[U <: SUPERCLASS, TYPECLASS12[_]](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS12]): MatcherFactory2[U, TYPECLASS1, TYPECLASS12] =
-    new MatcherFactory2[U, TYPECLASS1, TYPECLASS12] {
-      def matcher[V <: U : TYPECLASS1 : TYPECLASS12]: Matcher[V] = {
+  // This one, though, I'd need to add 1 more. Amazing this overloads, but anyway. And I really need this for each N. The above
+  // special case is just for MatcherFactory1. The other N's I'm not going to bother trying to do a quickie overload.
+  def or[U <: SC, TC12[_]](rightMatcherFactory1: MatcherFactory1[U, TC12]): MatcherFactory2[U, TC1, TC12] =
+    new MatcherFactory2[U, TC1, TC12] {
+      def matcher[V <: U : TC1 : TC12]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -112,9 +122,11 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
     }
 
   // "hi" should (equal ("ho") and {mockClown.hasBigRedNose; equal ("ho")})
-  def and[U <: SUPERCLASS](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS1]): MatcherFactory1[U, TYPECLASS1] =
-    new MatcherFactory1[U, TYPECLASS1] {
-      def matcher[V <: U : TYPECLASS1]: Matcher[V] = {
+  // Yes, same for and. Essentially, each N must have and one each and and or methods that takes a Matcher, one and and or
+  // method that takes each other MatcherFactoryN, plus one extra one for MatcherFactory1 of the rightmost type.
+  def and[U <: SC](rightMatcherFactory1: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
+    new MatcherFactory1[U, TC1] {
+      def matcher[V <: U : TC1]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -125,9 +137,9 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
       }
     }
 
-  def and[U <: SUPERCLASS, TYPECLASS12[_]](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS12]): MatcherFactory2[U, TYPECLASS1, TYPECLASS12] =
-    new MatcherFactory2[U, TYPECLASS1, TYPECLASS12] {
-      def matcher[V <: U : TYPECLASS1 : TYPECLASS12]: Matcher[V] = {
+  def and[U <: SC, TC12[_]](rightMatcherFactory1: MatcherFactory1[U, TC12]): MatcherFactory2[U, TC1, TC12] =
+    new MatcherFactory2[U, TC1, TC12] {
+      def matcher[V <: U : TC1 : TC12]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -149,32 +161,34 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
   final class AndHaveWord {
 
     /**
-     * This method enables the following syntax:
+     * This method enables the following syntax given a <code>MatcherFactory1</code>:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (have length (2) and have length (3 - 1))
-     *                                              ^
+     * (<MatcherFactory1> and have length (3 - 1))
+     *                               ^
      * </pre>
      */
-    def length(expectedLength: Long): MatcherFactory2[SUPERCLASS, TYPECLASS1, Length] = and(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherFactory2[SC, TC1, Length] = and(MatcherWords.have.length(expectedLength))
+
+    // These guys need to generate a MatcherFactory of N+1. And it needs N-1 TC's, with the last one being Length.
 
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (have size (2) and have size (3 - 1))
-     *                                            ^ 
+     * (have size (2) and have size (3 - 1))
+     *                         ^ 
      * </pre>
      */
-    def size(expectedSize: Long): MatcherFactory2[SUPERCLASS, TYPECLASS1, Size] = and(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherFactory2[SC, TC1, Size] = and(MatcherWords.have.size(expectedSize))
   }
 
   /**
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * Array(1, 2) should (have size (2) and have size (3 - 1))
-   *                                   ^ 
+   * (have size (2) and have size (3 - 1))
+   *                ^ 
    * </pre>
    */
   def and(haveWord: HaveWord): AndHaveWord = new AndHaveWord
@@ -191,141 +205,143 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (contain (2) and contain (3 - 1))
-     *                                     ^
+     * (contain (2) and contain (3 - 1))
+     *                  ^
      * </pre>
      */
-    def apply[U](expectedElement: U): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] = thisMatcherFactory.and(MatcherWords.contain(expectedElement))
-    // def element[SUPERCLASS](expectedElement: SUPERCLASS) = thisMatcherFactory.and(MatcherWords.contain.apply(expectedElement))
+    def apply[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] = thisMatcherFactory.and(MatcherWords.contain(expectedElement))
+    // def element[SC](expectedElement: SC) = thisMatcherFactory.and(MatcherWords.contain.apply(expectedElement))
+
+    // And some, the ones that would by themselves already generate a Matcher, just return a MatcherFactoryN where N is the same.
 
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -&gt; 1, "two" -&gt; 2) should (contain key ("two") and contain key ("one"))
-     *                                                                     ^
+     * (contain key ("two") and contain key ("one"))
+     *                                  ^
      * </pre>
      */
-    def key[U](expectedElement: U): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS1] = thisMatcherFactory.and(MatcherWords.contain.key(expectedElement))
+    def key[U](expectedElement: U): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] = thisMatcherFactory.and(MatcherWords.contain.key(expectedElement))
 
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -&gt; 1, "two" -&gt; 2) should (contain value (2) and contain value (1))
-     *                                                                   ^
+     * (contain value (2) and contain value (1))
+     *                                ^
      * </pre>
      */
-    def value[U](expectedValue: U): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.contain.value(expectedValue))
+    def value[U](expectedValue: U): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] = thisMatcherFactory.and(MatcherWords.contain.value(expectedValue))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) and contain theSameElementsAs List(1, 2, 3))
-     *                                                                           ^
+     * (contain theSameElementAs List(3, 2, 1) and contain theSameElementsAs List(1, 2, 3))
+     *                                                     ^
      * </pre>
      */
-    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.and(MatcherWords.contain.theSameElementsAs(right)(equality))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) and contain theSameIteratedElementsAs List(1, 2, 3))
-     *                                                                           ^
+     * (contain theSameElementAs List(3, 2, 1) and contain theSameIteratedElementsAs List(1, 2, 3))
+     *                                                     ^
      * </pre>
      */
-    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.and(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) and contain allOf (1, 2, 3))
-     *                                                                           ^
+     * (contain theSameElementAs List(3, 2, 1) and contain allOf (1, 2, 3))
+     *                                                     ^
      * </pre>
      */
-    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.and(MatcherWords.contain.allOf(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) and contain inOrder (1, 2, 3))
-     *                                                                           ^
+     * (contain theSameElementAs List(3, 2, 1) and contain inOrder (1, 2, 3))
+     *                                                     ^
      * </pre>
      */
-    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.and(MatcherWords.contain.inOrder(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) and contain oneOf (1, 3, 3))
-     *                                                                           ^
+     * (contain theSameElementAs List(3, 2, 1) and contain oneOf (1, 3, 3))
+     *                                                     ^
      * </pre>
      */
-    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.and(MatcherWords.contain.oneOf(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) and contain only (3, 1))
-     *                                                                           ^
+     * (contain theSameElementAs List(3, 2, 1) and contain only (3, 1))
+     *                                                     ^
      * </pre>
      */
-    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.and(MatcherWords.contain.only(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) and contain inOrderOnly (1, 3))
-     *                                                                           ^
+     * (contain theSameElementAs List(3, 2, 1) and contain inOrderOnly (1, 3))
+     *                                                     ^
      * </pre>
      */
-    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.and(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) and contain noneOf (7, 8, 9))
-     *                                                                           ^
+     * (contain theSameElementAs List(3, 2, 1) and contain noneOf (7, 8, 9))
+     *                                                     ^
      * </pre>
      */
-    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.and(MatcherWords.contain.noneOf(right.toList: _*)(equality))
       
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (contain a (positiveNumber) and contain a (validNumber))
-     *                                                       ^
+     * (contain a (positiveNumber) and contain a (validNumber))
+     *                                         ^
      * </pre>
      */
-    def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       and(MatcherWords.contain.a(aMatcher))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (contain an (positiveNumber) and contain an (validNumber))
-     *                                                        ^
+     * (contain a (positiveNumber) and contain an (invalidNumber))
+     *                                         ^
      * </pre>
      */
-    def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       and(MatcherWords.contain.an(anMatcher))
   }
 
@@ -355,7 +371,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                        ^
      * </pre>
      */
-    def a(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = and(MatcherWords.be.a(symbol))
+    def a(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = and(MatcherWords.be.a(symbol))
 
     /**
      * This method enables the following syntax:
@@ -365,7 +381,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                        ^
      * </pre>
      */
-    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS1] = and(MatcherWords.be.a(bePropertyMatcher))
+    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = and(MatcherWords.be.a(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -375,7 +391,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                             ^
      * </pre>
      */
-    def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = and(MatcherWords.be.a(aMatcher))
+    def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SC with U, TC1] = and(MatcherWords.be.a(aMatcher))
     
     /**
      * This method enables the following syntax:
@@ -385,7 +401,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                           ^
      * </pre>
      */
-    def an(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = and(MatcherWords.be.an(symbol))
+    def an(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = and(MatcherWords.be.an(symbol))
 
     /**
      * This method enables the following syntax:
@@ -395,7 +411,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                           ^
      * </pre>
      */
-    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS1] = and(MatcherWords.be.an(bePropertyMatcher))
+    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = and(MatcherWords.be.an(bePropertyMatcher))
     
     /**
      * This method enables the following syntax:
@@ -405,7 +421,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                         ^
      * </pre>
      */
-    def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = and(MatcherWords.be.an(anMatcher))
+    def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SC with U, TC1] = and(MatcherWords.be.an(anMatcher))
 
     /**
      * This method enables the following syntax:
@@ -415,7 +431,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                  ^
      * </pre>
      */
-    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = and(MatcherWords.be.theSameInstanceAs(anyRef))
+    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SC with AnyRef, TC1] = and(MatcherWords.be.theSameInstanceAs(anyRef))
   }
 
   /**
@@ -444,7 +460,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                         ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = and(MatcherWords.fullyMatch.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.fullyMatch.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -454,7 +470,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                              ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = and(MatcherWords.fullyMatch.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.fullyMatch.regex(regex))
   }
 
   /**
@@ -483,7 +499,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                   ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = and(MatcherWords.include.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.include.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -493,7 +509,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                        ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = and(MatcherWords.include.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.include.regex(regex))
   }
 
   /**
@@ -522,7 +538,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                       ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = and(MatcherWords.startWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.startWith.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -532,7 +548,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                            ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = and(MatcherWords.startWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.startWith.regex(regex))
   }
 
   /**
@@ -561,7 +577,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                   ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = and(MatcherWords.endWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.endWith.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -571,7 +587,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                        ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = and(MatcherWords.endWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.endWith.regex(regex))
   }
 
   /**
@@ -600,7 +616,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                 ^
      * </pre>
      */
-    def equal(any: Any): MatcherFactory2[SUPERCLASS, TYPECLASS1, Equality] =
+    def equal(any: Any): MatcherFactory2[SC, TC1, Equality] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.equal(any)))
 
     /**
@@ -611,7 +627,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                         ^
      * </pre>
      */
-    def equal[U](interval: Interval[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.equal(interval))
+    def equal[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.equal(interval))
 
     /**
      * This method enables the following syntax:
@@ -621,10 +637,10 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                   ^
      * </pre>
      */
-    def equal(o: Null): MatcherFactory1[SUPERCLASS, TYPECLASS1] = {
+    def equal(o: Null): MatcherFactory1[SC, TC1] = {
       thisMatcherFactory and {
-        new Matcher[SUPERCLASS] {
-          def apply(left: SUPERCLASS): MatchResult = {
+        new Matcher[SC] {
+          def apply(left: SC): MatchResult = {
             MatchResult(
               left != null,
               FailureMessages("equaledNull"),
@@ -645,7 +661,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                              ^
      * </pre>
      */
-    def be(any: Any): MatcherFactory1[SUPERCLASS, TYPECLASS1] =
+    def be(any: Any): MatcherFactory1[SC, TC1] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.be(any)))
 
     /**
@@ -656,7 +672,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                               ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SUPERCLASS, TYPECLASS1, Length] =
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SC, TC1, Length] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
@@ -667,7 +683,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                               ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SUPERCLASS, TYPECLASS1, Size] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SC, TC1, Size] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
@@ -678,7 +694,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                     ^
      * </pre>
      */
-    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
     /**
@@ -689,7 +705,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                ^
      * </pre>
      */
-    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.and(MatcherWords.not.be(resultOfLessThanComparison))
 
     /**
@@ -700,7 +716,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                     ^
      * </pre>
      */
-    def be(o: Null): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(o))
+    def be(o: Null): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(o))
 
     /**
      * This method enables the following syntax:
@@ -710,7 +726,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.and(MatcherWords.not.be(resultOfGreaterThanComparison))
 
     /**
@@ -721,7 +737,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                 ^
      * </pre>
      */
-    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.and(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
     /**
@@ -732,7 +748,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                 ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.and(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
     /**
@@ -743,7 +759,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                  ^
      * </pre>
      */
-    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SUPERCLASS, TYPECLASS1] =
+    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SC, TC1] =
       thisMatcherFactory.and(MatcherWords.not.be(tripleEqualsInvocation))
 
     /**
@@ -754,7 +770,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                              ^
      * </pre>
      */
-    def be(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(symbol))
+    def be(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(symbol))
 
     /**
      * This method enables the following syntax:
@@ -764,7 +780,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                ^
      * </pre>
      */
-    def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(beMatcher))
+    def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(beMatcher))
 
     /**
      * This method enables the following syntax:
@@ -774,7 +790,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                              ^
      * </pre>
      */
-    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(bePropertyMatcher))
+    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -784,7 +800,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                ^
      * </pre>
      */
-    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -794,7 +810,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                               ^
      * </pre>
      */
-    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -804,7 +820,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                             ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -814,7 +830,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                ^
      * </pre>
      */
-    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -824,7 +840,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                              ^
      * </pre>
      */
-    def be[SUPERCLASS <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[SUPERCLASS]) = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[SC <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[SC]) = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -834,7 +850,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                ^
      * </pre>
      */
-    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -844,7 +860,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                            ^
      * </pre>
      */
-    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
+    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
     /**
      * This method enables the following syntax, for the "primitive" numeric types:
@@ -854,7 +870,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                          ^
      * </pre>
      */
-    def be[U](interval: Interval[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.and(MatcherWords.not.be(interval))
+    def be[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(interval))
 
     /**
      * This method enables the following syntax:
@@ -864,7 +880,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                     ^
      * </pre>
      */
-    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.and(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
     /**
@@ -875,7 +891,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                     ^
      * </pre>
      */
-    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.and(MatcherWords.not.include(resultOfRegexWordApplication))
 
     /**
@@ -886,7 +902,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                            ^
      * </pre>
      */
-    def include(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def include(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.and(MatcherWords.not.include(expectedSubstring))
 
     /**
@@ -897,7 +913,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                    ^
      * </pre>
      */
-    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.and(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
     /**
@@ -908,7 +924,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                              ^
      * </pre>
      */
-    def startWith(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def startWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.and(MatcherWords.not.startWith(expectedSubstring))
 
     /**
@@ -919,7 +935,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                  ^
      * </pre>
      */
-    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.and(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
     /**
@@ -930,7 +946,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                            ^
      * </pre>
      */
-    def endWith(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def endWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.and(MatcherWords.not.endWith(expectedSubstring))
 
     /**
@@ -941,7 +957,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                     ^
      * </pre>
      */
-    def contain[U](expectedElement: U): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] =
+    def contain[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] =
       thisMatcherFactory.and(MatcherWords.not.contain(expectedElement))
 
     /**
@@ -952,7 +968,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                      ^
      * </pre>
      */
-    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS1] =
+    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] =
       thisMatcherFactory.and(MatcherWords.not.contain(resultOfKeyWordApplication))
 
     /**
@@ -963,7 +979,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                   ^
      * </pre>
      */
-    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS1] =
+    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] =
       thisMatcherFactory.and(MatcherWords.not.contain(resultOfValueWordApplication))
       
     /**
@@ -974,7 +990,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                      ^
      * </pre>
      */
-    def contain[U](right: ContainMatcher[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] =
+    def contain[U](right: ContainMatcher[U]): MatcherFactory1[SC with GenTraversable[U], TC1] =
       thisMatcherFactory.and(MatcherWords.not.contain(right))
       
     /**
@@ -985,7 +1001,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                     ^
      * </pre>
      */
-    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] = 
+    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
       thisMatcherFactory.and(MatcherWords.not.contain(resultOfAWordApplication))
       
     /**
@@ -996,7 +1012,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                 ^
      * </pre>
      */
-    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] = 
+    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
       thisMatcherFactory.and(MatcherWords.not.contain(resultOfAnWordApplication))
   }
 
@@ -1026,7 +1042,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                              ^
      * </pre>
      */
-    def length(expectedLength: Long): MatcherFactory2[SUPERCLASS, TYPECLASS1, Length] = or(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherFactory2[SC, TC1, Length] = or(MatcherWords.have.length(expectedLength))
 
     /**
      * This method enables the following syntax:
@@ -1036,7 +1052,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                       ^
      * </pre>
      */
-    def size(expectedSize: Long): MatcherFactory2[SUPERCLASS, TYPECLASS1, Size] = or(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherFactory2[SC, TC1, Size] = or(MatcherWords.have.size(expectedSize))
   }
 
   /**
@@ -1065,8 +1081,8 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                            ^
      * </pre>
      */
-    def apply[U](expectedElement: U): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] = thisMatcherFactory.or(MatcherWords.contain(expectedElement))
-    // def element[SUPERCLASS](expectedElement: SUPERCLASS) = thisMatcherFactory.or(MatcherWords.contain.apply(expectedElement))
+    def apply[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] = thisMatcherFactory.or(MatcherWords.contain(expectedElement))
+    // def element[SC](expectedElement: SC) = thisMatcherFactory.or(MatcherWords.contain.apply(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -1076,7 +1092,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                    ^
      * </pre>
      */
-    def key[U](expectedKey: U): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS1] = thisMatcherFactory.or(MatcherWords.contain.key(expectedKey))
+    def key[U](expectedKey: U): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] = thisMatcherFactory.or(MatcherWords.contain.key(expectedKey))
 
     /**
      * This method enables the following syntax:
@@ -1086,7 +1102,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                  ^
      * </pre>
      */
-    def value[U](expectedValue: U): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.contain.value(expectedValue))
+    def value[U](expectedValue: U): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] = thisMatcherFactory.or(MatcherWords.contain.value(expectedValue))
     
     /**
      * This method enables the following syntax:
@@ -1096,7 +1112,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                          ^
      * </pre>
      */
-    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.or(MatcherWords.contain.theSameElementsAs(right)(equality))
     
     /**
@@ -1107,7 +1123,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                          ^
      * </pre>
      */
-    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.or(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
     
     /**
@@ -1118,7 +1134,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                          ^
      * </pre>
      */
-    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.or(MatcherWords.contain.allOf(right.toList: _*)(equality))
     
     /**
@@ -1129,7 +1145,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                          ^
      * </pre>
      */
-    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.or(MatcherWords.contain.inOrder(right.toList: _*)(equality))
     
     /**
@@ -1140,7 +1156,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                          ^
      * </pre>
      */
-    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.or(MatcherWords.contain.oneOf(right.toList: _*)(equality))
     
     /**
@@ -1151,7 +1167,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                          ^
      * </pre>
      */
-    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.or(MatcherWords.contain.only(right.toList: _*)(equality))
     
     /**
@@ -1162,7 +1178,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                          ^
      * </pre>
      */
-    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.or(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
     
     /**
@@ -1173,7 +1189,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                          ^
      * </pre>
      */
-    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       thisMatcherFactory.or(MatcherWords.contain.noneOf(right.toList: _*)(equality))
       
     /**
@@ -1184,18 +1200,18 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                      ^
      * </pre>
      */
-    def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       or(MatcherWords.contain.a(aMatcher))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (contain an (positiveNumber) or contain an (validNumber))
-     *                                                       ^
+     * result should (contain a (positiveNumber) or contain an (invalidNumber))
+     *                                                      ^
      * </pre>
      */
-    def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SUPERCLASS with GenTraversable[E], TYPECLASS1] = 
+    def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
       or(MatcherWords.contain.an(anMatcher))
   }
 
@@ -1203,8 +1219,8 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * Map("one" -&gt; 1, "two" -&gt; 2) should (contain value (7) or contain value (1))
-   *                                                       ^
+   * (contain value (7) or contain value (1))
+   *                    ^
    * </pre>
    */
   def or(containWord: ContainWord): OrContainWord = new OrContainWord
@@ -1221,31 +1237,31 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * isFileMock should (be a ('file) or be a ('directory))
-     *                                       ^
+     * (be a ('file) or be a ('directory))
+     *                     ^
      * </pre>
      */
-    def a(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = or(MatcherWords.be.a(symbol))
+    def a(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = or(MatcherWords.be.a(symbol))
 
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * isFileMock should (be a (file) or be a (directory))
-     *                                      ^
+     * (be a (file) or be a (directory))
+     *                    ^
      * </pre>
      */
-    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS1] = or(MatcherWords.be.a(bePropertyMatcher))
+    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = or(MatcherWords.be.a(bePropertyMatcher))
     
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (be a (positiveNumber) or be a (validNumber))
+     * XXX result should (be a (positiveNumber) or be a (validNumber))
      *                                            ^
      * </pre>
      */
-    def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = or(MatcherWords.be.a(aMatcher))
+    def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SC with U, TC1] = or(MatcherWords.be.a(aMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1255,7 +1271,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                         ^
      * </pre>
      */
-    def an(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = or(MatcherWords.be.an(symbol))
+    def an(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = or(MatcherWords.be.an(symbol))
 
     /**
      * This method enables the following syntax:
@@ -1265,7 +1281,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                        ^
      * </pre>
      */
-    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS1] = or(MatcherWords.be.an(bePropertyMatcher))
+    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = or(MatcherWords.be.an(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1275,7 +1291,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                        ^
      * </pre>
      */
-    def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = or(MatcherWords.be.an(anMatcher))
+    def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SC with U, TC1] = or(MatcherWords.be.an(anMatcher))
     
     /**
      * This method enables the following syntax:
@@ -1285,7 +1301,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                 ^
      * </pre>
      */
-    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = or(MatcherWords.be.theSameInstanceAs(anyRef))
+    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SC with AnyRef, TC1] = or(MatcherWords.be.theSameInstanceAs(anyRef))
   }
 
   /**
@@ -1314,7 +1330,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                        ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = or(MatcherWords.fullyMatch.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.fullyMatch.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -1324,7 +1340,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                        ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = or(MatcherWords.fullyMatch.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.fullyMatch.regex(regex))
   }
 
   /**
@@ -1353,7 +1369,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                  ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = or(MatcherWords.include.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.include.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -1363,7 +1379,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                  ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = or(MatcherWords.include.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.include.regex(regex))
   }
 
   /**
@@ -1392,7 +1408,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                      ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = or(MatcherWords.startWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.startWith.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -1402,7 +1418,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                      ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = or(MatcherWords.startWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.startWith.regex(regex))
   }
 
   /**
@@ -1431,7 +1447,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                  ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = or(MatcherWords.endWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.endWith.regex(regexString))
 
     /**
      * This method enables the following syntax:
@@ -1441,7 +1457,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                  ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] = or(MatcherWords.endWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.endWith.regex(regex))
   }
 
   /**
@@ -1470,7 +1486,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                ^
      * </pre>
      */
-    def equal(any: Any): MatcherFactory1[SUPERCLASS, TYPECLASS1] =
+    def equal(any: Any): MatcherFactory1[SC, TC1] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.legacyEqual(any)))
 
     /**
@@ -1481,7 +1497,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                        ^
      * </pre>
      */
-    def equal[U](interval: Interval[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.equal(interval))
+    def equal[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.equal(interval))
 
     /**
      * This method enables the following syntax:
@@ -1491,10 +1507,10 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                   ^
      * </pre>
      */
-    def equal(o: Null): MatcherFactory1[SUPERCLASS, TYPECLASS1] = {
+    def equal(o: Null): MatcherFactory1[SC, TC1] = {
       thisMatcherFactory or {
-        new Matcher[SUPERCLASS] {
-          def apply(left: SUPERCLASS): MatchResult = {
+        new Matcher[SC] {
+          def apply(left: SC): MatchResult = {
             MatchResult(
               left != null,
               FailureMessages("equaledNull"),
@@ -1515,7 +1531,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                             ^
      * </pre>
      */
-    def be(any: Any): MatcherFactory1[SUPERCLASS, TYPECLASS1] =
+    def be(any: Any): MatcherFactory1[SC, TC1] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.be(any)))
 
     /**
@@ -1526,7 +1542,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SUPERCLASS, TYPECLASS1, Length] =
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SC, TC1, Length] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
@@ -1537,7 +1553,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                              ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SUPERCLASS, TYPECLASS1, Size] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SC, TC1, Size] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
@@ -1548,7 +1564,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                    ^
      * </pre>
      */
-    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
     /**
@@ -1559,7 +1575,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                    ^
      * </pre>
      */
-    def be(o: Null): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(o))
+    def be(o: Null): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(o))
 
     /**
      * This method enables the following syntax:
@@ -1569,7 +1585,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                               ^
      * </pre>
      */
-    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.or(MatcherWords.not.be(resultOfLessThanComparison))
 
     /**
@@ -1580,7 +1596,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                               ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.or(MatcherWords.not.be(resultOfGreaterThanComparison))
 
     /**
@@ -1591,7 +1607,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                ^
      * </pre>
      */
-    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.or(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
     /**
@@ -1602,7 +1618,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] =
+    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
       thisMatcherFactory.or(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
     /**
@@ -1613,7 +1629,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                 ^
      * </pre>
      */
-    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SUPERCLASS, TYPECLASS1] =
+    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SC, TC1] =
       thisMatcherFactory.or(MatcherWords.not.be(tripleEqualsInvocation))
 
     /**
@@ -1624,7 +1640,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                            ^
      * </pre>
      */
-    def be(symbol: Symbol): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(symbol))
+    def be(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(symbol))
 
     /**
      * This method enables the following syntax:
@@ -1634,7 +1650,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                ^
      * </pre>
      */
-    def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(beMatcher))
+    def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(beMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1644,7 +1660,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                          ^
      * </pre>
      */
-    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SUPERCLASS with AnyRef with U, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(bePropertyMatcher))
+    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(bePropertyMatcher))
 
     /**
      * This method enables the following syntax:
@@ -1654,7 +1670,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                    ^
      * </pre>
      */
-    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1664,7 +1680,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                 ^
      * </pre>
      */
-    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -1674,7 +1690,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                            ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1684,7 +1700,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                ^
      * </pre>
      */
-    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1694,7 +1710,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                             ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
      * This method enables the following syntax:
@@ -1704,7 +1720,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                ^
      * </pre>
      */
-    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
     
     /**
      * This method enables the following syntax:
@@ -1714,7 +1730,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                           ^
      * </pre>
      */
-    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SUPERCLASS with AnyRef, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
+    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
     /**
      * This method enables the following syntax for the "primitive" numeric types:
@@ -1724,7 +1740,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                         ^
      * </pre>
      */
-    def be[U](interval: Interval[U]): MatcherFactory1[SUPERCLASS with U, TYPECLASS1] = thisMatcherFactory.or(MatcherWords.not.be(interval))
+    def be[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(interval))
 
     /**
      * This method enables the following syntax:
@@ -1734,7 +1750,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                     ^
      * </pre>
      */
-    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.or(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
     /**
@@ -1745,7 +1761,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                  ^
      * </pre>
      */
-    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.or(MatcherWords.not.include(resultOfRegexWordApplication))
 
     /**
@@ -1756,7 +1772,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                           ^
      * </pre>
      */
-    def include(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def include(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.or(MatcherWords.not.include(expectedSubstring))
 
     /**
@@ -1767,7 +1783,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                   ^
      * </pre>
      */
-    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.or(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
     /**
@@ -1778,7 +1794,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                              ^
      * </pre>
      */
-    def startWith(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def startWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.or(MatcherWords.not.startWith(expectedSubstring))
 
     /**
@@ -1789,7 +1805,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                 ^
      * </pre>
      */
-    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.or(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
     /**
@@ -1800,7 +1816,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                            ^
      * </pre>
      */
-    def endWith(expectedSubstring: String): MatcherFactory1[SUPERCLASS with String, TYPECLASS1] =
+    def endWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
       thisMatcherFactory.or(MatcherWords.not.endWith(expectedSubstring))
 
     /**
@@ -1811,7 +1827,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                            ^
      * </pre>
      */
-    def contain[U](expectedElement: U): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] =
+    def contain[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] =
       thisMatcherFactory.or(MatcherWords.not.contain(expectedElement))
 
     /**
@@ -1822,7 +1838,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                    ^
      * </pre>
      */
-    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[U, Any], TYPECLASS1] =
+    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] =
       thisMatcherFactory.or(MatcherWords.not.contain(resultOfKeyWordApplication))
 
     /**
@@ -1833,7 +1849,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                  ^
      * </pre>
      */
-    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SUPERCLASS with scala.collection.GenMap[K, U] forSome { type K }, TYPECLASS1] =
+    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] =
       thisMatcherFactory.or(MatcherWords.not.contain(resultOfValueWordApplication))
       
     /**
@@ -1844,7 +1860,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                                     ^
      * </pre>
      */
-    def contain[U](right: ContainMatcher[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] =
+    def contain[U](right: ContainMatcher[U]): MatcherFactory1[SC with GenTraversable[U], TC1] =
       thisMatcherFactory.or(MatcherWords.not.contain(right))
       
     /**
@@ -1855,7 +1871,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                    ^
      * </pre>
      */
-    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] = 
+    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
       thisMatcherFactory.or(MatcherWords.not.contain(resultOfAWordApplication))
       
     /**
@@ -1866,7 +1882,7 @@ abstract class MatcherFactory1[-SUPERCLASS, TYPECLASS1[_]] { thisMatcherFactory 
      *                                                ^
      * </pre>
      */
-    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SUPERCLASS with GenTraversable[U], TYPECLASS1] = 
+    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
       thisMatcherFactory.or(MatcherWords.not.contain(resultOfAnWordApplication))
   }
 

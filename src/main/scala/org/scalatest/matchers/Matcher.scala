@@ -510,9 +510,9 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
       }
     }
 
-  def and[U <: T, TYPECLASS[_]](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS]): MatcherFactory1[U, TYPECLASS] =
-    new MatcherFactory1[U, TYPECLASS] {
-      def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+  def and[U <: T, TC1[_]](rightMatcherFactory1: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
+    new MatcherFactory1[U, TC1] {
+      def matcher[V <: U : TC1]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val rightMatcher = rightMatcherFactory1.matcher
@@ -552,9 +552,9 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
       }
     }
 
-  def or[U <: T, TYPECLASS[_]](rightMatcherFactory1: MatcherFactory1[U, TYPECLASS]): MatcherFactory1[U, TYPECLASS] =
-    new MatcherFactory1[U, TYPECLASS] {
-      def matcher[V <: U : TYPECLASS]: Matcher[V] = {
+  def or[U <: T, TC1[_]](rightMatcherFactory1: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
+    new MatcherFactory1[U, TC1] {
+      def matcher[V <: U : TC1]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val rightMatcher = rightMatcherFactory1.matcher
@@ -745,8 +745,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (contain an (positiveNumber) and contain an (validNumber))
-     *                                                        ^
+     * result should (contain a (positiveNumber) and contain an (invalidNumber))
+     *                                                       ^
      * </pre>
      */
     def an[E](anMatcher: AnMatcher[E]): Matcher[T with GenTraversable[E]] = 
@@ -1615,8 +1615,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (contain an (positiveNumber) or contain an (validNumber))
-     *                                                       ^
+     * result should (contain a (positiveNumber) or contain an (invalidNumber))
+     *                                                      ^
      * </pre>
      */
     def an[E](anMatcher: AnMatcher[E]): Matcher[T with GenTraversable[E]] = 
