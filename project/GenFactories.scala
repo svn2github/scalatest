@@ -73,7 +73,7 @@ import org.scalatest.words.ResultOfValueWordApplication
  * @author Bill Venners
  */
 // Add a TYPECLASSN for each N
-abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
+abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
 """
 /*
   // Add a TYPECLASSN for each N
@@ -1993,7 +1993,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
  
     try {
       val st = new org.antlr.stringtemplate.StringTemplate(wholeThang)
-      st.setAttribute("year", "2013");
+      st.setAttribute("arity", arity);
       bw.write(st.toString)
     }
     finally {
