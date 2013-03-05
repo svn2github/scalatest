@@ -153,18 +153,8 @@ class ShouldLogicalMatcherExprSpec extends Spec with Matchers with Checkers with
 
       val mockClown = mock[Clown]
 
-/*
-
-TODO: Uncomment this once the DSL is replicated under MatcherGen1, and replace
- the next clause where I put parens after and
       intercept[TestFailedException] {
         "hi" should (equal ("ho") and not equal {mockClown.hasBigRedNose; "ho"})
-      }
-*/
-
-      // Eventually replace this clause with commented out one above
-      intercept[TestFailedException] {
-        "hi" should (equal ("ho") and (not equal {mockClown.hasBigRedNose; "ho"}))
       }
 
       verify(mockClown, times(1)).hasBigRedNose
