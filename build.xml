@@ -158,6 +158,13 @@
           </mapper>
         </uptodate>
 
+        <uptodate property="genfactories.uptodate"
+                  srcfile="project/GenFactories.scala">
+          <mapper type="merge" to=
+            "${build}/scala-${scala.version}/src_managed/main/scala/org/scalatest/matchers/MatcherFactory1.delme">
+          </mapper>
+        </uptodate>
+
         <uptodate property="genmatchers.uptodate"
                   srcfile="project/GenMatchers.scala">
           <mapper type="merge" to=
@@ -202,6 +209,7 @@
             <include name="GenMatchers.scala" />
         	<include name="GenInspectors.scala" />
         	<include name="GenTable.scala" />
+        	<include name="GenFactories.scala" />
         	<include name="GenTheyWord.scala" />
         </scalac>
     </target>
@@ -244,6 +252,15 @@
     <target name="gendeprecatedshouldtests" depends="init, compile-codegenerators">
         <!-- Then, run it. -->
         <java classname="GenDeprecatedShouldMatchersTests" classpathref="run.generators.class.path" fork="false">
+        	<arg value="${build}/scala-${scala.version}/src_managed" />
+            <arg value="${scala.version}" />
+        </java>
+    </target>
+
+    <target name="genfactories" depends="init, compile-codegenerators"
+            unless="genfactories.uptodate">
+        <java classname="GenFactories" classpathref="run.generators.class.path"
+              fork="false">
         	<arg value="${build}/scala-${scala.version}/src_managed" />
             <arg value="${scala.version}" />
         </java>
