@@ -74,12 +74,26 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    */
   def matcher[T <: SC : TC1]: Matcher[T]
 
-  // Enables the following syntax:
-  // result should equal (1) (decided by defaultEquality)
+  /**
+   * Enables the <a href="../../org/scalautils/"><code>Explicitly</code></a> DSL to be used directly
+   * on a <code>MatcherFactory1</code>, without invoking the <code>matcher</code> factory method.
+   *
+   * <p>
+   * Here's an example of the kind of syntax this <code>apply</code> method can enable:
+   * </p>
+   *
+   * <pre>
+   * result should equal (1) (decided by defaultEquality)
+   * </pre>
+   */
   def apply[T <: SC](explicit: TC1[T]): Matcher[T] = matcher[T](explicit)
 
+  // And and or taking a Matcher
   // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
   // (equal (7) and ...)
+  /**
+   * Ands this matcher factory with the passed matcher.
+   */
   def and[U <: SC](rightMatcher: Matcher[U]): MatcherFactory1[U, TC1] =
     new MatcherFactory1[U, TC1] {
       def matcher[V <: U : TC1]: Matcher[V] = {
@@ -94,6 +108,9 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
 
   // (equal (7) or ...)
   // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
+  /**
+   * Ors this matcher factory with the passed matcher.
+   */
   def or[U <: SC](rightMatcher: Matcher[U]): MatcherFactory1[U, TC1] =
     new MatcherFactory1[U, TC1] {
       def matcher[V <: U : TC1]: Matcher[V] = {
@@ -106,68 +123,84 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
       }
     }
 
+  // And and or taking a MF1 that has the rightmost type class
 // Need one for the same typeclass and one for a different typeclass, yes, and can overload because
 // one returns a MatcherFactory1 the other a MatcherFactory2.
    // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
   // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
   // And what I'd do is use the rightmost TC. I may call these TC's. If it is the same, then I return the same one.
-  def or[U <: SC](rightMatcherFactory1: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
-    new MatcherFactory1[U, TC1] {
-      def matcher[V <: U : TC1]: Matcher[V] = {
-        new Matcher[V] {
-          def apply(left: V): MatchResult = {
-            val leftMatcher = thisMatcherFactory.matcher
-            val rightMatcher = rightMatcherFactory1.matcher
-            orMatchersAndApply(left, leftMatcher, rightMatcher)
-          }
-        }
-      }
-    }
-
-  // This one, though, I'd need to add 1 more. Amazing this overloads, but anyway. And I really need this for each N. The above
-  // special case is just for MatcherFactory1. The other N's I'm not going to bother trying to do a quickie overload.
-  def or[U <: SC, TC12[_]](rightMatcherFactory1: MatcherFactory1[U, TC12]): MatcherFactory2[U, TC1, TC12] =
-    new MatcherFactory2[U, TC1, TC12] {
-      def matcher[V <: U : TC1 : TC12]: Matcher[V] = {
-        new Matcher[V] {
-          def apply(left: V): MatchResult = {
-            val leftMatcher = thisMatcherFactory.matcher
-            val rightMatcher = rightMatcherFactory1.matcher
-            orMatchersAndApply(left, leftMatcher, rightMatcher)
-          }
-        }
-      }
-    }
-
   // "hi" should (equal ("ho") and {mockClown.hasBigRedNose; equal ("ho")})
   // Yes, same for and. Essentially, each N must have and one each and and or methods that takes a Matcher, one and and or
   // method that takes each other MatcherFactoryN, plus one extra one for MatcherFactory1 of the rightmost type.
-  def and[U <: SC](rightMatcherFactory1: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
+
+  /**
+   * Ands this matcher factory with the passed <code>MatcherFactory1</code> that has the same final typeclass as this one.
+   */
+  def and[U <: SC](rightMatcherFactory: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
     new MatcherFactory1[U, TC1] {
       def matcher[V <: U : TC1]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
-            val rightMatcher = rightMatcherFactory1.matcher
+            val rightMatcher = rightMatcherFactory.matcher
             andMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
       }
     }
 
-  def and[U <: SC, TC12[_]](rightMatcherFactory1: MatcherFactory1[U, TC12]): MatcherFactory2[U, TC1, TC12] =
-    new MatcherFactory2[U, TC1, TC12] {
-      def matcher[V <: U : TC1 : TC12]: Matcher[V] = {
+  /**
+   * Ors this matcher factory with the passed <code>MatcherFactory1</code> that has the same final typeclass as this one.
+   */
+  def or[U <: SC](rightMatcherFactory: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
+    new MatcherFactory1[U, TC1] {
+      def matcher[V <: U : TC1]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
-            val rightMatcher = rightMatcherFactory1.matcher
+            val rightMatcher = rightMatcherFactory.matcher
+            orMatchersAndApply(left, leftMatcher, rightMatcher)
+          }
+        }
+      }
+    }
+
+  // And and or taking a MF1 with a different type class
+  // This one, though, I'd need to add 1 more. Amazing this overloads, but anyway. And I really need this for each N. The above
+  // special case is just for MatcherFactory1. The other N's I'm not going to bother trying to do a quickie overload.
+  /**
+   * Ands this matcher factory with the passed matcher factory.
+   */
+  def and[U <: SC, TC2[_]](rightMatcherFactory: MatcherFactory1[U, TC2]): MatcherFactory2[U, TC1, TC2] =
+    new MatcherFactory2[U, TC1, TC2] {
+      def matcher[V <: U : TC1 : TC2]: Matcher[V] = {
+        new Matcher[V] {
+          def apply(left: V): MatchResult = {
+            val leftMatcher = thisMatcherFactory.matcher
+            val rightMatcher = rightMatcherFactory.matcher
             andMatchersAndApply(left, leftMatcher, rightMatcher)
           }
         }
       }
     }
 
+  /**
+   * Ors this matcher factory with the passed matcher factory.
+   */
+  def or[U <: SC, TC2[_]](rightMatcherFactory: MatcherFactory1[U, TC2]): MatcherFactory2[U, TC1, TC2] =
+    new MatcherFactory2[U, TC1, TC2] {
+      def matcher[V <: U : TC1 : TC2]: Matcher[V] = {
+        new Matcher[V] {
+          def apply(left: V): MatchResult = {
+            val leftMatcher = thisMatcherFactory.matcher
+            val rightMatcher = rightMatcherFactory.matcher
+            orMatchersAndApply(left, leftMatcher, rightMatcher)
+          }
+        }
+      }
+    }
+
+  // If A is Arity of this one, then For each N > Arity < 22 - Arity, and and or taking a MFN with a different type class
   // Replicating the and/or DSL here:
 
   /**
