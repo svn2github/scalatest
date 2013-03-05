@@ -616,11 +616,10 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *
      * <pre class="stHighlight">
      * Array(1, 2) should (contain (2) and contain (3 - 1))
-     *                                     ^
+     *                                             ^
      * </pre>
      */
     def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = outerInstance.and(MatcherWords.contain(expectedElement))
-    // def element[T](expectedElement: T) = outerInstance.and(MatcherWords.contain.apply(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -786,7 +785,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *
      * <pre class="stHighlight">
      * myFile should (be a (file) and be a (file))
-     *                                        ^
+     *                                   ^
      * </pre>
      */
     def a[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = and(MatcherWords.be.a(bePropertyMatcher))
@@ -816,7 +815,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *
      * <pre class="stHighlight">
      * isAppleMock should (be an (apple) and be an (apple))
-     *                                           ^
+     *                                          ^
      * </pre>
      */
     def an[U](bePropertyMatcher: BePropertyMatcher[U]): Matcher[T with AnyRef with U] = and(MatcherWords.be.an(bePropertyMatcher))
@@ -925,7 +924,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
    *
    * <pre class="stHighlight">
    * "hello, world" should (include regex ("hel*o") and include regex ("wor.d"))
-   *                                           ^
+   *                                                ^
    * </pre>
    */
   def and(includeWord: IncludeWord): AndIncludeWord = new AndIncludeWord
@@ -1031,8 +1030,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      * This method enables the following syntax, for the "primitive" numeric types:
      *
      * <pre class="stHighlight">
-     * sevenDotOh should (not equal (17.0 plusOrMinus 0.2) and not equal (17.0 plusOrMinus 0.2))
-     *                                                         ^
+     * sevenDotOh should (not equal (17.0 +- 0.2) and not equal (17.0 +- 0.2))
+     *                                                    ^
      * </pre>
      */
     def equal[U](interval: Interval[U]): Matcher[T with U] = outerInstance.and(MatcherWords.not.equal(interval))
@@ -1274,8 +1273,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      * This method enables the following syntax, for the "primitive" numeric types:
      *
      * <pre class="stHighlight">
-     * sevenDotOh should (not be (17.0 plusOrMinus 0.2) and not be (17.0 plusOrMinus 0.2))
-     *                                                          ^
+     * sevenDotOh should (not be (17.0 +- 0.2) and not be (17.0 +- 0.2))
+     *                                                 ^
      * </pre>
      */
     def be[U](interval: Interval[U]): Matcher[T with U] = outerInstance.and(MatcherWords.not.be(interval))
@@ -1446,8 +1445,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (have length (2) and have length (3 - 1))
-     *                                              ^
+     * Array(1, 2) should (have length (2) or have length (3 - 1))
+     *                                             ^
      * </pre>
      */
     def length(expectedLength: Long): MatcherFactory1[T, Length] = or(MatcherWords.have.length(expectedLength))
@@ -1456,8 +1455,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (have size (2) and have size (3 - 1))
-     *                                       ^
+     * Array(1, 2) should (have size (2) or have size (3 - 1))
+     *                                      ^
      * </pre>
      */
     def size(expectedSize: Long): MatcherFactory1[T, Size] = or(MatcherWords.have.size(expectedSize))
@@ -1467,7 +1466,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * Array(1, 2) should (have size (2) and have size (3 - 1))
+   * Array(1, 2) should (have size (2) or have size (3 - 1))
    *                                   ^
    * </pre>
    */
@@ -1490,7 +1489,6 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      * </pre>
      */
     def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = outerInstance.or(MatcherWords.contain(expectedElement))
-    // def element[T](expectedElement: T) = outerInstance.or(MatcherWords.contain.apply(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -1873,7 +1871,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
    *
    * <pre class="stHighlight">
    * "1.7b" should (endWith regex ("hello") or endWith regex ("7b"))
-   *                                           ^
+   *                                        ^
    * </pre>
    */
   def or(endWithWord: EndWithWord): OrEndWithWord = new OrEndWithWord
@@ -1901,8 +1899,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      * This method enables the following syntax for the "primitive" numeric types:
      *
      * <pre class="stHighlight">
-     * sevenDotOh should (not equal (17.0 plusOrMinus 0.2) or not equal (17.0 plusOrMinus 0.2))
-     *                                                        ^
+     * sevenDotOh should (not equal (17.0 +- 0.2) or not equal (17.0 +- 0.2))
+     *                                                   ^
      * </pre>
      */
     def equal[U](interval: Interval[U]): Matcher[T with U] = outerInstance.or(MatcherWords.not.equal(interval))
@@ -1912,7 +1910,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *
      * <pre class="stHighlight">
      * aNullRef should (not equal (null) or not equal (null))
-     *                                   ^
+     *                                          ^
      * </pre>
      */
     def equal(o: Null): Matcher[T] = {
@@ -2144,8 +2142,8 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      * This method enables the following syntax for the "primitive" numeric types:
      *
      * <pre class="stHighlight">
-     * sevenDotOh should (not be (17.0 plusOrMinus 0.2) or not be (17.0 plusOrMinus 0.2))
-     *                                                         ^
+     * sevenDotOh should (not be (17.0 +- 0.2) or not be (17.0 +- 0.2))
+     *                                                ^
      * </pre>
      */
     def be[U](interval: Interval[U]): Matcher[T with U] = outerInstance.or(MatcherWords.not.be(interval))

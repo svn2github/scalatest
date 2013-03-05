@@ -164,8 +164,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax given a <code>MatcherFactory1</code>:
      *
      * <pre class="stHighlight">
-     * (<MatcherFactory1> and have length (3 - 1))
-     *                               ^
+     * (aMatcherFactory and have length (3 - 1))
+     *                           ^
      * </pre>
      */
     def length(expectedLength: Long): MatcherFactory2[SC, TC1, Length] = and(MatcherWords.have.length(expectedLength))
@@ -176,8 +176,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (have size (2) and have size (3 - 1))
-     *                         ^ 
+     * (aMatcherFactory and have size (3 - 1))
+     *                           ^ 
      * </pre>
      */
     def size(expectedSize: Long): MatcherFactory2[SC, TC1, Size] = and(MatcherWords.have.size(expectedSize))
@@ -187,8 +187,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * (have size (2) and have size (3 - 1))
-   *                ^ 
+   * (haMatcherFactory and have size (3 - 1))
+   *                   ^ 
    * </pre>
    */
   def and(haveWord: HaveWord): AndHaveWord = new AndHaveWord
@@ -205,12 +205,11 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain (2) and contain (3 - 1))
-     *                  ^
+     * (aMatcherFactory and contain (3 - 1))
+     *                              ^
      * </pre>
      */
     def apply[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] = thisMatcherFactory.and(MatcherWords.contain(expectedElement))
-    // def element[SC](expectedElement: SC) = thisMatcherFactory.and(MatcherWords.contain.apply(expectedElement))
 
     // And some, the ones that would by themselves already generate a Matcher, just return a MatcherFactoryN where N is the same.
 
@@ -218,8 +217,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain key ("two") and contain key ("one"))
-     *                                  ^
+     * (aMatcherFactory and contain key ("one"))
+     *                               ^
      * </pre>
      */
     def key[U](expectedElement: U): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] = thisMatcherFactory.and(MatcherWords.contain.key(expectedElement))
@@ -228,8 +227,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain value (2) and contain value (1))
-     *                                ^
+     * (aMatcherFactory and contain value (1))
+     *                              ^
      * </pre>
      */
     def value[U](expectedValue: U): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] = thisMatcherFactory.and(MatcherWords.contain.value(expectedValue))
@@ -238,8 +237,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain theSameElementAs List(3, 2, 1) and contain theSameElementsAs List(1, 2, 3))
-     *                                                     ^
+     * (aMatcherFactory and contain theSameElementsAs List(1, 2, 3))
+     *                              ^
      * </pre>
      */
     def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -249,8 +248,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain theSameElementAs List(3, 2, 1) and contain theSameIteratedElementsAs List(1, 2, 3))
-     *                                                     ^
+     * (aMatcherFactory and contain theSameIteratedElementsAs List(1, 2, 3))
+     *                              ^
      * </pre>
      */
     def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -260,8 +259,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain theSameElementAs List(3, 2, 1) and contain allOf (1, 2, 3))
-     *                                                     ^
+     * (aMatcherFactory and contain allOf (1, 2, 3))
+     *                              ^
      * </pre>
      */
     def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -271,8 +270,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain theSameElementAs List(3, 2, 1) and contain inOrder (1, 2, 3))
-     *                                                     ^
+     * (aMatcherFactory and contain inOrder (1, 2, 3))
+     *                              ^
      * </pre>
      */
     def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -282,8 +281,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain theSameElementAs List(3, 2, 1) and contain oneOf (1, 3, 3))
-     *                                                     ^
+     * (aMatcherFactory and contain oneOf (1, 3, 3))
+     *                              ^
      * </pre>
      */
     def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -293,8 +292,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain theSameElementAs List(3, 2, 1) and contain only (3, 1))
-     *                                                     ^
+     * (aMatcherFactory and contain only (3, 1))
+     *                              ^
      * </pre>
      */
     def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -304,8 +303,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain theSameElementAs List(3, 2, 1) and contain inOrderOnly (1, 3))
-     *                                                     ^
+     * (and contain inOrderOnly (1, 3))
+     *              ^
      * </pre>
      */
     def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -315,8 +314,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain theSameElementAs List(3, 2, 1) and contain noneOf (7, 8, 9))
-     *                                                     ^
+     * (and contain noneOf (7, 8, 9))
+     *              ^
      * </pre>
      */
     def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -326,8 +325,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain a (positiveNumber) and contain a (validNumber))
-     *                                         ^
+     * (aMatcherFactory and contain a (validNumber))
+     *                              ^
      * </pre>
      */
     def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -337,8 +336,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (contain a (positiveNumber) and contain an (invalidNumber))
-     *                                         ^
+     * (aMatcherFactory and contain an (invalidNumber))
+     *                              ^
      * </pre>
      */
     def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -349,8 +348,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * Map("one" -&gt; 1, "two" -&gt; 2) should (contain key ("two") and contain key ("one"))
-   *                                                         ^ 
+   * (aMatcherFactory and contain key ("one"))
+   *                  ^ 
    * </pre>
    */
   def and(containWord: ContainWord): AndContainWord = new AndContainWord
@@ -367,8 +366,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * isFileMock should (be a ('file) and be a ('file))
-     *                                        ^
+     * (aMatcherFactory and be a ('file))
+     *                         ^
      * </pre>
      */
     def a(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = and(MatcherWords.be.a(symbol))
@@ -377,8 +376,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * myFile should (be a (file) and be a (file))
-     *                                        ^
+     * (aMatcherFactory and be a (file))
+     *                         ^
      * </pre>
      */
     def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = and(MatcherWords.be.a(bePropertyMatcher))
@@ -387,8 +386,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (be a (positiveNumber) and be a (validNumber))
-     *                                             ^
+     * (aMatcherFactory and be a (validNumber))
+     *                         ^
      * </pre>
      */
     def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SC with U, TC1] = and(MatcherWords.be.a(aMatcher))
@@ -397,8 +396,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * isAppleMock should (be an ('apple) and be an ('apple))
-     *                                           ^
+     * (aMatcherFactory and be an ('apple))
+     *                         ^
      * </pre>
      */
     def an(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = and(MatcherWords.be.an(symbol))
@@ -407,8 +406,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * isAppleMock should (be an (apple) and be an (apple))
-     *                                           ^
+     * (aMatcherFactory and be an (apple))
+     *                         ^
      * </pre>
      */
     def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = and(MatcherWords.be.an(bePropertyMatcher))
@@ -417,8 +416,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (be an (oddNumber) and be an (integerNumber))
-     *                                         ^
+     * (aMatcherFactory and be an (integerNumber))
+     *                         ^
      * </pre>
      */
     def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SC with U, TC1] = and(MatcherWords.be.an(anMatcher))
@@ -427,8 +426,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * obj should (be theSameInstanceAs (string) and be theSameInstanceAs (string))
-     *                                                  ^
+     * (aMatcherFactory and be theSameInstanceAs (string))
+     *                         ^
      * </pre>
      */
     def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SC with AnyRef, TC1] = and(MatcherWords.be.theSameInstanceAs(anyRef))
@@ -438,8 +437,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * isFileMock should (be a ('file) and be a ('file))
-   *                                 ^
+   * (aMatcherFactory and be a ('file))
+   *                  ^
    * </pre>
    */
   def and(beWord: BeWord): AndBeWord = new AndBeWord
@@ -456,8 +455,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (fullyMatch regex (decimal) and fullyMatch regex (decimal))
-     *                                                         ^
+     * (aMatcherFactory and fullyMatch regex (decimal))
+     *                                 ^
      * </pre>
      */
     def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.fullyMatch.regex(regexString))
@@ -466,8 +465,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (fullyMatch regex (decimalRegex) and fullyMatch regex (decimalRegex))
-     *                                                              ^
+     * (aMatcherFactory and fullyMatch regex (decimalRegex))
+     *                                 ^
      * </pre>
      */
     def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.fullyMatch.regex(regex))
@@ -477,8 +476,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * "1.7" should (fullyMatch regex (decimalRegex) and fullyMatch regex (decimalRegex))
-   *                                               ^
+   * (aMatcherFactory and fullyMatch regex (decimalRegex))
+   *                  ^
    * </pre>
    */
   def and(fullyMatchWord: FullyMatchWord): AndFullyMatchWord = new AndFullyMatchWord
@@ -495,8 +494,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (include regex (decimal) and include regex (decimal))
-     *                                                   ^
+     * (aMatcherFactory and include regex (decimal))
+     *                              ^
      * </pre>
      */
     def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.include.regex(regexString))
@@ -505,8 +504,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (include regex (decimalRegex) and include regex (decimalRegex))
-     *                                                        ^
+     * (aMatcherFactory and include regex (decimalRegex))
+     *                              ^
      * </pre>
      */
     def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.include.regex(regex))
@@ -516,8 +515,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * "hello, world" should (include regex ("hel*o") and include regex ("wor.d"))
-   *                                           ^
+   * (aMatcherFactory and include regex ("wor.d"))
+   *                  ^
    * </pre>
    */
   def and(includeWord: IncludeWord): AndIncludeWord = new AndIncludeWord
@@ -534,8 +533,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (startWith regex (decimal) and startWith regex (decimal))
-     *                                                       ^
+     * (aMatcherFactory and startWith regex (decimal))
+     *                                ^
      * </pre>
      */
     def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.startWith.regex(regexString))
@@ -544,8 +543,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (startWith regex (decimalRegex) and startWith regex (decimalRegex))
-     *                                                            ^
+     * (aMatcherFactory and startWith regex (decimalRegex))
+     *                                ^
      * </pre>
      */
     def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.startWith.regex(regex))
@@ -555,8 +554,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * "1.78" should (have length (4) and startWith regex ("1.7"))
-   *                                ^
+   * (aMatcherFactory and startWith regex ("1.7"))
+   *                  ^
    * </pre>
    */
   def and(startWithWord: StartWithWord): AndStartWithWord = new AndStartWithWord
@@ -573,8 +572,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (endWith regex (decimal) and endWith regex (decimal))
-     *                                                   ^
+     * (aMatcherFactory and endWith regex (decimal))
+     *                              ^
      * </pre>
      */
     def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.endWith.regex(regexString))
@@ -583,8 +582,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (endWith regex (decimalRegex) and endWith regex (decimalRegex))
-     *                                                        ^
+     * (aMatcherFactory and endWith regex (decimalRegex))
+     *                              ^
      * </pre>
      */
     def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.endWith.regex(regex))
@@ -594,8 +593,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * "1.7" should (endWith regex (decimalRegex) and endWith regex (decimalRegex))
-   *                                            ^
+   * (aMatcherFactory and endWith regex (decimalRegex))
+   *                  ^
    * </pre>
    */
   def and(endWithWord: EndWithWord): AndEndWithWord = new AndEndWithWord
@@ -612,8 +611,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 1 should (not equal (2) and not equal (3 - 1))
-     *                                 ^
+     * (aMatcherFactory and not equal (3 - 1))
+     *                          ^
      * </pre>
      */
     def equal(any: Any): MatcherFactory2[SC, TC1, Equality] =
@@ -623,8 +622,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax, for the "primitive" numeric types:
      *
      * <pre class="stHighlight">
-     * sevenDotOh should (not equal (17.0 plusOrMinus 0.2) and not equal (17.0 plusOrMinus 0.2))
-     *                                                         ^
+     * (aMatcherFactory and not equal (17.0 +- 0.2))
+     *                          ^
      * </pre>
      */
     def equal[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.equal(interval))
@@ -633,8 +632,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * aNullRef should (not equal ("hi") and not equal (null))
-     *                                   ^
+     * (aMatcherFactory and not equal (null))
+     *                          ^
      * </pre>
      */
     def equal(o: Null): MatcherFactory1[SC, TC1] = {
@@ -657,8 +656,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 1 should (not be (2) and not be (3 - 1))
-     *                              ^
+     * (aMatcherFactory and not be (3 - 1))
+     *                          ^
      * </pre>
      */
     def be(any: Any): MatcherFactory1[SC, TC1] =
@@ -668,8 +667,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (not have size (5) and not have length (3))
-     *                                               ^
+     * (aMatcherFactory and not have length (3))
+     *                          ^
      * </pre>
      */
     def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SC, TC1, Length] =
@@ -679,8 +678,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (not have size (5) and not have size (3))
-     *                                               ^
+     * (aMatcherFactory and not have size (3))
+     *                          ^
      * </pre>
      */
     def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SC, TC1, Size] =
@@ -690,8 +689,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * book should (not have (title ("Moby Dick")) and not have (author ("Melville")))
-     *                                                     ^
+     * (aMatcherFactory and not have (author ("Melville")))
+     *                          ^
      * </pre>
      */
     def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SC with U, TC1] =
@@ -701,8 +700,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 5 should (not be &lt; (2) and not be &lt; (6))
-     *                                ^
+     * (aMatcherFactory and not be &lt; (6))
+     *                          ^
      * </pre>
      */
     def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SC with U, TC1] =
@@ -712,8 +711,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * map should (contain key (7) and not be (null))
-     *                                     ^
+     * (aMatcherFactory and not be (null))
+     *                          ^
      * </pre>
      */
     def be(o: Null): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(o))
@@ -722,8 +721,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 7 should (not be &gt; (8) and not be &gt; (6))
-     *                                ^
+     * (aMatcherFactory (8) and not be &gt; (6))
+     *                              ^
      * </pre>
      */
     def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SC with U, TC1] =
@@ -733,8 +732,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 2 should (not be &lt;= (1) and not be &lt;= (2))
-     *                                 ^
+     * (aMatcherFactory and not be &lt;= (2))
+     *                          ^
      * </pre>
      */
     def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
@@ -744,8 +743,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 7 should (not be &gt;= (8) and not be &gt;= (6))
-     *                                 ^
+     * (aMatcherFactory and not be &gt;= (6))
+     *                          ^
      * </pre>
      */
     def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
@@ -755,8 +754,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 5 should (not be === (2) and not be === (6))
-     *                                  ^
+     * (aMatcherFactory and not be === (6))
+     *                          ^
      * </pre>
      */
     def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SC, TC1] =
@@ -766,8 +765,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * notEmptyMock should (not be ('empty) and not be ('empty))
-     *                                              ^
+     * (aMatcherFactory and not be ('empty))
+     *                          ^
      * </pre>
      */
     def be(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(symbol))
@@ -776,8 +775,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 2 should (not be (odd) and not be (odd))
-     *                                ^
+     * (aMatcherFactory and not be (odd))
+     *                          ^
      * </pre>
      */
     def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(beMatcher))
@@ -786,8 +785,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * myFile should (not be (directory) and not be (directory))
-     *                                              ^
+     * (aMatcherFactory and not be (directory))
+     *                          ^
      * </pre>
      */
     def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(bePropertyMatcher))
@@ -796,8 +795,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * isNotFileMock should (not be a ('file) and not be a ('file))
-     *                                                ^
+     * (aMatcherFactory and not be a ('file))
+     *                          ^
      * </pre>
      */
     def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
@@ -806,8 +805,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (not be a (passedMarks) and not be a (validMarks))
-     *                                               ^
+     * (aMatcherFactory and not be a (validMarks))
+     *                          ^
      * </pre>
      */
     def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
@@ -816,8 +815,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * myFile should (not be a (directory) and not be a (directory))
-     *                                             ^
+     * (aMatcherFactory and not be a (directory))
+     *                          ^
      * </pre>
      */
     def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
@@ -826,8 +825,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (not be a negativeNumber and not be a primeNumber)
-     *                                                ^
+     * (aMatcherFactory and not be a primeNumber)
+     *                          ^
      * </pre>
      */
     def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
@@ -836,8 +835,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * myFile should (not be an (directory) and not be an (directory))
-     *                                              ^
+     * (aMatcherFactory and not be an (directory))
+     *                          ^
      * </pre>
      */
     def be[SC <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[SC]) = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
@@ -846,8 +845,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (not be an (oddMarks) and not be an (invalidMarks))
-     *                                                ^
+     * (aMatcherFactory and not be an (invalidMarks))
+     *                          ^
      * </pre>
      */
     def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
@@ -856,8 +855,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * obj should (not be theSameInstanceAs (otherString) and not be theSameInstanceAs (otherString))
-     *                                                            ^
+     * (aMatcherFactory and not be theSameInstanceAs (otherString))
+     *                          ^
      * </pre>
      */
     def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
@@ -866,8 +865,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax, for the "primitive" numeric types:
      *
      * <pre class="stHighlight">
-     * sevenDotOh should (not be (17.0 plusOrMinus 0.2) and not be (17.0 plusOrMinus 0.2))
-     *                                                          ^
+     * (aMatcherFactory and not be (17.0 +- 0.2))
+     *                          ^
      * </pre>
      */
     def be[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(interval))
@@ -876,8 +875,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not fullyMatch regex ("bob") and not fullyMatch regex (decimal))
-     *                                                     ^
+     * (aMatcherFactory and not fullyMatch regex (decimal))
+     *                          ^
      * </pre>
      */
     def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
@@ -887,8 +886,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not include regex ("bob") and not include regex (decimal))
-     *                                                     ^
+     * (aMatcherFactory and not include regex (decimal))
+     *                          ^
      * </pre>
      */
     def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
@@ -898,8 +897,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not include ("bob") and not include ("1.7"))
-     *                                            ^
+     * (aMatcherFactory and not include ("1.7"))
+     *                          ^
      * </pre>
      */
     def include(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
@@ -909,8 +908,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not startWith regex ("bob") and not startWith regex (decimal))
-     *                                                    ^
+     * (aMatcherFactory and not startWith regex (decimal))
+     *                          ^
      * </pre>
      */
     def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
@@ -920,8 +919,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not startWith ("red") and not startWith ("1.7"))
-     *                                              ^
+     * (aMatcherFactory and not startWith ("1.7"))
+     *                          ^
      * </pre>
      */
     def startWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
@@ -931,8 +930,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not endWith regex ("bob") and not endWith regex (decimal))
-     *                                                  ^
+     * (aMatcherFactory and not endWith regex (decimal))
+     *                          ^
      * </pre>
      */
     def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
@@ -942,8 +941,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not endWith ("fre") and not endWith ("1.7"))
-     *                                            ^
+     * (aMatcherFactory and not endWith ("1.7"))
+     *                          ^
      * </pre>
      */
     def endWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
@@ -953,8 +952,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (not contain (5) and not contain (3))
-     *                                                     ^
+     * (aMatcherFactory and not contain (3))
+     *                          ^
      * </pre>
      */
     def contain[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] =
@@ -964,8 +963,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain key ("five") and not contain key ("three"))
-     *                                                                      ^
+     * (aMatcherFactory and not contain key ("three"))
+     *                          ^
      * </pre>
      */
     def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] =
@@ -975,8 +974,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain value (5) and not contain value (3))
-     *                                                                   ^
+     * (aMatcherFactory and not contain value (3))
+     *                          ^
      * </pre>
      */
     def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] =
@@ -986,8 +985,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * collection should (contain theSameElementsAs (List(1, 2, 3)) and not contain theSameElementsAs (List(8, 1, 2))) 
-     *                                                                      ^
+     * (aMatcherFactory and not contain theSameElementsAs (List(8, 1, 2))) 
+     *                          ^
      * </pre>
      */
     def contain[U](right: ContainMatcher[U]): MatcherFactory1[SC with GenTraversable[U], TC1] =
@@ -997,8 +996,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (not contain a negativeNumber and not contain a primeNumber)
-     *                                                     ^
+     * (aMatcherFactory and not contain a primeNumber)
+     *                          ^
      * </pre>
      */
     def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
@@ -1008,8 +1007,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (not contain an oddNumber and not contain an invalidNumber)
-     *                                                 ^
+     * (aMatcherFactory and not contain an invalidNumber)
+     *                          ^
      * </pre>
      */
     def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
@@ -1020,8 +1019,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain value (5) and not contain value (3))
-   *                                                           ^
+   * (aMatcherFactory and not contain value (3))
+   *                  ^
    * </pre>
    */
   def and(notWord: NotWord): AndNotWord = new AndNotWord
@@ -1038,8 +1037,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (have length (2) and have length (3 - 1))
-     *                                              ^
+     * (aMatcherFactory or have length (3 - 1))
+     *                          ^
      * </pre>
      */
     def length(expectedLength: Long): MatcherFactory2[SC, TC1, Length] = or(MatcherWords.have.length(expectedLength))
@@ -1048,8 +1047,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (have size (2) and have size (3 - 1))
-     *                                       ^
+     * (aMatcherFactory or have size (3 - 1))
+     *                          ^
      * </pre>
      */
     def size(expectedSize: Long): MatcherFactory2[SC, TC1, Size] = or(MatcherWords.have.size(expectedSize))
@@ -1059,8 +1058,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * Array(1, 2) should (have size (2) and have size (3 - 1))
-   *                                   ^
+   * (aMatcherFactory or have size (3 - 1))
+   *                  ^
    * </pre>
    */
   def or(haveWord: HaveWord): OrHaveWord = new OrHaveWord
@@ -1077,19 +1076,18 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (contain (2) or contain (3 - 1))
-     *                                            ^
+     * (aMatcherFactory or contain (3 - 1))
+     *                             ^
      * </pre>
      */
     def apply[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] = thisMatcherFactory.or(MatcherWords.contain(expectedElement))
-    // def element[SC](expectedElement: SC) = thisMatcherFactory.or(MatcherWords.contain.apply(expectedElement))
 
     /**
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -&gt; 1, "two" -&gt; 2) should (contain key ("cat") or contain key ("one"))
-     *                                                                    ^
+     * (aMatcherFactory or contain key ("one"))
+     *                             ^
      * </pre>
      */
     def key[U](expectedKey: U): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] = thisMatcherFactory.or(MatcherWords.contain.key(expectedKey))
@@ -1098,8 +1096,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -&gt; 1, "two" -&gt; 2) should (contain value (7) or contain value (1))
-     *                                                                  ^
+     * (aMatcherFactory or contain value (1))
+     *                             ^
      * </pre>
      */
     def value[U](expectedValue: U): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] = thisMatcherFactory.or(MatcherWords.contain.value(expectedValue))
@@ -1108,8 +1106,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) or contain theSameElementsAs List(1, 2, 3))
-     *                                                                          ^
+     * (aMatcherFactory or contain theSameElementsAs List(1, 2, 3))
+     *                             ^
      * </pre>
      */
     def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1119,8 +1117,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) or contain theSameIteratedElementsAs List(1, 2, 3))
-     *                                                                          ^
+     * (aMatcherFactory or contain theSameIteratedElementsAs List(1, 2, 3))
+     *                             ^
      * </pre>
      */
     def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1130,8 +1128,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) or contain allOf (1, 2, 3))
-     *                                                                          ^
+     * (aMatcherFactory or contain allOf (1, 2, 3))
+     *                             ^
      * </pre>
      */
     def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1141,8 +1139,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) or contain inOrder (1, 2, 3))
-     *                                                                          ^
+     * (aMatcherFactory or contain inOrder (1, 2, 3))
+     *                             ^
      * </pre>
      */
     def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1152,8 +1150,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) or contain oneOf (1, 3, 3))
-     *                                                                          ^
+     * (aMatcherFactory or contain oneOf (1, 3, 3))
+     *                             ^
      * </pre>
      */
     def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1163,8 +1161,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) or contain only (3, 1))
-     *                                                                          ^
+     * (aMatcherFactory or contain only (3, 1))
+     *                             ^
      * </pre>
      */
     def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1174,8 +1172,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) or contain inOrderOnly (1, 3))
-     *                                                                          ^
+     * (aMatcherFactory or contain inOrderOnly (1, 3))
+     *                             ^
      * </pre>
      */
     def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1185,8 +1183,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2, 3) should (contain theSameElementAs List(3, 2, 1) or contain noneOf (7, 8, 9))
-     *                                                                          ^
+     * (aMatcherFactory or contain noneOf (7, 8, 9))
+     *                             ^
      * </pre>
      */
     def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1196,8 +1194,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (contain a (positiveNumber) or contain a (validNumber))
-     *                                                      ^
+     * (aMatcherFactory or contain a (validNumber))
+     *                             ^
      * </pre>
      */
     def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1207,8 +1205,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (contain a (positiveNumber) or contain an (invalidNumber))
-     *                                                      ^
+     * (aMatcherFactory or contain an (invalidNumber))
+     *                             ^
      * </pre>
      */
     def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
@@ -1219,8 +1217,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * (contain value (7) or contain value (1))
-   *                    ^
+   * (aMatcherFactory or contain value (1))
+   *                  ^
    * </pre>
    */
   def or(containWord: ContainWord): OrContainWord = new OrContainWord
@@ -1237,8 +1235,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (be a ('file) or be a ('directory))
-     *                     ^
+     * (aMatcherFactory or be a ('directory))
+     *                        ^
      * </pre>
      */
     def a(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = or(MatcherWords.be.a(symbol))
@@ -1247,8 +1245,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * (be a (file) or be a (directory))
-     *                    ^
+     * (aMatcherFactory or be a (directory))
+     *                        ^
      * </pre>
      */
     def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = or(MatcherWords.be.a(bePropertyMatcher))
@@ -1257,8 +1255,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * XXX result should (be a (positiveNumber) or be a (validNumber))
-     *                                            ^
+     * (aMatcherFactory or be a (validNumber))
+     *                        ^
      * </pre>
      */
     def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SC with U, TC1] = or(MatcherWords.be.a(aMatcher))
@@ -1267,8 +1265,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * appleMock should (be an ('orange) or be an ('apple))
-     *                                         ^
+     * (aMatcherFactory or be an ('apple))
+     *                        ^
      * </pre>
      */
     def an(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = or(MatcherWords.be.an(symbol))
@@ -1277,8 +1275,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * appleMock should (be an (orange) or be an (apple))
-     *                                        ^
+     * (aMatcherFactory or be an (apple))
+     *                        ^
      * </pre>
      */
     def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = or(MatcherWords.be.an(bePropertyMatcher))
@@ -1287,8 +1285,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (be an (oddNumber) or be an (integerNumber))
-     *                                        ^
+     * (aMatcherFactory or be an (integerNumber))
+     *                        ^
      * </pre>
      */
     def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SC with U, TC1] = or(MatcherWords.be.an(anMatcher))
@@ -1297,8 +1295,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * obj should (be theSameInstanceAs (string) or be theSameInstanceAs (otherString))
-     *                                                 ^
+     * (aMatcherFactory or be theSameInstanceAs (otherString))
+     *                        ^
      * </pre>
      */
     def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SC with AnyRef, TC1] = or(MatcherWords.be.theSameInstanceAs(anyRef))
@@ -1308,8 +1306,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * isFileMock should (be a ('file) or be a ('directory))
-   *                                 ^
+   * (aMatcherFactory or be a ('directory))
+   *                  ^
    * </pre>
    */
   def or(beWord: BeWord): OrBeWord = new OrBeWord
@@ -1326,8 +1324,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (fullyMatch regex ("hello") or fullyMatch regex (decimal))
-     *                                                        ^
+     * (aMatcherFactory or fullyMatch regex (decimal))
+     *                                ^
      * </pre>
      */
     def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.fullyMatch.regex(regexString))
@@ -1336,8 +1334,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (fullyMatch regex ("hello") or fullyMatch regex (decimal))
-     *                                                        ^
+     * (aMatcherFactory or fullyMatch regex (decimal))
+     *                                ^
      * </pre>
      */
     def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.fullyMatch.regex(regex))
@@ -1347,8 +1345,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * "1.7" should (fullyMatch regex ("hello") or fullyMatch regex (decimal))
-   *                                          ^
+   * (aMatcherFactory or fullyMatch regex (decimal))
+   *                  ^
    * </pre>
    */
   def or(fullyMatchWord: FullyMatchWord): OrFullyMatchWord = new OrFullyMatchWord
@@ -1365,8 +1363,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (include regex ("hello") or include regex (decimal))
-     *                                                  ^
+     * (aMatcherFactory or include regex (decimal))
+     *                             ^
      * </pre>
      */
     def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.include.regex(regexString))
@@ -1375,8 +1373,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (include regex ("hello") or include regex (decimal))
-     *                                                  ^
+     * (aMatcherFactory or include regex (decimal))
+     *                             ^
      * </pre>
      */
     def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.include.regex(regex))
@@ -1386,8 +1384,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * "a1.7b" should (include regex ("1.7") or include regex ("1.7"))
-   *                                          ^
+   * (aMatcherFactory or include regex ("1.7"))
+   *                  ^
    * </pre>
    */
   def or(includeWord: IncludeWord): OrIncludeWord = new OrIncludeWord
@@ -1404,8 +1402,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (startWith regex ("hello") or startWith regex (decimal))
-     *                                                      ^
+     * (aMatcherFactory or startWith regex (decimal))
+     *                               ^
      * </pre>
      */
     def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.startWith.regex(regexString))
@@ -1414,8 +1412,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (startWith regex ("hello") or startWith regex (decimal))
-     *                                                      ^
+     * (aMatcherFactory or startWith regex (decimal))
+     *                               ^
      * </pre>
      */
     def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.startWith.regex(regex))
@@ -1425,8 +1423,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * "1.7" should (startWith regex ("hello") or startWith regex ("1.7"))
-   *                                            ^
+   * (aMatcherFactory or startWith regex ("1.7"))
+   *                  ^
    * </pre>
    */
   def or(startWithWord: StartWithWord): OrStartWithWord = new OrStartWithWord
@@ -1443,8 +1441,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (endWith regex ("hello") or endWith regex (decimal))
-     *                                                  ^
+     * (aMatcherFactory or endWith regex (decimal))
+     *                             ^
      * </pre>
      */
     def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.endWith.regex(regexString))
@@ -1453,8 +1451,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "1.7" should (endWith regex ("hello") or endWith regex (decimal))
-     *                                                  ^
+     * (aMatcherFactory or endWith regex (decimal))
+     *                             ^
      * </pre>
      */
     def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.endWith.regex(regex))
@@ -1464,8 +1462,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * "1.7b" should (endWith regex ("hello") or endWith regex ("7b"))
-   *                                           ^
+   * (aMatcherFactory or endWith regex ("7b"))
+   *                  ^
    * </pre>
    */
   def or(endWithWord: EndWithWord): OrEndWithWord = new OrEndWithWord
@@ -1482,8 +1480,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 1 should (not equal (1) or not equal (2))
-     *                                ^
+     * (aMatcherFactory or not equal (2))
+     *                         ^
      * </pre>
      */
     def equal(any: Any): MatcherFactory1[SC, TC1] =
@@ -1493,8 +1491,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax for the "primitive" numeric types:
      *
      * <pre class="stHighlight">
-     * sevenDotOh should (not equal (17.0 plusOrMinus 0.2) or not equal (17.0 plusOrMinus 0.2))
-     *                                                        ^
+     * (aMatcherFactory or not equal (17.0 +- 0.2))
+     *                         ^
      * </pre>
      */
     def equal[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.equal(interval))
@@ -1503,8 +1501,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * aNullRef should (not equal (null) or not equal (null))
-     *                                   ^
+     * (aMatcherFactory or not equal (null))
+     *                         ^
      * </pre>
      */
     def equal(o: Null): MatcherFactory1[SC, TC1] = {
@@ -1527,8 +1525,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 1 should (not be (1) or not be (2))
-     *                             ^
+     * (aMatcherFactory or not be (2))
+     *                         ^
      * </pre>
      */
     def be(any: Any): MatcherFactory1[SC, TC1] =
@@ -1538,8 +1536,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (not have length (2) or not have length (3))
-     *                                                ^
+     * (aMatcherFactory or not have length (3))
+     *                         ^
      * </pre>
      */
     def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SC, TC1, Length] =
@@ -1549,8 +1547,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (not have size (2) or not have size (3))
-     *                                              ^
+     * (aMatcherFactory or not have size (3))
+     *                         ^
      * </pre>
      */
     def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SC, TC1, Size] =
@@ -1560,8 +1558,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * book should (not have (title ("Moby Dick")) or not have (author ("Melville")))
-     *                                                    ^
+     * (aMatcherFactory or not have (author ("Melville")))
+     *                         ^
      * </pre>
      */
     def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SC with U, TC1] =
@@ -1571,8 +1569,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * map should (contain key (7) or not be (null))
-     *                                    ^
+     * (aMatcherFactory or not be (null))
+     *                         ^
      * </pre>
      */
     def be(o: Null): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(o))
@@ -1581,8 +1579,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 5 should (not be &lt; (7) or not be &lt; (8))
-     *                               ^
+     * (aMatcherFactory or not be &lt; (8))
+     *                         ^
      * </pre>
      */
     def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SC with U, TC1] =
@@ -1592,8 +1590,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 7 should (not be &gt; (5) or not be &gt; (6))
-     *                               ^
+     * (aMatcherFactory or not be &gt; (6))
+     *                         ^
      * </pre>
      */
     def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SC with U, TC1] =
@@ -1603,8 +1601,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 2 should (not be &lt;= (3) or not be &lt;= (2))
-     *                                ^
+     * (aMatcherFactory or not be &lt;= (2))
+     *                         ^
      * </pre>
      */
     def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
@@ -1614,8 +1612,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 8 should (not be &gt;= (7) or not be &gt;= (6))
-     *                                ^
+     * (aMatcherFactory or not be &gt;= (6))
+     *                         ^
      * </pre>
      */
     def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
@@ -1625,8 +1623,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 5 should (not be === (7) or not be === (8))
-     *                                 ^
+     * (aMatcherFactory or not be === (8))
+     *                         ^
      * </pre>
      */
     def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SC, TC1] =
@@ -1636,8 +1634,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * notEmptyMock should (not be ('full) or not be ('empty))
-     *                                            ^
+     * (aMatcherFactory or not be ('empty))
+     *                         ^
      * </pre>
      */
     def be(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(symbol))
@@ -1646,8 +1644,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * 2 should (not be (even) or not be (odd))
-     *                                ^
+     * (aMatcherFactory or not be (odd))
+     *                         ^
      * </pre>
      */
     def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(beMatcher))
@@ -1656,8 +1654,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * myFile should (not be (directory) or not be (file))
-     *                                          ^
+     * (aMatcherFactory or not be (file))
+     *                         ^
      * </pre>
      */
     def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(bePropertyMatcher))
@@ -1666,8 +1664,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * isNotFileMock should (not be a ('directory) or not be a ('file))
-     *                                                    ^
+     * (aMatcherFactory or not be a ('file))
+     *                         ^
      * </pre>
      */
     def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
@@ -1676,8 +1674,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (not be a (passedMarks) or not be a (validMarks))
-     *                                                 ^
+     * (aMatcherFactory or not be a (validMarks))
+     *                         ^
      * </pre>
      */
     def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
@@ -1686,8 +1684,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * myFile should (not be a (directory) or not be a (file))
-     *                                            ^
+     * (aMatcherFactory or not be a (file))
+     *                         ^
      * </pre>
      */
     def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
@@ -1696,8 +1694,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * notAppleMock should (not be an ('apple) or not be an ('apple))
-     *                                                ^
+     * (aMatcherFactory or not be an ('apple))
+     *                         ^
      * </pre>
      */
     def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
@@ -1706,8 +1704,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * myFile should (not be an (directory) or not be an (file))
-     *                                             ^
+     * (aMatcherFactory or not be an (file))
+     *                         ^
      * </pre>
      */
     def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
@@ -1716,8 +1714,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (not be an (oddMarks) and not be an (invalidMarks))
-     *                                                ^
+     * (aMatcherFactory and not be an (invalidMarks))
+     *                          ^
      * </pre>
      */
     def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
@@ -1726,8 +1724,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * obj should (not be theSameInstanceAs (otherString) or not be theSameInstanceAs (string))
-     *                                                           ^
+     * (aMatcherFactory or not be theSameInstanceAs (string))
+     *                         ^
      * </pre>
      */
     def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
@@ -1736,8 +1734,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax for the "primitive" numeric types:
      *
      * <pre class="stHighlight">
-     * sevenDotOh should (not be (17.0 plusOrMinus 0.2) or not be (17.0 plusOrMinus 0.2))
-     *                                                         ^
+     * (aMatcherFactory or not be (17.0 +- 0.2))
+     *                         ^
      * </pre>
      */
     def be[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(interval))
@@ -1746,8 +1744,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not fullyMatch regex ("fred") or not fullyMatch regex (decimal))
-     *                                                     ^
+     * (aMatcherFactory or not fullyMatch regex (decimal))
+     *                         ^
      * </pre>
      */
     def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
@@ -1757,8 +1755,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not include regex ("fred") or not include regex (decimal))
-     *                                                  ^
+     * (aMatcherFactory or not include regex (decimal))
+     *                         ^
      * </pre>
      */
     def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
@@ -1768,8 +1766,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not include ("bob") or not include ("1.7"))
-     *                                           ^
+     * (aMatcherFactory or not include ("1.7"))
+     *                         ^
      * </pre>
      */
     def include(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
@@ -1779,8 +1777,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not startWith regex ("bob") or not startWith regex (decimal))
-     *                                                   ^
+     * (aMatcherFactory or not startWith regex (decimal))
+     *                         ^
      * </pre>
      */
     def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
@@ -1790,8 +1788,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not startWith ("fred") or not startWith ("1.7"))
-     *                                              ^
+     * (aMatcherFactory or not startWith ("1.7"))
+     *                         ^
      * </pre>
      */
     def startWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
@@ -1801,8 +1799,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not endWith regex ("bob") or not endWith regex (decimal))
-     *                                                 ^
+     * (aMatcherFactory or not endWith regex (decimal))
+     *                         ^
      * </pre>
      */
     def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
@@ -1812,8 +1810,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * "fred" should (not endWith ("fred") or not endWith ("1.7"))
-     *                                            ^
+     * (aMatcherFactory or not endWith ("1.7"))
+     *                         ^
      * </pre>
      */
     def endWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
@@ -1823,8 +1821,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Array(1, 2) should (not contain (1) or not contain (3))
-     *                                            ^
+     * (aMatcherFactory or not contain (3))
+     *                         ^
      * </pre>
      */
     def contain[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] =
@@ -1834,8 +1832,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain key ("two") or not contain key ("three"))
-     *                                                                    ^
+     * (aMatcherFactory or not contain key ("three"))
+     *                         ^
      * </pre>
      */
     def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] =
@@ -1845,8 +1843,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain value (2) or not contain value (3))
-     *                                                                  ^
+     * (aMatcherFactory or not contain value (3))
+     *                         ^
      * </pre>
      */
     def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] =
@@ -1856,8 +1854,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * collection should (contain theSameElementsAs (List(1, 2, 3)) or not contain theSameElementsAs (List(8, 1, 2))) 
-     *                                                                     ^
+     * (aMatcherFactory or not contain theSameElementsAs (List(8, 1, 2))) 
+     *                         ^
      * </pre>
      */
     def contain[U](right: ContainMatcher[U]): MatcherFactory1[SC with GenTraversable[U], TC1] =
@@ -1867,8 +1865,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (not contain a negativeNumber or not contain a primeNumber)
-     *                                                    ^
+     * (aMatcherFactory or not contain a primeNumber)
+     *                         ^
      * </pre>
      */
     def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
@@ -1878,8 +1876,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
      * This method enables the following syntax:
      *
      * <pre class="stHighlight">
-     * result should (not contain an oddNumber or not contain an invalidNumber)
-     *                                                ^
+     * (aMatcherFactory or not contain an invalidNumber)
+     *                         ^
      * </pre>
      */
     def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
@@ -1890,8 +1888,8 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
    * This method enables the following syntax:
    *
    * <pre class="stHighlight">
-   * Map("one" -&gt; 1, "two" -&gt; 2) should (not contain value (2) or not contain value (3))
-   *                                                           ^
+   * (aMatcherFactory or not contain value (3))
+   *                  ^
    * </pre>
    */
   def or(notWord: NotWord): OrNotWord = new OrNotWord
