@@ -50,10 +50,28 @@ import org.scalatest.words.ResultOfRegexWordApplication
 import org.scalatest.words.ResultOfKeyWordApplication
 import org.scalatest.words.ResultOfValueWordApplication
 
+/**
+ * A matcher factory that can produce a matcher given one typeclass instance.
+ *
+ * <p>
+ * In the type parameters for this class, "<code>SC</code>" means <em>superclass</em>; "<code>TC</code>"
+ * (in <code>TC1</code>, <code>TC2</code>, <em>etc.</em>) means <em>typeclass</em>.
+ * This class's <code>matcher</code> factory method will produce a <code>Matcher[T]</code>, where <code>T</code> is a subtype of (or the same type
+ * as) <code>SC</code>, given a typeclass instance for each <code>TC<em>n</em></code>
+ * implicit parameter (for example, a <code>TC1[T]</code>, <code>TC2[T]</code>, <em>etc.</em>).
+ * </p>
+ *
+ * @author Bill Venners
+ */
 // Add a TYPECLASSN for each N
 abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
 
   // Add a TYPECLASSN for each N
+  /**
+   * Factory method that will produce a <code>Matcher[T]</code>, where <code>T</code> is a subtype of (or the same type
+   * as) <code>SC</code>, given a typeclass instance for each <code>TC<em>n</em></code>
+   * implicit parameter (for example, a <code>TC1[T]</code>, <code>TC2[T]</code>, <em>etc.</em>).
+   */
   def matcher[T <: SC : TC1]: Matcher[T]
 
   // Enables the following syntax:
@@ -153,7 +171,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   // Replicating the and/or DSL here:
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -194,7 +212,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def and(haveWord: HaveWord): AndHaveWord = new AndHaveWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -355,7 +373,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def and(containWord: ContainWord): AndContainWord = new AndContainWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -444,7 +462,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def and(beWord: BeWord): AndBeWord = new AndBeWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -483,7 +501,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def and(fullyMatchWord: FullyMatchWord): AndFullyMatchWord = new AndFullyMatchWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -522,7 +540,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def and(includeWord: IncludeWord): AndIncludeWord = new AndIncludeWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -561,7 +579,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def and(startWithWord: StartWithWord): AndStartWithWord = new AndStartWithWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -600,7 +618,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def and(endWithWord: EndWithWord): AndEndWithWord = new AndEndWithWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1026,7 +1044,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def and(notWord: NotWord): AndNotWord = new AndNotWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1065,7 +1083,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def or(haveWord: HaveWord): OrHaveWord = new OrHaveWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1224,7 +1242,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def or(containWord: ContainWord): OrContainWord = new OrContainWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1313,7 +1331,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def or(beWord: BeWord): OrBeWord = new OrBeWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1352,7 +1370,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def or(fullyMatchWord: FullyMatchWord): OrFullyMatchWord = new OrFullyMatchWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1391,7 +1409,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def or(includeWord: IncludeWord): OrIncludeWord = new OrIncludeWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1430,7 +1448,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def or(startWithWord: StartWithWord): OrStartWithWord = new OrStartWithWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1469,7 +1487,7 @@ abstract class MatcherFactory1[-SC, TC1[_]] { thisMatcherFactory =>
   def or(endWithWord: EndWithWord): OrEndWithWord = new OrEndWithWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners

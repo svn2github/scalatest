@@ -565,7 +565,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
     }
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -604,7 +604,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def and(haveWord: HaveWord): AndHaveWord = new AndHaveWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -763,7 +763,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def and(containWord: ContainWord): AndContainWord = new AndContainWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -852,7 +852,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def and(beWord: BeWord): AndBeWord = new AndBeWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -891,7 +891,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def and(fullyMatchWord: FullyMatchWord): AndFullyMatchWord = new AndFullyMatchWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -930,7 +930,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def and(includeWord: IncludeWord): AndIncludeWord = new AndIncludeWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -969,7 +969,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def and(startWithWord: StartWithWord): AndStartWithWord = new AndStartWithWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1008,7 +1008,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def and(endWithWord: EndWithWord): AndEndWithWord = new AndEndWithWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1434,7 +1434,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def and(notWord: NotWord): AndNotWord = new AndNotWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1473,7 +1473,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def or(haveWord: HaveWord): OrHaveWord = new OrHaveWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1632,7 +1632,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def or(containWord: ContainWord): OrContainWord = new OrContainWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1721,7 +1721,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def or(beWord: BeWord): OrBeWord = new OrBeWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1760,7 +1760,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def or(fullyMatchWord: FullyMatchWord): OrFullyMatchWord = new OrFullyMatchWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1799,7 +1799,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def or(includeWord: IncludeWord): OrIncludeWord = new OrIncludeWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1838,7 +1838,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def or(startWithWord: StartWithWord): OrStartWithWord = new OrStartWithWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners
@@ -1877,7 +1877,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
   def or(endWithWord: EndWithWord): OrEndWithWord = new OrEndWithWord
 
   /**
-   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="Matchers.html"><code>Matchers</code></a> for an overview of
+   * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
    *
    * @author Bill Venners

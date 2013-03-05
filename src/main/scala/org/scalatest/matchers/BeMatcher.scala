@@ -105,7 +105,7 @@ package org.scalatest.matchers
  * For more information on <code>MatchResult</code> and the meaning of its fields, please
  * see the documentation for <a href="MatchResult.html"><code>MatchResult</code></a>. To understand why <code>BeMatcher</code>
  * is contravariant in its type parameter, see the section entitled "Matcher's variance" in the
- * documentation for <a href="Matcher.html"><code>Matcher</code></a>.
+ * documentation for <a href="../Matcher.html"><code>Matcher</code></a>.
  * </p>
  *
  * @author Bill Venners
@@ -122,7 +122,7 @@ trait BeMatcher[-T] extends Function1[T, MatchResult] { thisBeMatcher =>
    * num should be (odd)
    * </pre>
    *
-   * The <code>be (odd)</code> expression results in a regular <a href="Matcher.html"><code>Matcher</code></a> that holds
+   * The <code>be (odd)</code> expression results in a regular <a href="../Matcher.html"><code>Matcher</code></a> that holds
    * a reference to <code>odd</code>, the
    * <code>BeMatcher</code> passed to <code>be</code>. The <code>should</code> method invokes <code>apply</code>
    * on this matcher, passing in <code>num</code>, which is therefore the "<code>left</code>" value. The

@@ -108,7 +108,7 @@ package org.scalatest.matchers
  * For more information on <code>BePropertyMatchResult</code> and the meaning of its fields, please
  * see the documentation for <a href="BePropertyMatchResult.html"><code>BePropertyMatchResult</code></a>. To understand why <code>BePropertyMatcher</code>
  * is contravariant in its type parameter, see the section entitled "Matcher's variance" in the
- * documentation for <a href="Matcher.html"><code>Matcher</code></a>.
+ * documentation for <a href="../Matcher.html"><code>Matcher</code></a>.
  * </p>
  *
  * @author Bill Venners
