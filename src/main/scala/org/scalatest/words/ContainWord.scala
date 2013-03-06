@@ -21,6 +21,7 @@ import org.scalautils._
 import org.scalatest.FailureMessages
 import org.scalatest.UnquotedString
 import org.scalautils.Equality
+import org.scalatest.enablers.Holder
 
 /**
  * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
@@ -38,6 +39,21 @@ final class ContainWord {
    *                             ^
    * </pre>
    */
+  def apply(expectedElement: Any): MatcherFactory1[Any, Holder] =
+    new MatcherFactory1[Any, Holder] {
+      def matcher[U <: Any : Holder]: Matcher[U] = 
+        new Matcher[U] {
+          def apply(left: U): MatchResult = {
+            val holder = implicitly[Holder[U]]
+            MatchResult(
+              holder.containsElement(left, expectedElement),
+              FailureMessages("didNotContainExpectedElement", left, expectedElement),
+              FailureMessages("containedExpectedElement", left, expectedElement)
+            )
+          }
+        }
+    }
+/*
   def apply[T](expectedElement: T): Matcher[GenTraversable[T]] =
     new Matcher[GenTraversable[T]] {
       def apply(left: GenTraversable[T]): MatchResult =
@@ -47,6 +63,7 @@ final class ContainWord {
           FailureMessages("containedExpectedElement", left, expectedElement)
         )
     }
+*/
   
   /**
    * This method enables the following syntax, where <code>num</code> is, for example, of type <code>Int</code> and

@@ -510,9 +510,9 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
       }
     }
 
-  def and[U <: T, TC1[_]](rightMatcherFactory1: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
-    new MatcherFactory1[U, TC1] {
-      def matcher[V <: U : TC1]: Matcher[V] = {
+  def and[U, TC1[_]](rightMatcherFactory1: MatcherFactory1[U, TC1]): MatcherFactory1[T with U, TC1] =
+    new MatcherFactory1[T with U, TC1] {
+      def matcher[V <: T with U : TC1]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val rightMatcher = rightMatcherFactory1.matcher
@@ -619,7 +619,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                             ^
      * </pre>
      */
-    def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = outerInstance.and(MatcherWords.contain(expectedElement))
+    def apply[U](expectedElement: Any): MatcherFactory1[T with U, Holder] = outerInstance.and(MatcherWords.contain(expectedElement))
 
     /**
      * This method enables the following syntax:
@@ -1488,7 +1488,7 @@ trait Matcher[-T] extends Function1[T, MatchResult] { outerInstance =>
      *                                            ^
      * </pre>
      */
-    def apply[U](expectedElement: U): Matcher[T with GenTraversable[U]] = outerInstance.or(MatcherWords.contain(expectedElement))
+    def apply[U](expectedElement: Any): MatcherFactory1[T with U, Holder] = outerInstance.or(MatcherWords.contain(expectedElement))
 
     /**
      * This method enables the following syntax:

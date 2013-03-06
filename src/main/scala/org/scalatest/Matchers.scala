@@ -10532,44 +10532,61 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
    */
   override def convertToTraversableLoneElementWrapper[T](xs: GenTraversable[T]): LoneElementTraversableWrapper[T] = new LoneElementTraversableWrapper[T](xs)
 
-  implicit def lengthOfJavaList[E, LIST[_] <: java.util.List[_]]: Length[LIST[E]] = 
-    new Length[LIST[E]] {
-      def extentOf(javaList: LIST[E]): Long = javaList.size
+  // This one doesn't include Holder in its result type because that would conflict with the
+  // one returned by enablersForJavaCollection.
+  implicit def enablersForJavaList[E, JLIST[_] <: java.util.List[_]]: Length[JLIST[E]] = 
+    new Length[JLIST[E]] {
+      def extentOf(javaList: JLIST[E]): Long = javaList.size
     }
 
-  implicit def lengthOfSeq[E, SEQ[_] <: scala.collection.GenSeq[_]]: Length[SEQ[E]] = 
+  // This one doesn't include Holder in its result type because that would conflict with the
+  // one returned by enablersForTraversable.
+  implicit def enablersForSeq[E, SEQ[_] <: scala.collection.GenSeq[_]]: Length[SEQ[E]] = 
     new Length[SEQ[E]] {
       def extentOf(seq: SEQ[E]): Long = seq.length
     }
 
-  implicit def sizeOfJavaCollection[E, COLL[_] <: java.util.Collection[_]]: Size[COLL[E]] = 
-    new Size[COLL[E]] {
-      def extentOf(javaColl: COLL[E]): Long = javaColl.size
+  implicit def enablersForJavaCollection[E, JCOL[_] <: java.util.Collection[_]]: Size[JCOL[E]] with Holder[JCOL[E]] = 
+    new Size[JCOL[E]] with Holder[JCOL[E]] {
+      def extentOf(javaColl: JCOL[E]): Long = javaColl.size
+      def containsElement(javaColl: JCOL[E], ele: Any): Boolean = javaColl.contains(ele)
     }
 
-  implicit def sizeOfJavaMap[K, V, MAP[_, _] <: java.util.Map[_, _]]: Size[MAP[K, V]] = 
-    new Size[MAP[K, V]] {
-      def extentOf(javaMap: MAP[K, V]): Long = javaMap.size
+  // I think Java Maps aren't Holders, because they don't have an element type. The ony
+  // thing close is the stupid Entry<K, V> type, which is mutable!
+  implicit def enablersForJavaMap[K, V, JMAP[_, _] <: java.util.Map[_, _]]: Size[JMAP[K, V]] = 
+    new Size[JMAP[K, V]] {
+      def extentOf(javaMap: JMAP[K, V]): Long = javaMap.size
     }
 
-  implicit def sizeOfTraversable[E, TRAV[_] <: scala.collection.GenTraversable[_]]: Size[TRAV[E]] = 
+  implicit def enablersForTraversable[E, TRAV[_] <: scala.collection.GenTraversable[_]]: Size[TRAV[E]] = 
     new Size[TRAV[E]] {
       def extentOf(trav: TRAV[E]): Long = trav.size
     }
 
-  implicit def sizeOfMap[K, V, MAP[_, _] <: scala.collection.GenMap[_, _]]: Size[MAP[K, V]] = 
-    new Size[MAP[K, V]] {
-      def extentOf(trav: MAP[K, V]): Long = trav.size
+  implicit def equalityEnablersForTraversable[E, TRAV[_] <: scala.collection.GenTraversable[_]](implicit equality: Equality[E]): Holder[TRAV[E]] = 
+    new Holder[TRAV[E]] {
+      def containsElement(trav: TRAV[E], ele: Any): Boolean = {
+        trav.exists((e: Any) => equality.areEqual(e.asInstanceOf[E], ele)) // Don't know why the compiler thinks e is Any. Should be E. Compiler bug?
+      }
     }
 
-  implicit def lengthAndSizeOfArray[E]: Length[Array[E]] with Size[Array[E]] = 
-    new Length[Array[E]] with Size[Array[E]] {
+  implicit def enablersForMap[K, V, MAP[_, _] <: scala.collection.GenMap[_, _]]: Size[MAP[K, V]] with Holder[MAP[K, V]] = 
+    new Size[MAP[K, V]] with Holder[MAP[K, V]] {
+      def extentOf(map: MAP[K, V]): Long = map.size
+      def containsElement(map: MAP[K, V], ele: Any): Boolean = map.exists(_ == ele)
+    }
+
+  implicit def enablersForArray[E]: Length[Array[E]] with Size[Array[E]] with Holder[Array[E]] = 
+    new Length[Array[E]] with Size[Array[E]] with Holder[Array[E]] {
       def extentOf(arr: Array[E]): Long = arr.length
+      def containsElement(arr: Array[E], ele: Any): Boolean = arr.exists(_ == ele)
     }
 
-  implicit val lengthAndSizeOfString: Length[String] with Size[String] = 
-    new Length[String] with Size[String] {
+  implicit val enablersForString: Length[String] with Size[String] with Holder[String] = 
+    new Length[String] with Size[String] with Holder[String] {
       def extentOf(str: String): Long = str.length
+      def containsElement(str: String, ele: Any): Boolean = str.exists(_ == ele)
     }
 }
 
