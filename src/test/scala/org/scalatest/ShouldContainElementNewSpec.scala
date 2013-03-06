@@ -34,7 +34,7 @@ class ShouldContainElementNewSpec extends Spec with Matchers {
       Vector(1, "2") should contain ("2".asAny)
       Vector(1, "2") should contain (1.asAny)
     }
-    def `should use an Equality of the element type of the left-hand "holder"` {
+    def `should use an Equality of the element type of the left-hand "holder" on a GenTraversable` {
       
       Vector(1, 2) should contain (2)
       val e1 = intercept[TestFailedException] {
@@ -52,6 +52,52 @@ class ShouldContainElementNewSpec extends Spec with Matchers {
         Vector(2, 2) should contain (2)
       }
       Vector(1, 1) should not contain (2)
+
+      e2.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e2.failedCodeLineNumber should be (Some(thisLineNumber - 5))
+    }
+/*
+    def `should use an Equality of the element type of the left-hand "holder" on a String` {
+      
+      "12" should contain ('2')
+      val e1 = intercept[TestFailedException] {
+        "12" should not contain ('2')
+      }
+
+      e1.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e1.failedCodeLineNumber should be (Some(thisLineNumber - 4))
+
+      implicit val e = new Equality[String] {
+        def areEqual(a: String, b: Any): Boolean = a != b
+      }
+      
+      val e2 = intercept[TestFailedException] {
+        "12" should contain ('2')
+      }
+      "12" should not contain ('2')
+
+      e2.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e2.failedCodeLineNumber should be (Some(thisLineNumber - 5))
+    }
+*/
+    def `should use an Equality of the element type of the left-hand "holder" on an Array` {
+      
+      Array(1, 2) should contain (2)
+      val e1 = intercept[TestFailedException] {
+        Array(1, 2) should not contain (2)
+      }
+
+      e1.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e1.failedCodeLineNumber should be (Some(thisLineNumber - 4))
+
+      implicit val e = new Equality[Int] {
+        def areEqual(a: Int, b: Any): Boolean = a != b
+      }
+      
+      val e2 = intercept[TestFailedException] {
+        Array(2, 2) should contain (2)
+      }
+      Array(1, 1) should not contain (2)
 
       e2.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
       e2.failedCodeLineNumber should be (Some(thisLineNumber - 5))

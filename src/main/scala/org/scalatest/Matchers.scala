@@ -10577,10 +10577,16 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       def containsElement(map: MAP[K, V], ele: Any): Boolean = map.exists(_ == ele)
     }
 
-  implicit def enablersForArray[E]: Length[Array[E]] with Size[Array[E]] with Holder[Array[E]] = 
-    new Length[Array[E]] with Size[Array[E]] with Holder[Array[E]] {
+  implicit def enablersForArray[E]: Length[Array[E]] with Size[Array[E]] = 
+    new Length[Array[E]] with Size[Array[E]] {
       def extentOf(arr: Array[E]): Long = arr.length
-      def containsElement(arr: Array[E], ele: Any): Boolean = arr.exists(_ == ele)
+    }
+
+  implicit def equalityEnablersForArray[E](implicit equality: Equality[E]): Holder[Array[E]] = 
+    new Holder[Array[E]] {
+      def containsElement(arr: Array[E], ele: Any): Boolean =
+        arr.exists((e: E) => equality.areEqual(e, ele)) // Don't know why the compiler thinks e is Any. Should be E. Compiler bug?
+        // arr.exists((e: Any) => equality.areEqual(e.asInstanceOf[E], ele)) // Don't know why the compiler thinks e is Any. Should be E. Compiler bug?
     }
 
   implicit val enablersForString: Length[String] with Size[String] with Holder[String] = 
