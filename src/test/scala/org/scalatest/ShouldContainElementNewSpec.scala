@@ -21,6 +21,7 @@ import Arbitrary._
 import Prop._
 import org.scalatest.exceptions.TestFailedException
 import org.scalautils.Equality
+import SharedHelpers.thisLineNumber
 
 // Calling this ShouldContainElementNewSpec so that it is easy to 
 // keep track of the new tests that we'll need to port over to
@@ -36,18 +37,24 @@ class ShouldContainElementNewSpec extends Spec with Matchers {
     def `should use an Equality of the element type of the left-hand "holder"` {
       
       Vector(1, 2) should contain (2)
-      intercept[TestFailedException] {
+      val e1 = intercept[TestFailedException] {
         Vector(1, 2) should not contain (2)
       }
+
+      e1.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e1.failedCodeLineNumber should be (Some(thisLineNumber - 4))
 
       implicit val e = new Equality[Int] {
         def areEqual(a: Int, b: Any): Boolean = a != b
       }
       
-      intercept[TestFailedException] {
+      val e2 = intercept[TestFailedException] {
         Vector(2, 2) should contain (2)
       }
       Vector(1, 1) should not contain (2)
+
+      e2.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e2.failedCodeLineNumber should be (Some(thisLineNumber - 5))
     }
   }
 }
