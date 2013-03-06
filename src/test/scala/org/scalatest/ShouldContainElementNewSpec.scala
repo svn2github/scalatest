@@ -57,91 +57,14 @@ class ShouldContainElementNewSpec extends Spec with Matchers with Explicitly {
       e2.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
       e2.failedCodeLineNumber should be (Some(thisLineNumber - 5))
 
-      (Vector(2, 2) should contain (2)) (traversableDecider(defaultEquality))
+      (Vector(2, 2) should contain (2)) (decidedForTraversable by defaultEquality)
       val e3 = intercept[TestFailedException] {
-        (Vector(1, 1) should contain (2)) (traversableDecider(defaultEquality))
+        (Vector(1, 1) should contain (2)) (decidedForTraversable by defaultEquality)
       }
 
       e3.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
       e3.failedCodeLineNumber should be (Some(thisLineNumber - 4))
-
-      Vector(2, 2) should contain (2) (traversableDecider[Int, Vector](defaultEquality))
-      val e4 = intercept[TestFailedException] {
-        Vector(1, 1) should contain (2) (traversableDecider[Int, Vector](defaultEquality))
-      }
-
-      e4.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
-      e4.failedCodeLineNumber should be (Some(thisLineNumber - 4))
-
-/*
-      (Vector(2, 2) should contain (2)) (decided by traversableDecider(defaultEquality))
-      val e5 = intercept[TestFailedException] {
-        (Vector(1, 1) should contain (2)) (decided by traversableDecider(defaultEquality))
-      }
-
-      e5.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
-      e5.failedCodeLineNumber should be (Some(thisLineNumber - 4))
-
-      Vector(2, 2) should contain (2) (decided by traversableDecider[Int, Vector](defaultEquality))
-      val e6 = intercept[TestFailedException] {
-        Vector(1, 1) should contain (2) (decided by traversableDecider[Int, Vector](defaultEquality))
-      }
-
-        Vector(1, 1) should contain (2) (decidedForTraversable by defaultEquality)
-
-      e6.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
-      e6.failedCodeLineNumber should be (Some(thisLineNumber - 4))
-*/
     }
-/*
-No, what should work is:
-
-contain (7) returns a subclass of MatcherFactory1 that also has an extra apply method that takes an Equality.
-This apply method returns a different MatcherFactory1 that requires not a Holder but a SpecifiedEqualityHolder
-or something. And it's this:
-trait SpecifiedEqualityHolder[A] {
-  def containsElement(aggregation: A, element: Any, specifiedEquality: Equality[Any]): Boolean
-}
-
-Well because I don't know A yet, I'd have to say Int, and even then, this is wrong. So it would need
-to be something that doesn't care about the left or right? An Equality[Any]? Or maybe it is an
-existential type, but that won't work either.
-
-Nope. So what about doing it via an implicit conversion. Wait, what about an apply method that actually
-returns a Matcher[Int]?  An apply method that takes a...
-
-What if Holder had another method on it that took a specified Equality?
-Well, o
-
-Can I say: 
-
-decided by defaultElementEquality
-
-And have that give me a holder?
-
-def defaultElementEquality[T]: Holder[T] = new Holder[T] {
-  def containsElement(aggregation: T, element: Any, specifiedEquality: Equality[Any]): Boolean
-}
-
-def defaultElementEquality = holder(defaultEquality) // ??
-def fuzzyElementEquality = holder(fuzzyEquality) // ??
-
-      (Vector(2, 2) should contain (2)) (decided by traversableHolder(defaultEquality))
-
-I could say "decided using defaultEquality" and have an implicit from that to whatever T is, but again, I don't know the types.
-
-I don't htink it will work and i don't want the implcits. 
-
-Maybe can have a traversableDecider method that takes a specified Equality and returns something that
-implements Holder, Aggregation, and Orderable. Then it would just be like this:
-
-(Vector(2, 2) should contain (2)) (decided by traversableDecider(defaultEquality))
-
-traversableDecider is not implicit, and neither is the Equality it takes. It is just a method. Can have
-one for arrayDecider, stringDecider, javaCollectionDecider, etc.
-
-Oh yes, and the optionDecider would only implement Holder[Option], not Aggregation[Option], etc.
-*/
 /*
     def `should use an Equality of the element type of the left-hand "holder" on a String` {
       
@@ -187,6 +110,14 @@ Oh yes, and the optionDecider would only implement Holder[Option], not Aggregati
 
       e2.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
       e2.failedCodeLineNumber should be (Some(thisLineNumber - 5))
+
+      (Array(2, 2) should contain (2)) (decidedForArray by defaultEquality)
+      val e3 = intercept[TestFailedException] {
+        (Array(1, 1) should contain (2)) (decidedForArray by defaultEquality)
+      }
+
+      e3.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e3.failedCodeLineNumber should be (Some(thisLineNumber - 4))
     }
   }
 }

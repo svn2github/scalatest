@@ -10567,12 +10567,14 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       def extentOf(trav: TRAV[E]): Long = trav.size
     }
 
-  def traversableDecider[E, TRAV[_] <: scala.collection.GenTraversable[_]](equality: Equality[E]): Holder[TRAV[E]] = 
-    new Holder[TRAV[E]] {
-      def containsElement(trav: TRAV[E], ele: Any): Boolean = {
-        trav.exists((e: Any) => equality.areEqual(e.asInstanceOf[E], ele)) // Don't know why the compiler thinks e is Any. Should be E. Compiler bug?
+  object decidedForTraversable {
+    def by[E, TRAV[_] <: scala.collection.GenTraversable[_]](equality: Equality[E]): Holder[TRAV[E]] = 
+      new Holder[TRAV[E]] {
+        def containsElement(trav: TRAV[E], ele: Any): Boolean = {
+          trav.exists((e: Any) => equality.areEqual(e.asInstanceOf[E], ele)) // Don't know why the compiler thinks e is Any. Should be E. Compiler bug?
+        }
       }
-    }
+  }
 
   implicit def equalityEnablersForTraversable[E, TRAV[_] <: scala.collection.GenTraversable[_]](implicit equality: Equality[E]): Holder[TRAV[E]] = 
     new Holder[TRAV[E]] {
@@ -10595,9 +10597,16 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
   implicit def equalityEnablersForArray[E](implicit equality: Equality[E]): Holder[Array[E]] = 
     new Holder[Array[E]] {
       def containsElement(arr: Array[E], ele: Any): Boolean =
-        arr.exists((e: E) => equality.areEqual(e, ele)) // Don't know why the compiler thinks e is Any. Should be E. Compiler bug?
-        // arr.exists((e: Any) => equality.areEqual(e.asInstanceOf[E], ele)) // Don't know why the compiler thinks e is Any. Should be E. Compiler bug?
+        arr.exists((e: E) => equality.areEqual(e, ele))
     }
+
+  object decidedForArray {
+    def by[E](equality: Equality[E]): Holder[Array[E]] = 
+      new Holder[Array[E]] {
+        def containsElement(arr: Array[E], ele: Any): Boolean =
+          arr.exists((e: E) => equality.areEqual(e, ele))
+      }
+  }
 
   implicit val enablersForString: Length[String] with Size[String] with Holder[String] = 
     new Length[String] with Size[String] with Holder[String] {
