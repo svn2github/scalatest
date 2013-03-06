@@ -24,7 +24,12 @@ package org.scalautils
  */
 trait Explicitly {
 
+/*
   class DecidedWord {
+  }
+*/
+  class DecidedWord {
+    // def by[T, TC[_]](typeclass: TC[T]): TC[T] = typeclass
     def by[T](equality: Equality[T]): DecidedByEquality[T] = new DecidedByEquality[T](equality)
   }
 

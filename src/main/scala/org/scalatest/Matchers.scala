@@ -10559,9 +10559,19 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       def extentOf(javaMap: JMAP[K, V]): Long = javaMap.size
     }
 
+  // This one could also mix in DefaultHolder. Wait, no, a Holder with an explicit equality.
+  // ExplicitEqualityHolder. That guy would have a method like:
+  // def containsElement(trav: TRAV[E], ele: Any, equality: Equality[E]): Boolean = {
   implicit def enablersForTraversable[E, TRAV[_] <: scala.collection.GenTraversable[_]]: Size[TRAV[E]] = 
     new Size[TRAV[E]] {
       def extentOf(trav: TRAV[E]): Long = trav.size
+    }
+
+  def traversableDecider[E, TRAV[_] <: scala.collection.GenTraversable[_]](equality: Equality[E]): Holder[TRAV[E]] = 
+    new Holder[TRAV[E]] {
+      def containsElement(trav: TRAV[E], ele: Any): Boolean = {
+        trav.exists((e: Any) => equality.areEqual(e.asInstanceOf[E], ele)) // Don't know why the compiler thinks e is Any. Should be E. Compiler bug?
+      }
     }
 
   implicit def equalityEnablersForTraversable[E, TRAV[_] <: scala.collection.GenTraversable[_]](implicit equality: Equality[E]): Holder[TRAV[E]] = 
@@ -10598,7 +10608,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
 
 /**
  * Companion object that facilitates the importing of <code>Matchers</code> members as 
- * an alternative to mixing it the trait. One use case is to import <code>Matchers</code> members so you can use
+  an alternative to mixing it the trait. One use case is to import <code>Matchers</code> members so you can use
  * them in the Scala interpreter:
  *
  * <pre class="stREPL">
