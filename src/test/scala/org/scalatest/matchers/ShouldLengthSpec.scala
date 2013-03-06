@@ -154,7 +154,6 @@ class ShouldLengthSpec extends Spec with ShouldMatchers with Checkers with Retur
         assert(caught3.getMessage === "\"hi\" had length 2, and \"hi\" had length 2")
       }
 
-/* TODO: Uncomment this once we have MatcherFactory3 going.
       def `should give good error messages when more than two clauses are used with logical connectors` {
 
         val caught1 = intercept[TestFailedException] {
@@ -167,7 +166,6 @@ class ShouldLengthSpec extends Spec with ShouldMatchers with Checkers with Retur
         }
         assert(caught2.getMessage === "\"hi\" had length 2, and \"hi\" equaled \"hi\", and \"[hi]\" did not equal \"[frog]\"")
       }
-*/
     }
 
     object `on Array` {

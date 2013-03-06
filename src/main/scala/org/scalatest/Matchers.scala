@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2008 Artima, Inc.
+ * Copyright 2001-2013 Artima, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9106,12 +9106,16 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *        ^
      * </pre>
      */
-    def should[TYPECLASS1[_]](rightMatcherFactory1: MatcherFactory1[String, TYPECLASS1])(implicit typeClass1: TYPECLASS1[String]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcherFactory1.matcher)
+    def should[TC1[_]](rightMatcherFactory: MatcherFactory1[String, TC1])(implicit typeClass1: TC1[String]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherFactory.matcher)
     }
 
-    def should[TYPECLASS1[_], TYPECLASS2[_]](rightMatcherFactory2: MatcherFactory2[String, TYPECLASS1, TYPECLASS2])(implicit typeClass1: TYPECLASS1[String], typeClass2: TYPECLASS2[String]) {
-      ShouldMethodHelper.shouldMatcher(left, rightMatcherFactory2.matcher)
+    def should[TC1[_], TC2[_]](rightMatcherFactory: MatcherFactory2[String, TC1, TC2])(implicit typeClass1: TC1[String], typeClass2: TC2[String]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherFactory.matcher)
+    }
+
+    def should[TC1[_], TC2[_], TC3[_]](rightMatcherFactory: MatcherFactory3[String, TC1, TC2, TC3])(implicit tc1: TC1[String], tc2: TC2[String], tc3: TC3[String]) {
+      ShouldMethodHelper.shouldMatcher(left, rightMatcherFactory.matcher)
     }
 
     /**
