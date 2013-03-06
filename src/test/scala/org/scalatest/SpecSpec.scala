@@ -1833,19 +1833,6 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
         assert(infoProvidedIndex < testStartingIndex)
         assert(testStartingIndex < testSucceededIndex)
       }
-      // TODO: This does not work, can't think of a solution yet.
-      /*it("should, when the info appears in the body after a test, report the info after the test runs") {
-        val msg = "hi there, dude"
-        val testName = "test name"
-        class MySpec extends Spec {
-          def `test name` {}
-          info(msg)
-        }
-        val (infoProvidedIndex, testStartingIndex, testSucceededIndex) =
-          getIndexesForInformerEventOrderTests(new MySpec, testName, msg)
-        assert(testStartingIndex < testSucceededIndex)
-        assert(testSucceededIndex < infoProvidedIndex)
-      }*/
       it("should throw an IllegalStateException when info is called by a method invoked after the suite has been executed") {
         class MySpec extends Spec {
           callInfo() // This should work fine
@@ -1893,7 +1880,6 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     }
   }
 
-  // TODO: ensure spec aborts if same name is used with and without communicator
   it("should discover method names and tags") {
 
     val a = new Spec {
