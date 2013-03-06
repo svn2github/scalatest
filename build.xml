@@ -280,7 +280,7 @@
     <target name="compile" depends="compile-main, compile-tests"/>
 
     <!--<target name="compile-main" depends="init">-->
-    <target name="compile-main" depends="init, gentables, genmatchers, gengen, geninspectors, write-excludes-file">
+    <target name="compile-main" depends="init, gentables, genmatchers, gengen, geninspectors, genfactories, write-excludes-file">
         <!--<fail message="Wrong JVM [${ant.java.version}]. Include 'java6' target to use java 6."
               unless="jvm.ok"/>-->
 

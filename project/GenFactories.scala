@@ -133,7 +133,7 @@ $endif$
    * Ands this matcher factory with the passed <code>MatcherFactory1</code> that has the same final typeclass as this one.
    */
   def and[U <: SC](rightMatcherFactory: MatcherFactory1[U, TC$arity$]): MatcherFactory$arity$[U, $commaSeparatedTCNs$] =
-    new MatcherFactory1[U, $commaSeparatedTCNs$] {
+    new MatcherFactory$arity$[U, $commaSeparatedTCNs$] {
       def matcher[V <: U : $colonSeparatedTCNs$]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
@@ -149,7 +149,7 @@ $endif$
    * Ors this matcher factory with the passed <code>MatcherFactory1</code> that has the same final typeclass as this one.
    */
   def or[U <: SC](rightMatcherFactory: MatcherFactory1[U, TC$arity$]): MatcherFactory$arity$[U, $commaSeparatedTCNs$] =
-    new MatcherFactory1[U, $commaSeparatedTCNs$] {
+    new MatcherFactory$arity$[U, $commaSeparatedTCNs$] {
       def matcher[V <: U : $colonSeparatedTCNs$]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
@@ -214,11 +214,7 @@ $endif$
     }
 """
 
-/*
-  // No it is simpler. for (a <- 1 to 22 - A), cut one.
-  // If A is Arity of this one, then For each N > A < 22 - A, and and or taking a MFN with a different type class
-  // Replicating the and/or DSL here:
-
+  val bottomPart1 = """
   /**
    * This class is part of the ScalaTest matchers DSL. Please see the documentation for <a href="../Matchers.html"><code>Matchers</code></a> for an overview of
    * the matchers DSL.
@@ -228,30 +224,30 @@ $endif$
   final class AndHaveWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and have length (3 - 1))
      *                           ^
      * </pre>
      */
-    def length(expectedLength: Long): MatcherFactory2[SC, TC1, Length] = and(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherFactory$arityPlusOne$[SC, $commaSeparatedTCNs$, Length] = and(MatcherWords.have.length(expectedLength))
 
     // These guys need to generate a MatcherFactory of N+1. And it needs N-1 TC's, with the last one being Length.
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and have size (3 - 1))
      *                           ^ 
      * </pre>
      */
-    def size(expectedSize: Long): MatcherFactory2[SC, TC1, Size] = and(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherFactory$arityPlusOne$[SC, $commaSeparatedTCNs$, Size] = and(MatcherWords.have.size(expectedSize))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (haMatcherFactory and have size (3 - 1))
@@ -269,150 +265,150 @@ $endif$
   final class AndContainWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain (3 - 1))
      *                              ^
      * </pre>
      */
-    def apply[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] = thisMatcherFactory.and(MatcherWords.contain(expectedElement))
+    def apply[U](expectedElement: U): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.contain(expectedElement))
 
     // And some, the ones that would by themselves already generate a Matcher, just return a MatcherFactoryN where N is the same.
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain key ("one"))
      *                               ^
      * </pre>
      */
-    def key[U](expectedElement: U): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] = thisMatcherFactory.and(MatcherWords.contain.key(expectedElement))
+    def key[U](expectedElement: U): MatcherFactory$arity$[SC with scala.collection.GenMap[U, Any], $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.contain.key(expectedElement))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain value (1))
      *                              ^
      * </pre>
      */
-    def value[U](expectedValue: U): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] = thisMatcherFactory.and(MatcherWords.contain.value(expectedValue))
+    def value[U](expectedValue: U): MatcherFactory$arity$[SC with scala.collection.GenMap[K, U] forSome { type K }, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.contain.value(expectedValue))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain theSameElementsAs List(1, 2, 3))
      *                              ^
      * </pre>
      */
-    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.contain.theSameElementsAs(right)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain theSameIteratedElementsAs List(1, 2, 3))
      *                              ^
      * </pre>
      */
-    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain allOf (1, 2, 3))
      *                              ^
      * </pre>
      */
-    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.contain.allOf(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain inOrder (1, 2, 3))
      *                              ^
      * </pre>
      */
-    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.contain.inOrder(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain oneOf (1, 3, 3))
      *                              ^
      * </pre>
      */
-    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.contain.oneOf(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain only (3, 1))
      *                              ^
      * </pre>
      */
-    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.contain.only(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (and contain inOrderOnly (1, 3))
      *              ^
      * </pre>
      */
-    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (and contain noneOf (7, 8, 9))
      *              ^
      * </pre>
      */
-    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.contain.noneOf(right.toList: _*)(equality))
       
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain a (validNumber))
      *                              ^
      * </pre>
      */
-    def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def a[E](aMatcher: AMatcher[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       and(MatcherWords.contain.a(aMatcher))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and contain an (invalidNumber))
      *                              ^
      * </pre>
      */
-    def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def an[E](anMatcher: AnMatcher[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       and(MatcherWords.contain.an(anMatcher))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory and contain key ("one"))
@@ -430,78 +426,78 @@ $endif$
   final class AndBeWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and be a ('file))
      *                         ^
      * </pre>
      */
-    def a(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = and(MatcherWords.be.a(symbol))
+    def a(symbol: Symbol): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = and(MatcherWords.be.a(symbol))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and be a (file))
      *                         ^
      * </pre>
      */
-    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = and(MatcherWords.be.a(bePropertyMatcher))
+    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory$arity$[SC with AnyRef with U, $commaSeparatedTCNs$] = and(MatcherWords.be.a(bePropertyMatcher))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and be a (validNumber))
      *                         ^
      * </pre>
      */
-    def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SC with U, TC1] = and(MatcherWords.be.a(aMatcher))
+    def a[U](aMatcher: AMatcher[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = and(MatcherWords.be.a(aMatcher))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and be an ('apple))
      *                         ^
      * </pre>
      */
-    def an(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = and(MatcherWords.be.an(symbol))
+    def an(symbol: Symbol): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = and(MatcherWords.be.an(symbol))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and be an (apple))
      *                         ^
      * </pre>
      */
-    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = and(MatcherWords.be.an(bePropertyMatcher))
+    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory$arity$[SC with AnyRef with U, $commaSeparatedTCNs$] = and(MatcherWords.be.an(bePropertyMatcher))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and be an (integerNumber))
      *                         ^
      * </pre>
      */
-    def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SC with U, TC1] = and(MatcherWords.be.an(anMatcher))
+    def an[U](anMatcher: AnMatcher[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = and(MatcherWords.be.an(anMatcher))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and be theSameInstanceAs (string))
      *                         ^
      * </pre>
      */
-    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SC with AnyRef, TC1] = and(MatcherWords.be.theSameInstanceAs(anyRef))
+    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = and(MatcherWords.be.theSameInstanceAs(anyRef))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory and be a ('file))
@@ -519,28 +515,28 @@ $endif$
   final class AndFullyMatchWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and fullyMatch regex (decimal))
      *                                 ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.fullyMatch.regex(regexString))
+    def regex(regexString: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = and(MatcherWords.fullyMatch.regex(regexString))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and fullyMatch regex (decimalRegex))
      *                                 ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.fullyMatch.regex(regex))
+    def regex(regex: Regex): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = and(MatcherWords.fullyMatch.regex(regex))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory and fullyMatch regex (decimalRegex))
@@ -558,28 +554,28 @@ $endif$
   final class AndIncludeWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and include regex (decimal))
      *                              ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.include.regex(regexString))
+    def regex(regexString: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = and(MatcherWords.include.regex(regexString))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and include regex (decimalRegex))
      *                              ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.include.regex(regex))
+    def regex(regex: Regex): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = and(MatcherWords.include.regex(regex))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory and include regex ("wor.d"))
@@ -597,28 +593,28 @@ $endif$
   final class AndStartWithWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and startWith regex (decimal))
      *                                ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.startWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = and(MatcherWords.startWith.regex(regexString))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and startWith regex (decimalRegex))
      *                                ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.startWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = and(MatcherWords.startWith.regex(regex))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory and startWith regex ("1.7"))
@@ -636,28 +632,28 @@ $endif$
   final class AndEndWithWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and endWith regex (decimal))
      *                              ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = and(MatcherWords.endWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = and(MatcherWords.endWith.regex(regexString))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and endWith regex (decimalRegex))
      *                              ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = and(MatcherWords.endWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = and(MatcherWords.endWith.regex(regex))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory and endWith regex (decimalRegex))
@@ -675,14 +671,14 @@ $endif$
   final class AndNotWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not equal (3 - 1))
      *                          ^
      * </pre>
      */
-    def equal(any: Any): MatcherFactory2[SC, TC1, Equality] =
+    def equal(any: Any): MatcherFactory$arityPlusOne$[SC, $commaSeparatedTCNs$, Equality] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.equal(any)))
 
     /**
@@ -693,17 +689,17 @@ $endif$
      *                          ^
      * </pre>
      */
-    def equal[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.equal(interval))
+    def equal[U](interval: Interval[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.equal(interval))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not equal (null))
      *                          ^
      * </pre>
      */
-    def equal(o: Null): MatcherFactory1[SC, TC1] = {
+    def equal(o: Null): MatcherFactory$arity$[SC, $commaSeparatedTCNs$] = {
       thisMatcherFactory and {
         new Matcher[SC] {
           def apply(left: SC): MatchResult = {
@@ -720,186 +716,186 @@ $endif$
     }
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be (3 - 1))
      *                          ^
      * </pre>
      */
-    def be(any: Any): MatcherFactory1[SC, TC1] =
+    def be(any: Any): MatcherFactory$arity$[SC, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.be(any)))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not have length (3))
      *                          ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SC, TC1, Length] =
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory$arityPlusOne$[SC, $commaSeparatedTCNs$, Length] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not have size (3))
      *                          ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SC, TC1, Size] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory$arityPlusOne$[SC, $commaSeparatedTCNs$, Size] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not have (author ("Melville")))
      *                          ^
      * </pre>
      */
-    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SC with U, TC1] =
+    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be &lt; (6))
      *                          ^
      * </pre>
      */
-    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SC with U, TC1] =
+    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.be(resultOfLessThanComparison))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be (null))
      *                          ^
      * </pre>
      */
-    def be(o: Null): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(o))
+    def be(o: Null): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(o))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory (8) and not be &gt; (6))
      *                              ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SC with U, TC1] =
+    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.be(resultOfGreaterThanComparison))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be &lt;= (2))
      *                          ^
      * </pre>
      */
-    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
+    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be &gt;= (6))
      *                          ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
+    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be === (6))
      *                          ^
      * </pre>
      */
-    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SC, TC1] =
+    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory$arity$[SC, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.be(tripleEqualsInvocation))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be ('empty))
      *                          ^
      * </pre>
      */
-    def be(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(symbol))
+    def be(symbol: Symbol): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(symbol))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be (odd))
      *                          ^
      * </pre>
      */
-    def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(beMatcher))
+    def be[U](beMatcher: BeMatcher[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(beMatcher))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be (directory))
      *                          ^
      * </pre>
      */
-    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(bePropertyMatcher))
+    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory$arity$[SC with AnyRef with U, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(bePropertyMatcher))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be a ('file))
      *                          ^
      * </pre>
      */
-    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be a (validMarks))
      *                          ^
      * </pre>
      */
-    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be a (directory))
      *                          ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be a primeNumber)
      *                          ^
      * </pre>
      */
-    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be an (directory))
@@ -909,24 +905,24 @@ $endif$
     def be[SC <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[SC]) = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be an (invalidMarks))
      *                          ^
      * </pre>
      */
-    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(resultOfAnWordApplication))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be theSameInstanceAs (otherString))
      *                          ^
      * </pre>
      */
-    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
+    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
     /**
      * This method enables the following syntax, for the "primitive" numeric types:
@@ -936,154 +932,157 @@ $endif$
      *                          ^
      * </pre>
      */
-    def be[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.and(MatcherWords.not.be(interval))
+    def be[U](interval: Interval[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.and(MatcherWords.not.be(interval))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not fullyMatch regex (decimal))
      *                          ^
      * </pre>
      */
-    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
+    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not include regex (decimal))
      *                          ^
      * </pre>
      */
-    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
+    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.include(resultOfRegexWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not include ("1.7"))
      *                          ^
      * </pre>
      */
-    def include(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
+    def include(expectedSubstring: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.include(expectedSubstring))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not startWith regex (decimal))
      *                          ^
      * </pre>
      */
-    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
+    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not startWith ("1.7"))
      *                          ^
      * </pre>
      */
-    def startWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
+    def startWith(expectedSubstring: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.startWith(expectedSubstring))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not endWith regex (decimal))
      *                          ^
      * </pre>
      */
-    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
+    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not endWith ("1.7"))
      *                          ^
      * </pre>
      */
-    def endWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
+    def endWith(expectedSubstring: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.endWith(expectedSubstring))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not contain (3))
      *                          ^
      * </pre>
      */
-    def contain[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] =
+    def contain[U](expectedElement: U): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.contain(expectedElement))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not contain key ("three"))
      *                          ^
      * </pre>
      */
-    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] =
+    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory$arity$[SC with scala.collection.GenMap[U, Any], $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.contain(resultOfKeyWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not contain value (3))
      *                          ^
      * </pre>
      */
-    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] =
+    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory$arity$[SC with scala.collection.GenMap[K, U] forSome { type K }, $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.contain(resultOfValueWordApplication))
       
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not contain theSameElementsAs (List(8, 1, 2))) 
      *                          ^
      * </pre>
      */
-    def contain[U](right: ContainMatcher[U]): MatcherFactory1[SC with GenTraversable[U], TC1] =
+    def contain[U](right: ContainMatcher[U]): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] =
       thisMatcherFactory.and(MatcherWords.not.contain(right))
       
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not contain a primeNumber)
      *                          ^
      * </pre>
      */
-    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
+    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.not.contain(resultOfAWordApplication))
       
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not contain an invalidNumber)
      *                          ^
      * </pre>
      */
-    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
+    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] = 
       thisMatcherFactory.and(MatcherWords.not.contain(resultOfAnWordApplication))
   }
+"""
+
+  val bottomPart2 = """
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory and not contain value (3))
@@ -1101,28 +1100,28 @@ $endif$
   final class OrHaveWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or have length (3 - 1))
      *                          ^
      * </pre>
      */
-    def length(expectedLength: Long): MatcherFactory2[SC, TC1, Length] = or(MatcherWords.have.length(expectedLength))
+    def length(expectedLength: Long): MatcherFactory$arityPlusOne$[SC, $commaSeparatedTCNs$, Length] = or(MatcherWords.have.length(expectedLength))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or have size (3 - 1))
      *                          ^
      * </pre>
      */
-    def size(expectedSize: Long): MatcherFactory2[SC, TC1, Size] = or(MatcherWords.have.size(expectedSize))
+    def size(expectedSize: Long): MatcherFactory$arityPlusOne$[SC, $commaSeparatedTCNs$, Size] = or(MatcherWords.have.size(expectedSize))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory or have size (3 - 1))
@@ -1140,148 +1139,148 @@ $endif$
   final class OrContainWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain (3 - 1))
      *                             ^
      * </pre>
      */
-    def apply[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] = thisMatcherFactory.or(MatcherWords.contain(expectedElement))
+    def apply[U](expectedElement: U): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.contain(expectedElement))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain key ("one"))
      *                             ^
      * </pre>
      */
-    def key[U](expectedKey: U): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] = thisMatcherFactory.or(MatcherWords.contain.key(expectedKey))
+    def key[U](expectedKey: U): MatcherFactory$arity$[SC with scala.collection.GenMap[U, Any], $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.contain.key(expectedKey))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain value (1))
      *                             ^
      * </pre>
      */
-    def value[U](expectedValue: U): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] = thisMatcherFactory.or(MatcherWords.contain.value(expectedValue))
+    def value[U](expectedValue: U): MatcherFactory$arity$[SC with scala.collection.GenMap[K, U] forSome { type K }, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.contain.value(expectedValue))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain theSameElementsAs List(1, 2, 3))
      *                             ^
      * </pre>
      */
-    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def theSameElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.contain.theSameElementsAs(right)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain theSameIteratedElementsAs List(1, 2, 3))
      *                             ^
      * </pre>
      */
-    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def theSameIteratedElementsAs[E](right: GenTraversable[E])(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.contain.theSameIteratedElementsAs(right)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain allOf (1, 2, 3))
      *                             ^
      * </pre>
      */
-    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def allOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.contain.allOf(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain inOrder (1, 2, 3))
      *                             ^
      * </pre>
      */
-    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def inOrder[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.contain.inOrder(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain oneOf (1, 3, 3))
      *                             ^
      * </pre>
      */
-    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def oneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.contain.oneOf(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain only (3, 1))
      *                             ^
      * </pre>
      */
-    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def only[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.contain.only(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain inOrderOnly (1, 3))
      *                             ^
      * </pre>
      */
-    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def inOrderOnly[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.contain.inOrderOnly(right.toList: _*)(equality))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain noneOf (7, 8, 9))
      *                             ^
      * </pre>
      */
-    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def noneOf[E](right: E*)(implicit equality: Equality[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.contain.noneOf(right.toList: _*)(equality))
       
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain a (validNumber))
      *                             ^
      * </pre>
      */
-    def a[E](aMatcher: AMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def a[E](aMatcher: AMatcher[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       or(MatcherWords.contain.a(aMatcher))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or contain an (invalidNumber))
      *                             ^
      * </pre>
      */
-    def an[E](anMatcher: AnMatcher[E]): MatcherFactory1[SC with GenTraversable[E], TC1] = 
+    def an[E](anMatcher: AnMatcher[E]): MatcherFactory$arity$[SC with GenTraversable[E], $commaSeparatedTCNs$] = 
       or(MatcherWords.contain.an(anMatcher))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory or contain value (1))
@@ -1299,78 +1298,78 @@ $endif$
   final class OrBeWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or be a ('directory))
      *                        ^
      * </pre>
      */
-    def a(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = or(MatcherWords.be.a(symbol))
+    def a(symbol: Symbol): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = or(MatcherWords.be.a(symbol))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or be a (directory))
      *                        ^
      * </pre>
      */
-    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = or(MatcherWords.be.a(bePropertyMatcher))
+    def a[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory$arity$[SC with AnyRef with U, $commaSeparatedTCNs$] = or(MatcherWords.be.a(bePropertyMatcher))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or be a (validNumber))
      *                        ^
      * </pre>
      */
-    def a[U](aMatcher: AMatcher[U]): MatcherFactory1[SC with U, TC1] = or(MatcherWords.be.a(aMatcher))
+    def a[U](aMatcher: AMatcher[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = or(MatcherWords.be.a(aMatcher))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or be an ('apple))
      *                        ^
      * </pre>
      */
-    def an(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = or(MatcherWords.be.an(symbol))
+    def an(symbol: Symbol): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = or(MatcherWords.be.an(symbol))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or be an (apple))
      *                        ^
      * </pre>
      */
-    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = or(MatcherWords.be.an(bePropertyMatcher))
+    def an[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory$arity$[SC with AnyRef with U, $commaSeparatedTCNs$] = or(MatcherWords.be.an(bePropertyMatcher))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or be an (integerNumber))
      *                        ^
      * </pre>
      */
-    def an[U](anMatcher: AnMatcher[U]): MatcherFactory1[SC with U, TC1] = or(MatcherWords.be.an(anMatcher))
+    def an[U](anMatcher: AnMatcher[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = or(MatcherWords.be.an(anMatcher))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or be theSameInstanceAs (otherString))
      *                        ^
      * </pre>
      */
-    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory1[SC with AnyRef, TC1] = or(MatcherWords.be.theSameInstanceAs(anyRef))
+    def theSameInstanceAs(anyRef: AnyRef): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = or(MatcherWords.be.theSameInstanceAs(anyRef))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory or be a ('directory))
@@ -1388,28 +1387,28 @@ $endif$
   final class OrFullyMatchWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or fullyMatch regex (decimal))
      *                                ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.fullyMatch.regex(regexString))
+    def regex(regexString: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = or(MatcherWords.fullyMatch.regex(regexString))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or fullyMatch regex (decimal))
      *                                ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.fullyMatch.regex(regex))
+    def regex(regex: Regex): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = or(MatcherWords.fullyMatch.regex(regex))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory or fullyMatch regex (decimal))
@@ -1427,28 +1426,28 @@ $endif$
   final class OrIncludeWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or include regex (decimal))
      *                             ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.include.regex(regexString))
+    def regex(regexString: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = or(MatcherWords.include.regex(regexString))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or include regex (decimal))
      *                             ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.include.regex(regex))
+    def regex(regex: Regex): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = or(MatcherWords.include.regex(regex))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory or include regex ("1.7"))
@@ -1466,28 +1465,28 @@ $endif$
   final class OrStartWithWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or startWith regex (decimal))
      *                               ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.startWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = or(MatcherWords.startWith.regex(regexString))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or startWith regex (decimal))
      *                               ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.startWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = or(MatcherWords.startWith.regex(regex))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory or startWith regex ("1.7"))
@@ -1505,28 +1504,28 @@ $endif$
   final class OrEndWithWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or endWith regex (decimal))
      *                             ^
      * </pre>
      */
-    def regex(regexString: String): MatcherFactory1[SC with String, TC1] = or(MatcherWords.endWith.regex(regexString))
+    def regex(regexString: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = or(MatcherWords.endWith.regex(regexString))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or endWith regex (decimal))
      *                             ^
      * </pre>
      */
-    def regex(regex: Regex): MatcherFactory1[SC with String, TC1] = or(MatcherWords.endWith.regex(regex))
+    def regex(regex: Regex): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] = or(MatcherWords.endWith.regex(regex))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory or endWith regex ("7b"))
@@ -1544,14 +1543,14 @@ $endif$
   final class OrNotWord {
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not equal (2))
      *                         ^
      * </pre>
      */
-    def equal(any: Any): MatcherFactory1[SC, TC1] =
+    def equal(any: Any): MatcherFactory$arity$[SC, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.legacyEqual(any)))
 
     /**
@@ -1562,17 +1561,17 @@ $endif$
      *                         ^
      * </pre>
      */
-    def equal[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.equal(interval))
+    def equal[U](interval: Interval[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.equal(interval))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not equal (null))
      *                         ^
      * </pre>
      */
-    def equal(o: Null): MatcherFactory1[SC, TC1] = {
+    def equal(o: Null): MatcherFactory$arity$[SC, $commaSeparatedTCNs$] = {
       thisMatcherFactory or {
         new Matcher[SC] {
           def apply(left: SC): MatchResult = {
@@ -1589,213 +1588,213 @@ $endif$
     }
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be (2))
      *                         ^
      * </pre>
      */
-    def be(any: Any): MatcherFactory1[SC, TC1] =
+    def be(any: Any): MatcherFactory$arity$[SC, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.be(any)))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not have length (3))
      *                         ^
      * </pre>
      */
-    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory2[SC, TC1, Length] =
+    def have(resultOfLengthWordApplication: ResultOfLengthWordApplication): MatcherFactory$arityPlusOne$[SC, $commaSeparatedTCNs$, Length] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.have.length(resultOfLengthWordApplication.expectedLength)))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not have size (3))
      *                         ^
      * </pre>
      */
-    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory2[SC, TC1, Size] =
+    def have(resultOfSizeWordApplication: ResultOfSizeWordApplication): MatcherFactory$arityPlusOne$[SC, $commaSeparatedTCNs$, Size] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.have.size(resultOfSizeWordApplication.expectedSize)))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not have (author ("Melville")))
      *                         ^
      * </pre>
      */
-    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory1[SC with U, TC1] =
+    def have[U](firstPropertyMatcher: HavePropertyMatcher[U, _], propertyMatchers: HavePropertyMatcher[U, _]*): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.apply(MatcherWords.have(firstPropertyMatcher, propertyMatchers: _*)))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be (null))
      *                         ^
      * </pre>
      */
-    def be(o: Null): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(o))
+    def be(o: Null): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(o))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be &lt; (8))
      *                         ^
      * </pre>
      */
-    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory1[SC with U, TC1] =
+    def be[U](resultOfLessThanComparison: ResultOfLessThanComparison[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.be(resultOfLessThanComparison))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be &gt; (6))
      *                         ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory1[SC with U, TC1] =
+    def be[U](resultOfGreaterThanComparison: ResultOfGreaterThanComparison[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.be(resultOfGreaterThanComparison))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be &lt;= (2))
      *                         ^
      * </pre>
      */
-    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
+    def be[U](resultOfLessThanOrEqualToComparison: ResultOfLessThanOrEqualToComparison[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.be(resultOfLessThanOrEqualToComparison))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be &gt;= (6))
      *                         ^
      * </pre>
      */
-    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory1[SC with U, TC1] =
+    def be[U](resultOfGreaterThanOrEqualToComparison: ResultOfGreaterThanOrEqualToComparison[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.be(resultOfGreaterThanOrEqualToComparison))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be === (8))
      *                         ^
      * </pre>
      */
-    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory1[SC, TC1] =
+    def be(tripleEqualsInvocation: TripleEqualsInvocation[_]): MatcherFactory$arity$[SC, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.be(tripleEqualsInvocation))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be ('empty))
      *                         ^
      * </pre>
      */
-    def be(symbol: Symbol): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(symbol))
+    def be(symbol: Symbol): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(symbol))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be (odd))
      *                         ^
      * </pre>
      */
-    def be[U](beMatcher: BeMatcher[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(beMatcher))
+    def be[U](beMatcher: BeMatcher[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(beMatcher))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be (file))
      *                         ^
      * </pre>
      */
-    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory1[SC with AnyRef with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(bePropertyMatcher))
+    def be[U](bePropertyMatcher: BePropertyMatcher[U]): MatcherFactory$arity$[SC with AnyRef with U, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(bePropertyMatcher))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be a ('file))
      *                         ^
      * </pre>
      */
-    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be(resultOfAWordApplication: ResultOfAWordToSymbolApplication): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be a (validMarks))
      *                         ^
      * </pre>
      */
-    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be a (file))
      *                         ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
+    def be[U <: AnyRef](resultOfAWordApplication: ResultOfAWordToBePropertyMatcherApplication[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be an ('apple))
      *                         ^
      * </pre>
      */
-    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be(resultOfAnWordApplication: ResultOfAnWordToSymbolApplication): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be an (file))
      *                         ^
      * </pre>
      */
-    def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U <: AnyRef](resultOfAnWordApplication: ResultOfAnWordToBePropertyMatcherApplication[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory and not be an (invalidMarks))
      *                          ^
      * </pre>
      */
-    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
+    def be[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(resultOfAnWordApplication))
     
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not be theSameInstanceAs (string))
      *                         ^
      * </pre>
      */
-    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory1[SC with AnyRef, TC1] = thisMatcherFactory.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
+    def be(resultOfTheSameInstanceAsApplication: ResultOfTheSameInstanceAsApplication): MatcherFactory$arity$[SC with AnyRef, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(resultOfTheSameInstanceAsApplication))
 
     /**
      * This method enables the following syntax for the "primitive" numeric types:
@@ -1805,154 +1804,154 @@ $endif$
      *                         ^
      * </pre>
      */
-    def be[U](interval: Interval[U]): MatcherFactory1[SC with U, TC1] = thisMatcherFactory.or(MatcherWords.not.be(interval))
+    def be[U](interval: Interval[U]): MatcherFactory$arity$[SC with U, $commaSeparatedTCNs$] = thisMatcherFactory.or(MatcherWords.not.be(interval))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not fullyMatch regex (decimal))
      *                         ^
      * </pre>
      */
-    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
+    def fullyMatch(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.fullyMatch(resultOfRegexWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not include regex (decimal))
      *                         ^
      * </pre>
      */
-    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
+    def include(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.include(resultOfRegexWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not include ("1.7"))
      *                         ^
      * </pre>
      */
-    def include(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
+    def include(expectedSubstring: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.include(expectedSubstring))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not startWith regex (decimal))
      *                         ^
      * </pre>
      */
-    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
+    def startWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.startWith(resultOfRegexWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not startWith ("1.7"))
      *                         ^
      * </pre>
      */
-    def startWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
+    def startWith(expectedSubstring: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.startWith(expectedSubstring))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not endWith regex (decimal))
      *                         ^
      * </pre>
      */
-    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory1[SC with String, TC1] =
+    def endWith(resultOfRegexWordApplication: ResultOfRegexWordApplication): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.endWith(resultOfRegexWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not endWith ("1.7"))
      *                         ^
      * </pre>
      */
-    def endWith(expectedSubstring: String): MatcherFactory1[SC with String, TC1] =
+    def endWith(expectedSubstring: String): MatcherFactory$arity$[SC with String, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.endWith(expectedSubstring))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not contain (3))
      *                         ^
      * </pre>
      */
-    def contain[U](expectedElement: U): MatcherFactory1[SC with GenTraversable[U], TC1] =
+    def contain[U](expectedElement: U): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.contain(expectedElement))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not contain key ("three"))
      *                         ^
      * </pre>
      */
-    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[U, Any], TC1] =
+    def contain[U](resultOfKeyWordApplication: ResultOfKeyWordApplication[U]): MatcherFactory$arity$[SC with scala.collection.GenMap[U, Any], $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.contain(resultOfKeyWordApplication))
 
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not contain value (3))
      *                         ^
      * </pre>
      */
-    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory1[SC with scala.collection.GenMap[K, U] forSome { type K }, TC1] =
+    def contain[U](resultOfValueWordApplication: ResultOfValueWordApplication[U]): MatcherFactory$arity$[SC with scala.collection.GenMap[K, U] forSome { type K }, $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.contain(resultOfValueWordApplication))
       
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not contain theSameElementsAs (List(8, 1, 2))) 
      *                         ^
      * </pre>
      */
-    def contain[U](right: ContainMatcher[U]): MatcherFactory1[SC with GenTraversable[U], TC1] =
+    def contain[U](right: ContainMatcher[U]): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] =
       thisMatcherFactory.or(MatcherWords.not.contain(right))
       
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not contain a primeNumber)
      *                         ^
      * </pre>
      */
-    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
+    def contain[U](resultOfAWordApplication: ResultOfAWordToAMatcherApplication[U]): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.not.contain(resultOfAWordApplication))
       
     /**
-     * This method enables the following syntax given a <code>MatcherFactory1</code>:
+     * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
      *
      * <pre class="stHighlight">
      * (aMatcherFactory or not contain an invalidNumber)
      *                         ^
      * </pre>
      */
-    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory1[SC with GenTraversable[U], TC1] = 
+    def contain[U](resultOfAnWordApplication: ResultOfAnWordToAnMatcherApplication[U]): MatcherFactory$arity$[SC with GenTraversable[U], $commaSeparatedTCNs$] = 
       thisMatcherFactory.or(MatcherWords.not.contain(resultOfAnWordApplication))
   }
 
   /**
-   * This method enables the following syntax given a <code>MatcherFactory1</code>:
+   * This method enables the following syntax given a <code>MatcherFactory$arity$</code>:
    *
    * <pre class="stHighlight">
    * (aMatcherFactory or not contain value (3))
@@ -1961,11 +1960,12 @@ $endif$
    */
   def or(notWord: NotWord): OrNotWord = new OrNotWord
 }
-
-*/
+"""
 
 // For some reason that I don't understand, I need to leave off the stars before the <pre> when 
 // they are next to ST commands. So I say  "   <pre>" sometimes instead of " * <pre>".
+
+  val MaxArity = 6
 
   def main(args: Array[String]) {
     val targetDir = args(0)
@@ -1983,7 +1983,7 @@ $endif$
   
   def genMain(dir: File, scalaVersion: String) {
     dir.mkdirs()
-    for (arity <- 1 to 22) {
+    for (arity <- 1 to MaxArity) {
       genMatcherFactory(dir, arity)
     }
   }
@@ -2008,29 +2008,46 @@ $endif$
       st.setAttribute("commaSeparatedTCNs", commaSeparatedTCNs);
     }
 
-    val bw = new BufferedWriter(new FileWriter(new File(targetDir, "MatcherFactory" + arity + ".delme")))
+    val bw = new BufferedWriter(new FileWriter(new File(targetDir, "MatcherFactory" + arity + ".scala")))
  
     try {
-      val st = new org.antlr.stringtemplate.StringTemplate(topPart)
-      setCommonOnes(arity, st)
-      bw.write(st.toString)
+
+      val topSt = new org.antlr.stringtemplate.StringTemplate(topPart)
+      setCommonOnes(arity, topSt)
+      bw.write(topSt.toString)
 
       // Now do the and/or methods that take matcher factories of various arities
-      for (passedArity <- 1 to 22 - arity) {
+      for (passedArity <- 1 to MaxArity - arity) {
         val resultArity = arity + passedArity
-        val st = new org.antlr.stringtemplate.StringTemplate(middlePart)
-        setCommonOnes(arity, st)
-        st.setAttribute("passedArity", passedArity);
-        st.setAttribute("resultArity", resultArity);
+        val middleSt = new org.antlr.stringtemplate.StringTemplate(middlePart)
+        setCommonOnes(arity, middleSt)
+        middleSt.setAttribute("passedArity", passedArity);
+        middleSt.setAttribute("resultArity", resultArity);
         val resultColonSeparatedTCNs = (1 to resultArity).map("TC" + _).mkString(" : ")
-        st.setAttribute("resultColonSeparatedTCNs", resultColonSeparatedTCNs);
+        middleSt.setAttribute("resultColonSeparatedTCNs", resultColonSeparatedTCNs);
         val resultCommaSeparatedTCNs = (1 to resultArity).map("TC" + _).mkString(", ")
-        st.setAttribute("resultCommaSeparatedTCNs", resultCommaSeparatedTCNs);
+        middleSt.setAttribute("resultCommaSeparatedTCNs", resultCommaSeparatedTCNs);
         val passedTypeConstructors = (arity + 1 to resultArity).map("TC" + _ + "[_]").mkString(", ")
-        st.setAttribute("passedTypeConstructors", passedTypeConstructors);
+        middleSt.setAttribute("passedTypeConstructors", passedTypeConstructors);
         val passedCommaSeparatedTCNs = (arity + 1 to resultArity).map("TC" + _).mkString(", ")
-        st.setAttribute("passedCommaSeparatedTCNs", passedCommaSeparatedTCNs);
-        bw.write(st.toString)
+        middleSt.setAttribute("passedCommaSeparatedTCNs", passedCommaSeparatedTCNs);
+        bw.write(middleSt.toString)
+      }
+
+      // Just don't put the and/or DSL under MatcherFactory<MaxArity>, even though the ones that could
+      // return another MatcherFactory<MaxArity> could be implemented. That would mean only *some* of the
+      // DSL is implemented under MatcherFactory<MaxArity>. I'd rather just say none of it is.
+      if (arity < MaxArity) {
+        def doABottomHalf(bottomSt: org.antlr.stringtemplate.StringTemplate) {
+          setCommonOnes(arity, bottomSt)
+          bottomSt.setAttribute("arityPlusOne", arity + 1);
+          bw.write(bottomSt.toString)
+        }
+        doABottomHalf(new org.antlr.stringtemplate.StringTemplate(bottomPart1)) // Do in two halves, because hitting class file max string size limit
+        doABottomHalf(new org.antlr.stringtemplate.StringTemplate(bottomPart2))
+      }
+      else {
+        bw.write("}\n")
       }
     }
     finally {
