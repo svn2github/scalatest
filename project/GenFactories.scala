@@ -21,7 +21,7 @@ import scala.collection.JavaConversions._
 
 object GenFactories {
 
-val wholeThang = """
+  val topPart = """
 package org.scalatest.matchers
 
 import org.scalatest.enablers._
@@ -73,17 +73,16 @@ import org.scalatest.words.ResultOfValueWordApplication
  * @author Bill Venners
  */
 // Add a TYPECLASSN for each N
-abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
-"""
-/*
-  // Add a TYPECLASSN for each N
+abstract class MatcherFactory$arity$[-SC, $typeConstructors$] { thisMatcherFactory =>
+
   /**
    * Factory method that will produce a <code>Matcher[T]</code>, where <code>T</code> is a subtype of (or the same type
    * as) <code>SC</code>, given a typeclass instance for each <code>TC<em>n</em></code>
    * implicit parameter (for example, a <code>TC1[T]</code>, <code>TC2[T]</code>, <em>etc.</em>).
    */
-  def matcher[T <: SC : TC1]: Matcher[T]
+  def matcher[T <: SC : $colonSeparatedTCNs$]: Matcher[T]
 
+$if (arityIsOne)$
   /**
    * Enables the <a href="../../org/scalautils/"><code>Explicitly</code></a> DSL to be used directly
    * on a <code>MatcherFactory1</code>, without invoking the <code>matcher</code> factory method.
@@ -98,15 +97,14 @@ abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
    */
   def apply[T <: SC](explicit: TC1[T]): Matcher[T] = matcher[T](explicit)
 
-  // And and or taking a Matcher
-  // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
-  // (equal (7) and ...)
+$endif$
+
   /**
    * Ands this matcher factory with the passed matcher.
    */
-  def and[U <: SC](rightMatcher: Matcher[U]): MatcherFactory1[U, TC1] =
-    new MatcherFactory1[U, TC1] {
-      def matcher[V <: U : TC1]: Matcher[V] = {
+  def and[U <: SC](rightMatcher: Matcher[U]): MatcherFactory$arity$[U, $commaSeparatedTCNs$] =
+    new MatcherFactory$arity$[U, $commaSeparatedTCNs$] {
+      def matcher[V <: U : $colonSeparatedTCNs$]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -116,14 +114,12 @@ abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
       }
     }
 
-  // (equal (7) or ...)
-  // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
   /**
    * Ors this matcher factory with the passed matcher.
    */
-  def or[U <: SC](rightMatcher: Matcher[U]): MatcherFactory1[U, TC1] =
-    new MatcherFactory1[U, TC1] {
-      def matcher[V <: U : TC1]: Matcher[V] = {
+  def or[U <: SC](rightMatcher: Matcher[U]): MatcherFactory$arity$[U, $commaSeparatedTCNs$] =
+    new MatcherFactory$arity$[U, $commaSeparatedTCNs$] {
+      def matcher[V <: U : $colonSeparatedTCNs$]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -133,22 +129,12 @@ abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
       }
     }
 
-  // And and or taking a MF1 that has the rightmost type class
-// Need one for the same typeclass and one for a different typeclass, yes, and can overload because
-// one returns a MatcherFactory1 the other a MatcherFactory2.
-   // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
-  // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
-  // And what I'd do is use the rightmost TC. I may call these TC's. If it is the same, then I return the same one.
-  // "hi" should (equal ("ho") and {mockClown.hasBigRedNose; equal ("ho")})
-  // Yes, same for and. Essentially, each N must have and one each and and or methods that takes a Matcher, one and and or
-  // method that takes each other MatcherFactoryN, plus one extra one for MatcherFactory1 of the rightmost type.
-
   /**
    * Ands this matcher factory with the passed <code>MatcherFactory1</code> that has the same final typeclass as this one.
    */
-  def and[U <: SC](rightMatcherFactory: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
-    new MatcherFactory1[U, TC1] {
-      def matcher[V <: U : TC1]: Matcher[V] = {
+  def and[U <: SC](rightMatcherFactory: MatcherFactory1[U, TC$arity$]): MatcherFactory$arity$[U, $commaSeparatedTCNs$] =
+    new MatcherFactory1[U, $commaSeparatedTCNs$] {
+      def matcher[V <: U : $colonSeparatedTCNs$]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -162,9 +148,9 @@ abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
   /**
    * Ors this matcher factory with the passed <code>MatcherFactory1</code> that has the same final typeclass as this one.
    */
-  def or[U <: SC](rightMatcherFactory: MatcherFactory1[U, TC1]): MatcherFactory1[U, TC1] =
-    new MatcherFactory1[U, TC1] {
-      def matcher[V <: U : TC1]: Matcher[V] = {
+  def or[U <: SC](rightMatcherFactory: MatcherFactory1[U, TC$arity$]): MatcherFactory$arity$[U, $commaSeparatedTCNs$] =
+    new MatcherFactory1[U, $commaSeparatedTCNs$] {
+      def matcher[V <: U : $colonSeparatedTCNs$]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -174,16 +160,33 @@ abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
         }
       }
     }
+"""
+
+  // And and or taking a MF1 that has the rightmost type class
+  // Need one for the same typeclass and one for a different typeclass, yes, and can overload because
+  // one returns a MatcherFactory1 the other a MatcherFactory2.
+  // "hi" should (equal ("hi") or {mockClown.hasBigRedNose; equal ("ho")})
+  // Changes the 1's to N's here, and will need to add TYPECLASSN for each N in 3 places
+  // And what I'd do is use the rightmost TC. I may call these TC's. If it is the same, then I return the same one.
+  // "hi" should (equal ("ho") and {mockClown.hasBigRedNose; equal ("ho")})
+  // Yes, same for and. Essentially, each N must have and one each and and or methods that takes a Matcher, one and and or
+  // method that takes each other MatcherFactoryN, plus one extra one for MatcherFactory1 of the rightmost type.
 
   // And and or taking a MF1 with a different type class
   // This one, though, I'd need to add 1 more. Amazing this overloads, but anyway. And I really need this for each N. The above
   // special case is just for MatcherFactory1. The other N's I'm not going to bother trying to do a quickie overload.
+
+  // passedArity is the arity of the right matcher factory passed in to and and or
+  // resultArity is the arity of the right matcher factory passed in to and and or, which is the arity of this
+  // matcher factory itself plus the arity of the passed matcher factory.
+  val middlePart = """
+
   /**
    * Ands this matcher factory with the passed matcher factory.
    */
-  def and[U <: SC, TC2[_]](rightMatcherFactory: MatcherFactory1[U, TC2]): MatcherFactory2[U, TC1, TC2] =
-    new MatcherFactory2[U, TC1, TC2] {
-      def matcher[V <: U : TC1 : TC2]: Matcher[V] = {
+  def and[U <: SC, $passedTypeConstructors$](rightMatcherFactory: MatcherFactory$passedArity$[U, $passedCommaSeparatedTCNs$]): MatcherFactory$resultArity$[U, $resultCommaSeparatedTCNs$] =
+    new MatcherFactory$resultArity$[U, $resultCommaSeparatedTCNs$] {
+      def matcher[V <: U : $resultColonSeparatedTCNs$]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -197,9 +200,9 @@ abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
   /**
    * Ors this matcher factory with the passed matcher factory.
    */
-  def or[U <: SC, TC2[_]](rightMatcherFactory: MatcherFactory1[U, TC2]): MatcherFactory2[U, TC1, TC2] =
-    new MatcherFactory2[U, TC1, TC2] {
-      def matcher[V <: U : TC1 : TC2]: Matcher[V] = {
+  def or[U <: SC, $passedTypeConstructors$](rightMatcherFactory: MatcherFactory$passedArity$[U, $passedCommaSeparatedTCNs$]): MatcherFactory$resultArity$[U, $resultCommaSeparatedTCNs$] =
+    new MatcherFactory$resultArity$[U, $resultCommaSeparatedTCNs$] {
+      def matcher[V <: U : $resultColonSeparatedTCNs$]: Matcher[V] = {
         new Matcher[V] {
           def apply(left: V): MatchResult = {
             val leftMatcher = thisMatcherFactory.matcher
@@ -209,8 +212,11 @@ abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
         }
       }
     }
+"""
 
-  // If A is Arity of this one, then For each N > Arity < 22 - Arity, and and or taking a MFN with a different type class
+/*
+  // No it is simpler. for (a <- 1 to 22 - A), cut one.
+  // If A is Arity of this one, then For each N > A < 22 - A, and and or taking a MFN with a different type class
   // Replicating the and/or DSL here:
 
   /**
@@ -1977,8 +1983,9 @@ abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
   
   def genMain(dir: File, scalaVersion: String) {
     dir.mkdirs()
-    for (arity <- 1 to 22)
+    for (arity <- 1 to 22) {
       genMatcherFactory(dir, arity)
+    }
   }
   
 /*
@@ -1989,12 +1996,42 @@ abstract class MatcherFactory$arity$[-SC, TC1[_]] { thisMatcherFactory =>
 */
   def genMatcherFactory(targetDir: File, arity: Int) {
 
+    def setCommonOnes(arity: Int, st: org.antlr.stringtemplate.StringTemplate) {
+      if (arity == 1)
+        st.setAttribute("arityIsOne", "true");
+      st.setAttribute("arity", arity);
+      val typeConstructors = (1 to arity).map("TC" + _ + "[_]").mkString(", ")
+      st.setAttribute("typeConstructors", typeConstructors);
+      val colonSeparatedTCNs = (1 to arity).map("TC" + _).mkString(" : ")
+      st.setAttribute("colonSeparatedTCNs", colonSeparatedTCNs);
+      val commaSeparatedTCNs = (1 to arity).map("TC" + _).mkString(", ")
+      st.setAttribute("commaSeparatedTCNs", commaSeparatedTCNs);
+    }
+
     val bw = new BufferedWriter(new FileWriter(new File(targetDir, "MatcherFactory" + arity + ".delme")))
  
     try {
-      val st = new org.antlr.stringtemplate.StringTemplate(wholeThang)
-      st.setAttribute("arity", arity);
+      val st = new org.antlr.stringtemplate.StringTemplate(topPart)
+      setCommonOnes(arity, st)
       bw.write(st.toString)
+
+      // Now do the and/or methods that take matcher factories of various arities
+      for (passedArity <- 1 to 22 - arity) {
+        val resultArity = arity + passedArity
+        val st = new org.antlr.stringtemplate.StringTemplate(middlePart)
+        setCommonOnes(arity, st)
+        st.setAttribute("passedArity", passedArity);
+        st.setAttribute("resultArity", resultArity);
+        val resultColonSeparatedTCNs = (1 to resultArity).map("TC" + _).mkString(" : ")
+        st.setAttribute("resultColonSeparatedTCNs", resultColonSeparatedTCNs);
+        val resultCommaSeparatedTCNs = (1 to resultArity).map("TC" + _).mkString(", ")
+        st.setAttribute("resultCommaSeparatedTCNs", resultCommaSeparatedTCNs);
+        val passedTypeConstructors = (arity + 1 to resultArity).map("TC" + _ + "[_]").mkString(", ")
+        st.setAttribute("passedTypeConstructors", passedTypeConstructors);
+        val passedCommaSeparatedTCNs = (arity + 1 to resultArity).map("TC" + _).mkString(", ")
+        st.setAttribute("passedCommaSeparatedTCNs", passedCommaSeparatedTCNs);
+        bw.write(st.toString)
+      }
     }
     finally {
       bw.close()
