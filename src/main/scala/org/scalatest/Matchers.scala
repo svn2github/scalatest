@@ -29,6 +29,7 @@ import scala.collection.GenTraversable
 import scala.collection.GenSeq
 import scala.collection.GenMap
 import org.scalautils.Tolerance
+import org.scalautils.Explicitly
 import org.scalautils.Interval
 import org.scalautils.TripleEqualsInvocation
 import scala.annotation.tailrec
@@ -938,7 +939,7 @@ import Helper.accessProperty
  * forget a set of needed parentheses.
  * </p>
  */
-trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElement with MatcherWords { matchers =>
+trait Matchers extends Assertions with Tolerance with ShouldVerb with LoneElement with MatcherWords with Explicitly { matchers =>
 
   private[scalatest] def newTestFailedException(message: String, optionalCause: Option[Throwable] = None, stackDepthAdjustment: Int = 0): Throwable = {
     val temp = new RuntimeException
