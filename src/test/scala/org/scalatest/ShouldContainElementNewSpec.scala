@@ -35,6 +35,7 @@ class ShouldContainElementNewSpec extends Spec with Matchers with Explicitly {
       Vector(1, "2") should contain ("2".asAny)
       Vector(1, "2") should contain (1.asAny)
     }
+
     def `should use an Equality of the element type of the left-hand "holder" on a GenTraversable` {
       
       Vector(2, 2) should contain (2)
@@ -122,6 +123,40 @@ class ShouldContainElementNewSpec extends Spec with Matchers with Explicitly {
       (Array(2, 2) should contain (2)) (decidedForArray by defaultEquality)
       val e3 = intercept[TestFailedException] {
         (Array(2, 2) should not contain (2)) (decidedForArray by defaultEquality)
+      }
+
+      e3.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e3.failedCodeLineNumber should be (Some(thisLineNumber - 4))
+    }
+
+    def `should use an Equality of the element type of the left-hand "holder" on a Java Collection` {
+
+      val javaSet: java.util.Set[Int] = new java.util.HashSet
+      javaSet.add(2)
+
+      javaSet should contain (2)
+      val e1 = intercept[TestFailedException] {
+        javaSet should not contain (2)
+      }
+
+      e1.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e1.failedCodeLineNumber should be (Some(thisLineNumber - 4))
+
+      implicit val e = new Equality[Int] {
+        def areEqual(a: Int, b: Any): Boolean = a != b
+      }
+
+      val e2 = intercept[TestFailedException] {
+        javaSet should contain (2)
+      }
+      javaSet should not contain (2)
+
+      e2.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))
+      e2.failedCodeLineNumber should be (Some(thisLineNumber - 5))
+
+      (javaSet should contain (2)) (decidedForJavaCollection by defaultEquality)
+      val e3 = intercept[TestFailedException] {
+        (javaSet should not contain (2)) (decidedForJavaCollection by defaultEquality)
       }
 
       e3.failedCodeFileName should be (Some("ShouldContainElementNewSpec.scala"))

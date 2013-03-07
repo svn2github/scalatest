@@ -1938,9 +1938,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                           ^
      * </pre>
      */
-    def contain(expectedElement: E) {
+    def contain(expectedElement: E)(implicit holder: Holder[T[E]]) {
       val right = expectedElement
-      if ((left.contains(right)) != shouldBeTrue) {
+      // if ((left.contains(right)) != shouldBeTrue) {
+      if (holder.containsElement(left, right) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainExpectedElement" else "containedExpectedElement",
@@ -10568,13 +10569,29 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       def extentOf(seq: SEQ[E]): Long = seq.length
     }
 
-  implicit def enablersForJavaCollection[E, JCOL[_] <: java.util.Collection[_]]: Size[JCOL[E]] with Holder[JCOL[E]] = 
-    new Size[JCOL[E]] with Holder[JCOL[E]] {
+  implicit def enablersForJavaCollection[E, JCOL[_] <: java.util.Collection[_]]: Size[JCOL[E]] = 
+    new Size[JCOL[E]] {
       def extentOf(javaColl: JCOL[E]): Long = javaColl.size
-      def containsElement(javaColl: JCOL[E], ele: Any): Boolean = javaColl.contains(ele)
     }
 
-  // I think Java Maps aren't Holders, because they don't have an element type. The ony
+  implicit def equalityEnablersForJavaCollection[E, JCOL[_] <: java.util.Collection[_]](implicit equality: Equality[E]): Holder[JCOL[E]] = 
+    decidedForJavaCollection by equality
+
+  object decidedForJavaCollection {
+    def by[E, JCOL[_] <: java.util.Collection[_]](equality: Equality[E]): Holder[JCOL[E]] = 
+      new Holder[JCOL[E]] {
+        def containsElement(javaColl: JCOL[E], ele: Any): Boolean = {
+          val it: java.util.Iterator[E] = javaColl.iterator.asInstanceOf[java.util.Iterator[E]]
+          var found = false
+          while (!found && it.hasNext) {
+            found = equality.areEqual(it.next , ele)
+          }
+          found
+        }
+      }
+  }
+
+  // I think Java Maps aren't Holders, because they don't have an element type. The only
   // thing close is the stupid Entry<K, V> type, which is mutable!
   implicit def enablersForJavaMap[K, V, JMAP[_, _] <: java.util.Map[_, _]]: Size[JMAP[K, V]] = 
     new Size[JMAP[K, V]] {
@@ -10661,26 +10678,26 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
  * Type in expressions to have them evaluated.
  * Type :help for more information.
  * 
- * scala> import org.scalatest.Matchers._
+ * scala&gt; import org.scalatest.Matchers._
  * import org.scalatest.Matchers._
  * 
- * scala> 1 should equal (2)
+ * scala&gt; 1 should equal (2)
  * org.scalatest.TestFailedException: 1 did not equal 2
  * 	at org.scalatest.matchers.Helper$.newTestFailedException(Matchers.template:40)
  * 	at org.scalatest.matchers.ShouldMatchers$ShouldMethodHelper$.shouldMatcher(ShouldMatchers.scala:826)
  * 	at org.scalatest.matchers.ShouldMatchers$IntShouldWrapper.should(ShouldMatchers.scala:1123)
- * 	at .<init>(<console>:9)
- * 	at .<clinit>(<console>)
+ * 	at .&lt;init&gt;(&lt;console&gt;:9)
+ * 	at .&lt;clinit&gt;(&lt;console&gt;)
  * 	at RequestR...
  *
- * scala> "hello, world" should startWith ("hello")
+ * scala&gt; "hello, world" should startWith ("hello")
  * 
- * scala> 7 should (be >= (3) and not be <= (7))
+ * scala&gt; 7 should (be &gt;= (3) and not be &lt;= (7))
  * org.scalatest.TestFailedException: 7 was greater than or equal to 3, but 7 was less than or equal to 7
  * 	at org.scalatest.matchers.Helper$.newTestFailedException(Matchers.template:40)
  * 	at org.scalatest.matchers.ShouldMatchers$ShouldMethodHelper$.shouldMatcher(ShouldMatchers.scala:826)
  * 	at org.scalatest.matchers.ShouldMatchers$IntShouldWrapper.should(ShouldMatchers.scala:1123)
- * 	at .<init>(...
+ * 	at .&lt;init&gt;(...
  * </pre>
  *
  * @author Bill Venners
