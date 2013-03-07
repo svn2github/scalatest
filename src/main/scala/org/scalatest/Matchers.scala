@@ -1802,9 +1802,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                     ^
      * </pre>
      */
-    def contain(expectedElement: E) {
+    def contain(expectedElement: E)(implicit holder: Holder[T[E]]) {
       val right = expectedElement
-      if ((left.exists(_ == right)) != shouldBeTrue) {
+      if (holder.containsElement(left, right) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainExpectedElement" else "containedExpectedElement",
@@ -2344,9 +2344,10 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                                  ^
      * </pre>
      */
-    def contain(expectedElement: E) {
+    def contain(expectedElement: E)(implicit holder: Holder[Array[E]]) {
       val right = expectedElement
-      if ((left.exists(_ == right)) != shouldBeTrue) {
+      // if ((left.exists(_ == right)) != shouldBeTrue) {
+      if (holder.containsElement(left, right) != shouldBeTrue) {
         throw newTestFailedException(
           FailureMessages(
             if (shouldBeTrue) "didNotContainExpectedElement" else "containedExpectedElement",
@@ -3363,6 +3364,27 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
             expectedSubstring
           )
         )
+    }
+
+    /**
+     * This method enables the following syntax:
+     *
+     * <pre class="stHighlight">
+     * string should not contain ('c')
+     *                   ^
+     * </pre>
+     */
+    def contain(expectedElement: Char)(implicit holder: Holder[String]) {
+      val right = expectedElement
+      if (holder.containsElement(left, right) != shouldBeTrue) {
+        throw newTestFailedException(
+          FailureMessages(
+            if (shouldBeTrue) "didNotContainExpectedElement" else "containedExpectedElement",
+              left,
+              right
+            )
+          )
+      }
     }
   }
 
@@ -10608,11 +10630,24 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
   }
 
-  implicit val enablersForString: Length[String] with Size[String] with Holder[String] = 
-    new Length[String] with Size[String] with Holder[String] {
+  implicit val enablersForString: Length[String] with Size[String] = 
+    new Length[String] with Size[String] {
       def extentOf(str: String): Long = str.length
-      def containsElement(str: String, ele: Any): Boolean = str.exists(_ == ele)
     }
+
+  implicit def equalityEnablersForString(implicit equality: Equality[Char]): Holder[String] = 
+    new Holder[String] {
+      def containsElement(str: String, ele: Any): Boolean =
+          str.exists((e: Char) => equality.areEqual(e, ele))
+    }
+
+  object decidedForString {
+    def by(equality: Equality[Char]): Holder[String] = 
+      new Holder[String] {
+        def containsElement(str: String, ele: Any): Boolean =
+          str.exists((e: Char) => equality.areEqual(e, ele))
+      }
+  }
 }
 
 /**
