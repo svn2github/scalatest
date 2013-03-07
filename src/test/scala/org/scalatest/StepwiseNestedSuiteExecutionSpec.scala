@@ -56,7 +56,7 @@ class StepwiseNestedSuiteExecutionSpec extends Spec with SharedHelpers {
         parStatus.waitUntilCompleted()
         assert(par.superRunNestedSuitesWasInvoked )
         assert(par.distributorWasDefined)
-        assert(par.distributorWasPropagated)
+        assert(par.distributorWasPropagated) // This flickers. Is this a problem with volatile?
         val stpStatus = stp.run(None, Args(SilentReporter, distributor = Some(new TestConcurrentDistributor(2))))
         assert(stpStatus.isCompleted) // When a stepwise execution returns, the whole thing should be completed already, even though some of it may have run in parallel
         assert(!stp.superRunNestedSuitesWasInvoked )

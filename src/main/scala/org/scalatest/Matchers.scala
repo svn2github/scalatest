@@ -6691,7 +6691,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -6702,7 +6702,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -6770,7 +6770,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -6781,7 +6781,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -7152,7 +7152,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -7163,7 +7163,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -7309,7 +7309,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -7320,7 +7320,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -7644,7 +7644,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e.deep.asInstanceOf[IndexedSeq[T]]) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -7655,7 +7655,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e.deep.asInstanceOf[IndexedSeq[T]]) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -8125,7 +8125,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
@@ -8136,7 +8136,7 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       doCollected(collected, xs, "should", 1) { e =>
         rightMatcher(e) match {
           case MatchResult(false, failureMessage, _, _, _) => 
-            throw newTestFailedException(failureMessage, None, 10)
+            throw newTestFailedException(failureMessage, None, 6)
           case _ => ()
         }
       }
