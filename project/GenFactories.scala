@@ -1962,7 +1962,7 @@ $endif$
 }
 
 /**
- * Companion object containing an implicit method, <code>produceMatcher</code> that converts a <code>MatcherFactory$arity$</code> to a <code>Matcher</code>.
+ * Companion object containing an implicit method that converts a <code>MatcherFactory$arity$</code> to a <code>Matcher</code>.
  *
  * @author Bill Venners
  */
