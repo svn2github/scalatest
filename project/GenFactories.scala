@@ -60,7 +60,7 @@ import org.scalatest.words.ResultOfKeyWordApplication
 import org.scalatest.words.ResultOfValueWordApplication
 
 /**
- * A matcher factory that can produce a matcher given one typeclass instance.
+ * A matcher factory that can produce a matcher given $nTypeclassInstances$.
  *
  * <p>
  * In the type parameters for this class, "<code>SC</code>" means <em>superclass</em>; "<code>TC</code>"
@@ -1965,7 +1965,7 @@ $endif$
 // For some reason that I don't understand, I need to leave off the stars before the <pre> when 
 // they are next to ST commands. So I say  "   <pre>" sometimes instead of " * <pre>".
 
-  val MaxArity = 6
+  val MaxArity = 9
 
   def main(args: Array[String]) {
     val targetDir = args(0)
@@ -2014,6 +2014,23 @@ $endif$
 
       val topSt = new org.antlr.stringtemplate.StringTemplate(topPart)
       setCommonOnes(arity, topSt)
+      val nTypeclassInstances =
+        if (arity == 1) "one typeclass instance"
+        else {
+          val numStr =
+            arity match {
+              case 2 => "two"
+              case 3 => "three"
+              case 4 => "four"
+              case 5 => "five"
+              case 6 => "six"
+              case 7 => "seven"
+              case 8 => "eight"
+              case 9 => "nine"
+            }
+           numStr + " typeclass instances"
+        }
+      topSt.setAttribute("nTypeclassInstances", nTypeclassInstances)
       bw.write(topSt.toString)
 
       // Now do the and/or methods that take matcher factories of various arities
