@@ -1960,6 +1960,23 @@ $endif$
    */
   def or(notWord: NotWord): OrNotWord = new OrNotWord
 }
+
+/**
+ * Companion object containing an implicit method, <code>produceMatcher</code> that converts a <code>MatcherFactory$arity$</code> to a <code>Matcher</code>.
+ *
+ * @author Bill Venners
+ */
+object MatcherFactory$arity$ {
+
+  /**
+   * Converts a <code>MatcherFactory$arity$</code> to a <code>Matcher</code>.
+   *
+   * @param matcherFactory a MatcherFactory$arity$ to convert
+   * @return a Matcher produced by the passed MatcherFactory$arity$
+   */
+  implicit def produceMatcher[SC, $typeConstructors$, T <: SC : $colonSeparatedTCNs$](matcherFactory: MatcherFactory$arity$[SC, $commaSeparatedTCNs$]): Matcher[T] =
+    matcherFactory.matcher
+}
 """
 
 // For some reason that I don't understand, I need to leave off the stars before the <pre> when 

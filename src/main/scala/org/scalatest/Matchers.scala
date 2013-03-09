@@ -9138,9 +9138,11 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherFactory.matcher)
     }
 
+/*
     def should[TC1[_], TC2[_], TC3[_]](rightMatcherFactory: MatcherFactory3[String, TC1, TC2, TC3])(implicit tc1: TC1[String], tc2: TC2[String], tc3: TC3[String]) {
       ShouldMethodHelper.shouldMatcher(left, rightMatcherFactory.matcher)
     }
+*/
 
     /**
      * This method enables syntax such as the following:
