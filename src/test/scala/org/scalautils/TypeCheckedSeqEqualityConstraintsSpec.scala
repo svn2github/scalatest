@@ -23,7 +23,7 @@ import scala.collection.GenIterable
 import scala.collection.GenTraversable
 import scala.collection.GenTraversableOnce
 
-class SeqEqualityConstraintsSpec extends Spec with NonImplicitAssertions with TypeCheckedTripleEquals with SeqEqualityConstraints {
+class TypeCheckedSeqEqualityConstraintsSpec extends Spec with NonImplicitAssertions with TypeCheckedTripleEquals with SeqEqualityConstraints {
 
   case class Super(size: Int)
   class Sub(sz: Int) extends Super(sz)
@@ -40,7 +40,6 @@ class SeqEqualityConstraintsSpec extends Spec with NonImplicitAssertions with Ty
 
   object `the SeqEqualityConstraints trait` {
 
-    // Actually, I wonder if we shouldn't use something put into scope by either TypeChecked or ConversionChecked
     def `should allow any Seq to be compared with any other Seq, so long as the element types of the two Seq's are in a subtype/supertype relationship` {
       assert(Vector(1, 2, 3) === List(1, 2, 3))
       // assert(Vector(1, 2, 3) === List(1L, 2L, 3L)) // does not compile last time I checked
