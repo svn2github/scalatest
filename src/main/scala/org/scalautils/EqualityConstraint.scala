@@ -23,7 +23,7 @@ import annotation.implicitNotFound
 /**
  * Abstract class used to enforce type constraints for equality checks.
  */
-@implicitNotFound(msg = "types ${A} and ${B} do not adhere to the equality constraint selected for the === and !== operators; they must either be in a subtype/supertype relationship, or, if ConversionCheckedTripleEquals is in force, implicitly convertible in one direction or the other; the missing implicit parameter is of type org.scalautils.EqualityConstraint[${A},${B}]")
+@implicitNotFound(msg = "types ${A} and ${B} do not adhere to the equality constraint selected for the === and !== operators; the missing implicit parameter is of type org.scalautils.EqualityConstraint[${A},${B}]")
 sealed abstract class EqualityConstraint[A, B] {
 
   /**
