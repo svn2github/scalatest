@@ -39,8 +39,6 @@ class ConversionCheckedMapEqualityConstraintsSpec extends Spec with NonImplicitA
   class Apple extends Fruit("apple")
   class Orange extends Fruit("orange")
 
-  implicit def convert(in: (Char, Int)): (Char, Long) = (in._1, in._2)
-
   object `the MapEqualityConstraints trait` {
 
     def `should allow any Map to be compared with any other Map, so long as the element types of the two Maps adhere to the equality constraint in force for those types` {
