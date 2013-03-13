@@ -17,3 +17,4 @@ package org.scalautils
 
 trait TraversableEqualityConstraints extends SeqEqualityConstraints with SetEqualityConstraints with MapEqualityConstraints
 
+object TraversableEqualityConstraints extends TraversableEqualityConstraints

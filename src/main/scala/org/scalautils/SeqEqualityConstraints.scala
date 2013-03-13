@@ -19,3 +19,4 @@ trait SeqEqualityConstraints {
   implicit def seqEqualityConstraint[EA, CA[_] <: collection.GenSeq[_], EB, CB[_] <: collection.GenSeq[_]](implicit equalityOfA: Equality[CA[EA]], ev: EqualityConstraint[EA, EB]): EqualityConstraint[CA[EA], CB[EB]] = new BasicEqualityConstraint[CA[EA], CB[EB]](equalityOfA)
 }
 
+object SeqEqualityConstraints extends SeqEqualityConstraints

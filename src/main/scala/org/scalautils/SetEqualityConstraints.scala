@@ -19,3 +19,4 @@ trait SetEqualityConstraints {
   implicit def setEqualityConstraint[EA, CA[_] <: collection.GenSet[_], EB, CB[_] <: collection.GenSet[_]](implicit equalityOfA: Equality[CA[EA]], ev: EqualityConstraint[EA, EB]): EqualityConstraint[CA[EA], CB[EB]] = new BasicEqualityConstraint[CA[EA], CB[EB]](equalityOfA)
 }
 
+object SetEqualityConstraints extends SetEqualityConstraints
