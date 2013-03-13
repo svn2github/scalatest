@@ -15,7 +15,5 @@
  */
 package org.scalautils
 
-trait MapEqualityConstraints {
-  implicit def mapEqualityConstraint[EAK, EAV, CA[_, _] <: collection.GenMap[_, _], EBK, EBV, CB[_, _] <: collection.GenMap[_, _]](implicit equalityOfA: Equality[CA[EAK, EAV]], evKey: EqualityConstraint[EAK, EBK], evValue: EqualityConstraint[EAV, EBV]): EqualityConstraint[CA[EAK, EAV], CB[EBK, EBV]] = new BasicEqualityConstraint[CA[EAK, EAV], CB[EBK, EBV]](equalityOfA)
-}
+trait TraversableEqualityConstraints extends SeqEqualityConstraints with SetEqualityConstraints with MapEqualityConstraints
 
