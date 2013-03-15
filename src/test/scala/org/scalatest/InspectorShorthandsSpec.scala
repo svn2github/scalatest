@@ -26,6 +26,7 @@ import matchers.HavePropertyMatcher
 import matchers.HavePropertyMatchResult
 import matchers.BePropertyMatcher
 import matchers.BePropertyMatchResult
+import org.scalautils.Equality
 
 class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropertyChecks with SharedHelpers {
 
@@ -265,6 +266,28 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
             tfe.getCause should be (null)
           case other => fail("Expected cause to be TestFailedException, but got: " + other)
         }
+      }
+    }
+
+    @Ignore def `should use Equality from 'should equal'` {
+      val xs = List(1, 1, 1)
+      all (xs) should equal (1) 
+      implicit val e = new Equality[Int] {
+        def areEqual(a: Int, b: Any): Boolean = a != b
+      }
+      intercept[exceptions.TestFailedException] {
+        all (xs) should equal (1) 
+      }
+    }
+    
+    @Ignore def `should use Equality from 'should not equal'` {
+      val xs = List(1, 1, 1)
+      all (xs) should not equal (2) 
+      implicit val e = new Equality[Int] {
+        def areEqual(a: Int, b: Any): Boolean = a != b
+      }
+      intercept[exceptions.TestFailedException] {
+        all (xs) should not equal (2) 
       }
     }
     
