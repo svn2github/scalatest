@@ -161,7 +161,7 @@
         <uptodate property="genfactories.uptodate"
                   srcfile="project/GenFactories.scala">
           <mapper type="merge" to=
-            "${build}/scala-${scala.version}/src_managed/main/scala/org/scalatest/matchers/MatcherFactory1.delme">
+            "${build}/scala-${scala.version}/src_managed/main/scala/org/scalatest/matchers/MatcherFactory1.scala">
           </mapper>
         </uptodate>
 
