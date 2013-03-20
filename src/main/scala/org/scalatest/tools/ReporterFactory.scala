@@ -166,27 +166,33 @@ private[scalatest] class ReporterFactory {
     new SocketReporter(host, port)
   }
   
-  private[scalatest] def getDispatchReporter(reporterSpecs: ReporterConfigurations, graphicReporter: Option[Reporter], passFailReporter: Option[Reporter], loader: ClassLoader, resultHolder: Option[SuiteResultHolder]) = {
+  private[scalatest] def getReporterFromConfiguration(configuration: ReporterConfiguration, loader: ClassLoader, resultHolder: Option[SuiteResultHolder]): Reporter =
 
-    def getReporterFromConfiguration(configuration: ReporterConfiguration): Reporter =
+    configuration match {
+      case StandardOutReporterConfiguration(configSet) => createStandardOutReporter(configSet)
+      case StandardErrReporterConfiguration(configSet) => createStandardErrReporter(configSet)
+      case FileReporterConfiguration(configSet, fileName) => createFileReporter(configSet, fileName)
+      case JunitXmlReporterConfiguration(configSet, directory) => createJunitXmlReporter(configSet, directory)
+      case DashboardReporterConfiguration(configSet, directory, numFilesToArchive) => createDashboardReporter(configSet, directory, numFilesToArchive)
+      case XmlReporterConfiguration(configSet, directory) => createXmlReporter(configSet, directory)
+      case HtmlReporterConfiguration(configSet, directory, cssFile) => createHtmlReporter(configSet, directory, cssFile, resultHolder)
+      case CustomReporterConfiguration(configSet, reporterClassName) => createCustomReporter(configSet, reporterClassName, loader) 
+      case GraphicReporterConfiguration(configSet) => throw new RuntimeException("Should never happen.")
+      case SocketReporterConfiguration(host, port) => createSocketReporter(host, port)
+  }
+  
+  private[scalatest] def createReportersFromConfigurations(reporterSpecs: ReporterConfigurations, loader: ClassLoader, resultHolder: Option[SuiteResultHolder]) = 
+    (for (spec <- reporterSpecs)
+        yield getReporterFromConfiguration(spec, loader, resultHolder))
+  
+  private[scalatest] def getDispatchReporter(reporterSpecs: ReporterConfigurations, graphicReporter: Option[Reporter], passFailReporter: Option[Reporter], loader: ClassLoader, resultHolder: Option[SuiteResultHolder]): DispatchReporter = {
 
-      configuration match {
-        case StandardOutReporterConfiguration(configSet) => createStandardOutReporter(configSet)
-        case StandardErrReporterConfiguration(configSet) => createStandardErrReporter(configSet)
-        case FileReporterConfiguration(configSet, fileName) => createFileReporter(configSet, fileName)
-        case JunitXmlReporterConfiguration(configSet, directory) => createJunitXmlReporter(configSet, directory)
-        case DashboardReporterConfiguration(configSet, directory, numFilesToArchive) => createDashboardReporter(configSet, directory, numFilesToArchive)
-        case XmlReporterConfiguration(configSet, directory) => createXmlReporter(configSet, directory)
-        case HtmlReporterConfiguration(configSet, directory, cssFile) => createHtmlReporter(configSet, directory, cssFile, resultHolder)
-        case CustomReporterConfiguration(configSet, reporterClassName) => createCustomReporter(configSet, reporterClassName, loader) 
-        case GraphicReporterConfiguration(configSet) => throw new RuntimeException("Should never happen.")
-        case SocketReporterConfiguration(host, port) => createSocketReporter(host, port)
-    }
+    val reporterSeq = createReportersFromConfigurations(reporterSpecs, loader, resultHolder)
 
-    val reporterSeq =
-      (for (spec <- reporterSpecs)
-        yield getReporterFromConfiguration(spec))
-
+    getDispatchReporter(reporterSeq, graphicReporter, passFailReporter, loader, resultHolder)
+  }
+  
+  private[scalatest] def getDispatchReporter(reporterSeq: Seq[Reporter], graphicReporter: Option[Reporter], passFailReporter: Option[Reporter], loader: ClassLoader, resultHolder: Option[SuiteResultHolder]): DispatchReporter = {
     val almostFullReporterList: List[Reporter] =
       graphicReporter match {
         case None => reporterSeq.toList

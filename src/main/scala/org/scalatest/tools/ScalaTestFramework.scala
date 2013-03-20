@@ -92,20 +92,9 @@ class ScalaTestFramework extends Framework {
     
   object RunConfig {
     
-    private class SbtLogInfoReporter(loggers: Array[Logger], presentAllDurations: Boolean, presentInColor: Boolean, presentShortStackTraces: Boolean, presentFullStackTraces: Boolean) 
-      extends StringReporter(presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces, false) {
-    
-      protected def printPossiblyInColor(text: String, ansiColor: String) {
-          loggers.foreach { logger =>
-            logger.info(if (logger.ansiCodesSupported && presentInColor) colorizeLinesIndividually(text, ansiColor) else text)
-          }
-      }
-
-      def dispose() = ()
-    }
-    
     private var reporter: DispatchReporter = null
     private var reporterConfigs: ReporterConfigurations = null
+    private var useStdout = false
     private var filter: Filter = null
     private var configMap: ConfigMap = null
     private val resultHolder = new SuiteResultHolder()
@@ -122,39 +111,25 @@ class ScalaTestFramework extends Framework {
           val tagsToExclude: Set[String] = parseCompoundArgIntoSet(excludesArgsList, "-l")
           filter = org.scalatest.Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExclude)
         
-          // If no reporters specified, just give them a default stdout reporter
-          reporterConfigs = Runner.parseReporterArgsIntoConfigurations(if(repoArgsList.isEmpty) "-o" :: Nil else repoArgsList)
-        }
-        
-        object SbtReporterFactory extends ReporterFactory {
-          
-          override def createStandardOutReporter(configSet: Set[ReporterConfigParam]) = {
-            if (configSetMinusNonFilterParams(configSet).isEmpty)
-              new SbtLogInfoReporter(
-                loggers, 
-                configSet.contains(PresentAllDurations),
-                !configSet.contains(PresentWithoutColor),
-                configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
-                configSet.contains(PresentFullStackTraces) // If they say both S and F, F overrules
-              )
-            else
-              new FilterReporter(
-                new SbtLogInfoReporter(
-                  loggers, 
-                  configSet.contains(PresentAllDurations),
-                  !configSet.contains(PresentWithoutColor),
-                  configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
-                  configSet.contains(PresentFullStackTraces) // If they say both S and F, F overrules
-                ),
-                configSet
-              )
+          repoArgsList.find(_.startsWith("-o")) match {
+            case Some(dashO) => useStdout = true
+            case None => useStdout = repoArgsList.isEmpty // If no reporters specified, just give them a default stdout reporter
           }
+          
+          reporterConfigs = Runner.parseReporterArgsIntoConfigurations(repoArgsList.filter(!_.startsWith("-o")))
         }
         
-        if (reporter == null || reporter.isDisposed)
-          reporter = SbtReporterFactory.getDispatchReporter(reporterConfigs, None, None, testLoader, Some(resultHolder))
-        
-        (reporter, filter, configMap)
+        if (reporter == null || reporter.isDisposed) {
+          reporter = ReporterFactory.getDispatchReporter(reporterConfigs, None, None, testLoader, Some(resultHolder))
+        }
+          
+        val dispatchReporter = 
+          if (useStdout)
+            ReporterFactory.getDispatchReporter(Seq(reporter, createSbtLogInfoReporter(loggers)), None, None, testLoader, Some(resultHolder))
+          else
+            reporter
+          
+        (dispatchReporter, filter, configMap)
       }
     
     private val atomicLatch = new AtomicReference(new CountDownLatch(0))
@@ -171,17 +146,36 @@ class ScalaTestFramework extends Framework {
         val latch = atomicLatch.get
         latch.countDown()
         if (latch.getCount() == 0) {
-          reporter match {
-            case resourcefulRep: ResourcefulReporter => 
-              resourcefulRep.dispose()
-            case _ =>
-          }
+          reporter.dispatchDisposeAndWaitUntilDone()
           reporter = null
           reporterConfigs = null
           filter = null
           configMap = null
         }
       }
+    }
+    
+    def createSbtLogInfoReporter(loggers: Array[Logger]) = {
+      val (presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces) = 
+      reporterConfigs.standardOutReporterConfiguration match {
+        case Some(stdoutConfig) =>
+          val configSet = stdoutConfig.configSet
+          (
+            configSet.contains(PresentAllDurations),
+            !configSet.contains(PresentWithoutColor),
+            configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
+            configSet.contains(PresentFullStackTraces)    
+          )
+        case None => 
+          (false, true, false, false)
+      }
+      new SbtLogInfoReporter(
+          loggers, 
+          presentAllDurations,
+          presentInColor,
+          presentShortStackTraces,
+          presentFullStackTraces // If they say both S and F, F overrules
+        )
     }
   }
 
@@ -191,6 +185,18 @@ class ScalaTestFramework extends Framework {
    */
   def testRunner(testLoader: ClassLoader, loggers: Array[Logger]) = {
     new ScalaTestRunner(testLoader, loggers)
+  }
+  
+  class SbtLogInfoReporter(loggers: Array[Logger], presentAllDurations: Boolean, presentInColor: Boolean, presentShortStackTraces: Boolean, presentFullStackTraces: Boolean) 
+      extends StringReporter(presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces, false) {
+    
+    protected def printPossiblyInColor(text: String, ansiColor: String) {
+      loggers.foreach { logger =>
+        logger.info(if (logger.ansiCodesSupported && presentInColor) colorizeLinesIndividually(text, ansiColor) else text)
+      }
+    }
+
+    def dispose() = ()
   }
 
   /**The test runner for ScalaTest suites. It is compiled in a second step after the rest of sbt.*/
