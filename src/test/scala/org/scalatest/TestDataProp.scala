@@ -66,7 +66,7 @@ class ExampleTestDataSuite extends Suite with TestDataFixtureServices {
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.SlowAsMolasses")
   }
   var testData: TestData = null
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -84,7 +84,7 @@ class ExampleTestDataFixtureSuite extends fixture.Suite with TestDataFixtureServ
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.SlowAsMolasses")
   }
   var testData: TestData = null
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -102,7 +102,7 @@ class ExampleTestDataSpec extends Spec with TestDataFixtureServices {
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.SlowAsMolasses")
   }
   var testData: TestData = null
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -125,7 +125,7 @@ class ExampleTestDataFixtureSpec extends fixture.Spec with TestDataFixtureServic
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.SlowAsMolasses")
   }
   var testData: TestData = null
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -194,7 +194,7 @@ class ExampleTestDataFunSuite extends FunSuite with TestDataFixtureServices {
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -211,7 +211,7 @@ class ExampleTestDataFixtureFunSuite extends fixture.FunSuite with TestDataFixtu
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -228,7 +228,7 @@ class ExampleTestDataFunSpec extends FunSpec with TestDataFixtureServices {
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -249,7 +249,7 @@ class ExampleTestDataFixtureFunSpec extends fixture.FunSpec with TestDataFixture
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -270,7 +270,7 @@ class ExampleTestDataFeatureSpec extends FeatureSpec with TestDataFixtureService
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -289,7 +289,7 @@ class ExampleTestDataFixtureFeatureSpec extends fixture.FeatureSpec with TestDat
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -308,7 +308,7 @@ class ExampleTestDataFlatSpec extends FlatSpec with TestDataFixtureServices {
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -325,7 +325,7 @@ class ExampleTestDataFixtureFlatSpec extends fixture.FlatSpec with TestDataFixtu
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -342,7 +342,7 @@ class ExampleTestDataFreeSpec extends FreeSpec with TestDataFixtureServices {
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -363,7 +363,7 @@ class ExampleTestDataFixtureFreeSpec extends fixture.FreeSpec with TestDataFixtu
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -384,7 +384,7 @@ class ExampleTestDataPropSpec extends PropSpec with TestDataFixtureServices {
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -401,7 +401,7 @@ class ExampleTestDataFixturePropSpec extends fixture.PropSpec with TestDataFixtu
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -418,7 +418,7 @@ class ExampleTestDataWordSpec extends WordSpec with TestDataFixtureServices {
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }
@@ -439,7 +439,7 @@ class ExampleTestDataFixtureWordSpec extends fixture.WordSpec with TestDataFixtu
     val tags = Set("org.scalatest.DoNotDiscover", "org.scalatest.tags.TestDataTag")
   }
   var testData: TestData = null
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest): Outcome = {
     testData = test
     super.withFixture(test)
   }

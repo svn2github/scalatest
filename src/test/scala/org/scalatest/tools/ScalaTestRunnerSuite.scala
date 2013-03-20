@@ -16,6 +16,7 @@
 package org.scalatest.tools {
 
 import org.scalatest.FunSuite
+import org.scalatest.Outcome
 import org.scalatools.testing.{Event, EventHandler, Result, Logger, Runner => TestingRunner}
 
   // testing runner.run:
@@ -178,7 +179,7 @@ import org.scalatools.testing.{Event, EventHandler, Result, Logger, Runner => Te
     import org.scalatest.fixture
     private class TestWithConfigMap extends fixture.FunSuite {
       type FixtureParam = String
-      override def withFixture(test: OneArgTest) {
+      override def withFixture(test: OneArgTest): Outcome = {
         test(test.configMap("josh").toString)
       }
       test("get config"){ conf => assert(conf === "cool") }
@@ -187,7 +188,7 @@ import org.scalatools.testing.{Event, EventHandler, Result, Logger, Runner => Te
 
     private class TestWithConfigMap2 extends fixture.FunSuite {
       type FixtureParam = Map[String,Any]
-      override def withFixture(test: OneArgTest) {
+      override def withFixture(test: OneArgTest): Outcome = {
         test(test.configMap)
       }
       test("get config"){ conf => assert(conf === Map("a" -> "z", "b" -> "y", "c" -> "x")) }

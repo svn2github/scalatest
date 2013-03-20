@@ -74,7 +74,7 @@ import org.scalatest.Suite.autoTagClassAnnotations
  *   type FixtureParam = FileReader
  * 
  *   // 2. define the withFixture method
- *   def withFixture(test: OneArgTest) {
+ *   def withFixture(test: OneArgTest) = {
  * 
  *     val FileName = "TempFile.txt"
  * 
@@ -205,7 +205,7 @@ import org.scalatest.Suite.autoTagClassAnnotations
  *   case class F(builder: StringBuilder, buffer: ListBuffer[String])
  *   type FixtureParam = F
  * 
- *   def withFixture(test: OneArgTest) {
+ *   def withFixture(test: OneArgTest) = {
  * 
  *     // Create needed mutable objects
  *     val stringBuilder = new StringBuilder("ScalaTest is ")

@@ -151,9 +151,9 @@ trait SpecLike extends Suite  { thisSuite =>
                 case None => methodTags.contains(IgnoreAnnotation)
               }
               if (isIgnore)
-                registerIgnoredTest(testName, testFun, "registrationAlreadyClosed", sourceFileName, "ensureScopesAndTestsRegistered", 3, 0, Some(testLocation), methodTags.map(new Tag(_)): _*)
+                registerIgnoredTest(testName, Transformer(testFun), "registrationAlreadyClosed", sourceFileName, "ensureScopesAndTestsRegistered", 3, 0, Some(testLocation), methodTags.map(new Tag(_)): _*)
               else
-                registerTest(testName, testFun, "registrationAlreadyClosed", sourceFileName, "ensureScopesAndTestsRegistered", 2, 1, None, Some(testLocation), None, methodTags.map(new Tag(_)): _*)
+                registerTest(testName, Transformer(testFun), "registrationAlreadyClosed", sourceFileName, "ensureScopesAndTestsRegistered", 2, 1, None, Some(testLocation), None, methodTags.map(new Tag(_)): _*)
             }
           }
         }
@@ -254,13 +254,13 @@ trait SpecLike extends Suite  { thisSuite =>
 
     ensureScopesAndTestsRegistered()
 
-    def invokeWithFixture(theTest: TestLeaf) {
+    def invokeWithFixture(theTest: TestLeaf): Outcome = {
       val theConfigMap = args.configMap
       val testData = testDataFor(testName, theConfigMap)
       withFixture(
         new OneArgTest {
           val name = testData.name
-          def apply(fixture: FixtureParam) { theTest.testFun(fixture) }
+          def apply(fixture: FixtureParam): Outcome = { theTest.testFun(fixture) }
           val configMap = testData.configMap
           val scopes = testData.scopes
           val text = testData.text

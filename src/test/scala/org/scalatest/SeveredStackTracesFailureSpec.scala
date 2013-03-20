@@ -19,17 +19,17 @@ import org.scalatest.matchers.ShouldMatchers
 
 class SeveredStackTracesFailureSpec extends FunSpec with ShouldMatchers with SeveredStackTraces {
 
-  override def withFixture(test: NoArgTest) {
-    try {
-      super.withFixture(test)
-    }
-    catch {
-      case e: TestFailedException => 
+  override def withFixture(test: NoArgTest): Outcome = {
+    super.withFixture(test) match {
+      case Failed(e: TestFailedException) => 
         e.failedCodeStackDepth should equal (0)
         e.failedCodeFileNameAndLineNumberString match {
-          case Some(s) => checkFileNameAndLineNumber(e, s)
+          case Some(s) =>
+            checkFileNameAndLineNumber(e, s)
           case None => fail("TestFailedException didn't contain file name and line number string", e)
         }
+        Succeeded
+      case other => other
     }
   }
 

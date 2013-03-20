@@ -53,7 +53,7 @@ class MandarinOrangePropSpec(ns: Suite*) extends PropSpec {
 // else they end up with dollar signs in the names.
 trait MandarinOrangeFixture { this: fixture.Suite =>
   type FixtureParam = String
-  def withFixture(test: OneArgTest) { test("hi") }
+  def withFixture(test: OneArgTest): Outcome = { test("hi") }
 }
 
 class MandarinOrangeFixtureFunSuite(ns: Suite*) extends fixture.FunSuite with MandarinOrangeFixture {
@@ -758,7 +758,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       val a = new Suite {
         var withFixtureWasInvoked = false
         var theTestWasInvoked = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           withFixtureWasInvoked = true
           super.withFixture(test)
         }
@@ -774,7 +774,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       val a = new Suite {
         var withFixtureWasInvoked = false
         var theTestWasInvoked = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           withFixtureWasInvoked = true
           super.withFixture(test)
         }
@@ -789,7 +789,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     it("should pass the correct test name in the NoArgTest passed to withFixture") {
       val a = new Suite {
         var correctTestNameWasPassed = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           correctTestNameWasPassed = test.name == (encode("test: something") + "(Informer)")
           super.withFixture(test)
         }
@@ -801,7 +801,7 @@ class SuiteSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     it("should pass the correct config map in the NoArgTest passed to withFixture") {
       val a = new Suite {
         var correctConfigMapWasPassed = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           correctConfigMapWasPassed = (test.configMap == ConfigMap("hi" -> 7))
           super.withFixture(test)
         }

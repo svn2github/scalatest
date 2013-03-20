@@ -64,7 +64,7 @@ trait FreeSpecLike extends org.scalatest.Suite with OneInstancePerTest { thisSui
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToRun(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
-    handleTest(thisSuite, specText, testFun, "itCannotAppearInsideAnotherIt", "FreeSpecLike.scala", methodName, 4, -3, None, testTags: _*)
+    handleTest(thisSuite, specText, Transformer(testFun), "itCannotAppearInsideAnotherIt", "FreeSpecLike.scala", methodName, 4, -3, None, testTags: _*)
   }
 
   /**
@@ -87,7 +87,7 @@ trait FreeSpecLike extends org.scalatest.Suite with OneInstancePerTest { thisSui
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   private def registerTestToIgnore(specText: String, testTags: List[Tag], methodName: String, testFun: () => Unit) {
-    handleIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", "FreeSpecLike.scala", methodName, 4, -3, None, testTags: _*)
+    handleIgnoredTest(specText, Transformer(testFun), "ignoreCannotAppearInsideAnIt", "FreeSpecLike.scala", methodName, 4, -3, None, testTags: _*)
   }
 
   /**
@@ -338,7 +338,7 @@ trait FreeSpecLike extends org.scalatest.Suite with OneInstancePerTest { thisSui
    *
    * @param test unused
    */
-  final override def withFixture(test: NoArgTest) {
+  final override def withFixture(test: NoArgTest): Outcome = {
     throw new UnsupportedOperationException
   }
 
@@ -452,7 +452,7 @@ trait FreeSpecLike extends org.scalatest.Suite with OneInstancePerTest { thisSui
 
     ensureTestResultsRegistered(thisSuite)
     
-    def dontInvokeWithFixture(theTest: TestLeaf) {
+    def dontInvokeWithFixture(theTest: TestLeaf): Outcome = {
       theTest.testFun()
     }
 

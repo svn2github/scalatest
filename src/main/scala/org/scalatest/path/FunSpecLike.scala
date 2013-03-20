@@ -92,7 +92,7 @@ trait FunSpecLike extends org.scalatest.Suite with OneInstancePerTest { thisSuit
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(testText: String, testTags: Tag*)(testFun: => Unit) {
-      handleTest(thisSuite, testText, testFun _, "itCannotAppearInsideAnotherIt", "FunSpecLike.scala", "apply", 3, -2, None, testTags: _*)
+      handleTest(thisSuite, testText, Transformer(testFun _), "itCannotAppearInsideAnotherIt", "FunSpecLike.scala", "apply", 3, -2, None, testTags: _*)
     }
     
     /**
@@ -204,7 +204,7 @@ trait FunSpecLike extends org.scalatest.Suite with OneInstancePerTest { thisSuit
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(testText: String, testTags: Tag*)(testFun: => Unit) {
-      handleTest(thisSuite, testText, testFun _, "theyCannotAppearInsideAnotherThey", "FunSpecLike.scala", "apply", 3, -2, None, testTags: _*)
+      handleTest(thisSuite, testText, Transformer(testFun _), "theyCannotAppearInsideAnotherThey", "FunSpecLike.scala", "apply", 3, -2, None, testTags: _*)
     }
  
     /**
@@ -290,7 +290,7 @@ trait FunSpecLike extends org.scalatest.Suite with OneInstancePerTest { thisSuit
    */
   protected def ignore(testText: String, testTags: Tag*)(testFun: => Unit) {
     // Might not actually register it. Only will register it if it is its turn.
-    handleIgnoredTest(testText, testFun _, "ignoreCannotAppearInsideAnIt", "FunSpecLike.scala", "ignore", 4, -2, None, testTags: _*)
+    handleIgnoredTest(testText, Transformer(testFun _), "ignoreCannotAppearInsideAnIt", "FunSpecLike.scala", "ignore", 4, -2, None, testTags: _*)
   }
   
   /**
@@ -339,7 +339,7 @@ trait FunSpecLike extends org.scalatest.Suite with OneInstancePerTest { thisSuit
    * <a href="#sharedFixtures">Shared fixtures</a> section in the main documentation for this trait.
    * </p>
    */
-  final override def withFixture(test: NoArgTest) {
+  final override def withFixture(test: NoArgTest): Outcome = {
     throw new UnsupportedOperationException
   }
 
@@ -454,7 +454,7 @@ trait FunSpecLike extends org.scalatest.Suite with OneInstancePerTest { thisSuit
 
     ensureTestResultsRegistered(thisSuite)
     
-    def dontInvokeWithFixture(theTest: TestLeaf) {
+    def dontInvokeWithFixture(theTest: TestLeaf): Outcome = {
       theTest.testFun()
     }
 

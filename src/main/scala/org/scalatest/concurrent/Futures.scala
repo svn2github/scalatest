@@ -17,7 +17,7 @@ package org.scalatest.concurrent
 
 import org.scalatest._
 import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
-import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
+import org.scalatest.Suite.anExceptionThatShouldCauseAnAbort
 import scala.annotation.tailrec
 import org.scalatest.time.Span
 import exceptions.{TestCanceledException, TestFailedException, TestPendingException, TimeoutField}
@@ -471,7 +471,7 @@ trait Futures extends PatienceConfiguration {
           case Some(Right(v)) => v
           case Some(Left(tpe: TestPendingException)) => throw tpe
           case Some(Left(tce: TestCanceledException)) => throw tce
-          case Some(Left(e)) if anErrorThatShouldCauseAnAbort(e) => throw e
+          case Some(Left(e)) if anExceptionThatShouldCauseAnAbort(e) => throw e
           case Some(Left(e)) =>
             throw new TestFailedException(
               sde => Some {
@@ -626,7 +626,7 @@ trait Futures extends PatienceConfiguration {
       future.value match {
         case Some(Right(v)) => fun(v)
         case Some(Left(tpe: TestPendingException)) => throw tpe // TODO: In 2.0 add TestCanceledException here
-        case Some(Left(e)) if anErrorThatShouldCauseAnAbort(e) => throw e
+        case Some(Left(e)) if anExceptionThatShouldCauseAnAbort(e) => throw e
         case Some(Left(e)) =>
           val hasMessage = e.getMessage != null
           throw new TestFailedException(

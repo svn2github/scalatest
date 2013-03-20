@@ -136,7 +136,7 @@ class JUnitWrapperSuite(junitClassName: String, loader: ClassLoader) extends Sui
    *
    * @param test the no-arg test function to run with a fixture
    */
-  override final protected def withFixture(test: NoArgTest) {
+  override final protected def withFixture(test: NoArgTest): Outcome = {
      throw new UnsupportedOperationException
   }
 

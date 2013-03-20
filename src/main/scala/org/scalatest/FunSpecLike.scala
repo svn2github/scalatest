@@ -117,7 +117,7 @@ trait FunSpecLike extends Suite { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(specText: String, testTags: Tag*)(testFun: => Unit) {
-      registerTest(specText, testFun _, "itCannotAppearInsideAnotherIt", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
+      registerTest(specText, Transformer(testFun _), "itCannotAppearInsideAnotherIt", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
     }
 
     /**
@@ -229,7 +229,7 @@ trait FunSpecLike extends Suite { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(specText: String, testTags: Tag*)(testFun: => Unit) {
-      registerTest(specText, testFun _, "theyCannotAppearInsideAnotherThey", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
+      registerTest(specText, Transformer(testFun _), "theyCannotAppearInsideAnotherThey", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
     }
 
     /**
@@ -313,7 +313,7 @@ trait FunSpecLike extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   protected def ignore(testText: String, testTags: Tag*)(testFun: => Unit) {
-    registerIgnoredTest(testText, testFun _, "ignoreCannotAppearInsideAnIt", sourceFileName, "ignore", 4, -2, None, testTags: _*)
+    registerIgnoredTest(testText, Transformer(testFun _), "ignoreCannotAppearInsideAnIt", sourceFileName, "ignore", 4, -2, None, testTags: _*)
   }
 
   /**
@@ -382,13 +382,13 @@ trait FunSpecLike extends Suite { thisSuite =>
    */
   protected override def runTest(testName: String, args: Args): Status = {
 
-    def invokeWithFixture(theTest: TestLeaf) {
+    def invokeWithFixture(theTest: TestLeaf): Outcome = {
       val theConfigMap = args.configMap
       val testData = testDataFor(testName, theConfigMap)
       withFixture(
         new NoArgTest {
           val name = testData.name
-          def apply() { theTest.testFun() }
+          def apply(): Outcome = { theTest.testFun() }
           val configMap = testData.configMap
           val scopes = testData.scopes
           val text = testData.text

@@ -50,17 +50,17 @@ private[scalatest] trait ScreenshotOnFailure extends SuiteMixin { this: Suite wi
    * stack trace, is printed to the standard error stream, and the original exception that indicated a failed test is rethrown.
    * </p>
    */
-  abstract override def withFixture(test: NoArgTest) {
-    try super.withFixture(test)
-    catch {
-      case e: exceptions.TestFailedException => 
+  abstract override def withFixture(test: NoArgTest): Outcome = {
+    super.withFixture(test) match {
+      case failed: Failed => 
         try captureScreenshot(screenshotDir)
         catch {
           case innerE: Throwable =>
             Console.err.println("Unable to capture screenshot to " + screenshotDir)
             innerE.printStackTrace(Console.err)
         }
-        throw e
+        failed
+      case other => other
     }
   }
 }

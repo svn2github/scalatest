@@ -1,11 +1,11 @@
 package org.scalatest.examples.funsuite.noargtest
 
 import java.io.File
-import org.scalatest.FunSuite
+import org.scalatest._
 
 class ExampleSuite extends FunSuite {
 
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest) = {
 
     try super.withFixture(test)
     catch {

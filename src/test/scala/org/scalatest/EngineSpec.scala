@@ -19,6 +19,7 @@ import events.InfoProvided
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.events.LineInFile
 import org.scalatest.exceptions._
+import org.scalatest.OutcomeOf.outcomeOf
 
 class EngineSpec extends FlatSpec with SharedHelpers with ShouldMatchers {
 
@@ -60,13 +61,13 @@ class EngineSpec extends FlatSpec with SharedHelpers with ShouldMatchers {
     import engine._
     val child = DescriptionBranch(Trunk, "child", Some("child prefix"), None)
     Trunk.subNodes ::= child
-    val childTest = TestLeaf(Trunk, "child test", "child test", () => (), None)
+    val childTest = TestLeaf(Trunk, "child test", "child test", () => Succeeded, None)
     Trunk.subNodes ::= childTest
     val grandchild = DescriptionBranch(child, "grandchild", None, None)
     child.subNodes ::= grandchild
-    val grandchildTest = TestLeaf(child, "grandchild test", "grandchild test", () => (), None)
+    val grandchildTest = TestLeaf(child, "grandchild test", "grandchild test", () => Succeeded, None)
     child.subNodes ::= grandchildTest
-    val greatGrandchildTest = TestLeaf(grandchild, "great-grandchild test", "great-grandchild test", () => (), None)
+    val greatGrandchildTest = TestLeaf(grandchild, "great-grandchild test", "great-grandchild test", () => Succeeded, None)
     grandchild.subNodes ::= greatGrandchildTest
     Trunk.indentationLevel should be (0)
     child.indentationLevel should be (0)
@@ -86,15 +87,16 @@ class EngineSpec extends FlatSpec with SharedHelpers with ShouldMatchers {
         engine.registerTest("then the list has only 1 in it", () => {
           list should be (ListBuffer(1)) 
           list.clear()
+          Succeeded
         }, "Anything", "Anything", "Anything", 1, 0, None, None, None)
         engine.registerTest("then the list length = 1", () => {
-          list.length should be (1) 
+          outcomeOf { list.length should be (1) }
         }, "Anything", "Anything", "Anything", 1, 0, None, None, None)
       }, "Anything", "Anything", "Anything", 1, 0, None)
       engine.registerNestedBranch("when 2 is inserted", None, {
         list += 2
         engine.registerTest("then the list has only 2 in it", () => {
-          list should be (ListBuffer(2)) 
+          outcomeOf { list should be (ListBuffer(2)) }
         }, "Anything", "Anything", "Anything", 1, 0, None, None, None)
       }, "Anything", "Anything", "Anything", 1, 0, None)
     }, "Anything", "Anything", "Anything", 1, 0, None)

@@ -18,7 +18,7 @@ package org.scalatest.concurrent
 import org.scalatest._
 import exceptions.{TestFailedDueToTimeoutException, TestFailedException, TestPendingException}
 import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
-import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
+import org.scalatest.Suite.anExceptionThatShouldCauseAnAbort
 import scala.annotation.tailrec
 import time.{Nanosecond, Span, Nanoseconds}
 
@@ -395,7 +395,7 @@ trait Eventually extends PatienceConfiguration {
       }
       catch {
         case tpe: TestPendingException => throw tpe
-        case e: Throwable if !anErrorThatShouldCauseAnAbort(e) => Left(e)
+        case e: Throwable if !anExceptionThatShouldCauseAnAbort(e) => Left(e)
       }
     }
 

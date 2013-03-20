@@ -698,7 +698,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *
  * <pre class="stHighlight">
  * // Default implementation in trait Suite
- * protected def withFixture(test: NoArgTest) {
+ * protected def withFixture(test: NoArgTest) = {
  *   test()
  * }
  * </pre>
@@ -718,7 +718,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *
  * <pre class="stHighlight">
  * // Your implementation
- * override def withFixture(test: NoArgTest) {
+ * override def withFixture(test: NoArgTest) = {
  *   // Perform setup
  *   try super.withFixture(test) // Invoke the test function
  *   finally {
@@ -740,7 +740,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * 
  * class ExampleSpec extends Spec {
  * 
- *   override def withFixture(test: NoArgTest) {
+ *   override def withFixture(test: NoArgTest) = {
  * 
  *     try super.withFixture(test)
  *     catch {
@@ -935,7 +935,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
  * 
- *   def withFixture(test: OneArgTest) {
+ *   def withFixture(test: OneArgTest) = {
  *
  *     // create the fixture
  *     val file = File.createTempFile("hello", "world")
@@ -1059,7 +1059,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * 
  *   val builder = new StringBuilder
  * 
- *   abstract override def withFixture(test: NoArgTest) {
+ *   abstract override def withFixture(test: NoArgTest) = {
  *     builder.append("ScalaTest is ")
  *     try super.withFixture(test) // To be stackable, must call super.withFixture
  *     finally builder.clear()
@@ -1070,7 +1070,7 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * 
  *   val buffer = new ListBuffer[String]
  * 
- *   abstract override def withFixture(test: NoArgTest) {
+ *   abstract override def withFixture(test: NoArgTest) = {
  *     try super.withFixture(test) // To be stackable, must call super.withFixture
  *     finally buffer.clear()
  *   }

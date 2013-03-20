@@ -61,7 +61,7 @@ package org.scalatest
  * trait TempFileExistsSpec extends fixture.FlatSpec {
  * 
  *   type FixtureParam = File
- *   override def withFixture(test: OneArgTest) {
+ *   override def withFixture(test: OneArgTest) = {
  *     val fileName = test.configMap.getRequired[String]("tempFileName")
  *     val file = new File(fileName)
  *     withFixture(test.toNoArgTest(file)) // loan the fixture to the test

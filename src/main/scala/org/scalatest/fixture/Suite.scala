@@ -22,6 +22,7 @@ import java.lang.reflect.{InvocationTargetException, Method, Modifier}
 import org.scalatest.events._
 import org.scalatest.Suite._
 import exceptions.{TestCanceledException, TestPendingException}
+import OutcomeOf.outcomeOf
 
 /**
  * Base trait for a family of style traits that can pass a fixture object into tests.
@@ -67,12 +68,12 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
    * <a href="Suite.html">documentation for trait <code>fixture.Suite</code></a>.
    * </p>
    */
-  protected trait OneArgTest extends (FixtureParam => Unit) with TestData { thisOneArgTest =>
+  protected trait OneArgTest extends (FixtureParam => Outcome) with TestData { thisOneArgTest =>
 
     /**
      * Run the test, using the passed <code>FixtureParam</code>.
      */
-    def apply(fixture: FixtureParam)
+    def apply(fixture: FixtureParam): Outcome
 
     /**
      * Convert this <code>OneArgTest</code> to a <code>NoArgTest</code> whose
@@ -94,7 +95,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
      * </p>
      *
      * <pre class="stHighlight">
-     * def withFixture(test: OneArgTest) {
+     * def withFixture(test: OneArgTest) = {
      *   withFixture(test.toNoArgTest(new StringBuilder))
      * }
      * </pre>
@@ -103,7 +104,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
       new NoArgTest {
         val name = thisOneArgTest.name
         val configMap = thisOneArgTest.configMap
-        def apply() { thisOneArgTest(fixture) }
+        def apply(): Outcome = { thisOneArgTest(fixture) }
         val scopes = thisOneArgTest.scopes
         val text = thisOneArgTest.text
         val tags = thisOneArgTest.tags
@@ -122,13 +123,13 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
    *
    * @param fun the <code>OneArgTest</code> to invoke, passing in a fixture
    */
-  protected def withFixture(test: OneArgTest)
+  protected def withFixture(test: OneArgTest): Outcome
 
   private[fixture] class TestFunAndConfigMap(val name: String, test: FixtureParam => Any, val configMap: ConfigMap)
     extends OneArgTest {
     
-    def apply(fixture: FixtureParam) {
-      test(fixture)
+    def apply(fixture: FixtureParam): Outcome = {
+      outcomeOf { test(fixture) }
     }
     private val testData = testDataFor(name, configMap)
     val scopes = testData.scopes
@@ -139,7 +140,9 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
   private[fixture] class FixturelessTestFunAndConfigMap(override val name: String, test: () => Any, override val configMap: ConfigMap)
     extends NoArgTest {
 
-    def apply() { test() }
+    def apply(): Outcome = {
+      outcomeOf { test() }
+    }
     private val testData = testDataFor(name, configMap)
     val scopes = testData.scopes
     val text = testData.text
@@ -230,7 +233,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
             method.invoke(thisSuite, args: _*)
           }
         }
-        withFixture(new TestFunAndConfigMap(testName, testFun, configMap))
+        withFixture(new TestFunAndConfigMap(testName, testFun, configMap)).toUnit
       }
       else { // Test method does not take a fixture
         val testFun: () => Unit = {
@@ -244,7 +247,7 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
             method.invoke(this, args: _*)
           }
         }
-        withFixture(new FixturelessTestFunAndConfigMap(testName, testFun, configMap))
+        withFixture(new FixturelessTestFunAndConfigMap(testName, testFun, configMap)).toUnit
       }
 
       val duration = System.currentTimeMillis - testStartTime
@@ -267,13 +270,13 @@ trait Suite extends org.scalatest.Suite { thisSuite =>
             // testWasCanceled = true so info's printed out in the finally clause show up yellow
             report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), testName, testName, messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(getTopOfMethod(thisSuite, method)), thisSuite.rerunner))
             SucceededStatus
-          case e if !anErrorThatShouldCauseAnAbort(e) =>
+          case e if !anExceptionThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
             handleFailedTest(thisSuite, t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
             FailedStatus
           case e => throw e
         }
-      case e if !anErrorThatShouldCauseAnAbort(e) =>
+      case e if !anExceptionThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         handleFailedTest(thisSuite, e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
         FailedStatus

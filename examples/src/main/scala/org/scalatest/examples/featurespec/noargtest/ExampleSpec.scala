@@ -1,11 +1,11 @@
 package org.scalatest.examples.featurespec.noargtest
 
 import java.io.File
-import org.scalatest.FeatureSpec
+import org.scalatest._
 
 class ExampleSpec extends FeatureSpec {
 
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest) = {
 
     try super.withFixture(test)
     catch {

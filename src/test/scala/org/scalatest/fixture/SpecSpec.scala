@@ -23,7 +23,7 @@ import org.scalatest.Suite._
 import org.scalatest.{ PrivateMethodTester, SharedHelpers, ShouldMatchers, BeforeAndAfterEach, BeforeAndAfterAll, 
                         Filter, Args, Stopper, Tracker, Ignore, SlowAsMolasses, FastAsLight, WeakAsAKitten, Specs, 
                         Reporter, Distributor, OptionValues, NotAllowedException, Resources, DoNotDiscover, WrapWith, 
-                        ConfigMapWrapperSuite, StringFixture, Status, SucceededStatus, ConfigMap }
+                        ConfigMapWrapperSuite, StringFixture, Status, SucceededStatus, ConfigMap, Outcome }
 
 class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with SharedHelpers {
 
@@ -100,7 +100,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     it("should return the test names in alphabetical order from testNames") {
       val a = new Spec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("A Fixture") }
+        def withFixture(test: OneArgTest): Outcome = { test("A Fixture") }
         def `it should do this`(fixture: String) {}
         def `it should do that`(fixture: String) {}
       }
@@ -117,7 +117,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
 
       val c = new Spec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("A Fixture") }
+        def withFixture(test: OneArgTest): Outcome = { test("A Fixture") }
         def `test: that`(fixture: String) {}
         def `test: this`(fixture: String) {}
       }
@@ -130,7 +130,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     it("should return test names nested in scope in alpahbetical order from testNames") {
       val a = new Spec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("A Fixture") }
+        def withFixture(test: OneArgTest): Outcome = { test("A Fixture") }
         object `A Tester` {
           def `should test that`(fixture: String) {}
           def `should test this`(fixture: String) {}
@@ -143,7 +143,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
 
       val b = new Spec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("A Fixture") }
+        def withFixture(test: OneArgTest): Outcome = { test("A Fixture") }
         object `A Tester` {
           object `should be able to` {
             def `test this`(fixture: String) {}
@@ -164,7 +164,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     it("test names should properly nest scopes in test names") {
       class MySpec extends Spec with ShouldMatchers {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("A Fixture") }
+        def withFixture(test: OneArgTest): Outcome = { test("A Fixture") }
         object `A Stack` {
           object `(when not empty)` {
             def `must allow me to pop`(fixture: String) {}
@@ -183,7 +183,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     it("should be able to mix in BeforeAndAfterEach with BeforeAndAfterAll without any problems") {
       class MySpec extends Spec with ShouldMatchers with BeforeAndAfterEach with BeforeAndAfterAll {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("A Fixture") }
+        def withFixture(test: OneArgTest): Outcome = { test("A Fixture") }
         object `A Stack` {
           object `(when not empty)` {
             def `should allow me to pop`(fixture: String) {}
@@ -835,7 +835,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       val a = new Spec with StringFixture {
         var withFixtureWasInvoked = false
         var theTestWasInvoked = false
-        override def withFixture(test: OneArgTest) {
+        override def withFixture(test: OneArgTest): Outcome = {
           withFixtureWasInvoked = true
           super.withFixture(test)
         }
@@ -851,7 +851,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     it("should pass the correct test name in the OneArgTest passed to withFixture") {
       val a = new Spec with StringFixture {
         var correctTestNameWasPassed = false
-        override def withFixture(test: OneArgTest) {
+        override def withFixture(test: OneArgTest): Outcome = {
           correctTestNameWasPassed = test.name == "test: something"
           super.withFixture(test)
         }
@@ -864,7 +864,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     it("should pass the correct config map in the OneArgTest passed to withFixture") {
       val a = new Spec with StringFixture {
         var correctConfigMapWasPassed = false
-        override def withFixture(test: OneArgTest) {
+        override def withFixture(test: OneArgTest): Outcome = {
           correctConfigMapWasPassed = (test.configMap == ConfigMap("hi" -> 7))
           super.withFixture(test)
         }
@@ -878,7 +878,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       val msg = "hi there dude"
       class MySpec extends Spec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test(msg) }
+        def withFixture(test: OneArgTest): Outcome = { test(msg) }
         def `test: with Informer`(fixture: String) {
           info(fixture)
         }
@@ -1818,7 +1818,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       class InfoInsideTestSpec extends Spec {
         val msg = "hi there, dude"
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test(msg) }
+        def withFixture(test: OneArgTest): Outcome = { test(msg) }
         def `test name`(fixture: String) {
           info(fixture)
         }
@@ -2038,7 +2038,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
     var theTestThisConfigMapWasEmpty = true
     var theTestThatConfigMapWasEmpty = true
     var theTestTheOtherConfigMapWasEmpty = true
-    override def withFixture(test: OneArgTest) {
+    override def withFixture(test: OneArgTest): Outcome = {
       if (test.configMap.size > 0)
         test.name match {
           case "test this" => theTestThisConfigMapWasEmpty = false
@@ -2132,7 +2132,7 @@ class SpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with Share
       var theTestThisConfigMapWasEmpty = true
       var theTestThatConfigMapWasEmpty = true
       var theTestTheOtherConfigMapWasEmpty = true
-      override def withFixture(test: OneArgTest) {
+      override def withFixture(test: OneArgTest): Outcome = {
         if (test.configMap.size > 0)
           test.name match {
             case "test$u0020this" => theTestThisConfigMapWasEmpty = false

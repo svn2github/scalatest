@@ -23,6 +23,7 @@ import org.scalatest.exceptions.StackDepthException
 import java.nio.channels.ClosedByInterruptException
 import java.nio.channels.Selector
 import java.net.Socket
+import org.scalatest.Exceptional
 import org.scalatest.time.Span
 import org.scalatest.exceptions.TestFailedDueToTimeoutException
 
@@ -259,7 +260,7 @@ trait Timeouts {
   }
 */
 
-  private def timeoutAfter[T](timeout: Span, f: => T, interruptor: Interruptor, exceptionFun: Option[Throwable] => StackDepthException): T = {
+  /*private def timeoutAfter[T](timeout: Span, f: => T, interruptor: Interruptor, exceptionFun: Option[Throwable] => StackDepthException): T = {
     val timer = new Timer()
     val task = new TimeoutTask(Thread.currentThread(), interruptor)
     timer.schedule(task, timeout.totalNanos / 1000 / 1000) // TODO: Probably use a sleep so I can use nanos
@@ -270,6 +271,37 @@ trait Timeouts {
         if (task.needToResetInterruptedStatus)
           Thread.interrupted() // To reset the flag probably. He only does this if it was not set before and was set after, I think.
         throw exceptionFun(None)
+      }
+      result
+    }
+    catch {
+      case t: Throwable => 
+        timer.cancel() // Duplicate code could be factored out I think. Maybe into a finally? Oh, not that doesn't work. So a method.
+        if(task.timedOut) {
+          if (task.needToResetInterruptedStatus)
+            Thread.interrupted() // Clear the interrupt status (There's a race condition here, but not sure we an do anything about that.)
+          throw exceptionFun(Some(t))
+        }
+        else
+          throw t
+    }
+  }*/
+  
+  private def timeoutAfter[T](timeout: Span, f: => T, interruptor: Interruptor, exceptionFun: Option[Throwable] => StackDepthException): T = {
+    val timer = new Timer()
+    val task = new TimeoutTask(Thread.currentThread(), interruptor)
+    timer.schedule(task, timeout.totalNanos / 1000 / 1000) // TODO: Probably use a sleep so I can use nanos
+    try {
+      val result = f
+      timer.cancel()
+      result match {
+        case Exceptional(ex) => throw ex  // If the result is Exceptional, the exception is already wrapped, just re-throw it to get the old behavior.
+        case _ => 
+          if (task.timedOut) { 
+            if (task.needToResetInterruptedStatus)
+              Thread.interrupted() // To reset the flag probably. He only does this if it was not set before and was set after, I think.
+            throw exceptionFun(None)
+          }
       }
       result
     }

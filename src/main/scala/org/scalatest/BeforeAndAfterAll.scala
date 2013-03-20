@@ -57,7 +57,7 @@ package org.scalatest
  *   private val tempFileName = "tmp.txt"
  * 
  *   type FixtureParam = File
- *   override def withFixture(test: OneArgTest) {
+ *   override def withFixture(test: OneArgTest) = {
  *     val file = new File(tempFileName)
  *     withFixture(test.toNoArgTest(file)) // loan the fixture to the test
  *   }

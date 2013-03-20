@@ -30,13 +30,10 @@ trait SeveredStackTraces extends SuiteMixin { this: Suite =>
    * Invokes <code>super.withFixture(test)</code> and transforms a thrown <code>StackDepth</code> exception by severing
    * its stack trace at the stack depth.
    */
-  abstract override def withFixture(test: NoArgTest) {
-    try {
-      super.withFixture(test)
-    }
-    catch {
-      case e: StackDepth =>
-        throw e.severedAtStackDepth
+  abstract override def withFixture(test: NoArgTest): Outcome = {
+    super.withFixture(test) match {
+      case Exceptional(e: StackDepth) => Exceptional(e.severedAtStackDepth)
+      case o => o
     }
   }
 }

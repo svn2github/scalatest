@@ -22,7 +22,7 @@ import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepth
 import java.util.concurrent.atomic.AtomicReference
 import java.util.ConcurrentModificationException
 import org.scalatest.events._
-import Suite.anErrorThatShouldCauseAnAbort
+import Suite.anExceptionThatShouldCauseAnAbort
 import Suite.autoTagClassAnnotations
 
 /**
@@ -783,7 +783,7 @@ import Suite.autoTagClassAnnotations
  *
  * <pre class="stHighlight">
  * // Default implementation in trait Suite
- * protected def withFixture(test: NoArgTest) {
+ * protected def withFixture(test: NoArgTest) = {
  *   test()
  * }
  * </pre>
@@ -803,7 +803,7 @@ import Suite.autoTagClassAnnotations
  *
  * <pre class="stHighlight">
  * // Your implementation
- * override def withFixture(test: NoArgTest) {
+ * override def withFixture(test: NoArgTest) = {
  *   // Perform setup
  *   try super.withFixture(test) // Invoke the test function
  *   finally {
@@ -825,9 +825,9 @@ import Suite.autoTagClassAnnotations
  * 
  * class ExampleSpec extends FreeSpec {
  * 
- *   override def withFixture(test: NoArgTest) {
+ *   override def withFixture(test: NoArgTest) = {
  * 
- *     try super.withFixture(test)
+ *     try super.withFixture(test) // TODO: THIS NEEDS REWRITING
  *     catch {
  *       case e: Exception =&gt;
  *         val currDir = new File(".")
@@ -1014,7 +1014,7 @@ import Suite.autoTagClassAnnotations
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
  * 
- *   def withFixture(test: OneArgTest) {
+ *   def withFixture(test: OneArgTest) = {
  *
  *     // create the fixture
  *     val file = File.createTempFile("hello", "world")
@@ -1138,7 +1138,7 @@ import Suite.autoTagClassAnnotations
  * 
  *   val builder = new StringBuilder
  * 
- *   abstract override def withFixture(test: NoArgTest) {
+ *   abstract override def withFixture(test: NoArgTest) = {
  *     builder.append("ScalaTest is ")
  *     try super.withFixture(test) // To be stackable, must call super.withFixture
  *     finally builder.clear()
@@ -1149,7 +1149,7 @@ import Suite.autoTagClassAnnotations
  * 
  *   val buffer = new ListBuffer[String]
  * 
- *   abstract override def withFixture(test: NoArgTest) {
+ *   abstract override def withFixture(test: NoArgTest) = {
  *     try super.withFixture(test) // To be stackable, must call super.withFixture
  *     finally buffer.clear()
  *   }

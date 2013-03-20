@@ -19,6 +19,7 @@ import org.scalatest._
 import org.scalatest.events._
 import java.util.concurrent.atomic.AtomicReference
 import _root_.java.util.concurrent.Callable
+import org.scalatest.OutcomeOf.outcomeOf
 
 /**
  * Trait that provides each test with access to a new <code>Conductor</code> 
@@ -179,10 +180,12 @@ trait ConductorMethods extends SuiteMixin with Conductors { this: Suite =>
    * function to <code>super.withFixture(NoArgTest)</code>.
    * </p>
    */
-  abstract override def withFixture(test: NoArgTest) {
+  abstract override def withFixture(test: NoArgTest): Outcome = {
     conductor.compareAndSet(conductor.get, new Conductor)
-    super.withFixture(test)
-    if (!conductor.get.conductingHasBegun)
-      conductor.get.conduct()
+    super.withFixture(test) match {
+      case Succeeded if !conductor.get.conductingHasBegun =>
+          outcomeOf { conductor.get.conduct() }
+      case other => other
+    }
   }
 }

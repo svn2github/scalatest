@@ -817,7 +817,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       val a = new Spec {
         var withFixtureWasInvoked = false
         var theTestWasInvoked = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           withFixtureWasInvoked = true
           super.withFixture(test)
         }
@@ -833,7 +833,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     it("should pass the correct test name in the NoArgTest passed to withFixture") {
       val a = new Spec {
         var correctTestNameWasPassed = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           correctTestNameWasPassed = test.name == "test: something"
           super.withFixture(test)
         }
@@ -846,7 +846,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     it("should pass the correct config map in the NoArgTest passed to withFixture") {
       val a = new Spec {
         var correctConfigMapWasPassed = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           correctConfigMapWasPassed = (test.configMap == ConfigMap("hi" -> 7))
           super.withFixture(test)
         }
@@ -2003,7 +2003,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
     var theTestThisConfigMapWasEmpty = true
     var theTestThatConfigMapWasEmpty = true
     var theTestTheOtherConfigMapWasEmpty = true
-    override def withFixture(test: NoArgTest) {
+    override def withFixture(test: NoArgTest): Outcome = {
       if (test.configMap.size > 0)
         test.name match {
           case "test this" => theTestThisConfigMapWasEmpty = false
@@ -2097,7 +2097,7 @@ class SpecSpec extends FunSpec with PrivateMethodTester with SharedHelpers {
       var theTestThisConfigMapWasEmpty = true
       var theTestThatConfigMapWasEmpty = true
       var theTestTheOtherConfigMapWasEmpty = true
-      override def withFixture(test: NoArgTest) {
+      override def withFixture(test: NoArgTest): Outcome = {
         if (test.configMap.size > 0)
           test.name match {
             case "test$u0020this" => theTestThisConfigMapWasEmpty = false

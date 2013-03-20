@@ -22,7 +22,7 @@ import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import java.util.concurrent.atomic.AtomicReference
 import java.util.ConcurrentModificationException
 import org.scalatest.events._
-import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
+import org.scalatest.Suite.anExceptionThatShouldCauseAnAbort
 import org.scalatest.Suite.autoTagClassAnnotations
 import words.BehaveWord
 import FunSuite.IgnoreTagName 
@@ -110,7 +110,7 @@ trait FunSpecLike extends Suite { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(specText: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-      registerTest(specText, testFun, "itCannotAppearInsideAnotherIt", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
+      registerTest(specText, Transformer(testFun), "itCannotAppearInsideAnotherIt", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
     }
 
     /**
@@ -219,7 +219,7 @@ trait FunSpecLike extends Suite { thisSuite =>
      * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
      */
     def apply(specText: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-      registerTest(specText, testFun, "theyCannotAppearInsideAnotherThey", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
+      registerTest(specText, Transformer(testFun), "theyCannotAppearInsideAnotherThey", sourceFileName, "apply", 3, -2, None, None, None, testTags: _*)
     }
 
     /**
@@ -304,7 +304,7 @@ trait FunSpecLike extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   protected def ignore(specText: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIt", sourceFileName, "ignore", 6, -2, None, testTags: _*)
+    registerIgnoredTest(specText, Transformer(testFun), "ignoreCannotAppearInsideAnIt", sourceFileName, "ignore", 6, -2, None, testTags: _*)
   }
 
   /**
@@ -370,11 +370,20 @@ trait FunSpecLike extends Suite { thisSuite =>
    */
   protected override def runTest(testName: String, args: Args): Status = {
 
-    def invokeWithFixture(theTest: TestLeaf) {
+    def invokeWithFixture(theTest: TestLeaf): Outcome = {
       theTest.testFun match {
-        case wrapper: NoArgTestWrapper[_] =>
-          withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
-        case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
+        case transformer: org.scalatest.fixture.Transformer[_] => 
+          transformer.exceptionalTestFun match {
+            case wrapper: NoArgTestWrapper[_] =>
+              withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
+            case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
+          }
+        case other => 
+          other match {
+            case wrapper: NoArgTestWrapper[_] =>
+              withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
+            case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
+          }
       }
     }
 

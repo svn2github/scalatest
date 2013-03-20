@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import org.scalatest.exceptions.TimeoutField
 import org.scalatest.time.Span
-import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
+import org.scalatest.Suite.anExceptionThatShouldCauseAnAbort
 import org.scalatest.exceptions.TestPendingException
 import akka.dispatch.{Future => FutureOfAkka}
 import akka.dispatch.Promise
@@ -49,7 +49,7 @@ private[scalatest] trait AkkaFutures extends Futures {
         def wrapActorFailure(e: Throwable) = {
           val cause = e.getCause
             val exToReport = if (cause == null) e else cause // TODO: in 2.0 add TestCanceledException here
-            if (anErrorThatShouldCauseAnAbort(exToReport) || exToReport.isInstanceOf[TestPendingException] || exToReport.isInstanceOf[TestCanceledException]) 
+            if (anExceptionThatShouldCauseAnAbort(exToReport) || exToReport.isInstanceOf[TestPendingException] || exToReport.isInstanceOf[TestCanceledException]) 
               exToReport
             else
               new TestFailedException(

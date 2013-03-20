@@ -22,7 +22,7 @@ import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import java.util.concurrent.atomic.AtomicReference
 import java.util.ConcurrentModificationException
 import org.scalatest.events._
-import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
+import org.scalatest.Suite.anExceptionThatShouldCauseAnAbort
 import org.scalatest.Suite.autoTagClassAnnotations
 import org.scalatest.exceptions.NotAllowedException
 
@@ -84,7 +84,7 @@ trait FeatureSpecLike extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   protected def scenario(specText: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerTest(Resources("scenario", specText.trim), testFun, "scenarioCannotAppearInsideAnotherScenario", sourceFileName, "scenario", 4, -2, None, None, None, testTags: _*)
+    registerTest(Resources("scenario", specText.trim), Transformer(testFun), "scenarioCannotAppearInsideAnotherScenario", sourceFileName, "scenario", 4, -2, None, None, None, testTags: _*)
   }
 
   /**
@@ -106,7 +106,7 @@ trait FeatureSpecLike extends Suite { thisSuite =>
    * @throws NullPointerException if <code>specText</code> or any passed test tag is <code>null</code>
    */
   protected def ignore(specText: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerIgnoredTest(Resources("scenario", specText), testFun , "ignoreCannotAppearInsideAScenario", sourceFileName, "ignore", 4, -2, None, testTags: _*)
+    registerIgnoredTest(Resources("scenario", specText), Transformer(testFun), "ignoreCannotAppearInsideAScenario", sourceFileName, "ignore", 4, -2, None, testTags: _*)
   }
 
   /**
@@ -154,11 +154,21 @@ trait FeatureSpecLike extends Suite { thisSuite =>
   protected override def runTest(testName: String, args: Args): Status = {
 
 
-    def invokeWithFixture(theTest: TestLeaf) {
+    def invokeWithFixture(theTest: TestLeaf): Outcome = {
+
       theTest.testFun match {
-        case wrapper: NoArgTestWrapper[_] =>
-          withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
-        case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
+        case transformer: org.scalatest.fixture.Transformer[_] => 
+          transformer.exceptionalTestFun match {
+            case wrapper: NoArgTestWrapper[_] =>
+              withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
+            case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
+          }
+        case other => 
+          other match {
+            case wrapper: NoArgTestWrapper[_] =>
+              withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
+            case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
+          }
       }
     }
 

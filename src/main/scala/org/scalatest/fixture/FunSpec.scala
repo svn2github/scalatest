@@ -22,7 +22,7 @@ import org.scalatest.exceptions.StackDepthExceptionHelper.getStackDepthFun
 import java.util.concurrent.atomic.AtomicReference
 import java.util.ConcurrentModificationException
 import org.scalatest.events._
-import org.scalatest.Suite.anErrorThatShouldCauseAnAbort
+import org.scalatest.Suite.anExceptionThatShouldCauseAnAbort
 import org.scalatest.Suite.autoTagClassAnnotations
 import words.BehaveWord
 import FunSuite.IgnoreTagName 
@@ -102,7 +102,7 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *   case class F(file: File, writer: FileWriter)
  *   type FixtureParam = F
  * 
- *   def withFixture(test: OneArgTest) {
+ *   def withFixture(test: OneArgTest) = {
  * 
  *     // create the fixture
  *     val file = File.createTempFile("hello", "world")
@@ -176,7 +176,7 @@ import org.scalatest.exceptions.TestRegistrationClosedException
  *   // it is created
  *   def populateDb(db: Db) {}
  * 
- *   def withFixture(test: OneArgTest) {
+ *   def withFixture(test: OneArgTest) = {
  *     val dbName = randomUUID.toString
  *     val db = createDb(dbName) // create the fixture
  *     try {

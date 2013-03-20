@@ -57,7 +57,7 @@ trait SuiteMixin { this: Suite =>
    *
    * @param test the no-arg test function to run with a fixture
    */
-  protected def withFixture(test: NoArgTest)
+  protected def withFixture(test: NoArgTest): Outcome
 
   /**
    * Runs this suite of tests.

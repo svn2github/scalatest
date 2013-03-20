@@ -1,11 +1,11 @@
 package org.scalatest.examples.wordspec.noargtest
 
 import java.io.File
-import org.scalatest.WordSpec
+import org.scalatest._
 
 class ExampleSpec extends WordSpec {
 
-  override def withFixture(test: NoArgTest) {
+  override def withFixture(test: NoArgTest) = {
 
     try super.withFixture(test)
     catch {

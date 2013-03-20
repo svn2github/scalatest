@@ -94,7 +94,7 @@ trait ConfigMapFixture { this: fixture.Suite =>
    * @param test the <code>OneArgTest</code> to invoke, passing in the
    *   <code>configMap</code> fixture
    */
-  def withFixture(test: OneArgTest) {
+  def withFixture(test: OneArgTest): Outcome = {
     withFixture(test.toNoArgTest(test.configMap))
   }
 }

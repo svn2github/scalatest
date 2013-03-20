@@ -206,7 +206,7 @@ private[scalatest] object InspectorsHelper {
     throwable match {
       case _: exceptions.TestPendingException |
            _: exceptions.TestCanceledException => true
-      case _ if Suite.anErrorThatShouldCauseAnAbort(throwable) => true
+      case _ if Suite.anExceptionThatShouldCauseAnAbort(throwable) => true
       case _ => false
     }
   

@@ -188,7 +188,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
     testName: String,
     args: Args,
     includeIcon: Boolean,
-    invokeWithFixture: TestLeaf => Unit
+    invokeWithFixture: TestLeaf => Outcome
   ): Status = {
 
     if (testName == null)
@@ -231,7 +231,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 
     try {
 
-      invokeWithFixture(theTest)
+      invokeWithFixture(theTest).toUnit
 
       val duration = System.currentTimeMillis - testStartTime
       val durationToReport = theTest.recordedDuration.getOrElse(duration)
@@ -243,7 +243,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
       reportTestSucceeded(theSuite, report, tracker, testName, theTest.testText, recordEvents, durationToReport, formatter, theSuite.rerunner, theTest.location)
       SucceededStatus
     }
-    catch { // XXX
+    catch {
       case _: TestPendingException =>
         val duration = System.currentTimeMillis - testStartTime
         // testWasPending = true so info's printed out in the finally clause show up yellow
@@ -264,7 +264,7 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
                              Vector.empty)
         reportTestCanceled(theSuite, report, e, testName, theTest.testText, recordEvents, theSuite.rerunner, tracker, duration, formatter, theTest.location)
         SucceededStatus
-      case e if !anErrorThatShouldCauseAnAbort(e) =>
+      case e if !anExceptionThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         val durationToReport = theTest.recordedDuration.getOrElse(duration)
         val recordEvents = messageRecorderForThisTest.recordedEvents(false, false) ++ 
@@ -680,10 +680,10 @@ private[scalatest] sealed abstract class SuperEngine[T](concurrentBundleModResou
 }
 
 private[scalatest] class Engine(concurrentBundleModResourceName: String, simpleClassName: String)
-    extends SuperEngine[() => Unit](concurrentBundleModResourceName, simpleClassName)
+    extends SuperEngine[() => Outcome](concurrentBundleModResourceName, simpleClassName)
 
 private[scalatest] class FixtureEngine[FixtureParam](concurrentBundleModResourceName: String, simpleClassName: String)
-    extends SuperEngine[FixtureParam => Any](concurrentBundleModResourceName, simpleClassName)
+    extends SuperEngine[FixtureParam => Outcome](concurrentBundleModResourceName, simpleClassName)
 
 
 
@@ -762,7 +762,7 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
  * 
  * 
  */
-  def handleTest(handlingSuite: Suite, testText: String, testFun: () => Unit, testRegistrationClosedResourceName: String, sourceFileName: String, methodName: String, stackDepth: Int, adjustment: Int, location: Option[Location], testTags: Tag*) {
+  def handleTest(handlingSuite: Suite, testText: String, testFun: () => Outcome, testRegistrationClosedResourceName: String, sourceFileName: String, methodName: String, stackDepth: Int, adjustment: Int, location: Option[Location], testTags: Tag*) {
 
     if (insideAPathTest) 
       throw new TestRegistrationClosedException(Resources("itCannotAppearInsideAnotherIt"), getStackDepthFun(sourceFileName, methodName, stackDepth + adjustment))
@@ -774,7 +774,6 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
       val nextPath = getNextPath()
       if (isInTargetPath(nextPath, targetPath)) {
         // Default value of None indicates successful test
-        var resultOfRunningTest: Option[Throwable] = None
           //theTest.indentationLevel + 1
         val informerForThisTest =
           PathMessageRecordingInformer( // TODO: Put locations into path traits!
@@ -786,32 +785,26 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
 
         var durationOfRunningTest: Long = -1
         var startTime: Long = System.currentTimeMillis
-        try { // TODO: Correctly record the time a test takes and report that
-          // I think I need to replace the Informer with one that records the message and whether the
-          // thread was this thread, and then...
-          testFun()
-          // If no exception, leave at None to indicate success
-        }
-        catch {
-          case e: Throwable if !Suite.anErrorThatShouldCauseAnAbort(e) =>
-            resultOfRunningTest = Some(e)
-        }
-        finally {
-          durationOfRunningTest = System.currentTimeMillis - startTime
-          val shouldBeInformerForThisTest = atomicInformer.getAndSet(oldInformer)
-          val swapAndCompareSucceeded = shouldBeInformerForThisTest eq informerForThisTest
-          if (!swapAndCompareSucceeded)
-            throw new ConcurrentModificationException(Resources("concurrentInformerMod", handlingSuite.getClass.getName))
-        }
+        val outcome = 
+          try { // TODO: Correctly record the time a test takes and report that
+            // I think I need to replace the Informer with one that records the message and whether the
+            // thread was this thread, and then...
+            testFun()
+            // If no exception, leave at None to indicate success
+          }
+          finally {
+            durationOfRunningTest = System.currentTimeMillis - startTime
+            val shouldBeInformerForThisTest = atomicInformer.getAndSet(oldInformer)
+            val swapAndCompareSucceeded = shouldBeInformerForThisTest eq informerForThisTest
+            if (!swapAndCompareSucceeded)
+              throw new ConcurrentModificationException(Resources("concurrentInformerMod", handlingSuite.getClass.getName))
+          }
 
-        val newTestFun = { () =>
-          // Here in the test function, replay those info calls. But I can't do this from different threads is the issue. Unless
-          // I downcast to MessageRecordingInformer, and have another apply method on it that takes the true/false. Or override
-          // runTestImpl and do something different. How about registering a different kind of test. EagerTest. Then it has
-          // yes, that's how.
-          if (resultOfRunningTest.isDefined)
-            throw resultOfRunningTest.get
-        }
+        // Here in the test function, replay those info calls. But I can't do this from different threads is the issue. Unless
+        // I downcast to MessageRecordingInformer, and have another apply method on it that takes the true/false. Or override
+        // runTestImpl and do something different. How about registering a different kind of test. EagerTest. Then it has
+        // yes, that's how.
+        val newTestFun = { () => outcome }
         // register with         informerForThisTest.fireRecordedMessages(testWasPending)
 
         registerTest(testText, newTestFun, "itCannotAppearInsideAnotherIt", sourceFileName, methodName, stackDepth + 1, adjustment, Some(durationOfRunningTest), location, Some(informerForThisTest), testTags: _*)
@@ -942,7 +935,7 @@ private[scalatest] class PathEngine(concurrentBundleModResourceName: String, sim
     status
   }
    
-  def handleIgnoredTest(testText: String, f: () => Unit, testRegistrationClosedResourceName: String, sourceFileName: String, methodName: String, stackDepth: Int, adjustment: Int, location: Option[Location], testTags: Tag*) {
+  def handleIgnoredTest(testText: String, f: () => Outcome, testRegistrationClosedResourceName: String, sourceFileName: String, methodName: String, stackDepth: Int, adjustment: Int, location: Option[Location], testTags: Tag*) {
 
     if (insideAPathTest) 
       throw new TestRegistrationClosedException(Resources("ignoreCannotAppearInsideAnIt"), getStackDepthFun(sourceFileName, methodName, stackDepth + adjustment))

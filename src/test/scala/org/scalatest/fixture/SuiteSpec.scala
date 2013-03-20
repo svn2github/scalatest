@@ -46,7 +46,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
     it("should return the test names in alphabetical order from testNames") {
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(fun: String => Unit, config: Map[String, Any]) {}
+        def withFixture(fun: String => Unit, config: Map[String, Any]): Outcome = Succeeded
         def testThis(fixture: String) {}
         def testThat(fixture: String) {}
       }
@@ -57,7 +57,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val b = new Suite {
         type FixtureParam = String
-        def withFixture(fun: String => Unit, config: Map[String, Any]) {}
+        def withFixture(fun: String => Unit, config: Map[String, Any]): Outcome = Succeeded
       }
 
       assertResult(List[String]()) {
@@ -66,7 +66,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val c = new Suite {
         type FixtureParam = String
-        def withFixture(fun: String => Unit, config: Map[String, Any]) {}
+        def withFixture(fun: String => Unit, config: Map[String, Any]): Outcome = Succeeded
         def testThat(fixture: String) {}
         def testThis(fixture: String) {}
       }
@@ -79,7 +79,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
     it("should discover tests with and without Informer parameters") {
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(fun: String => Unit, config: Map[String, Any]) {}
+        def withFixture(fun: String => Unit, config: Map[String, Any]): Outcome = Succeeded
         def testThis(fixture: String) = ()
         def testThat(fixture: String, info: Informer) = ()
       }
@@ -90,7 +90,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(fun: String => Unit, config: Map[String, Any]) {
+        def withFixture(fun: String => Unit, config: Map[String, Any]): Outcome = {
           test(hello)
         }
         def testThis(fixture: String) {
@@ -108,7 +108,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val hello = "Hello, world!"
       val a = new Suite {
         type FixtureParam = Map[String, Any]
-        def withFixture(fun: FixtureParam => Unit, config: Map[String, Any]) {
+        def withFixture(fun: FixtureParam => Unit, config: Map[String, Any]): Outcome = {
           test(config)
         }
         def testThis(fixture: FixtureParam) {
@@ -129,7 +129,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
     it("should return the test names in alphabetical order from testNames") {
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         def testThis(fixture: String) {}
         def testThat(fixture: String) {}
       }
@@ -140,7 +140,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val b = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
       }
 
       assertResult(List[String]()) {
@@ -149,7 +149,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val c = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         def testThat(fixture: String) {}
         def testThis(fixture: String) {}
       }
@@ -162,7 +162,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
     it("should discover tests with and without Informer parameters") {
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         def testThis(fixture: String) = ()
         def testThat(fixture: String, info: Informer) = ()
       }
@@ -173,7 +173,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
         def testThis(fixture: String) {
@@ -190,7 +190,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
     
     class TestWasCalledSuite extends Suite {
       type FixtureParam = String
-      def withFixture(test: OneArgTest) { test("hi") }
+      def withFixture(test: OneArgTest): Outcome = { test("hi") }
       var theTestThisCalled = false
       var theTestThatCalled = false
       def testThis(s: String) { theTestThisCalled = true }
@@ -217,7 +217,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         def testThis(fixture: FixtureParam) { theTestThisCalled = true }
@@ -232,7 +232,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val b = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         @Ignore
@@ -250,7 +250,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val c = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         def testThis(fixture: FixtureParam) { theTestThisCalled = true }
@@ -268,7 +268,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val d = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         @Ignore
@@ -290,7 +290,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val e = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         @Ignore
@@ -309,7 +309,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val suite = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         def testThis(fixture: FixtureParam) { theTestThisCalled = true }
@@ -332,7 +332,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // Nothing is excluded
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         @SlowAsMolasses
@@ -348,7 +348,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // SlowAsMolasses is included, one test should be excluded
       val b = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         @SlowAsMolasses
@@ -364,7 +364,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // SlowAsMolasses is included, and both tests should be included
       val c = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         @SlowAsMolasses
@@ -381,7 +381,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // SlowAsMolasses is included. both tests should be included but one ignored
       val d = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         @Ignore
@@ -399,7 +399,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // SlowAsMolasses included, FastAsLight excluded
       val e = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -421,7 +421,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // An Ignored test that was both included and excluded should not generate a TestIgnored event
       val f = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -444,7 +444,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // An Ignored test that was not included should not generate a TestIgnored event
       val g = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -467,7 +467,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // No tagsToInclude set, FastAsLight excluded
       val h = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -488,7 +488,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // No tagsToInclude set, SlowAsMolasses excluded
       val i = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -509,7 +509,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // No tagsToInclude set, SlowAsMolasses excluded, TestIgnored should not be received on excluded ones
       val j = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -532,7 +532,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       // Same as previous, except Ignore specifically mentioned in excludes set
       val k = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -558,7 +558,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         def testThis(fixture: FixtureParam) = ()
         def testThat(fixture: FixtureParam, info: Informer) = ()
       }
@@ -566,7 +566,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val b = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         @Ignore
         def testThis(fixture: FixtureParam) = ()
         def testThat(fixture: FixtureParam, info: Informer) = ()
@@ -575,7 +575,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val c = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         @FastAsLight
         def testThis(fixture: FixtureParam) = ()
         def testThat(fixture: FixtureParam, info: Informer) = ()
@@ -585,7 +585,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val d = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         @FastAsLight
         @SlowAsMolasses
         def testThis(fixture: FixtureParam) = ()
@@ -600,7 +600,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
       val e = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         @FastAsLight
         @SlowAsMolasses
         def testThis(fixture: FixtureParam) = ()
@@ -622,7 +622,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
 
@@ -646,7 +646,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
 
@@ -670,7 +670,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
 
@@ -695,7 +695,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
         def testThrowsAssertionError(s: String) { throw new AssertionError }
@@ -712,7 +712,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
         def testThrowsAssertionError(s: String) { throw new OutOfMemoryError }
@@ -725,7 +725,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
 
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test("Hello, world!")
         }
 
@@ -753,7 +753,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
 
         type FixtureParam = Int
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(99)
         }
 
@@ -782,11 +782,13 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
         type FixtureParam = String
         var aNoArgTestWasPassed = false
         var aOneArgTestWasPassed = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           aNoArgTestWasPassed = true
+          Succeeded
         }
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           aOneArgTestWasPassed = true
+          Succeeded
         }
         def testSomething() {
           assert(1 + 1 === 2)
@@ -803,11 +805,13 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
         type FixtureParam = String
         var aNoArgTestWasPassed = false
         var aOneArgTestWasPassed = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           aNoArgTestWasPassed = true
+          Succeeded
         }
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           aOneArgTestWasPassed = true
+          Succeeded
         }
         def testSomething(info: Informer) {
           assert(1 + 1 === 2)
@@ -824,11 +828,13 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
         type FixtureParam = String
         var aNoArgTestWasPassed = false
         var aOneArgTestWasPassed = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           aNoArgTestWasPassed = true
+          Succeeded
         }
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           aOneArgTestWasPassed = true
+          Succeeded
         }
         def testSomething(fixture: FixtureParam, info: Informer) {
           assert(1 + 1 === 2)
@@ -844,11 +850,13 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       class MySuite extends Suite {
         type FixtureParam = String
         var aNoArgTestWasPassed = false
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           // Shouldn't be called
+          Succeeded
         }
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           aNoArgTestWasPassed = true
+          Succeeded
         }
         def testSomething(fixture: FixtureParam) {
           assert(1 + 1 === 2)
@@ -865,8 +873,9 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       class MySuite extends Suite {
         type FixtureParam = String
         var theNoArgTestWasInvoked = false
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           // Shouldn't be called, but just in case don't invoke a OneArgTest
+          Succeeded
         }
         def testSomething() {
           theNoArgTestWasInvoked = true
@@ -883,8 +892,9 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       class MySuite extends Suite {
         type FixtureParam = String
         var theNoArgTestWasInvoked = false
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           // Shouldn't be called, but just in case don't invoke a OneArgTest
+          Succeeded
         }
         def testSomething(info: Informer) {
           theNoArgTestWasInvoked = true
@@ -899,7 +909,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
         type FixtureParam = String
         var correctTestNameWasPassed = false
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           correctTestNameWasPassed = test.name == "testSomething(FixtureParam, Informer)"
           test("hi")
         }
@@ -912,7 +922,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val a = new Suite {
         type FixtureParam = String
         var correctConfigMapWasPassed = false
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           correctConfigMapWasPassed = (test.configMap == ConfigMap("hi" -> 7))
           test("hi")
         }
@@ -926,7 +936,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
             "calls made from a test that is pending") {
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test("hi")
         }
         def testSomething(s: String, info: Informer) {
@@ -952,7 +962,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
             "calls made from a test that is not pending or canceled") {
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test("hi")
         }
         def testSomething(s: String, info: Informer) {
@@ -978,7 +988,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
             "calls made from a test that is canceled") {
       val a = new Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test("hi")
         }
         def testSomething(s: String, info: Informer) {
@@ -1005,7 +1015,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val msg = "hi there dude"
       class MySuite extends Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test("hi")
         }
         def testWithInformer(s: String, info: Informer) {
@@ -1020,7 +1030,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
       val msg = "hi there dude"
       class MySuite extends Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test("hi")
         }
         def testWithInformer(info: Informer) {
@@ -1041,12 +1051,12 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
 
         type FixtureParam = String
 
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           noArgWithFixtureWasCalled = true
           test()
         }
 
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           withFixture(test.toNoArgTest("hi"))
         }
 
@@ -1064,7 +1074,7 @@ class SuiteSpec extends org.scalatest.FunSpec with PrivateMethodTester with Shar
     it("should fire TestFailed event with correct stack depth info when test failed") {
       class TestSpec extends Suite {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           withFixture(test.toNoArgTest("hi"))
         }
         def testFailure(fixture: String) {

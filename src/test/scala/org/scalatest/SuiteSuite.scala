@@ -301,7 +301,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
     var theTestThisConfigMapWasEmpty = true
     var theTestThatConfigMapWasEmpty = true
     var theTestTheOtherConfigMapWasEmpty = true
-    override def withFixture(test: NoArgTest) {
+    override def withFixture(test: NoArgTest): Outcome = {
       if (test.configMap.size > 0)
         test.name match {
           case "testThis" => theTestThisConfigMapWasEmpty = false
@@ -438,7 +438,7 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
       var theTestThisConfigMapWasEmpty = true
       var theTestThatConfigMapWasEmpty = true
       var theTestTheOtherConfigMapWasEmpty = true
-      override def withFixture(test: NoArgTest) {
+      override def withFixture(test: NoArgTest): Outcome = {
         if (test.configMap.size > 0)
           test.name match {
             case "test$u0020this" => theTestThisConfigMapWasEmpty = false
@@ -714,19 +714,17 @@ class SuiteSuite extends Suite with PrivateMethodTester with SharedHelpers with 
   }
 
   def testAnErrorThatShouldCauseAnAbort() {
-    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new AnnotationFormatError("oops")) }
-    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new AWTError("ouch")) }
-    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new CoderMalfunctionError(new Exception)) }
-    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new FactoryConfigurationError) }
-    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new LinkageError) }
-    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new ThreadDeath) }
-    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new TransformerFactoryConfigurationError) }
-    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new VirtualMachineError {}) }
-    assertResult(true) { Suite.anErrorThatShouldCauseAnAbort(new OutOfMemoryError) }
-    assertResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
-    assertResult(false) { Suite.anErrorThatShouldCauseAnAbort(new RuntimeException) }
-    assertResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
-    assertResult(false) { Suite.anErrorThatShouldCauseAnAbort(new AssertionError) }
+    assertResult(true) { Suite.anExceptionThatShouldCauseAnAbort(new AnnotationFormatError("oops")) }
+    assertResult(true) { Suite.anExceptionThatShouldCauseAnAbort(new AWTError("ouch")) }
+    assertResult(true) { Suite.anExceptionThatShouldCauseAnAbort(new CoderMalfunctionError(new Exception)) }
+    assertResult(true) { Suite.anExceptionThatShouldCauseAnAbort(new FactoryConfigurationError) }
+    assertResult(true) { Suite.anExceptionThatShouldCauseAnAbort(new LinkageError) }
+    assertResult(true) { Suite.anExceptionThatShouldCauseAnAbort(new ThreadDeath) }
+    assertResult(true) { Suite.anExceptionThatShouldCauseAnAbort(new TransformerFactoryConfigurationError) }
+    assertResult(true) { Suite.anExceptionThatShouldCauseAnAbort(new VirtualMachineError {}) }
+    assertResult(true) { Suite.anExceptionThatShouldCauseAnAbort(new OutOfMemoryError) }
+    assertResult(false) { Suite.anExceptionThatShouldCauseAnAbort(new AssertionError) }
+    assertResult(false) { Suite.anExceptionThatShouldCauseAnAbort(new RuntimeException) }
   }
 }
 

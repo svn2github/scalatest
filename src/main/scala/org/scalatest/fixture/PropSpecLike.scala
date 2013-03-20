@@ -73,7 +73,7 @@ trait PropSpecLike extends Suite { thisSuite =>
    * @throws NullPointerException if <code>testName</code> or any passed test tag is <code>null</code>
    */
   protected def property(testName: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerTest(testName, testFun, "testCannotAppearInsideAnotherTest", sourceFileName, "property", 4, -2, None, None, None, testTags: _*)
+    registerTest(testName, Transformer(testFun), "testCannotAppearInsideAnotherTest", sourceFileName, "property", 4, -2, None, None, None, testTags: _*)
   }
 
   /**
@@ -92,7 +92,7 @@ trait PropSpecLike extends Suite { thisSuite =>
    * @throws NotAllowedException if <code>testName</code> had been registered previously
    */
   protected def ignore(testName: String, testTags: Tag*)(testFun: FixtureParam => Any) {
-    registerIgnoredTest(testName, testFun, "ignoreCannotAppearInsideATest", sourceFileName, "ignore", 4, 2, None, testTags: _*)
+    registerIgnoredTest(testName, Transformer(testFun), "ignoreCannotAppearInsideATest", sourceFileName, "ignore", 4, 2, None, testTags: _*)
   }
 
   /**
@@ -121,11 +121,20 @@ trait PropSpecLike extends Suite { thisSuite =>
    */
   protected override def runTest(testName: String, args: Args): Status = {
 
-    def invokeWithFixture(theTest: TestLeaf) {
+    def invokeWithFixture(theTest: TestLeaf): Outcome = {
       theTest.testFun match {
-        case wrapper: NoArgTestWrapper[_] =>
-          withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
-        case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
+        case transformer: org.scalatest.fixture.Transformer[_] => 
+          transformer.exceptionalTestFun match {
+            case wrapper: NoArgTestWrapper[_] =>
+              withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
+            case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
+          }
+        case other => 
+          other match {
+            case wrapper: NoArgTestWrapper[_] =>
+              withFixture(new FixturelessTestFunAndConfigMap(testName, wrapper.test, args.configMap))
+            case fun => withFixture(new TestFunAndConfigMap(testName, fun, args.configMap))
+          }
       }
     }
 

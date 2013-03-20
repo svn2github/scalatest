@@ -781,7 +781,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         var withFixtureWasInvoked = false
         var testWasInvoked = false
 
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           withFixtureWasInvoked = true
           super.withFixture(test)
         }
@@ -799,7 +799,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
         var withFixtureWasInvoked = false
         var testWasInvoked = false
 
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           withFixtureWasInvoked = true
           super.withFixture(test)
         }
@@ -816,7 +816,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
       val a = new Suite {
         var correctTestNameWasPassed = false
 
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           correctTestNameWasPassed = test.name == "testSomething(Informer)"
           super.withFixture(test)
         }
@@ -830,7 +830,7 @@ class DeprecatedMethodFormSuiteSpec extends FunSpec with PrivateMethodTester wit
       val a = new Suite {
         var correctConfigMapWasPassed = false
 
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           correctConfigMapWasPassed = (test.configMap == ConfigMap("hi" -> 7))
           super.withFixture(test)
         }

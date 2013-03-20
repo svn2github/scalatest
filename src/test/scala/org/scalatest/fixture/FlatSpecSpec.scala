@@ -28,7 +28,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
     it("A fixture.Spec should return the test names in order of registration from testNames") {
       val a = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         "Something" should "do that" in { fixture =>
         }
         it should "do this" in { fixture =>
@@ -41,7 +41,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val b = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
       }
 
       assertResult(List[String]()) {
@@ -50,7 +50,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val c = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         "Something" should "do this" in { fixture =>
         }
         it should "do that" in { fixture =>
@@ -67,7 +67,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[DuplicateTestNameException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           it should "test this" in { fixture => }
           it should "test this" in { fixture => }
         }
@@ -75,7 +75,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[DuplicateTestNameException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           it should "test this" in { fixture => }
           it should "test this" taggedAs(SlowTest) ignore { fixture => }
         }
@@ -83,7 +83,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[DuplicateTestNameException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           it should "test this" in { fixture => }
           it should "test this" taggedAs(Tag("SlowTest")) ignore { fixture => }
         }
@@ -91,7 +91,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[DuplicateTestNameException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           ignore should "test this" in { fixture => }
           it should "test this" ignore { fixture => }
         }
@@ -99,7 +99,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[DuplicateTestNameException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           ignore should "test this" in { fixture => }
           it should "test this" in { fixture => }
         }
@@ -110,7 +110,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
         "Something" should "do this" in { fixture =>
@@ -133,7 +133,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       }
       class MyConfigFlatSpec extends FlatSpec with SharedFlatSpecTests {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test("hi")
         }
         it can behave like nonEmptyStack("hi")(1)
@@ -153,14 +153,14 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[NullPointerException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           it should "hi" taggedAs(null) in { fixture => }
         }
       }
       val caught = intercept[NullPointerException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           it should "hi" taggedAs(mytags.SlowAsMolasses, null) in { fixture => }
         }
       }
@@ -168,7 +168,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[NullPointerException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           it should "hi" taggedAs(mytags.SlowAsMolasses, null, mytags.WeakAsAKitten) in { fixture => }
         }
       }
@@ -176,14 +176,14 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[NullPointerException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           ignore should "hi" taggedAs(null) in { fixture => }
         }
       }
       val caught2 = intercept[NullPointerException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           ignore should "hi" taggedAs(mytags.SlowAsMolasses, null) in { fixture => }
         }
       }
@@ -191,21 +191,21 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[NullPointerException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           ignore should "hi" taggedAs(mytags.SlowAsMolasses, null, mytags.WeakAsAKitten) in { fixture => }
         }
       }
       intercept[NullPointerException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           it should "hi" taggedAs(null) ignore { fixture => }
         }
       }
       val caught3 = intercept[NullPointerException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           it should "hi" taggedAs(mytags.SlowAsMolasses, null) ignore { fixture => }
         }
       }
@@ -213,7 +213,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       intercept[NullPointerException] {
         new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           it should "hi" taggedAs(mytags.SlowAsMolasses, null, mytags.WeakAsAKitten) ignore { fixture => }
         }
       }
@@ -225,7 +225,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val a = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         ignore should "test this" is (pending)
         it should "test that" is (pending)
       }
@@ -235,7 +235,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val b = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         it can "test this" is (pending)
         ignore can "test that" is (pending)
       }
@@ -245,7 +245,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val c = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         ignore must "test this" is (pending)
         ignore must "test that" is (pending)
       }
@@ -255,7 +255,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val d = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         it must "test this" taggedAs(mytags.SlowAsMolasses) is (pending)
         ignore must "test that" taggedAs(mytags.SlowAsMolasses) is (pending)
       }
@@ -265,7 +265,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val e = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         it must "test this" is (pending)
         it must "test that" is (pending)
       }
@@ -275,7 +275,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val f = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         it can "test this" taggedAs(mytags.SlowAsMolasses, mytags.WeakAsAKitten) is (pending)
         it can "test that" taggedAs(mytags.SlowAsMolasses) in  { fixture => }
       }
@@ -285,7 +285,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val g = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         it should "test this" taggedAs(mytags.SlowAsMolasses, mytags.WeakAsAKitten) is (pending)
         it should "test that" taggedAs(mytags.SlowAsMolasses) is (pending)
       }
@@ -298,7 +298,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val a = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         it should "test this" ignore { fixture => }
         it should "test that" is (pending)
       }
@@ -308,7 +308,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val b = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         it can "test this" is (pending)
         it can "test that" ignore { fixture => }
       }
@@ -318,7 +318,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val c = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         it must "test this" ignore { fixture => }
         it must "test that" ignore { fixture => }
       }
@@ -328,7 +328,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val d = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         it must "test this" taggedAs(mytags.SlowAsMolasses) is (pending)
         it must "test that" taggedAs(mytags.SlowAsMolasses) ignore { fixture => }
       }
@@ -341,7 +341,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val a = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         "A Stack" should "test this" ignore { fixture => }
         "A Stack" should "test that" is (pending)
       }
@@ -351,7 +351,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val b = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         "A Stack" can "test this" is (pending)
         "A Stack" can "test that" ignore { fixture => }
       }
@@ -361,7 +361,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val c = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         "A Stack" must "test this" ignore { fixture => }
         "A Stack" must "test that" ignore { fixture => }
       }
@@ -371,7 +371,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val d = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         "A Stack" must "test this" taggedAs(mytags.SlowAsMolasses) is (pending)
         "A Stack" must "test that" taggedAs(mytags.SlowAsMolasses) ignore { fixture => }
       }
@@ -381,7 +381,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val e = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         "A Stack" must "test this" is (pending)
         "A Stack" must "test that" is (pending)
       }
@@ -391,7 +391,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val f = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         "A Stack" can "test this" taggedAs(mytags.SlowAsMolasses, mytags.WeakAsAKitten) is (pending)
         "A Stack" can "test that" taggedAs(mytags.SlowAsMolasses) in  { fixture => }
       }
@@ -401,7 +401,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val g = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {}
+        def withFixture(test: OneArgTest): Outcome = Succeeded
         "A Stack" should "test this" taggedAs(mytags.SlowAsMolasses, mytags.WeakAsAKitten) is (pending)
         "A Stack" should "test that" taggedAs(mytags.SlowAsMolasses) in  { fixture => }
       }
@@ -412,7 +412,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
     class TestWasCalledSuite extends FlatSpec {
       type FixtureParam = String
-      def withFixture(test: OneArgTest) { test("hi") }
+      def withFixture(test: OneArgTest): Outcome = { test("hi") }
       var theTestThisCalled = false
       var theTestThatCalled = false
       it should "run this" in { fixture => theTestThisCalled = true }
@@ -439,7 +439,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val a = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         it can "test this" in { fixture => theTestThisCalled = true }
@@ -454,7 +454,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val b = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         ignore must "test this" in { fixture => theTestThisCalled = true }
@@ -471,7 +471,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val c = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         it can "test this" in { fixture => theTestThisCalled = true }
@@ -490,7 +490,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // Will try and implement that tomorrow. Subtypes will be able to change the order.
       val d = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         ignore should "test this" in { fixture => theTestThisCalled = true }
@@ -511,7 +511,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // method and actually invoke it.
       val e = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         ignore must "test this" in { fixture => theTestThisCalled = true }
@@ -530,7 +530,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // Nothing is excluded
       val a = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         it should "test this" taggedAs(mytags.SlowAsMolasses) in { fixture => theTestThisCalled = true }
@@ -545,7 +545,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // SlowAsMolasses is included, one test should be excluded
       val b = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         it should "test this" taggedAs(mytags.SlowAsMolasses) in { fixture => theTestThisCalled = true }
@@ -560,7 +560,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // SlowAsMolasses is included, and both tests should be included
       val c = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         it should "test this" taggedAs(mytags.SlowAsMolasses) in { fixture => theTestThisCalled = true }
@@ -575,7 +575,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // SlowAsMolasses is included. both tests should be included but one ignored
       val d = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         ignore should "test this" taggedAs(mytags.SlowAsMolasses) in { fixture => theTestThisCalled = true }
@@ -590,7 +590,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // SlowAsMolasses included, FastAsLight excluded
       val e = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -609,7 +609,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // An Ignored test that was both included and excluded should not generate a TestIgnored event
       val f = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -628,7 +628,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // An Ignored test that was not included should not generate a TestIgnored event
       val g = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -647,7 +647,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // No tagsToInclude set, FastAsLight excluded
       val h = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -665,7 +665,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // No tagsToInclude set, SlowAsMolasses excluded
       val i = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -683,7 +683,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // No tagsToInclude set, SlowAsMolasses excluded, TestIgnored should not be received on excluded ones
       val j = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -701,7 +701,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       // Same as previous, except Ignore specifically mentioned in excludes set
       val k = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         var theTestTheOtherCalled = false
@@ -721,7 +721,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val a = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         it should "test this" in { fixture => }
         it should "test that" in { fixture => }
       }
@@ -729,7 +729,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val b = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         ignore should "test this" in { fixture => }
         it should "test that" in { fixture => }
       }
@@ -737,7 +737,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val c = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         it should "test this" taggedAs(mytags.FastAsLight) in { fixture => }
         it should "test that" in { fixture => }
       }
@@ -746,7 +746,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val d = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         it should "test this" taggedAs(mytags.FastAsLight, mytags.SlowAsMolasses) in { fixture => }
         it should "test that" taggedAs(mytags.SlowAsMolasses) in { fixture => }
         it should "test the other thing" in { fixture => }
@@ -758,7 +758,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
       val e = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         it should "test this" taggedAs(mytags.FastAsLight, mytags.SlowAsMolasses) in { fixture => }
         it should "test that" taggedAs(mytags.SlowAsMolasses) in { fixture => }
         ignore should "test the other thing" in { fixture => }
@@ -776,7 +776,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
 
@@ -801,7 +801,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
         it should "throw AssertionError" in { s => throw new AssertionError }
@@ -818,7 +818,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
         it should "throws AssertionError" in { s => throw new OutOfMemoryError }
@@ -833,7 +833,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec with GivenWhenThen {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
         it should "do something else" in { s =>
@@ -859,7 +859,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec with GivenWhenThen {
         type FixtureParam = String
         val hello = "Hello, world!"
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test(hello)
         }
         it should "do something else" in { s =>
@@ -885,7 +885,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec {
 
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test("Hello, world!")
         }
 
@@ -905,7 +905,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec {
 
         type FixtureParam = String
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           test("Hello, world!")
         }
 
@@ -926,7 +926,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
     it("should work with ignored tests whose inferred result type is not Unit") {
       val a = new FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         var theTestThisCalled = false
         var theTestThatCalled = false
         ignore should "test this" in { () => theTestThisCalled = true; "hi" }
@@ -946,11 +946,13 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         type FixtureParam = String
         var aNoArgTestWasPassed = false
         var aOneArgTestWasPassed = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           aNoArgTestWasPassed = true
+          Succeeded
         }
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           aOneArgTestWasPassed = true
+          Succeeded
         }
         it should "do something" in { () =>
           assert(1 + 1 === 2)
@@ -967,11 +969,13 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         type FixtureParam = String
         var aNoArgTestWasPassed = false
         var aOneArgTestWasPassed = false
-        override def withFixture(test: NoArgTest) {
+        override def withFixture(test: NoArgTest): Outcome = {
           aNoArgTestWasPassed = true
+          Succeeded
         }
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           aOneArgTestWasPassed = true
+          Succeeded
         }
         it should "do something" in { fixture =>
           assert(1 + 1 === 2)
@@ -989,8 +993,9 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       class MySpec extends FlatSpec {
         type FixtureParam = String
         var theNoArgTestWasInvoked = false
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           // Shouldn't be called, but just in case don't invoke a OneArgTest
+          Succeeded
         }
         it should "do something" in { () =>
           theNoArgTestWasInvoked = true
@@ -1005,7 +1010,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec {
         type FixtureParam = String
         var correctTestNameWasPassed = false
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           correctTestNameWasPassed = test.name == "should do something"
           test("hi")
         }
@@ -1018,7 +1023,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       val a = new FlatSpec {
         type FixtureParam = String
         var correctConfigMapWasPassed = false
-        def withFixture(test: OneArgTest) {
+        def withFixture(test: OneArgTest): Outcome = {
           correctConfigMapWasPassed = (test.configMap == ConfigMap("hi" -> 7))
           test("hi")
         }
@@ -1033,7 +1038,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
         class MySpec extends FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) { test("hi") }
+          def withFixture(test: OneArgTest): Outcome = { test("hi") }
           it should "blow up" in { fixture =>
             behavior of "in the wrong place, at the wrong time"
           }
@@ -1046,7 +1051,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
         class MySpec extends FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) { test("hi") }
+          def withFixture(test: OneArgTest): Outcome = { test("hi") }
           it should "blow up" in { fixture =>
             behavior of "in the wrong place, at the wrong time"
             it should "never run" in { fixture =>
@@ -1062,7 +1067,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
         class MySpec extends FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) { test("hi") }
+          def withFixture(test: OneArgTest): Outcome = { test("hi") }
           it should "blow up" in { fixture =>
             it should "never run" in { fixture =>
               assert(1 === 1)
@@ -1077,7 +1082,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
         class MySpec extends FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) { test("hi") }
+          def withFixture(test: OneArgTest): Outcome = { test("hi") }
           it should "blow up" in { fixture =>
             it should "never run" taggedAs(mytags.SlowAsMolasses) in { fixture =>
               assert(1 === 1)
@@ -1092,7 +1097,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
         class MySpec extends FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) { test("hi") }
+          def withFixture(test: OneArgTest): Outcome = { test("hi") }
           it should "blow up" in { fixture =>
             behavior of "in the wrong place, at the wrong time"
             ignore should "never run" in { fixture =>
@@ -1108,7 +1113,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
         class MySpec extends FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) { test("hi") }
+          def withFixture(test: OneArgTest): Outcome = { test("hi") }
           it should "blow up" in { fixture =>
             ignore should "never run" in { fixture =>
               assert(1 === 1)
@@ -1123,7 +1128,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
         class MySpec extends FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) { test("hi") }
+          def withFixture(test: OneArgTest): Outcome = { test("hi") }
           it should "blow up" in { fixture =>
             ignore should "never run" taggedAs(mytags.SlowAsMolasses) in { fixture =>
               assert(1 === 1)
@@ -1141,7 +1146,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       it("A fixture.Spec should return the test names in order of registration from testNames") {
         val a = new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           "Something" should "do that" in { fixture =>
           }
           they should "do this" in { fixture =>
@@ -1154,7 +1159,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
         val b = new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
         }
 
         assertResult(List[String]()) {
@@ -1163,7 +1168,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
 
         val c = new FlatSpec {
           type FixtureParam = String
-          def withFixture(test: OneArgTest) {}
+          def withFixture(test: OneArgTest): Outcome = Succeeded
           "Something" should "do this" in { fixture =>
           }
           they should "do that" in { fixture =>
@@ -1180,7 +1185,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         intercept[DuplicateTestNameException] {
           new FlatSpec {
             type FixtureParam = String
-            def withFixture(test: OneArgTest) {}
+            def withFixture(test: OneArgTest): Outcome = Succeeded
             they should "test this" in { fixture => }
             they should "test this" in { fixture => }
           }
@@ -1188,7 +1193,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         intercept[DuplicateTestNameException] {
           new FlatSpec {
             type FixtureParam = String
-            def withFixture(test: OneArgTest) {}
+            def withFixture(test: OneArgTest): Outcome = Succeeded
             they should "test this" in { fixture => }
             they should "test this" taggedAs(SlowTest) ignore { fixture => }
           }
@@ -1196,7 +1201,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         intercept[DuplicateTestNameException] {
           new FlatSpec {
             type FixtureParam = String
-            def withFixture(test: OneArgTest) {}
+            def withFixture(test: OneArgTest): Outcome = Succeeded
             they should "test this" in { fixture => }
             they should "test this" taggedAs(Tag("SlowTest")) ignore { fixture => }
           }
@@ -1204,7 +1209,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         intercept[DuplicateTestNameException] {
           new FlatSpec {
             type FixtureParam = String
-            def withFixture(test: OneArgTest) {}
+            def withFixture(test: OneArgTest): Outcome = Succeeded
             ignore should "test this" in { fixture => }
             they should "test this" ignore { fixture => }
           }
@@ -1212,7 +1217,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
         intercept[DuplicateTestNameException] {
           new FlatSpec {
             type FixtureParam = String
-            def withFixture(test: OneArgTest) {}
+            def withFixture(test: OneArgTest): Outcome = Succeeded
             ignore should "test this" in { fixture => }
             they should "test this" in { fixture => }
           }
@@ -1226,7 +1231,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
     it("should fire TestFailed event with correct stack depth info when test failed") {
       class TestSpec extends FlatSpec {
         type FixtureParam = String
-        def withFixture(test: OneArgTest) { test("hi") }
+        def withFixture(test: OneArgTest): Outcome = { test("hi") }
         it should "fail"  in { fixture =>
           assert(1 === 2)
         }
@@ -1255,15 +1260,14 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
             assert(1 === 2)
           }
         }
-        override def withFixture(test: OneArgTest) {
-          try {
-            test.apply("hi")
-          }
-          catch {
-            case e: TestRegistrationClosedException => 
+        override def withFixture(test: OneArgTest): Outcome = {
+          val outcome = test.apply("hi")
+          outcome match {
+            case Exceptional(ex: TestRegistrationClosedException) => 
               registrationClosedThrown = true
-              throw e
+            case _ =>
           }
+          outcome
         }
       }
       val rep = new EventRecordingReporter
@@ -1275,7 +1279,7 @@ class FlatSpecSpec extends org.scalatest.FunSpec with PrivateMethodTester with S
       assert(testFailedEvents(0).throwable.get.getClass() === classOf[TestRegistrationClosedException])
       val trce = testFailedEvents(0).throwable.get.asInstanceOf[TestRegistrationClosedException]
       assert("FlatSpecSpec.scala" === trce.failedCodeFileName.get)
-      assert(trce.failedCodeLineNumber.get === thisLineNumber - 24)
+      assert(trce.failedCodeLineNumber.get === thisLineNumber - 23)
     }
   }
 }

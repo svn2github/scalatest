@@ -66,7 +66,7 @@ trait JUnitSuiteLike extends Suite with AssertionsForJUnit { thisSuite =>
    *
    * @param test the no-arg test function to run with a fixture
    */
-  override final protected def withFixture(test: NoArgTest) {
+  override final protected def withFixture(test: NoArgTest): Outcome = {
      throw new UnsupportedOperationException
   }
 

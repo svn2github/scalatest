@@ -22,6 +22,8 @@ import org.scalatest.exceptions.ModifiableMessage
 import org.scalatest.Resources
 import org.scalatest.time.Span
 import org.scalatest.exceptions.TimeoutField
+import org.scalatest.Outcome
+import org.scalatest.Exceptional
 
 /**
  * Trait that when mixed into a suite class establishes a time limit for its tests.
@@ -128,15 +130,17 @@ trait TimeLimitedTests extends SuiteMixin { this: Suite =>
    * 
    * @param test the test on which to enforce a time limit
    */
-  abstract override def withFixture(test: NoArgTest) {
+  abstract override def withFixture(test: NoArgTest): Outcome = {
     try {
       failAfter(timeLimit) {
         super.withFixture(test)
       } (defaultTestInterruptor)
     }
     catch {
-      case e: org.scalatest.exceptions.ModifiableMessage[_] with TimeoutField =>
-        throw e.modifyMessage(opts => Some(Resources("testTimeLimitExceeded", e.timeout.prettyString)))
+      case e: org.scalatest.exceptions.ModifiableMessage[_] with TimeoutField => 
+        Exceptional(e.modifyMessage(opts => Some(Resources("testTimeLimitExceeded", e.timeout.prettyString))))
+      case t: Throwable => 
+        Exceptional(t)
     }
   }
 

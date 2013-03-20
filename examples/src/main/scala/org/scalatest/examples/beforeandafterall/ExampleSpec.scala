@@ -5,7 +5,7 @@ import java.io._
 trait TempFileExistsSpec extends fixture.FlatSpecLike {
 
   type FixtureParam = File
-  override def withFixture(test: OneArgTest) {
+  override def withFixture(test: OneArgTest) = {
     val fileName = test.configMap("tempFileName").asInstanceOf[String]
     val file = new File(fileName)
     withFixture(test.toNoArgTest(file)) // loan the fixture to the test

@@ -32,7 +32,7 @@ import Suite.formatterForSuiteCompleted
 import Suite.checkForPublicNoArgConstructor
 import Suite.checkChosenStyles
 import Suite.formatterForSuiteAborted
-import Suite.anErrorThatShouldCauseAnAbort
+import Suite.anExceptionThatShouldCauseAnAbort
 import Suite.getSimpleNameOfAnObjectsClass
 import Suite.takesInformer
 import Suite.handleFailedTest
@@ -68,6 +68,7 @@ import collection.mutable.ListBuffer
 import collection.GenTraversable
 import annotation.tailrec
 import collection.immutable
+import OutcomeOf.outcomeOf
 
 /*
  * <h2>Using <code>info</code> and <code>markup</code></h2>
@@ -571,12 +572,12 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    * <code>NoArgTest</code> instance passed to <code>withFixture</code>.
    * </p>
    */
-  protected trait NoArgTest extends (() => Unit) with TestData {
+  protected trait NoArgTest extends (() => Outcome) with TestData {
     
     /**
      * Runs the code of the test.
      */
-    def apply()
+    def apply(): Outcome
   }
 
   /**
@@ -1103,7 +1104,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
    *
    * @param test the no-arg test function to run with a fixture
    */
-  protected def withFixture(test: NoArgTest) {
+  protected def withFixture(test: NoArgTest): Outcome = {
     test()
   }
 
@@ -1188,13 +1189,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       withFixture(
         new NoArgTest {
           val name = testData.name
-          def apply() { method.invoke(thisSuite, argsArray: _*) }
+          def apply(): Outcome = { outcomeOf { method.invoke(thisSuite, argsArray: _*) } }
           val configMap = testData.configMap
           val scopes = testData.scopes
           val text = testData.text
           val tags = testData.tags
         }
-      )
+      ).toUnit
       val duration = System.currentTimeMillis - testStartTime
       reportTestSucceeded(this, report, tracker, testName, testName, messageRecorderForThisTest.recordedEvents(false, false), duration, formatter, rerunner, Some(getTopOfMethod(thisSuite, method)))
       SucceededStatus
@@ -1216,13 +1217,13 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
             report(TestCanceled(tracker.nextOrdinal(), message, thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), 
                                 testName, testName, messageRecorderForThisTest.recordedEvents(false, true), Some(e), Some(duration), Some(formatter), Some(TopOfMethod(thisSuite.getClass.getName, method.toGenericString())), rerunner))
             SucceededStatus                 
-          case e if !anErrorThatShouldCauseAnAbort(e) =>
+          case e if !anExceptionThatShouldCauseAnAbort(e) =>
             val duration = System.currentTimeMillis - testStartTime
             handleFailedTest(thisSuite, t, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
             FailedStatus
           case e => throw e
         }
-      case e if !anErrorThatShouldCauseAnAbort(e) =>
+      case e if !anExceptionThatShouldCauseAnAbort(e) =>
         val duration = System.currentTimeMillis - testStartTime
         handleFailedTest(thisSuite, e, testName, messageRecorderForThisTest.recordedEvents(false, false), report, tracker, getEscapedIndentedTextForTest(testName, 1, true), duration)
         FailedStatus
@@ -1872,9 +1873,14 @@ private[scalatest] object Suite {
       testName
 */
 
-  def anErrorThatShouldCauseAnAbort(throwable: Throwable) =
+  def anExceptionThatShouldCauseAnAbort(throwable: Throwable): Boolean =
     throwable match {
       case _: AnnotationFormatError | 
+/*
+           _: org.scalatest.TestRegistrationClosedException |
+           _: org.scalatest.DuplicateTestNameException |
+           _: org.scalatest.NotAllowedException |
+*/
            _: CoderMalfunctionError |
            _: FactoryConfigurationError | 
            _: LinkageError | 

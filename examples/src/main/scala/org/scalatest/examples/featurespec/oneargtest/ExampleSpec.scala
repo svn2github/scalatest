@@ -7,7 +7,7 @@ class ExampleSpec extends fixture.FeatureSpec {
 
   case class FixtureParam(file: File, writer: FileWriter)
 
-  def withFixture(test: OneArgTest) {
+  def withFixture(test: OneArgTest) = {
 
     // create the fixture
     val file = File.createTempFile("hello", "world")

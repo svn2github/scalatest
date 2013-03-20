@@ -79,7 +79,7 @@ trait FunSuiteLike extends Suite { thisSuite =>
    * @throws NullPointerException if <code>testName</code> or any passed test tag is <code>null</code>
    */
   protected def test(testName: String, testTags: Tag*)(testFun: => Unit) {
-    registerTest(testName, testFun _, "testCannotAppearInsideAnotherTest", "FunSuite.scala", "test", 4, -2, None, None, None, testTags: _*)
+    registerTest(testName, Transformer(testFun _), "testCannotAppearInsideAnotherTest", "FunSuite.scala", "test", 4, -2, None, None, None, testTags: _*)
   }
 
   /**
@@ -98,7 +98,7 @@ trait FunSuiteLike extends Suite { thisSuite =>
    * @throws NotAllowedException if <code>testName</code> had been registered previously
    */
   protected def ignore(testName: String, testTags: Tag*)(testFun: => Unit) {
-    registerIgnoredTest(testName, testFun _, "ignoreCannotAppearInsideATest", "FunSuite.scala", "ignore", 4, -2, None, testTags: _*)
+    registerIgnoredTest(testName, Transformer(testFun _), "ignoreCannotAppearInsideATest", "FunSuite.scala", "ignore", 4, -2, None, testTags: _*)
   }
 
   /**
@@ -127,13 +127,13 @@ trait FunSuiteLike extends Suite { thisSuite =>
    */
   protected override def runTest(testName: String, args: Args): Status = {
 
-    def invokeWithFixture(theTest: TestLeaf) {
+    def invokeWithFixture(theTest: TestLeaf): Outcome = {
       val theConfigMap = args.configMap
       val testData = testDataFor(testName, theConfigMap)
       withFixture(
         new NoArgTest {
           val name = testData.name
-          def apply() { theTest.testFun() }
+          def apply(): Outcome = { theTest.testFun() }
           val configMap = testData.configMap
           val scopes = testData.scopes
           val text = testData.text

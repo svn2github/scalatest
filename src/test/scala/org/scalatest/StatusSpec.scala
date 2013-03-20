@@ -10,11 +10,14 @@ class StatusSpec extends fixture.Spec {
     def waitUntilCompleted()
   }
   
-   override protected def withFixture(test: OneArgTest) {
+   override protected def withFixture(test: OneArgTest): Outcome = {
      val status1 = new ScalaTestStatefulStatus
-     test(status1)
-     val status2 = new StatefulStatus
-     test(status2)
+     test(status1) match {
+       case Succeeded =>
+         val status2 = new StatefulStatus
+         test(status2)
+       case other => other
+     }
    }
   
   object `StatefulStatus ` {
