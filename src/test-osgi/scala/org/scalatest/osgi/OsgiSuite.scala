@@ -48,6 +48,7 @@ class OsgiSuite extends JUnitSuite with ShouldMatchersForJUnit {
       // For pre-2.10 versions, fall back to the Apache Service Mix wrapped bundles
       val servicemixVersion = version match {
         case Version(2, 9, 0) => "2.9.0_1"
+        case Version(2, 9, 1) => "2.9.1_3"
         case other => throw new IllegalStateException("No OSGi bundle known for Scala Library version %s".format(other))
       }
       mavenBundle.groupId("org.apache.servicemix.bundles").artifactId("org.apache.servicemix.bundles.scala-library").version(servicemixVersion)
