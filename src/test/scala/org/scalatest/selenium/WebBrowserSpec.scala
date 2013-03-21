@@ -30,6 +30,7 @@ import org.scalatest.Suite
 import org.scalatest.Args
 import org.scalatest.ScreenshotOnFailure
 import org.scalatest.SharedHelpers.SilentReporter
+import org.scalatest.tagobjects.Slow
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxProfile
 import org.openqa.selenium.safari.SafariDriver
@@ -264,7 +265,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
   }
 
   describe("click on") {
-    it("should throw TFE with valid stack depth if specified item not found") {
+    it("should throw TFE with valid stack depth if specified item not found", Slow) {
       go to (host + "index.html")
       val caught = intercept[TestFailedException] {
         click on "unknown"
@@ -296,7 +297,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
   }
 
   describe("switch to") {
-    it("should switch frame correctly and throw TFE with valid stack depth if specified frame not found") {
+    it("should switch frame correctly and throw TFE with valid stack depth if specified frame not found", Slow) {
       go to (host + "frame.html")
       val win = windowHandle
       switch to frame("frame1")
@@ -606,7 +607,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       pageTitle should be ("Radio Button")
     }
 
-    it("should get and set text field value correctly.") {
+    it("should get and set text field value correctly.", Slow) {
       go to (host + "textfield.html")
       pageTitle should be ("Text Field")
 
@@ -624,7 +625,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       textField("text2").attribute("value") should be (Some("value 2"))
     }
     
-    it("should get and set password field value correctly.") {
+    it("should get and set password field value correctly.", Slow) {
       go to (host + "pwdfield.html")
       pageTitle should be ("Password Field")
 
@@ -712,7 +713,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       textField("text1").value should be ("value 1")
     }
  
-    it("should get and set text area value correctly.") {
+    it("should get and set text area value correctly.", Slow) {
       go to (host + "textarea.html")
       pageTitle should be ("Text Area")
       
@@ -821,7 +822,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       checkbox("opt1").isSelected should be (false)
     }
 
-    it("should read, select and clear dropdown list (select) correctly.") {
+    it("should read, select and clear dropdown list (select) correctly.", Slow) {
       go to (host + "select.html")
       pageTitle should be ("Select")
       
@@ -1020,7 +1021,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       implicitlyWait(Span(2, Seconds))
     }
   
-    it("should support capturing screenshot") {
+    it("should support capturing screenshot", Slow) {
       go to "http://www.artima.com"
       try {
         capture
@@ -1033,7 +1034,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       }
     }
     
-    it("should support setting capture target directory") {
+    it("should support setting capture target directory", Slow) {
       go to "http://www.artima.com"
       val tempDir = new File(System.getProperty("java.io.tmpdir"))
       val targetDir1 = new File(tempDir, "scalatest-test-target1")
@@ -1059,8 +1060,11 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
       try isScreenshotSupported(driver) should be (false)
       finally close()(driver)
     }
-    
-    it("isScreenshotSupported should return true for FirefoxDriver") {
+
+    /* This is causing long hang times and left-open Firefox windows.
+     * TODO: fix
+     */
+    ignore("isScreenshotSupported should return true for FirefoxDriver") {
       val driver = try {
         new FirefoxDriver(new FirefoxProfile())
       }
@@ -1196,7 +1200,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
   }
   
   describe("clickOn") {
-    it("should throw TFE with valid stack depth if specified item not found") {
+    it("should throw TFE with valid stack depth if specified item not found", Slow) {
       go to (host + "index.html")
       val caught = intercept[TestFailedException] {
         clickOn("unknown")
@@ -1233,7 +1237,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         id("aLink").element.isInstanceOf[Element] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid id") {
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid id", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           id("aInvalidLink").element
@@ -1249,7 +1253,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           case other => fail("Expected Some(element: Element), but got: " + other)
         }
       }
-      it("should return None when findElement method is called with invalid id") {
+      it("should return None when findElement method is called with invalid id", Slow) {
         go to (host + "click.html")
         id("aInvalidLink").findElement should be (None)
       }
@@ -1257,7 +1261,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         id("aLink").webElement.isInstanceOf[WebElement] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid id") {
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid id", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           id("aInvalidLink").webElement
@@ -1273,7 +1277,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         itr.next.isInstanceOf[Element] should be (true)
         itr.hasNext should be (false)
       }
-      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid id") {
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid id", Slow) {
         go to (host + "click.html")
         val itr = id("aInvalidLink").findAllElements
         itr.hasNext should be (false)
@@ -1285,7 +1289,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         name("aLinkName").element.isInstanceOf[Element] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid name") {
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid name", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           name("aInvalidLinkName").element
@@ -1301,7 +1305,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           case other => fail("Expected Some(element: Element), but got: " + other)
         }
       }
-      it("should return None when findElement method is called with invalid name") {
+      it("should return None when findElement method is called with invalid name", Slow) {
         go to (host + "click.html")
         name("aInvalidLinkName").findElement should be (None)
       }
@@ -1309,7 +1313,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         name("aLinkName").webElement.isInstanceOf[WebElement] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid name") {
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid name", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           name("aInvalidLinkName").webElement
@@ -1325,7 +1329,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         itr.next.isInstanceOf[Element] should be (true)
         itr.hasNext should be (false)
       }
-      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid name") {
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid name", Slow) {
         go to (host + "click.html")
         val itr = name("aInvalidLinkName").findAllElements
         itr.hasNext should be (false)
@@ -1337,7 +1341,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         xpath("//html/body/a").element.isInstanceOf[Element] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid xpath") {
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid xpath", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           xpath("//html/body/div/a").element
@@ -1353,7 +1357,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           case other => fail("Expected Some(element: Element), but got: " + other)
         }
       }
-      it("should return None when findElement method is called with invalid xpath") {
+      it("should return None when findElement method is called with invalid xpath", Slow) {
         go to (host + "click.html")
         xpath("//html/body/div/a").findElement should be (None)
       }
@@ -1361,7 +1365,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         xpath("//html/body/a").webElement.isInstanceOf[WebElement] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid xpath") {
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid xpath", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           xpath("//html/body/div/a").webElement
@@ -1377,7 +1381,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         itr.next.isInstanceOf[Element] should be (true)
         itr.hasNext should be (false)
       }
-      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid xpath") {
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid xpath", Slow) {
         go to (host + "click.html")
         val itr = xpath("//html/body/div/a").findAllElements
         itr.hasNext should be (false)
@@ -1389,7 +1393,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         className("aClass").element.isInstanceOf[Element] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid className") {
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid className", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           className("aInvalidClass").element
@@ -1405,7 +1409,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           case other => fail("Expected Some(element: Element), but got: " + other)
         }
       }
-      it("should return None when findElement method is called with invalid className") {
+      it("should return None when findElement method is called with invalid className", Slow) {
         go to (host + "click.html")
         className("aInvalidClass").findElement should be (None)
       }
@@ -1413,7 +1417,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         className("aClass").webElement.isInstanceOf[WebElement] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid className") {
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid className", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           className("aInvalidClass").webElement
@@ -1429,7 +1433,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         itr.next.isInstanceOf[Element] should be (true)
         itr.hasNext should be (false)
       }
-      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid className") {
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid className", Slow) {
         go to (host + "click.html")
         val itr = className("aInvalidClass").findAllElements
         itr.hasNext should be (false)
@@ -1441,7 +1445,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         cssSelector("a[id='aLink']").element.isInstanceOf[Element] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid cssSelector") {
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid cssSelector", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           cssSelector("a[id='aInvalidLink']").element
@@ -1457,7 +1461,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           case other => fail("Expected Some(element: Element), but got: " + other)
         }
       }
-      it("should return None when findElement method is called with invalid cssSelector") {
+      it("should return None when findElement method is called with invalid cssSelector", Slow) {
         go to (host + "click.html")
         cssSelector("a[id='aInvalidLink']").findElement should be (None)
       }
@@ -1465,7 +1469,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         cssSelector("a[id='aLink']").webElement.isInstanceOf[WebElement] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid cssSelector") {
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid cssSelector", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           cssSelector("a[id='aInvalidLink']").webElement
@@ -1481,7 +1485,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         itr.next.isInstanceOf[Element] should be (true)
         itr.hasNext should be (false)
       }
-      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid cssSelector") {
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid cssSelector", Slow) {
         go to (host + "click.html")
         val itr = cssSelector("a[id='aInvalidLink']").findAllElements
         itr.hasNext should be (false)
@@ -1493,7 +1497,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         linkText("Test Click").element.isInstanceOf[Element] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid linkText") {
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid linkText", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           linkText("Test Invalid Click").element
@@ -1509,7 +1513,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           case other => fail("Expected Some(element: Element), but got: " + other)
         }
       }
-      it("should return None when findElement method is called with invalid linkText") {
+      it("should return None when findElement method is called with invalid linkText", Slow) {
         go to (host + "click.html")
         linkText("Test Invalid Click").findElement should be (None)
       }
@@ -1517,7 +1521,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         linkText("Test Click").webElement.isInstanceOf[WebElement] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid linkText") {
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid linkText", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           linkText("Test Invalid Click").webElement
@@ -1533,7 +1537,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         itr.next.isInstanceOf[Element] should be (true)
         itr.hasNext should be (false)
       }
-      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid linkText") {
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid linkText", Slow) {
         go to (host + "click.html")
         val itr = linkText("Test Invalid Click").findAllElements
         itr.hasNext should be (false)
@@ -1545,7 +1549,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         partialLinkText("Click").element.isInstanceOf[Element] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid partialLinkText") {
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid partialLinkText", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           partialLinkText("Click Invalid").element
@@ -1561,7 +1565,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           case other => fail("Expected Some(element: Element), but got: " + other)
         }
       }
-      it("should return None when findElement method is called with invalid partialLinkText") {
+      it("should return None when findElement method is called with invalid partialLinkText", Slow) {
         go to (host + "click.html")
         partialLinkText("Click Invalid").findElement should be (None)
       }
@@ -1569,7 +1573,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         partialLinkText("Click").webElement.isInstanceOf[WebElement] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid partialLinkText") {
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid partialLinkText", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           partialLinkText("Click Invalid").webElement
@@ -1585,7 +1589,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         itr.next.isInstanceOf[Element] should be (true)
         itr.hasNext should be (false)
       }
-      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid partialLinkText") {
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid partialLinkText", Slow) {
         go to (host + "click.html")
         val itr = partialLinkText("Click Invalid").findAllElements
         itr.hasNext should be (false)
@@ -1597,7 +1601,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         tagName("a").element.isInstanceOf[Element] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid tagname") {
+      it("should throw TestFailedException with correct stack depth and cause when element method is called with invalid tagname", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           tagName("img").element
@@ -1613,7 +1617,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
           case other => fail("Expected Some(element: Element), but got: " + other)
         }
       }
-      it("should return None when findElement method is called with invalid tagname") {
+      it("should return None when findElement method is called with invalid tagname", Slow) {
         go to (host + "click.html")
         tagName("img").findElement should be (None)
       }
@@ -1621,7 +1625,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         go to (host + "click.html")
         tagName("a").webElement.isInstanceOf[WebElement] should be (true)
       }
-      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid tagname") {
+      it("should throw TestFailedException with correct stack depth and cause when webElement method is called with invalid tagname", Slow) {
         go to (host + "click.html")
         val e = intercept[TestFailedException] {
           tagName("img").webElement
@@ -1637,7 +1641,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
         itr.next.isInstanceOf[Element] should be (true)
         itr.hasNext should be (false)
       }
-      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid tagname") {
+      it("should return list Iterator[Element] with size of 0 when findAllElements is called with invalid tagname", Slow) {
         go to (host + "click.html")
         val itr = tagName("img").findAllElements
         itr.hasNext should be (false)
@@ -1646,7 +1650,7 @@ class WebBrowserSpec extends JettySpec with ShouldMatchers with SpanSugar with W
   }
   
   describe("switchTo") {
-    it("should switch frame correctly and throw TFE with valid stack depth if specified frame not found") {
+    it("should switch frame correctly and throw TFE with valid stack depth if specified frame not found", Slow) {
       goTo(host + "frame.html")
       val win = windowHandle
       switchTo(frame("frame1"))

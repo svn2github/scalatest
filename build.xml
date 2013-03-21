@@ -299,6 +299,7 @@
     	<!-- Compile the Java code from ${javasrc} into ${classes} -->
     	<javac srcdir="${javasrc}" destdir="${classes}" compiler="javac1.5" memoryMaximumSize="1500M" fork="true" classpathref="build.class.path" debug="yes">
     	    <include name="org/scalatest/Ignore.java" />
+    	    <include name="org/scalatest/tags/Slow.java" />
     	    <include name="org/scalatest/DoNotDiscover.java" />
     	    <include name="org/scalatest/tools/ScalaTestTask.java" />
     	    <include name="org/scalatest/WrapWith.java" />
@@ -551,12 +552,31 @@
     </target>
 
     <!--
+      - These two targets control whether or not tests tagged 'Slow' are run.
+      - They are excluded by default. To have them included, specify target
+      - 'runslow' on the command line when running tests, e.g.:
+      -    ant runslow test
+      -->
+    <target name="runslow"
+            description="include tests tagged Slow when running tests">
+      <echo message="including tests tagged Slow"/>
+      <property name="tags.to.exclude" value=""/>
+    </target>
+    <target name="slowtags" unless="tags.to.exclude">
+      <property name="tags.to.exclude"
+                value="org.scalatest.tags.Slow"/>
+      <echo message="excluding tests with tags: ${tags.to.exclude}"/>
+    </target>
+
+    <!--
       - Called from 'test' and 'testfromjar' targets.
       -->
-    <target name="runtest" depends="compile,copyprops,taskdefscalatest">
+    <target name="runtest"
+            depends="compile,copyprops,taskdefscalatest,slowtags">
         <mkdir dir="target/dash" />
     	<mkdir dir="target/html" />
-        <scalatest fork="true" runpath="${test.runpath}" parallel="true" haltonfailure="true">
+        <scalatest fork="true" runpath="${test.runpath}" parallel="true"
+                   haltonfailure="true" tagsToExclude="${tags.to.exclude}">
             <jvmarg value="-XX:MaxPermSize=512m"/>
             <reporter type="graphic"/>
             <reporter type="dashboard" directory="target/dash" numfiles="3" />

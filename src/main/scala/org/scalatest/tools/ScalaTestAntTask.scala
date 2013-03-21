@@ -133,6 +133,12 @@ import org.apache.tools.ant.taskdefs.Java
  * </pre>
  *
  * <p>
+ * Tags to include or exclude can also be specified using attributes
+ * tagsToInclude and tagsToExclude, with arguments specified as whitespace-
+ * delimited lists.
+ * </p>
+ *
+ * <p>
  * To specify suites to run, use either a <code>suite</code> attribute or nested
  * <code>&lt;suite&gt;</code> elements:
  * </p>
@@ -233,8 +239,8 @@ import org.apache.tools.ant.taskdefs.Java
  * @author George Berger
  */
 class ScalaTestAntTask extends Task {
-  private var includes:  String = null
-  private var excludes:  String = null
+  private var includes:  String = ""
+  private var excludes:  String = ""
   private var maxMemory: String = null
   private var suffixes:  String = null
 
@@ -364,22 +370,22 @@ class ScalaTestAntTask extends Task {
   }
 
   //
-  // Adds '-n includes-list' arg pair to args list if a <tagsToInclude>
-  // element was supplied for task.
+  // Adds '-n includes-list' arg pair to args list if a tagsToInclude
+  // element or attribute was supplied for task.
   //
   private def addIncludesArgs(args: ListBuffer[String]) {
-    if (includes != null) {
+    if ((includes != null) && (includes.trim != "")) {
       args += "-n"
       args += singleSpace(includes)
     }
   }
 
   //
-  // Adds '-l excludes-list' arg pair to args list if an <excludes>
-  // element was supplied for task.
+  // Adds '-l excludes-list' arg pair to args list if a tagsToExclude
+  // element or attribute was supplied for task.
   //
   private def addExcludesArgs(args: ListBuffer[String]) {
-    if (excludes != null) {
+    if ((excludes != null) && (excludes.trim != "")) {
       args += "-l"
       args += singleSpace(excludes)
     }
@@ -606,6 +612,20 @@ class ScalaTestAntTask extends Task {
   }
   
   /**
+   * Sets value of the <code>tagsToExclude</code> attribute.
+   */
+  def setTagsToExclude(tagsToExclude: String) {
+    this.excludes += " " + tagsToExclude
+  }
+  
+  /**
+   * Sets value of the <code>tagsToInclude</code> attribute.
+   */
+  def setTagsToInclude(tagsToInclude: String) {
+    this.includes += " " + tagsToInclude
+  }
+  
+  /**
    * Sets value of the <code>haltonfailure</code> attribute.
    */
   def setHaltonfailure(haltonfailure: Boolean) {
@@ -791,7 +811,7 @@ class ScalaTestAntTask extends Task {
    * Sets value from nested element <code>tagsToInclude</code>.
    */
   def addConfiguredTagsToInclude(tagsToInclude: TextElement) {
-    this.includes = tagsToInclude.getText
+    this.includes += " " + tagsToInclude.getText
   }
   
   def addConfiguredStyle(style: StyleElement) {
@@ -808,14 +828,14 @@ class ScalaTestAntTask extends Task {
     Console.err.println("WARNING: 'includes' is deprecated - " +
                         "use 'tagsToInclude' instead [includes: " +
                         includes.getText + "]")
-    this.includes = includes.getText
+    addConfiguredTagsToInclude(includes)
   }
 
   /**
-   * Sets value from nested element <code>excludes</code>.
+   * Sets value from nested element <code>tagsToExclude</code>.
    */
   def addConfiguredTagsToExclude(tagsToExclude: TextElement) {
-    this.excludes = tagsToExclude.getText
+    this.excludes += " " + tagsToExclude.getText
   }
 
   /**
@@ -828,7 +848,7 @@ class ScalaTestAntTask extends Task {
     Console.err.println("WARNING: 'excludes' is deprecated - " +
                         "use 'tagsToExclude' instead [excludes: " +
                         excludes.getText + "]")
-    this.excludes = excludes.getText
+    addConfiguredTagsToExclude(excludes)
   }
 
   //
@@ -930,7 +950,7 @@ class ScalaTestAntTask extends Task {
   }
 
   //
-  // Class to hold data from <includes> and <excludes> elements.
+  // Class to hold data from tagsToInclude and tagsToExclude elements.
   //
   private class TextElement {
       private var text: String = null
