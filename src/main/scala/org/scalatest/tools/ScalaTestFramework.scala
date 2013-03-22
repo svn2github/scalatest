@@ -94,7 +94,7 @@ class ScalaTestFramework extends Framework {
     
     private var reporter: DispatchReporter = null
     private var reporterConfigs: ReporterConfigurations = null
-    private var useStdout = false
+    private var useStdout, presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces = false
     private var filter: Filter = null
     private var configMap: ConfigMap = null
     private val resultHolder = new SuiteResultHolder()
@@ -110,13 +110,26 @@ class ScalaTestFramework extends Framework {
           val tagsToInclude: Set[String] = parseCompoundArgIntoSet(includesArgsList, "-n")
           val tagsToExclude: Set[String] = parseCompoundArgIntoSet(excludesArgsList, "-l")
           filter = org.scalatest.Filter(if (tagsToInclude.isEmpty) None else Some(tagsToInclude), tagsToExclude)
-        
-          repoArgsList.find(_.startsWith("-o")) match {
-            case Some(dashO) => useStdout = true
-            case None => useStdout = repoArgsList.isEmpty // If no reporters specified, just give them a default stdout reporter
+          
+          val fullReporterConfigurations = Runner.parseReporterArgsIntoConfigurations(repoArgsList)
+          
+          fullReporterConfigurations.standardOutReporterConfiguration match {
+            case Some(stdoutConfig) =>
+              val configSet = stdoutConfig.configSet
+              useStdout = true
+              presentAllDurations = configSet.contains(PresentAllDurations)
+              presentInColor = !configSet.contains(PresentWithoutColor)
+              presentShortStackTraces = configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces)
+              presentFullStackTraces = configSet.contains(PresentFullStackTraces)
+            case None => 
+              useStdout = repoArgsList.isEmpty  // If no reporters specified, just give them a default stdout reporter
+              presentAllDurations = false
+              presentInColor = true
+              presentShortStackTraces = false
+              presentFullStackTraces = false
           }
           
-          reporterConfigs = Runner.parseReporterArgsIntoConfigurations(repoArgsList.filter(!_.startsWith("-o")))
+          reporterConfigs = fullReporterConfigurations.copy(standardOutReporterConfiguration = None) //Runner.parseReporterArgsIntoConfigurations(repoArgsList.filter(!_.startsWith("-o")))
         }
         
         if (reporter == null || reporter.isDisposed) {
@@ -156,7 +169,7 @@ class ScalaTestFramework extends Framework {
     }
     
     def createSbtLogInfoReporter(loggers: Array[Logger]) = {
-      val (presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces) = 
+      /*val (presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces) = 
       reporterConfigs.standardOutReporterConfiguration match {
         case Some(stdoutConfig) =>
           val configSet = stdoutConfig.configSet
@@ -168,7 +181,7 @@ class ScalaTestFramework extends Framework {
           )
         case None => 
           (false, true, false, false)
-      }
+      }*/
       new SbtLogInfoReporter(
           loggers, 
           presentAllDurations,

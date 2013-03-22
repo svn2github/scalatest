@@ -75,7 +75,7 @@ private[scalatest] class JUnitXmlReporter(directory: String) extends Reporter {
 
     val testsuite = getTestsuite(endEvent, suiteId)
     val xmlStr    = xmlify(testsuite)
-    val filespec  = directory + "/TEST-" + testsuite.name + ".xml"
+    val filespec  = directory + "/TEST-" + suiteId + ".xml"
 
     val out = new PrintWriter(filespec, "UTF-8")
     out.print(xmlStr)

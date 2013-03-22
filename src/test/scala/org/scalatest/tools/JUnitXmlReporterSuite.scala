@@ -56,7 +56,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     SuiteStarting(
       ord1a,
       "suite1",
-      "suite id",
+      "suiteId1",
       None,
       None,
       None,
@@ -69,7 +69,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     SuiteStarting(
       ord1b,
       "suite2",
-      "suite id",
+      "suiteId2",
       None,
       None,
       None,
@@ -83,7 +83,7 @@ class JUnitXmlReporterSuite extends FunSuite {
       ord1c,
       "aborted message",
       "suite2",
-      "suite id",
+      "suiteId2",
       None,
       None,
       None,
@@ -95,7 +95,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     SuiteCompleted(
       ord1d,
       "suite1",
-      "suite id",
+      "suiteId1",
       None,
       None,
       None,
@@ -109,7 +109,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     SuiteStarting(
       ord2a,
       "suite3",
-      "suite id 3",
+      "suiteId3",
       None,
       None,
       None,
@@ -122,7 +122,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     TestStarting(
       ordinal = ord2b,
       suiteName = "suite3",
-      suiteId = "suite id 3",
+      suiteId = "suiteId3",
       suiteClassName = Some("Suite3Class"),
       testName = "a pass test",
       testText = "a pass test text")
@@ -131,7 +131,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     TestSucceeded (
       ordinal = ord2c,
       suiteName = "suite3",
-      suiteId = "suite id 3",
+      suiteId = "suiteId3",
       suiteClassName = Some("Suite3Class"),
       testName = "a pass test",
       testText = "a pass test text",
@@ -141,7 +141,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     TestIgnored (
       ordinal = ord2d,
       suiteName = "suite3",
-      suiteId = "suite id 3",
+      suiteId = "suiteId3",
       suiteClassName = Some("Suite3Class"),
       testName = "an ignored test",
       testText = "an ignored test text")
@@ -150,7 +150,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     TestStarting(
       ordinal = ord2e,
       suiteName = "suite3",
-      suiteId = "suite id 3",
+      suiteId = "suiteId3",
       suiteClassName = Some("Suite3Class"),
       testName = "a fail test",
       testText = "a fail test text")
@@ -160,7 +160,7 @@ class JUnitXmlReporterSuite extends FunSuite {
       ordinal = ord2f,
       message = "failTest2 message text",
       suiteName = "suite3",
-      suiteId = "suite id 3",
+      suiteId = "suiteId3",
       suiteClassName = Some("Suite3Class"),
       testName = "a fail test",
       testText = "a fail test text",
@@ -170,7 +170,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     TestStarting(
       ordinal = ord2g,
       suiteName = "suite3",
-      suiteId = "suite id 3",
+      suiteId = "suiteId3",
       suiteClassName = Some("Suite3Class"),
       testName = "a pending test",
       testText = "a pending test text")
@@ -179,7 +179,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     TestPending (
       ordinal = ord2h,
       suiteName = "suite3",
-      suiteId = "suite id 3",
+      suiteId = "suiteId3",
       suiteClassName = Some("Suite3Class"),
       testName = "a pending test",
       testText = "a pending test text",
@@ -189,7 +189,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     TestStarting(
       ordinal = ord2i,
       suiteName = "suite3",
-      suiteId = "suite id 3",
+      suiteId = "suiteId3",
       suiteClassName = Some("Suite3Class"),
       testName = "a canceled test",
       testText = "a canceled test text")
@@ -199,7 +199,7 @@ class JUnitXmlReporterSuite extends FunSuite {
       ordinal = ord2j,
       message = "bailed out",
       suiteName = "suite3",
-      suiteId = "suite id 3",
+      suiteId = "suiteId3",
       suiteClassName = Some("Suite3Class"),
       testName = "a canceled test",
       testText = "a canceled test text",
@@ -209,7 +209,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     SuiteCompleted(
       ord2k,
       "suite3",
-      "suite id 3",
+      "suiteId3",
       None,
       None,
       None,
@@ -227,8 +227,8 @@ class JUnitXmlReporterSuite extends FunSuite {
     reporter(abort2)
     reporter(complete1)
 
-    val file1 = new File("target/TEST-suite1.xml")
-    val file2 = new File("target/TEST-suite2.xml")
+    val file1 = new File("target/TEST-suiteId1.xml")
+    val file2 = new File("target/TEST-suiteId2.xml")
 
     assert(file1.exists)
     assert(file2.exists)
@@ -250,7 +250,7 @@ class JUnitXmlReporterSuite extends FunSuite {
     reporter(canceledTest4)
     reporter(complete3)
 
-    val loadnode = xml.XML.loadFile("target/TEST-suite3.xml")
+    val loadnode = xml.XML.loadFile("target/TEST-suiteId3.xml")
     val testcases = loadnode \\ "testcase"
 
     val tcIgnored =
