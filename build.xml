@@ -22,8 +22,6 @@
     <property name="javasrc" value="src/main/java" />
     <property name="scalasrc.test" value="src/test/scala" />
     <property name="javasrc.test" value="src/test/java" />
-    <property name="scalasrc.examples" value="src/examples/scala" /> <!-- OLD EXAMPLES -->
-    <property name="javasrc.examples" value="src/examples/java" /> <!-- OLD EXAMPLES -->
     <property name="osgi-test-src" value="src/test-osgi/scala" />
     <property name="resources" value="src/main/resources" />
     <property name="html" value="src/main/html" />
@@ -39,7 +37,6 @@
 	<property name="build.generated.tests.bin" value="gentests/${build}/scala-${scala.version}/bin" />
     <property name="build.tests" value="${build}/tests" />
     <property name="build.tests.jar" value="${build}/tests.jar" />
-    <property name="build.examples" value="${build}/examples" /> <!-- OLD EXAMPLES -->
     <property name="build.generators" value="${build}/generators" />
     <property name="build.coverage" value="${build}/coverage" />
     <property name="build.osgi-tests" value="${build}/osgi-tests" />
@@ -67,7 +64,6 @@
         <!-- Create the build directory structure used by compile -->
         <mkdir dir="${jar.contents}" />
         <mkdir dir="${build.tests}" />
-        <mkdir dir="${build.examples}" />
         <mkdir dir="${build.generators}" />
         <mkdir dir="${build.generated.src}" />
     	<mkdir dir="${build.generated.tests.src}" />
@@ -102,7 +98,6 @@
         <!-- this is the class path used to run ScalaTest to test itself, in the "test" target -->
         <path id="test.class.path">
             <pathelement location="${classes}" />
-			<pathelement location="${build.examples}" />
             <path refid="lib.path"></path>
         </path>
         
@@ -385,15 +380,6 @@
         <include name="org/scalatest/inspectors/nested/*.scala"/>
         <include name="org/scalatest/inspectors/no/*.scala"/>
       </scalac>
-    </target>
-
-    <target name="compile-examples" depends="compile-main"> <!-- OLD EXAMPLES -->
-
-        <!-- Compile the Scala code from ${scalasrc.examples} into ${build.examples} -->
-        <scalac srcdir="${scalasrc.examples}:${javasrc.examples}" destdir="${build.examples}" target="jvm-1.5" classpathref="build.test.class.path" addparams="-no-specialization" deprecation="yes" fork="true" jvmargs="${jvmargs} -XX:+UseConcMarkSweepGC"/>
-
-        <!-- Compile the Java code from ${examples} into ${build.examples} -->
-        <javac srcdir="${javasrc.examples}" destdir="${build.examples}" compiler="javac1.5" classpath="${classes}:${org.easymock:easymock:jar}:${org.scala-lang:scala-library:jar}" debug="yes" />
     </target>
 
     <!-- Compile demo into its own directory. I.e., the class files will sit alongside the java files
@@ -685,20 +671,6 @@
         </scalatest>
     </target>
 
-    <target name="examples" depends="compile-main,compile-examples,copyprops,taskdefscalatest"> <!-- OLD EXAMPLES -->
-        <scalatest runpath="${build.examples}" concurrent="false" haltonfailure="true">
-            <reporter type="graphic"/>
-            <reporter type="stdout"/>
-<!--
-            <suite classname="org.scalatestexamples.ParallelTestExecutionExampleSpec" />
--->
-            <membersonly package="org.scalatestexamples" />
-            <membersonly package="org.scalatestexamples.concurrent" />
-            <membersonly package="org.scalatestexamples.fixture" />
-            <membersonly package="org.scalatestexamples.matchers" />
-        </scalatest>
-    </target>
-
     <target name="coverage" depends="compile,copyprops,instrument,jartests">
         <java classname="org.scalatest.tools.Runner" classpathref="coverage.class.path" fork="true">
 
@@ -817,24 +789,6 @@
         </scalatest>
     </target>
 
-    <target name="runexample" depends="compile,copyprops,taskdefscalatest" 
-            description="run a specified suite (use -Dclass=classname)"> <!-- OLD EXAMPLES -->
-
-        <fail message="class not defined (use -Dclass=classname)"
-              unless="class" />
-
-        <scalatest runpath="${build.examples};${classes}" haltonfailure="true">
-<!--
-            <property name="tempFileName" value="TempFile.txt"/>
--->
-            <excludes>SlowTest</excludes>
-            <reporter type="graphic"/>
-            <reporter type="stdout"/>
-            <suite classname="${class}"/>
-        </scalatest>
-    </target>
-
-
     <path id="example.class.path">
         <pathelement location="${dist}/lib/scalatest.jar" />
         <pathelement location="${classes}" />
@@ -931,8 +885,6 @@
         <fileset dir="src/main/scala"/>
         <fileset dir="src/main/java"/>
         <fileset dir="src/main/resources" includes="org/**"/>
-        <fileset dir="src/examples/scala"/>
-        <fileset dir="src/examples/java"/>
         <fileset dir="${build.generated.src}"/>
       </jar>
 
@@ -1345,24 +1297,6 @@
         <param name="deploy.classifier" value="javadoc"/>
         <param name="deploy.file"       value="${deploy.javadoc}"/>
       </antcall>
-    </target>
-
-    <target name="test-junit"> <!-- OLD EXAMPLES -->
-        <junit>
-           <batchtest fork="yes" todir="target/argh">
-                <fileset dir="${build.examples}">
-                    <include name="org/scalatestexamples/junit/*Suite.class"/>
-                </fileset>
-                <formatter type="xml"/>
-                <formatter type="plain"/>
-            </batchtest>
- <!--
-            <test name="org.scalatestexamples.junit.JUnitTestCaseSuite">
-                <formatter type="xml"/>
-            </test>
--->
-            <classpath refid="test.class.path" />
-        </junit>
     </target>
 
     <!--
