@@ -172,8 +172,7 @@ import org.scalatest.Suite.autoTagClassAnnotations
  * </p>
  *
  * <pre class="stHighlight">
- * case class F(builder: StringBuilder, buffer: ListBuffer[String])
- * type FixtureParam = F
+ * case class FixtureParam(builder: StringBuilder, buffer: ListBuffer[String])
  * </pre>
  *
  * <p>
@@ -202,15 +201,14 @@ import org.scalatest.Suite.autoTagClassAnnotations
  * 
  * class ExampleSpec extends fixture.PropSpec with PropertyChecks with ShouldMatchers {
  * 
- *   case class F(builder: StringBuilder, buffer: ListBuffer[String])
- *   type FixtureParam = F
+ *   case class FixtureParam(builder: StringBuilder, buffer: ListBuffer[String])
  * 
  *   def withFixture(test: OneArgTest) = {
  * 
  *     // Create needed mutable objects
  *     val stringBuilder = new StringBuilder("ScalaTest is ")
  *     val listBuffer = new ListBuffer[String]
- *     val theFixture = F(stringBuilder, listBuffer)
+ *     val theFixture = FixtureParam(stringBuilder, listBuffer)
  * 
  *     // Invoke the test function, passing in the mutable objects
  *     withFixture(test.toNoArgTest(theFixture))

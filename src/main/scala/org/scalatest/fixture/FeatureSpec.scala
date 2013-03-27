@@ -68,8 +68,7 @@ import org.scalatest.exceptions.NotAllowedException
  * </p>
  *
  * <pre class="stHighlight">
- * case class F(file: File, writer: FileWriter)
- * type FixtureParam = F
+ * case class FixtureParam(file: File, writer: FileWriter)
  * </pre>
  *
  * <p>
