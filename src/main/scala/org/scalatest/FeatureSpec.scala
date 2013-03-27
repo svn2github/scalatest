@@ -974,15 +974,14 @@ import Suite.autoTagClassAnnotations
  * 
  * class ExampleSpec extends fixture.FeatureSpec {
  * 
- *   case class F(file: File, writer: FileWriter)
- *   type FixtureParam = F
+ *   case class FixtureParam(file: File, writer: FileWriter)
  * 
  *   def withFixture(test: OneArgTest) = {
  * 
  *     // create the fixture
  *     val file = File.createTempFile("hello", "world")
  *     val writer = new FileWriter(file)
- *     val theFixture = F(file, writer)
+ *     val theFixture = FixtureParam(file, writer)
  * 
  *     try {
  *       writer.write("ScalaTest is designed to be ") // set up the fixture

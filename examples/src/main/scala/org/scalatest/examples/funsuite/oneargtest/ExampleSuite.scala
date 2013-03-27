@@ -5,15 +5,14 @@ import java.io._
 
 class ExampleSuite extends fixture.FunSuite {
 
-  case class F(file: File, writer: FileWriter)
-  type FixtureParam = F
+  case class FixtureParam(file: File, writer: FileWriter)
 
   def withFixture(test: OneArgTest) = {
 
     // create the fixture
     val file = File.createTempFile("hello", "world")
     val writer = new FileWriter(file)
-    val theFixture = F(file, writer)
+    val theFixture = FixtureParam(file, writer)
 
     try {
       writer.write("ScalaTest is ") // set up the fixture

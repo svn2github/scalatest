@@ -968,15 +968,16 @@ import Suite.autoTagClassAnnotations
  * 
  * class ExampleSpec extends fixture.FlatSpec {
  * 
- *   case class F(file: File, writer: FileWriter)
- *   type FixtureParam = F
+ *   case class FixtureParam(file: File, writer: FileWriter)
  * 
  *   def withFixture(test: OneArgTest) = {
  *     val file = File.createTempFile("hello", "world") // create the fixture
  *     val writer = new FileWriter(file)
+ *     val theFixture = FixtureParam(file, writer)
+ * 
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
- *       withFixture(test.toNoArgTest(F(file, writer))) // "loan" the fixture to the test
+ *       withFixture(test.toNoArgTest(theFixture)) // "loan" the fixture to the test
  *     }
  *     finally writer.close() // clean up the fixture
  *   }

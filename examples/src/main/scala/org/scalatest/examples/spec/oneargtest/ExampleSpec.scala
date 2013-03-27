@@ -5,15 +5,14 @@ import java.io._
 
 class ExampleSpec extends fixture.Spec {
 
-  case class F(file: File, writer: FileWriter)
-  type FixtureParam = F
+  case class FixtureParam(file: File, writer: FileWriter)
 
   def withFixture(test: OneArgTest) = {
 
     // create the fixture
     val file = File.createTempFile("hello", "world")
     val writer = new FileWriter(file)
-    val theFixture = F(file, writer)
+    val theFixture = FixtureParam(file, writer)
 
     try {
       writer.write("ScalaTest is ") // set up the fixture
@@ -23,13 +22,13 @@ class ExampleSpec extends fixture.Spec {
   }
 
   object `Testing ` {
-    def `should be easy` { f: F =>
+    def `should be easy` { f: FixtureParam =>
       f.writer.write("easy!")
       f.writer.flush()
       assert(f.file.length === 18)
     }
  
-    def `should be fun` { f: F =>
+    def `should be fun` { f: FixtureParam =>
       f.writer.write("fun!")
       f.writer.flush()
       assert(f.file.length === 17)

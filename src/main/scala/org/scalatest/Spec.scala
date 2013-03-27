@@ -932,15 +932,14 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  * 
  * class ExampleSpec extends fixture.Spec {
  * 
- *   case class F(file: File, writer: FileWriter)
- *   type FixtureParam = F
+ *   case class FixtureParam(file: File, writer: FileWriter)
  * 
  *   def withFixture(test: OneArgTest) = {
  *
  *     // create the fixture
  *     val file = File.createTempFile("hello", "world")
  *     val writer = new FileWriter(file)
- *     val theFixture = F(file, writer)
+ *     val theFixture = FixtureParam(file, writer)
  *
  *     try {
  *       writer.write("ScalaTest is ") // set up the fixture
@@ -950,13 +949,13 @@ import java.lang.reflect.{Method, Modifier, InvocationTargetException}
  *   }
  *
  *   object &#96;Testing &#96; {
- *     def &#96;should be easy&#96; { f&#58; F =&gt;
+ *     def &#96;should be easy&#96; { f&#58; FixtureParam =&gt;
  *       f.writer.write("easy!")
  *       f.writer.flush()
  *       assert(f.file.length === 18)
  *     }
- * 
- *     def &#96;should be fun&#96; { f&#58; F =&gt;
+ *  
+ *     def &#96;should be fun&#96; { f&#58; FixtureParam =&gt;
  *       f.writer.write("fun!")
  *       f.writer.flush()
  *       assert(f.file.length === 17)
