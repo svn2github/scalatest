@@ -9,23 +9,18 @@ exec scala "$0" "$@"
  * The resulting scala files won't work for actually running code, but
  * they're close enough to get into the scaladocs.
  *
- * The script rewrites five files in src/main/java/org/scalatest:
+ * The script rewrites six files in src/main/java/org/scalatest
  *  
  *   DoNotDiscover.java
  *   Ignore.java
  *   Finders.java
  *   TagAnnotation.java
  *   WrapWith.java
+ *   tags/Slow.java
  *
  * It copies them into target/docsrc/org/scalatest, removing java annotations
  * and converting them into similar scala code and preserving their header
  * comments so those make it into the scaladocs.
- *
- * This script aborts if any unexpected files are found in the java
- * directory, in order to make it obvious that something changed that
- * needs to be looked at.  If it's a new tag file, try adding it to the
- * filenames set and see if it works.  Otherwise, modify this script as
- * needed to get things working again.
  */
 
 import java.io.File
@@ -88,14 +83,13 @@ def main() {
                       "Ignore.java",
                       "Finders.java",
                       "TagAnnotation.java",
-                      "WrapWith.java")
+                      "WrapWith.java",
+                      "tags/Slow.java")
 
-  for (file <- (new File(srcDir)).list; if file.endsWith(".java")) {
-    if (!filenames.contains(file))
-      throw new RuntimeException("found unexpected java file [" + file + "]")
-
-    val contents  = Source.fromFile(srcDir +"/"+ file).mkString
-    val className = file.replaceFirst("""\.java$""", "")
+  for (filename <- filenames) {
+    val contents  = Source.fromFile(srcDir +"/"+ filename).mkString
+    val className =
+      filename.replaceFirst("""^.*/""", "").replaceFirst("""\.java$""", "")
 
     val (top, body) = parseContents(className, contents)
 
@@ -113,9 +107,17 @@ def main() {
                     "trait "+ className +
                     " extends java.lang.annotation.Annotation "+ newBody +"\n")
 
-     val newFile = new PrintWriter(docsrcDir +"/"+ className +".scala")
-     newFile.print(newContents)
-     newFile.close()
+    if (filename.contains("/")) {
+      val newDir =
+        new File(docsrcDir +"/"+ filename.replaceFirst("""/.*$""", ""))
+      val result = newDir.mkdirs()
+    }
+
+    val newFile =
+      new PrintWriter(docsrcDir +"/"+
+                      filename.replaceFirst("""\.java$""", ".scala"))
+    newFile.print(newContents)
+    newFile.close()
   }
 }
 
