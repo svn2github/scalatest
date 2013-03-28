@@ -707,11 +707,11 @@ object Runner {
     runOptionallyWithPassFailReporter(args, true)
   }
   
-  def parseFriendlyParams(friendlyArgs:String): Array[String] = {
+  private[scalatest] def parseFriendlyParams(friendlyArgs:String): Array[String] = {
     parseFriendlyParams(friendlyArgs.split(" "))
   }
 
-  def parseFriendlyParams(friendlyArgs:Array[String]): Array[String] = {
+  private[scalatest] def parseFriendlyParams(friendlyArgs:Array[String]): Array[String] = {
     val (propsList, includesList, excludesList, repoArgsList, concurrentList, memberOnlyList, wildcardList, suiteList, junitList, testngList) = 
       new FriendlyParamsTranslator().parsePropsAndTags(friendlyArgs)
     val arrayBuffer = new ArrayBuffer[String]()
