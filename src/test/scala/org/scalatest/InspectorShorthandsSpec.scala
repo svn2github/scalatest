@@ -269,7 +269,30 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       }
     }
 
-    @Ignore def `should use Equality from 'should equal'` {
+    def `should throw TestFailedException with correct stack depth and message when 'shouldEqual' failed` {
+      forAll(examples) { colFun => 
+        val col = colFun(Set(1, 2, 3))
+        val e2 = intercept[exceptions.TestFailedException] {
+          all(col) shouldEqual 2 
+        }
+        e2.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+        e2.failedCodeLineNumber should be (Some(thisLineNumber - 3))
+        val firstViolation = getFirstNot[Int](col, _ == 2)
+        e2.message should be (Some("'all' inspection failed, because: \n" +
+                                    "  at index " + getIndex(col, firstViolation) + ", " + firstViolation + " did not equal 2 (InspectorShorthandsSpec.scala:" + (thisLineNumber - 6) + ") \n" +
+                                    "in " + col))
+        e2.getCause match {
+          case tfe: exceptions.TestFailedException =>
+            tfe.failedCodeFileName should be (Some("InspectorShorthandsSpec.scala"))
+            tfe.failedCodeLineNumber should be (Some(thisLineNumber - 11))
+            tfe.message should be (Some(firstViolation + " did not equal 2"))
+            tfe.getCause should be (null)
+          case other => fail("Expected cause to be TestFailedException, but got: " + other)
+        }
+      }
+    }
+
+    def `should use Equality from 'shouldEqual'` {
       val xs = List(1, 1, 1)
       all (xs) should equal (1) 
       implicit val e = new Equality[Int] {
@@ -280,7 +303,18 @@ class InspectorShorthandsSpec extends Spec with Matchers with TableDrivenPropert
       }
     }
     
-    @Ignore def `should use Equality from 'should not equal'` {
+    def `should use Equality from 'should equal'` {
+      val xs = List(1, 1, 1)
+      all (xs) should equal (1) 
+      implicit val e = new Equality[Int] {
+        def areEqual(a: Int, b: Any): Boolean = a != b
+      }
+      intercept[exceptions.TestFailedException] {
+        all (xs) should equal (1) 
+      }
+    }
+    
+    def `should use Equality from 'should not equal'` {
       val xs = List(1, 1, 1)
       all (xs) should not equal (2) 
       implicit val e = new Equality[Int] {

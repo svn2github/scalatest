@@ -4898,9 +4898,9 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
      *                    ^
      * </pre>
      */
-    def equal(right: Any) {
+    def equal(right: Any)(implicit equality: Equality[T]) {
       doCollected(collected, xs, "equal", 1) { e =>
-        if ((e == right) != shouldBeTrue)
+        if ((equality.areEqual(e, right)) != shouldBeTrue)
           throw newTestFailedException(
             FailureMessages(
               if (shouldBeTrue) "didNotEqual" else "equaled",
@@ -6600,6 +6600,23 @@ class ResultOfHaveWordForArray[T](left: Array[T], shouldBeTrue: Boolean) {
       }
     }
     
+    /**
+     * This method enables syntax such as the following:
+     *
+     * <pre class="stHighlight">
+     * all (xs) shouldEqual 7
+     *          ^
+     * </pre>
+     */
+    def shouldEqual(right: Any)(implicit equality: Equality[T]) {
+      doCollected(collected, xs, "shouldEqual", 1) { e =>
+        if (!equality.areEqual(e, right)) {
+          val (eee, rightee) = Suite.getObjectsForFailureMessage(e, right)
+          throw newTestFailedException(FailureMessages("didNotEqual", eee, rightee), None, 6)
+        }
+      }
+    }
+
     /**
      * This method enables syntax such as the following:
      *
