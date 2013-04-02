@@ -222,7 +222,8 @@ trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
   abstract override def run(testName: Option[String], args: Args): Status = {
     var thrownException: Option[Throwable] = None
 
-    beforeAll(args.configMap)
+    if (!args.runTestInNewInstance)
+      beforeAll(args.configMap)
     try {
       val runStatus = super.run(testName, args)
       runStatus.succeeds()
@@ -235,7 +236,8 @@ trait BeforeAndAfterAll  extends SuiteMixin { this: Suite =>
     }
     finally {
       try {
-        afterAll(args.configMap) // Make sure that afterAll is called even if run completes abruptly.
+        if (!args.runTestInNewInstance)
+          afterAll(args.configMap) // Make sure that afterAll is called even if run completes abruptly.
         thrownException match {
           case Some(e) => throw e
           case None =>

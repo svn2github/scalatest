@@ -1414,17 +1414,18 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
     val report = wrapReporterIfNecessary(thisSuite, reporter)
     val newArgs = args.copy(reporter = report)
 
-    testName match {
-      case None => runNestedSuites(newArgs)
-      case Some(_) =>
-    }
-    val status = runTests(testName, newArgs)
+    val nestedSuitesStatus = 
+      testName match {
+        case None => runNestedSuites(newArgs)
+        case Some(_) => SucceededStatus
+      }
+    val testsStatus = runTests(testName, newArgs)
 
     if (stopRequested()) {
       val rawString = Resources("executeStopping")
       report(InfoProvided(tracker.nextOrdinal(), rawString, Some(NameInfo(thisSuite.suiteName, thisSuite.suiteId, Some(thisSuite.getClass.getName), testName))))
     }
-    status
+    new CompositeStatus(Set(nestedSuitesStatus, testsStatus))
   }
 
   /**
