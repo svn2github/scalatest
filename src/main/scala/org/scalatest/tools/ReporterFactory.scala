@@ -162,12 +162,15 @@ private[scalatest] class ReporterFactory {
     new DashboardReporter(directory, numFilesToArchive)
   }
   
+  protected def createXmlSocketReporter(host: String, port: Int) = {
+    new XmlSocketReporter(host, port)
+  }
+  
   protected def createSocketReporter(host: String, port: Int) = {
     new SocketReporter(host, port)
   }
   
   private[scalatest] def getReporterFromConfiguration(configuration: ReporterConfiguration, loader: ClassLoader, resultHolder: Option[SuiteResultHolder]): Reporter =
-
     configuration match {
       case StandardOutReporterConfiguration(configSet) => createStandardOutReporter(configSet)
       case StandardErrReporterConfiguration(configSet) => createStandardErrReporter(configSet)
@@ -179,6 +182,7 @@ private[scalatest] class ReporterFactory {
       case CustomReporterConfiguration(configSet, reporterClassName) => createCustomReporter(configSet, reporterClassName, loader) 
       case GraphicReporterConfiguration(configSet) => throw new RuntimeException("Should never happen.")
       case SocketReporterConfiguration(host, port) => createSocketReporter(host, port)
+      case XmlSocketReporterConfiguration(host, port) => createXmlSocketReporter(host, port)
   }
   
   private[scalatest] def createReportersFromConfigurations(reporterSpecs: ReporterConfigurations, loader: ClassLoader, resultHolder: Option[SuiteResultHolder]) = 
@@ -186,9 +190,7 @@ private[scalatest] class ReporterFactory {
         yield getReporterFromConfiguration(spec, loader, resultHolder))
   
   private[scalatest] def getDispatchReporter(reporterSpecs: ReporterConfigurations, graphicReporter: Option[Reporter], passFailReporter: Option[Reporter], loader: ClassLoader, resultHolder: Option[SuiteResultHolder]): DispatchReporter = {
-
     val reporterSeq = createReportersFromConfigurations(reporterSpecs, loader, resultHolder)
-
     getDispatchReporter(reporterSeq, graphicReporter, passFailReporter, loader, resultHolder)
   }
   

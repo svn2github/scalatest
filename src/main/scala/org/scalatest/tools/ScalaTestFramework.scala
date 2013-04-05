@@ -1,6 +1,6 @@
 package org.scalatest.tools
 
-import org.scalatools.testing._
+import org.scalatools.testing.{Framework => SbtFramework, _}
 import org.scalatest.tools.Runner.parsePropertiesArgsIntoMap
 import org.scalatest.tools.Runner.parseCompoundArgIntoSet
 import SuiteDiscoveryHelper._
@@ -66,7 +66,7 @@ import java.util.concurrent.CountDownLatch
  * @author Bill Venners
  * @author Josh Cough
  */
-class ScalaTestFramework extends Framework {
+class ScalaTestFramework extends SbtFramework {
   
   /**
    * Returns <code>"ScalaTest"</code>, the human readable name for this test framework.
@@ -169,19 +169,6 @@ class ScalaTestFramework extends Framework {
     }
     
     def createSbtLogInfoReporter(loggers: Array[Logger]) = {
-      /*val (presentAllDurations, presentInColor, presentShortStackTraces, presentFullStackTraces) = 
-      reporterConfigs.standardOutReporterConfiguration match {
-        case Some(stdoutConfig) =>
-          val configSet = stdoutConfig.configSet
-          (
-            configSet.contains(PresentAllDurations),
-            !configSet.contains(PresentWithoutColor),
-            configSet.contains(PresentShortStackTraces) || configSet.contains(PresentFullStackTraces),
-            configSet.contains(PresentFullStackTraces)    
-          )
-        case None => 
-          (false, true, false, false)
-      }*/
       new SbtLogInfoReporter(
           loggers, 
           presentAllDurations,

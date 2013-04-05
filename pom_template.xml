@@ -59,6 +59,11 @@
       <name>Typesafe Repository</name>
       <url>http://repo.typesafe.com/typesafe/releases/</url>
     </repository>
+    <repository>
+      <id>artima.com</id>
+      <name>Artima.com Repository</name>
+      <url>http://www.artima.com/maven2/</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -79,7 +84,7 @@
     <dependency>
       <groupId>org.scala-tools.testing</groupId>
       <artifactId>test-interface</artifactId>
-      <version>0.5</version>
+      <version>1.0-SNAP1</version>
       <optional>true</optional>
     </dependency>
 

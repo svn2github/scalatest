@@ -88,7 +88,7 @@ import collection.immutable.MapLike
  * 
  * @author Bill Venners
  */
-class ConfigMap(underlying: Map[String, Any]) extends Map[String, Any] with MapLike[String, Any, ConfigMap] {
+class ConfigMap(underlying: Map[String, Any]) extends Map[String, Any] with MapLike[String, Any, ConfigMap] with java.io.Serializable {
 
   def get(key: String): Option[Any] = underlying.get(key)
 

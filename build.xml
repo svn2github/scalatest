@@ -291,6 +291,9 @@
     	<javac srcdir="${javasrc}" destdir="${classes}" compiler="javac1.5" memoryMaximumSize="1500M" fork="true" classpathref="build.class.path" debug="yes">
     	    <include name="org/scalatest/Ignore.java" />
     	    <include name="org/scalatest/tags/Slow.java" />
+	        <include name="org/scalatest/tags/CPU.java" />
+    		<include name="org/scalatest/tags/Disk.java" />
+    		<include name="org/scalatest/tags/Network.java" />
     	    <include name="org/scalatest/DoNotDiscover.java" />
     	    <include name="org/scalatest/tools/ScalaTestTask.java" />
     	    <include name="org/scalatest/WrapWith.java" />

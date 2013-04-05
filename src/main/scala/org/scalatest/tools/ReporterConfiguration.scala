@@ -34,6 +34,7 @@ private[tools] case class DashboardReporterConfiguration(configSet: Set[Reporter
 private[tools] case class XmlReporterConfiguration(configSet: Set[ReporterConfigParam], fileName: String) extends ReporterConfiguration
 private[tools] case class HtmlReporterConfiguration(configSet: Set[ReporterConfigParam], directory: String, cssFileName: Option[URL]) extends ReporterConfiguration
 private[tools] case class CustomReporterConfiguration(configSet: Set[ReporterConfigParam], reporterClass: String) extends ReporterConfiguration
+private[tools] case class XmlSocketReporterConfiguration(host: String, port: Int) extends ReporterConfiguration
 private[tools] case class SocketReporterConfiguration(host: String, port: Int) extends ReporterConfiguration
 
 // If there were no fileReporterSpecList or customReporterSpecList specified, you get Nil
@@ -48,6 +49,7 @@ private[tools] case class ReporterConfigurations(
   val standardErrReporterConfiguration: Option[StandardErrReporterConfiguration],
   val htmlReporterConfigurationList: List[HtmlReporterConfiguration],
   val customReporterConfigurationList: List[CustomReporterConfiguration], 
+  val xmlSocketReporterConfigurationList: List[XmlSocketReporterConfiguration], 
   val socketReporterConfigurationList: List[SocketReporterConfiguration]
 ) extends Seq[ReporterConfiguration] {
 
@@ -62,6 +64,7 @@ private[tools] case class ReporterConfigurations(
       standardErrReporterConfiguration.toList,
       htmlReporterConfigurationList,
       customReporterConfigurationList, 
+      xmlSocketReporterConfigurationList, 
       socketReporterConfigurationList
     )
 

@@ -3,19 +3,17 @@ package org.scalatest.tools
 import org.scalatest.events.Event
 import org.scalatest.ResourcefulReporter
 import java.net.Socket
-import java.io.ObjectOutputStream
+import java.io.PrintWriter
 import java.io.BufferedOutputStream
 
-private[scalatest] class SocketReporter(host: String, port: Int) extends ResourcefulReporter {
-
+private[scalatest] class XmlSocketReporter(host: String, port: Int) extends ResourcefulReporter {
+  
   private val socket = new Socket(host, port)
-  private val out = new ObjectOutputStream(socket.getOutputStream)
+  private val out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream))
   
   def apply(event: Event) {
-    synchronized {
-      out.writeObject(event)
-      out.flush()
-    }
+    out.println(event.toXml.toString)
+    out.flush()
   }
 
   def dispose() {
@@ -23,5 +21,4 @@ private[scalatest] class SocketReporter(host: String, port: Int) extends Resourc
     out.close()
     socket.close()
   }
-  
 }
