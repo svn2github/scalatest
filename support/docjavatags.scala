@@ -117,6 +117,8 @@ def main() {
       new PrintWriter(docsrcDir +"/"+
                       filename.replaceFirst("""\.java$""", ".scala"))
     newFile.print(newContents)
+    if (filename == "TagAnnotation.java")
+      newFile.print("{ def value: String}")
     newFile.close()
   }
 }
