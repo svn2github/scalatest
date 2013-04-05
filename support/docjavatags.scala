@@ -84,7 +84,11 @@ def main() {
                       "Finders.java",
                       "TagAnnotation.java",
                       "WrapWith.java",
-                      "tags/Slow.java")
+                      "tags/Slow.java",
+                      "tags/CPU.java",
+                      "tags/Disk.java",
+                      "tags/Network.java"
+)
 
   for (filename <- filenames) {
     val contents  = Source.fromFile(srcDir +"/"+ filename).mkString
@@ -99,6 +103,7 @@ def main() {
       top
         .replaceAll("""@Retention\(.*?\)""",  "")
         .replaceAll("""@Target\(.*?\)""",     "")
+        .replaceAll("""@TagAnnotation.*\)""",     "")
         .replaceAll("""@TagAnnotation""",     "")
         .replaceAll("""@Inherited""",         "")
         .replaceAll("""public *@interface""", "")
