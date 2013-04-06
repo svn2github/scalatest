@@ -1533,32 +1533,55 @@ object Runner {
     }
     val xmlReporterConfigurationList = buildXmlReporterConfigurationList(args)
 
-    def buildHtmlReporterConfigurationList(args: List[String]) = {
-      val it = args.iterator
-      val lb = new ListBuffer[HtmlReporterConfiguration]
-      while (it.hasNext) {
-        val arg = it.next
-        if (arg.startsWith("-h") && it.hasNext) {
-          if (it.hasNext) {
-            val configSet = parseConfigSet(arg)
-            val directory = it.next
-            val cssFile = 
-              if (it.hasNext && it.next == "-Y") {
-                if (it.hasNext)
-                  Some(new File(it.next).toURI.toURL)
-                else
-                  throw new IllegalArgumentException("-Y cannot be last, expected CSS file name to follow.")
-              }
-              else
-                None
-            lb += new HtmlReporterConfiguration(configSet, directory, cssFile)
-          }
-          else
-            throw new IllegalArgumentException("-h cannot be last, expected HTML output directory name to follow.")
-        }
+    def buildHtmlReporterConfigurationList(args: List[String]):
+      List[HtmlReporterConfiguration] =
+    {
+      if (args.isEmpty)
+        Nil
+      else if (!args.head.startsWith("-h"))
+        buildHtmlReporterConfigurationList(args.tail)
+      else if (args.tail.isEmpty)
+        throw new IllegalArgumentException(
+          "-h cannot be last, expected HTML output directory name to follow.")
+      else {
+        val (configSet, dir, cssFile, remainingArgs) = parseHtmlArgs(args)
+        new HtmlReporterConfiguration(configSet, dir, cssFile) ::
+          buildHtmlReporterConfigurationList(remainingArgs)
       }
-      lb.toList
     }
+
+    //
+    // Parses one set of -h arguments: configuration settings, html output
+    // directory, and optional cssFile, from an argument list whose first
+    // argument begins with "-h".  Returns parsed values plus list of
+    // remaining arguments.
+    //
+    // -h argument list consists of string "-h" with optional configuration
+    // letters appended (none are currently defined), a directory where
+    // output html is to be written, and optionally a "-Y" argument followed
+    // by the path to a custom CSS file to be used.  E.g.:
+    //
+    //   -hABC target/htmldir -Y src/resources/my.css
+    //
+    def parseHtmlArgs(args: List[String]):
+      (Set[ReporterConfigParam], String, Option[URL], List[String]) =
+    {
+      val configSet = parseConfigSet(args.head)
+      val directory = args(1)
+      val (cssFile, remainingArgs) = 
+        if ((args.size > 2) && args(2) == "-Y") {
+          if (args.size < 4)
+            throw new IllegalArgumentException(
+              "-Y cannot be last, expected CSS file name to follow.")
+          else
+            (Some(new File(args(3)).toURI.toURL), args.drop(4))
+        }
+        else
+          (None, args.drop(2))
+
+      (configSet, directory, cssFile, remainingArgs)
+    }
+
     val htmlReporterConfigurationList = buildHtmlReporterConfigurationList(args)
 
     val standardOutReporterConfigurationOption =
