@@ -135,6 +135,9 @@ private[tools] class IconEmbellishedListCellRenderer extends ListCellRenderer {
     val event: Event = value.asInstanceOf[EventHolder].event
 
     event match {
+      case _: DiscoveryStarting  =>
+      case _: DiscoveryCompleted =>
+
       case _: RunStarting => {
         if (isSelected)
           renderer.setIcon(Icons.runStartingSelIcon)

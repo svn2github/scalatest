@@ -1896,57 +1896,29 @@ final case class ScopePending (
     </ScopePending>
 }
 
-/*
-
 /**
- * Event that indicates a runner is about run a suite of tests.
- *
- * <p>
- * For example, object <code>Runner</code> reports <code>RunStarting</code> to indicate
- * that the first <code>execute</code> method of a run's initial <code>Suite</code>
- * is about to be invoked.
- * </p>
- *
- * <p>
- * To create instances of this class you may
- * use the factory method provided in its <a href="RunStarting$.html">companion object</a>. For example, given a
- * report function named <code>report</code>, you could fire a <code>RunStarting</code> event like this:
- * </p>
- *
- * <pre class="stHighlight">
- * report(RunStarting(ordinal, testCount))
- * </pre>
+ * Event that indicates a runner is beginning search for suites to run.
  *
  * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
  *        other events reported during the same run
- * @param testCount the number of tests expected during this run
  * @param configMap a <code>ConfigMap</code> of key-value pairs that can be used by custom <code>Reporter</code>s
- * @param payload an optional object that can be used to pass custom information to the reporter about the <code>RunStarting</code> event
  * @param threadName a name for the <code>Thread</code> about whose activity this event was reported
  * @param timeStamp a <code>Long</code> indicating the time this event was reported, expressed in terms of the
  *        number of milliseconds since the standard base time known as "the epoch":  January 1, 1970, 00:00:00 GMT
- *
- * @throws IllegalArgumentException if <code>testCount</code> is less than zero.
  *
  * @author Bill Venners
  */
 final case class DiscoveryStarting (
   ordinal: Ordinal,
-  testCount: Int,
   configMap: ConfigMap,
-  payload: Option[Any] = None,
   threadName: String = Thread.currentThread.getName,
   timeStamp: Long = (new Date).getTime
 ) extends Event {
  
   if (ordinal == null)
     throw new NullPointerException("ordinal was null")
-  if (testCount < 0)
-    throw new IllegalArgumentException("testCount was less than zero: " + testCount)
   if (configMap == null)
     throw new NullPointerException("configMap was null")
-  if (payload == null)
-    throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
 
@@ -1956,51 +1928,42 @@ final case class DiscoveryStarting (
   val location: Option[Location] = None
 
   /**
+   * Payload in a <code>DiscoveryStarting</code> is always set to <code>None</code>.
+   */
+  val payload: Option[Any] = None
+
+  /**
    * Formatter in a <code>DiscoveryStarting</code> is always set to <code>None</code>.
    */
   val formatter: Option[Formatter] = None
+
+  import EventXmlHelper._
+  private [scalatest] def toXml = 
+    <DiscoveryStarting>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <configMap>
+        { 
+          for ((key, value) <- configMap) yield {
+            <entry>
+              <key>{ key }</key>
+              <value>{ value }</value>
+            </entry>
+          }
+        }
+      </configMap>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </DiscoveryStarting>
 }
 
 /**
- * Event that indicates a runner has completed running a suite of tests.
- *
- * <p>
- * <code>Suite</code>'s <code>execute</code> method takes a <code>Stopper</code>, whose <code>stopRequested</code>
- * method indicates a stop was requested. If <code>true</code> is returned by
- * <code>stopRequested</code> while a suite of tests is running, the
- * <code>execute</code> method should promptly
- * return even if that suite hasn't finished running all of its tests.
- * </p>
- *
- * <p>If a stop was requested via the <code>Stopper</code>.
- * <code>Runner</code> will report <code>RunStopped</code>
- * when the <code>execute</code> method of the run's starting <code>Suite</code> returns.
- * If a stop is not requested, <code>Runner</code> will report <code>RunCompleted</code>
- * when the last <code>execute</code> method of the run's starting <code>Suite</code>s returns.
- * </p>
- *
- * <p>
- * ScalaTest's <code>Runner</code> fires a <code>RunCompleted</code> report with an empty <code>summary</code>, because
- * the reporter is responsible for keeping track of the total number of tests reported as succeeded, failed, ignored, and pending.
- * ScalaTest's internal reporter replaces the <code>RunCompleted</code> with a new one that is identical except that is
- * has a defined <code>summary</code>.
- * </p>
- *
- * <p>
- * To create instances of this class you may
- * use the factory method provided in its <a href="RunCompleted$.html">companion object</a>. For example, given a
- * report function named <code>report</code>, you could fire a <code>RunCompleted</code> event like this:
- * </p>
- *
- * <pre class="stHighlight">
- * report(RunCompleted(ordinal))
- * </pre>
+ * Event that indicates a runner has completed searching for suites.
  *
  * @param ordinal an <code>Ordinal</code> that can be used to place this event in order in the context of
  *        other events reported during the same run
  * @param duration an optional amount of time, in milliseconds, that was required by the run that has completed
- * @param summary an optional summary of the number of tests that were reported as succeeded, failed, ignored, and pending
- * @param payload an optional object that can be used to pass custom information to the reporter about the <code>RunCompleted</code> event
  * @param threadName a name for the <code>Thread</code> about whose activity this event was reported
  * @param timeStamp a <code>Long</code> indicating the time this event was reported, expressed in terms of the
  *        number of milliseconds since the standard base time known as "the epoch":  January 1, 1970, 00:00:00 GMT
@@ -2010,8 +1973,6 @@ final case class DiscoveryStarting (
 final case class DiscoveryCompleted (
   ordinal: Ordinal,
   duration: Option[Long] = None,
-  summary: Option[Summary] = None,
-  payload: Option[Any] = None,
   threadName: String = Thread.currentThread.getName,
   timeStamp: Long = (new Date).getTime
 ) extends Event {
@@ -2020,10 +1981,6 @@ final case class DiscoveryCompleted (
     throw new NullPointerException("ordinal was null")
   if (duration == null)
     throw new NullPointerException("duration was null")
-  if (summary == null)
-    throw new NullPointerException("summary was null")
-  if (payload == null)
-    throw new NullPointerException("payload was null")
   if (threadName == null)
     throw new NullPointerException("threadName was null")
 
@@ -2033,12 +1990,26 @@ final case class DiscoveryCompleted (
   val location: Option[Location] = None
 
   /**
+   * Payload in a <code>DiscoveryCompleted</code> is always set to <code>None</code>.
+   */
+  val payload: Option[Any] = None
+
+  /**
    * Formatter in a <code>DiscoveryCompleted</code> is always set to <code>None</code>.
    */
   val formatter: Option[Formatter] = None
+  
+  import EventXmlHelper._
+  private [scalatest] def toXml = 
+    <DiscoveryCompleted>
+      <ordinal>
+        <runStamp>{ ordinal.runStamp }</runStamp>
+      </ordinal>
+      <duration>{ longOption(duration) }</duration>
+      <threadName>{ threadName }</threadName>
+      <timeStamp>{ timeStamp }</timeStamp>
+    </DiscoveryCompleted>
 }
-
-*/
 
 /**
  * Deprecated singleton object for the <a href="TestStarting.html"><code>TestStarting</code></a> event, which contains overloaded factory methods

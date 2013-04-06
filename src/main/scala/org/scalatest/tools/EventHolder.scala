@@ -56,6 +56,8 @@ private[tools] class EventHolder(val event: Event, val message: Option[String], 
         def firstAndSecondString(first: String, second: String) = first + " - " + second
 
         event match {
+          case event: DiscoveryStarting => firstString
+          case event: DiscoveryCompleted => firstString
           case event: RunStarting => firstString
           case event: RunStopped => firstString
           case event: RunAborted => firstString

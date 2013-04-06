@@ -898,6 +898,8 @@ private[scalatest] class HtmlReporter(directoryPath: String, presentAllDurations
   def apply(event: Event) {
         
     event match {
+      case _: DiscoveryStarting  =>
+      case _: DiscoveryCompleted =>
 
       case RunStarting(ordinal, testCount, configMap, formatter, location, payload, threadName, timeStamp) => 
 

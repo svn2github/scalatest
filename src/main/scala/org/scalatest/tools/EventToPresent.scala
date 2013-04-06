@@ -26,6 +26,8 @@ import org.scalatest.events._
  */
 private[tools] sealed abstract class EventToPresent
 
+private[tools] case object PresentDiscoveryStarting extends EventToPresent
+private[tools] case object PresentDiscoveryCompleted extends EventToPresent
 private[tools] case object PresentRunStarting extends EventToPresent
 private[tools] case object PresentTestStarting extends EventToPresent
 private[tools] case object PresentTestFailed extends EventToPresent
@@ -49,6 +51,8 @@ private[tools] object EventToPresent {
 
   val allEventsToPresent: Set[EventToPresent] =
     Set(
+      PresentDiscoveryStarting,
+      PresentDiscoveryCompleted,
       PresentRunStarting,
       PresentTestStarting,
       PresentTestSucceeded,
@@ -71,6 +75,8 @@ private[tools] object EventToPresent {
 
   def eventToEventToPresent(event: org.scalatest.events.Event): EventToPresent =
     event match {
+      case _: DiscoveryStarting => PresentDiscoveryStarting
+      case _: DiscoveryCompleted => PresentDiscoveryCompleted
       case _: RunStarting => PresentRunStarting
       case _: TestStarting => PresentTestStarting
       case _: TestSucceeded => PresentTestSucceeded

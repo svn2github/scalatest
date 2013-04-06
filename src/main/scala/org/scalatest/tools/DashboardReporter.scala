@@ -71,15 +71,17 @@ private[scalatest] class DashboardReporter(directory: String,
   //
   def apply(event: Event) {
     event match {
-      case _: RunStarting    => timestamp = formatCurrentTime
-      case _: InfoProvided   =>
-      case _: ScopeOpened    =>
-      case _: ScopeClosed    =>
-      case _: ScopePending   =>
-      case _: MarkupProvided =>
-      case _: RunCompleted   => writeFiles(event)
-      case _: RunStopped     => writeFiles(event)
-      case _: RunAborted     => writeFiles(event)
+      case _: DiscoveryStarting  =>
+      case _: DiscoveryCompleted =>
+      case _: RunStarting        => timestamp = formatCurrentTime
+      case _: InfoProvided       =>
+      case _: ScopeOpened        =>
+      case _: ScopeClosed        =>
+      case _: ScopePending       =>
+      case _: MarkupProvided     =>
+      case _: RunCompleted       => writeFiles(event)
+      case _: RunStopped         => writeFiles(event)
+      case _: RunAborted         => writeFiles(event)
       case _ => events += event
     }
   }
@@ -587,16 +589,17 @@ private[scalatest] class DashboardReporter(directory: String,
         case e: SuiteCompleted => endSuite(e)
         case e: SuiteAborted   => endSuite(e)
 
-        case e: RunStarting    => unexpectedEvent(e)
-        case e: RunCompleted   => unexpectedEvent(e)
-        case e: RunStopped     => unexpectedEvent(e)
-        case e: RunAborted     => unexpectedEvent(e)
-
-        case e: InfoProvided   => unexpectedEvent(e)
-        case e: ScopeOpened    => unexpectedEvent(e)
-        case e: ScopeClosed    => unexpectedEvent(e)
-        case e: ScopePending   => unexpectedEvent(e)
-        case e: MarkupProvided => unexpectedEvent(e)
+        case e: DiscoveryStarting  => unexpectedEvent(e)
+        case e: DiscoveryCompleted => unexpectedEvent(e)
+        case e: RunStarting        => unexpectedEvent(e)
+        case e: RunCompleted       => unexpectedEvent(e)
+        case e: RunStopped         => unexpectedEvent(e)
+        case e: RunAborted         => unexpectedEvent(e)
+        case e: InfoProvided       => unexpectedEvent(e)
+        case e: ScopeOpened        => unexpectedEvent(e)
+        case e: ScopeClosed        => unexpectedEvent(e)
+        case e: ScopePending       => unexpectedEvent(e)
+        case e: MarkupProvided     => unexpectedEvent(e)
       }
     }
     pw.println("</doc>")

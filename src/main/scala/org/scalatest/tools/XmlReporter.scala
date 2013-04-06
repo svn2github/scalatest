@@ -165,6 +165,8 @@ private[scalatest] class XmlReporter(directory: String) extends Reporter {
         case e: TestSucceeded  => unexpected(e)
         case e: TestFailed     => unexpected(e)
         case e: SuiteStarting  => unexpected(e)
+        case e: DiscoveryStarting  => unexpected(e)
+        case e: DiscoveryCompleted => unexpected(e)
       }
     }
     testsuite
@@ -283,6 +285,8 @@ private[scalatest] class XmlReporter(directory: String) extends Reporter {
         case e: RunStopped     => unexpected(e)
         case e: RunAborted     => unexpected(e)
         case e: SuiteAborted   => unexpected(e)
+        case e: DiscoveryStarting  => unexpected(e)
+        case e: DiscoveryCompleted => unexpected(e)
       }
     }
     (endIndex, testcase)

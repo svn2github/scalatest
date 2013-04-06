@@ -32,6 +32,8 @@ private[tools] class FilterReporter(reporter: Reporter, configSet: Set[ReporterC
   override def apply(event: Event) {
     val report = reporter
     event match {
+      case event: DiscoveryStarting => report(event)
+      case event: DiscoveryCompleted => report(event)
       case event: RunStarting => report(event)
       case event: RunCompleted => report(event)
       case event: RunAborted => report(event)

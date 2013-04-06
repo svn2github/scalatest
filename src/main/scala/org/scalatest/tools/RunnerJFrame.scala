@@ -384,6 +384,8 @@ private[scalatest] class RunnerJFrame(
 
             val name =
               holder.event match {
+                case event: DiscoveryStarting => None
+                case event: DiscoveryCompleted => None
                 case event: RunStarting => None
                 case event: RunStopped => None
                 case event: RunAborted => None
@@ -413,6 +415,8 @@ private[scalatest] class RunnerJFrame(
             
             val suiteId = 
               holder.event match {
+                case event: DiscoveryStarting => None
+                case event: DiscoveryCompleted => None
                 case event: RunStarting => None
                 case event: RunStopped => None
                 case event: RunAborted => None
@@ -435,6 +439,8 @@ private[scalatest] class RunnerJFrame(
 
             val duration =
               holder.event match {
+                case event: DiscoveryStarting => None
+                case event: DiscoveryCompleted => event.duration
                 case event: RunStarting => None
                 case event: RunStopped => event.duration
                 case event: RunAborted => event.duration
@@ -879,6 +885,15 @@ private[scalatest] class RunnerJFrame(
 
     override def apply(event: Event) {
       event match {
+        case _: DiscoveryStarting  =>
+          usingEventDispatchThread {
+            statusJPanel.discoveryStarting()
+          }
+
+        case _: DiscoveryCompleted =>
+          usingEventDispatchThread {
+            statusJPanel.discoveryCompleted()
+          }
 
         case RunStarting(ordinal, testCount, configMap, formatter, location, payload, threadName, timeStamp) =>
 
@@ -924,6 +939,7 @@ private[scalatest] class RunnerJFrame(
         case RunAborted(ordinal, message, throwable, duration, summary, formatter, location, payload, threadName, timeStamp) => 
 
           usingEventDispatchThread {
+            statusJPanel.runAborted()
             progressBar.setRed()
             registerEvent(event)
             // Must do this here, not in RunningState.runFinished, because the runFinished
@@ -1331,6 +1347,9 @@ private[scalatest] class RunnerJFrame(
     def apply(event: Event) {
 
       event match {
+        case _: DiscoveryStarting => None
+        case _: DiscoveryCompleted => None
+
         case RunStarting(ordinal, testCount, configMap, formatter, location, payload, threadName, timeStamp) =>
 
           // Create the Report outside of the event handler thread, because otherwise
@@ -1361,6 +1380,7 @@ private[scalatest] class RunnerJFrame(
         case RunAborted(ordinal, message, throwable, duration, summary, formatter, location, payload, threadName, timeStamp) => 
 
           usingEventDispatchThread {
+            statusJPanel.runAborted()
             rerunColorBox.setRed()
             val eventHolder = registerRerunEvent(event)
             if (!anErrorHasOccurredAlready) {
@@ -1572,6 +1592,8 @@ private[tools] object RunnerJFrame {
 
   def getUpperCaseName(eventToPresent: EventToPresent) =
     eventToPresent match {
+      case PresentDiscoveryStarting => "DISCOVERY_STARTING"
+      case PresentDiscoveryCompleted => "DISCOVERY_COMPLETED"
       case PresentRunStarting => "RUN_STARTING"
       case PresentTestStarting => "TEST_STARTING"
       case PresentTestFailed => "TEST_FAILED"

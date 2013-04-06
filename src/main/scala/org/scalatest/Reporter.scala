@@ -23,12 +23,14 @@ import org.scalatest.events.Event
  * be called "report functions" or "reporters."
  *
  * <p>
- * Reporters receive test results via thirteen events.
+ * Reporters receive test results via fifteen events.
  * Each event is fired to pass a particular kind of information to
  * the reporter. The events are:
  * </p>
  *
  * <ul>
+ * <li><code>DiscoveryStarting</code>
+ * <li><code>DiscoveryCompleted</code>
  * <li><code>RunStarting</code>
  * <li><code>TestStarting</code>
  * <li><code>TestSucceeded</code>
