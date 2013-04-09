@@ -1513,7 +1513,7 @@ trait Suite extends Assertions with AbstractSuite with Serializable { thisSuite 
       else
         FailedStatus
     }
-    
+
     val statusBuffer = new ListBuffer[Status]()
     if (!filter.excludeNestedSuites) {
       val nestedSuitesArray = nestedSuites.toArray

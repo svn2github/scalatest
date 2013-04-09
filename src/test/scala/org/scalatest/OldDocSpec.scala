@@ -21,7 +21,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.Doc.stripMargin
 import org.scalatest.Doc.trimMarkup
 
-class DocSpec extends FreeSpec with ShouldMatchers with TableDrivenPropertyChecks {
+class OldDocSpec extends FreeSpec with ShouldMatchers with TableDrivenPropertyChecks {
 
   class DocSpecASuite extends Suite
   class DocSpecBSuite extends Suite
