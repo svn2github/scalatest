@@ -513,7 +513,7 @@ class FrameworkSuite extends FunSuite {
     val runner = framework.runner(Array("-oW"), Array.empty, testClassLoader)
     val task = runner.task("org.scalatest.tools.scalasbt.SampleSuite", false, Array(new SuiteSelector()))
     task.execute(new TestEventHandler, Array(testLogger))
-    val summaryText = runner.done
+    val summaryText = runner.done.split("\n")
     assert(summaryText.size === 5)
     assert(summaryText(0).startsWith("Run completed in "))
     assert(summaryText(1) === "Total number of tests run: 3")

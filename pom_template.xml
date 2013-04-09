@@ -84,7 +84,7 @@
     <dependency>
       <groupId>org.scala-tools.testing</groupId>
       <artifactId>test-interface</artifactId>
-      <version>1.0-SNAP1</version>
+      <version>1.0-SNAP2</version>
       <optional>true</optional>
     </dependency>
 
